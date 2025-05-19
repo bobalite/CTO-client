@@ -128,6 +128,8 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
         console.log('params', params)
        
         const response = await reportDetailsService.getReportDetails(params)
+
+         console.log('response', response)
       
         //
         if (response.data) {

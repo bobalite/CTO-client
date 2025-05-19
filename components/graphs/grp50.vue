@@ -131,6 +131,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
         }
   
         const response = await reportDetailsService.getReportDetails(params)
+        console.log('response', response)
   
         //
         if (response.data) {
@@ -179,6 +180,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
   
         }
     } catch (error) {
+        console.log(error)
   
         state.graphSeriesMale = [0,0,0,0,0,0,0,0,0]
         state.graphSeriesFemale = [0,0,0,0,0,0,0,0,0]
