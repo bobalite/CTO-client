@@ -874,7 +874,7 @@ async function fetchReports_Details_Actuals() {
         if (response.data) {
             state.report_details.data = response.data
           
-            if (response.data.length > 0) {
+            if (response) {
                 for (const c in state.report_details.data) {
                     state.view_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
                     state.view_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
@@ -1146,7 +1146,7 @@ async function fetchReports_Details_Edit() {
         if (response.data) {
             state.report_details.data = response.data
           
-            if (response.data.length > 0) {
+            if (response) {
                 for (const c in state.report_details.data) {
                     state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
                     state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;

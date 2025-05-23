@@ -8,6 +8,7 @@ class ReportDetailsService extends BaseAPIService {
     async getReportDetailsTotaled(params: object): Promise<any> { 
         return await this.request(`/report_details`, "GET", params);
     }
+    
 
     async getReportDetail(id: any): Promise<any> {
         return await this.request(`/report_details/${id}`, "GET");

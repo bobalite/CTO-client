@@ -115,7 +115,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
 
              state.report_details.data = response.data          
             
-             if (response.data.length > 0) {
+             if (response) {
                 state.graphSeries = [0,0,0]
                 for (const c in state.report_details.data) {
 
