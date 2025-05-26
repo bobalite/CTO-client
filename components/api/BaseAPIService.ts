@@ -47,12 +47,16 @@ class BaseAPIService {
                     throw new APIError(error.response._data);
                     // throw new APIError("404 Not Found");
                 case 401:
-                    this.revokeAccess();
+                    //this.revokeAccess();
                     throw new APIError(error.response._data);
                     // throw new APIError("401 Unauthorized");
                 case 500:
-                    this.revokeAccess();
-                    throw new APIError(error.response._data);
+                    //this.revokeAccess();
+                    //throw new APIError(error.response._data);
+                    throw new APIError({
+                        message:
+                            "API error - 500 Internal Server Error. Please try again later.",
+                    });
                 default:
                     throw new APIError({
                         message:

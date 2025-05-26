@@ -960,8 +960,10 @@ async function saveReportDetails(){
         return;
     }
     
-   
-    for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+    
+
+         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
                     let params = {
 
@@ -980,26 +982,40 @@ async function saveReportDetails(){
                         is_active: 1,
                     }
                    
-                    console.log(params)
-                    const response = await reportDetailsService.createReportDetails(params);
-                     if (response.data) {
-                        successcount = successcount + 1; 
+                        console.log('params', params)
+                        const response = await reportDetailsService.createReportDetails(params);
+                        if (response.data) {
+                            successcount = successcount + 1; 
                         //successAlert("Success!", 'Successfully Added to database.')
-                     }   
+                        }else{
+                            errorcount = errorcount + 1;
+                        }   
        
                     } catch (error) {
-                        console.log(error)
+                        console.log('error', error)
                         errorcount = errorcount + 1;
+                        alert("Error in saving data. Please check the values you entered.")
+                        state.isAddModalOpen = false
                     }
-    }
-    if (successcount > 0){
+        }
+        if (successcount > 0){
         //successAlert("Success!", 'Successfully Added to database.')
         state.successcount = successcount;
         state.errorcount = errorcount;
         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)
         state.isAddModalOpen = false
     }
+        
+    // } catch (error) {
+    //     console.log(error)
+    //     errorcount = errorcount + 1;
+    // }
+   
+   
 }
+
+
+
 
 function SaveAddEntryModal(){
 
