@@ -1,6 +1,7 @@
 import BaseAPIService from "./BaseAPIService";
 
 class ReportDetailsService extends BaseAPIService {
+    
     async getReportDetails(params: object): Promise<any> { 
         return await this.request(`/report_details`, "GET", params);
     }

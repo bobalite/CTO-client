@@ -24,7 +24,7 @@
 //import { numeric } from '@vuelidate/validators';
 import ApexCharts from 'vue3-apexcharts';
 //import { report_yearService } from '../api/ReportYears';
-import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+import {reportDetailsService } from '@/components/api/ReportDetailsService'; 
 //reportDetailsService
 
 const props = defineProps({
