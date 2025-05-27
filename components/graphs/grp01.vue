@@ -21,10 +21,11 @@
 </template>
 
 <script setup>
-import { numeric } from '@vuelidate/validators';
+//import { numeric } from '@vuelidate/validators';
 import ApexCharts from 'vue3-apexcharts';
 //import { report_yearService } from '../api/ReportYears';
 import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+//reportDetailsService
 
 const props = defineProps({
     class: {
@@ -125,11 +126,11 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
-        console.log('params', params)
+        console.log('params-getReportDetails',params)
        
         const response = await reportDetailsService.getReportDetails(params)
-
-         console.log('response', response)
+        
+        console.log('response', response)
       
         //
         if (response.data) {

@@ -867,7 +867,7 @@ async function fetchReports_Details_Actuals() {
             group_agency_datasource_id: state.view_selected_datasource
         }
 
-
+        console.log('params-getReportDetails',params)
         const response = await reportDetailsService.getReportDetails(params)
         //console.log(response)
         //console.log(params)
