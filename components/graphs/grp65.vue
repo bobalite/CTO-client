@@ -122,7 +122,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
             group_id: 65,
             report_year_id: props.report_year, // need to be passed from the dashboard main page
             is_active: 1,
-            entry_type: 'Actual',//state.selected_view_entry_type,
+            entry_type: "Actual",//state.selected_view_entry_type,
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
