@@ -143,40 +143,40 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
                 state.graphSeriesFemale = [0,0,0,0,0,0,0,0,0,0,0,0]
                 for (const c in state.report_details.data) {
 
-                    if (state.report_details.data[c].sequence_header == '3.1.2.1') {
+                    if (state.report_details.data[c].sequence_header == '3.1.2.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[0] = parseFloat(state.graphSeriesMale[0]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[0] = parseFloat(state.graphSeriesFemale[0]) + parseFloat( state.report_details.data[c].female)
-                    } else if (state.report_details.data[c].sequence_header == '3.1.2.2') {
+                    } else if (state.report_details.data[c].sequence_header == '3.1.2.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[1] = parseFloat(state.graphSeriesMale[1]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[1] = parseFloat(state.graphSeriesFemale[1]) + parseFloat( state.report_details.data[c].female)
-                    } else if (state.report_details.data[c].sequence_header == '3.1.2.3') {
+                    } else if (state.report_details.data[c].sequence_header == '3.1.2.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[2] = parseFloat(state.graphSeriesMale[2]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[2] = parseFloat(state.graphSeriesFemale[2]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.4') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[3] = parseFloat(state.graphSeriesMale[3]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[3] = parseFloat(state.graphSeriesFemale[3]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.5') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[4] = parseFloat(state.graphSeriesMale[4]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[4] = parseFloat(state.graphSeriesFemale[4]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.6') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.6' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[5] = parseFloat(state.graphSeriesMale[5]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[5] = parseFloat(state.graphSeriesFemale[5]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.7') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.7' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[6] = parseFloat(state.graphSeriesMale[6]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[6] = parseFloat(state.graphSeriesFemale[6]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.8') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.8' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[7] = parseFloat(state.graphSeriesMale[7]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[7] = parseFloat(state.graphSeriesFemale[7]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.9') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.9' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[8] = parseFloat(state.graphSeriesMale[8]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[8] = parseFloat(state.graphSeriesFemale[8]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.10') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.10' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[9] = parseFloat(state.graphSeriesMale[9]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[9] = parseFloat(state.graphSeriesFemale[9]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.11') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.11' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[10] = parseFloat(state.graphSeriesMale[10]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[10] = parseFloat(state.graphSeriesFemale[10]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '3.1.2.12') {
+                    }else if (state.report_details.data[c].sequence_header == '3.1.2.12' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[11] = parseFloat(state.graphSeriesMale[11]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[11] = parseFloat(state.graphSeriesFemale[11]) + parseFloat( state.report_details.data[c].female)
                     }

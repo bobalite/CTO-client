@@ -126,16 +126,15 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
                 state.graphSeries = [0,0,0]
                 for (const c in state.report_details.data) {
 
-                    if (state.report_details.data[c].sequence_header == '2.3.1') {
+                    if (state.report_details.data[c].sequence_header == '2.3.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
    
                         state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat( state.report_details.data[c].total)
 
-                    } else if (state.report_details.data[c].sequence_header == '2.3.2') {
-
+                    } else if (state.report_details.data[c].sequence_header == '2.3.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
    
                         state.graphSeries[1] = parseFloat(state.graphSeries[1]) +  parseFloat( state.report_details.data[c].total)
 
-                    } else if (state.report_details.data[c].sequence_header == '2.3.3') {
+                    } else if (state.report_details.data[c].sequence_header == '2.3.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
    
                         state.graphSeries[2] = parseFloat(state.graphSeries[2]) +  parseFloat( state.report_details.data[c].total)
                     }

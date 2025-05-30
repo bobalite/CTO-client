@@ -136,19 +136,19 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
                 state.graphSeriesFemale =   [0,0,0,0,0]
                 for (const c in state.report_details.data) {
 
-                    if (state.report_details.data[c].sequence_header == '5.3.6.1') {
+                    if (state.report_details.data[c].sequence_header == '5.3.6.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[0] = parseFloat(state.graphSeriesMale[0]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[0] = parseFloat(state.graphSeriesFemale[0]) + parseFloat( state.report_details.data[c].female)
-                    } else if (state.report_details.data[c].sequence_header == '5.3.6.2') {
+                    } else if (state.report_details.data[c].sequence_header == '5.3.6.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[1] = parseFloat(state.graphSeriesMale[1]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[1] = parseFloat(state.graphSeriesFemale[1]) + parseFloat( state.report_details.data[c].female)
-                    } else if (state.report_details.data[c].sequence_header == '5.3.6.3') {
+                    } else if (state.report_details.data[c].sequence_header == '5.3.6.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[2] = parseFloat(state.graphSeriesMale[2]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[2] = parseFloat(state.graphSeriesFemale[2]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '5.3.6.4') {
+                    }else if (state.report_details.data[c].sequence_header == '5.3.6.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[3] = parseFloat(state.graphSeriesMale[3]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[3] = parseFloat(state.graphSeriesFemale[3]) + parseFloat( state.report_details.data[c].female)
-                    }else if (state.report_details.data[c].sequence_header == '5.3.6.5') {
+                    }else if (state.report_details.data[c].sequence_header == '5.3.6.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeriesMale[4] = parseFloat(state.graphSeriesMale[4]) + parseFloat( state.report_details.data[c].male)
                         state.graphSeriesFemale[4] = parseFloat(state.graphSeriesFemale[4]) + parseFloat( state.report_details.data[c].female)
                     }

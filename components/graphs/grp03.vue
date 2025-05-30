@@ -118,7 +118,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
                 state.graphSeries = [0,0,0]
                 for (const c in state.report_details.data) {
 
-                 if (state.report_details.data[c].sequence_header == '1.1.3'){
+                 if (state.report_details.data[c].sequence_header == '1.1.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year){
                         state.prevalence = parseFloat(state.prevalence) +  parseFloat( state.report_details.data[c].total)
 
                     }

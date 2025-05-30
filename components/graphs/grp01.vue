@@ -121,10 +121,10 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
     try {
         let params = {
             group_id: 1,
-            // report_year_id: props.report_year, // need to be passed from the dashboard main page
-            // is_active: 1,
-            // // entry_type: "Actual",//state.selected_view_entry_type,
-            // group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
+            report_year_id: props.report_year, // need to be passed from the dashboard main page
+            is_active: 1,
+            // entry_type: "Actual",//state.selected_view_entry_type,
+            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
         console.log('params-getReportDetailsGroups',params)
@@ -143,13 +143,13 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
              if (response) {
                 state.graphSeries = [0,0,0]
                 for (const c in state.report_details.data) {
-                    if (state.report_details.data[c].sequence_header == '1.1.1.1.1' && state.report_details.data[c].entry_type == 'Actual') {
+                    if (state.report_details.data[c].sequence_header == '1.1.1.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat( state.report_details.data[c].total)
-                    } else if (state.report_details.data[c].sequence_header == '1.1.1.1.2' && state.report_details.data[c].entry_type == 'Actual') {
+                    } else if (state.report_details.data[c].sequence_header == '1.1.1.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeries[1] = parseFloat(state.graphSeries[1]) +  parseFloat( state.report_details.data[c].total)
-                    } else if (state.report_details.data[c].sequence_header == '1.1.1.1.3' && state.report_details.data[c].entry_type == 'Actual') {
+                    } else if (state.report_details.data[c].sequence_header == '1.1.1.1.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                         state.graphSeries[2] = parseFloat(state.graphSeries[2]) +  parseFloat( state.report_details.data[c].total)
-                    } else if (state.report_details.data[c].sequence_header == '1.1.1.2' && state.report_details.data[c].entry_type == 'Actual'){
+                    } else if (state.report_details.data[c].sequence_header == '1.1.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year){
                         state.prevalence = parseFloat(state.prevalence) +  parseFloat( state.report_details.data[c].total)
                     }
                 }
