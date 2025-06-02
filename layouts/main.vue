@@ -387,8 +387,8 @@ const encoding_forms = [
 const admin_pages = [
     { id: 1, name: 'Rights Entry Configuration', link: '/admin', initial: 'R', current: false },
     { id: 2, name: 'User Management', link: '/admin/usermanagement', initial: 'R', current: false },
-    { id: 3, name: 'Manage Datasources ', link: '/admin/usermanagement', initial: 'R', current: false },
-    { id: 4, name: 'Manage Report Schedules ', link: '/admin/managereportschedules', initial: 'R', current: false },
+    //{ id: 3, name: 'Manage Datasources ', link: '/admin/usermanagement', initial: 'R', current: false },
+    { id: 3, name: 'Manage Report Schedules ', link: '/admin/managereportschedules', initial: 'R', current: false },
 
 ]
 
