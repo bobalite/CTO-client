@@ -49,7 +49,7 @@
                                             <div class="text-xs font-semibold leading-6 text-green-200">Data Encoding
                                             </div>
                                             <!-- <ul role="list" class="-mx-2 mt-2 space-y-1">
-                                                <li v-for="team in teams" :key="team.name">
+                                                <li v-for="team in admin_pages" :key="team.name">
                                                    <NuxtLink :to="team.link"
                                                         :class="[team.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                                                         <span
@@ -59,6 +59,17 @@
                                                     </NuxtLink>
                                                 </li>
                                             </ul> -->
+
+                                                <li v-for="data_encoding in encoding_forms" :key="data_encoding.name">
+                                                    <NuxtLink :to="data_encoding.link"
+                                                        :class="[data_encoding.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                                                        <span
+                                                            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">
+                                                            {{ data_encoding.initial }}
+                                                        </span>
+                                                        <span class="truncate">{{ data_encoding.name }}</span>
+                                                    </NuxtLink>
+                                                </li>
                                         </li>
                                         <li class="mt-auto">
                                             <a href="#"
@@ -68,6 +79,18 @@
                                                     aria-hidden="true" />
                                                 Settings
                                             </a>
+
+                                            <ul role="list" class="-mx-2 mt-2 space-y-1">
+                                                <li v-for="team in admin_pages" :key="team.name">
+                                                    <NuxtLink :to="team.link"
+                                                        :class="[team.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                                                        <span
+                                                            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">{{
+                                                            team.initial }}</span>
+                                                        <span class="truncate">{{ team.name }}</span>
+                                                    </NuxtLink>
+                                                </li>
+                                            </ul>
                                         </li>
                                     </ul>
                                 </nav>
@@ -171,12 +194,12 @@
                             <MenuButton class="-m-1.5 flex items-center p-1.5">
                                 <span class="sr-only">Open user menu</span>
                                 <template v-if="userStore.getUser.email == 'test@email.com'">
-                                    <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg" alt="" />
+                                    <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg"
+                                        alt="" />
 
                                 </template>
                                 <template v-else-if="userStore.getUser.email == 'cath@email.com'">
-                                    <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/cat.jpg"
-                                        alt="" />
+                                    <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
                                 </template>
                                 <template v-else>
                                     <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/default_pic.png"
@@ -232,11 +255,11 @@
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <div class="sm:col-span-7  ">
                         <template v-if="userStore.getUser.email == 'test@email.com'">
-                            <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg" alt="" />
+                            <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg"
+                                alt="" />
                         </template>
                         <template v-else-if="userStore.getUser.email == 'cath@email.com'">
-                            <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/cat.jpg"
-                                alt="" />
+                            <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
                         </template>
                         <template v-else>
                             <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/default_pic.png"
@@ -244,8 +267,8 @@
                         </template>
 
                         <button
-                        class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="closeSlideModal"> Change Profile Picture </button>
+                            class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
+                            @click="closeSlideModal"> Change Profile Picture </button>
                     </div>
                     <GridCell class="sm:col-span-8 " :displaytext="''" />
 
@@ -278,12 +301,12 @@
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Current Password: '" />
                     <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" />
-                    
+
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'New Password: '" />
                     <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" />
-                    
+
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Re-Type New Password: '" />

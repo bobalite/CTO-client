@@ -14,7 +14,8 @@
 <script setup>
 import ApexCharts from 'vue3-apexcharts';
 //import { report_yearService } from '../api/ReportYears';
-import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+import {reportDetailsService } from '~/components/api/ReportDetailsService';
+import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 
 const props = defineProps({
     class: {
@@ -96,16 +97,19 @@ OptionsPieDatasource: {
 
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
-    try {
+       try {
         let params = {
             group_id: 6,
             report_year_id: props.report_year, // need to be passed from the dashboard main page
             is_active: 1,
-            entry_type: "Actual",//state.selected_view_entry_type,
+            // entry_type: "Actual",//state.selected_view_entry_type,
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
-   
-        const response = await reportDetailsService.getReportDetails(params)
+
+        console.log('params-getReportDetailsGroups',params)
+       
+        //const response = await reportDetailsService.getReportDetails(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
    
         //
         if (response.data) {
