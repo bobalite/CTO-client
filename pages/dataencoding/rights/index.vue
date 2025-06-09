@@ -41,13 +41,13 @@
 
                         <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type"
                             :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" />
-                        <GridCell
+                        <!-- <GridCell
                             class="sm:col-span-4 text-center  table-header-1  border-1 border-t border-r border-solid border-grey border-l pb-4"
                             :displaytext="'Select Datasource:'" />
 
                         <FormSelect v-model="state.view_selected_datasource" :options="state.options.datasources"
                             :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'"
-                            :displaytext="''" @click="changeViewdata()" />
+                            :displaytext="''" @click="changeViewdata()" /> -->
 
                         <GridCell
                              class="sm:col-span-12 flex justify-center items-center text-xl text-white table-header-text  border-white border-t border-l border-r border-b border-grey pb-6"
@@ -175,11 +175,11 @@
                             :displaytext="'Select Entry Type:'" />
                         <GridSelect v-model="state.selected_entry_type" :options="state.options.entry_type"
                             :class="'sm:col-span-8 text-xl  text-center  border-2 border-solid border-r  border-grey  border-t  pb-4'" />
-                        <GridCell
+                        <!-- <GridCell
                             class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey  border-l border-t pb-4"
                             :displaytext="'Select Datasource:'" />
                         <GridSelect v-model="state.datasource_id" :options="state.options.datasources"
-                            :class="'sm:col-span-8 text-xl  text-center border-2 border-solid border-r  border-t border-grey  pb-4'" />
+                            :class="'sm:col-span-8 text-xl  text-center border-2 border-solid border-r  border-t border-grey  pb-4'" /> -->
 
                         <GridCell
                             class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey  pb-6"
@@ -266,11 +266,11 @@
                             :displaytext="'Select Entry Type:'" />
                         <GridSelect v-model="state.selected_edit_entry_type" :options="state.options.entry_type"
                             :class="'sm:col-span-8 text-xl text-center border-2 border-solid border-r  border-grey border-t  pb-4'" @click="fetchReports_Details_Edit()"/>
-                        <GridCell
+                        <!-- <GridCell
                             class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-white border-l border-t pb-4"
                             :displaytext="'Select Datasource:'" />
                         <FormSelect v-model="state.edit_selected_datasource" :options="state.options.datasources"
-                            :class="'sm:col-span-8 text-xl  text-center bg-green-300  border-2 border-solid border-r  border-t border-grey pb-4'" @click="fetchReports_Details_Edit()" />
+                            :class="'sm:col-span-8 text-xl  text-center bg-green-300  border-2 border-solid border-r  border-t border-grey pb-4'" @click="fetchReports_Details_Edit()" /> -->
 
                         <GridCell
                             class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey pb-6"
@@ -433,16 +433,27 @@
                                     <!-- agencies with color -->
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         <span 
-                                            v-for="datasource in Rights_entry_config.datasources"
-                                            v-bind:key=Rights_entry_config.datasources.agency_id
+                                          
+                                            v-bind:key=Rights_entry_config.agency_id
                                             class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
-                                            :class="state.options.agencies.find(a => a.value === datasource.agency_id)?.color">
+                                            :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
                                             <template v-for="agency in state.options.agencies">
-                                                <template v-if="agency.value == datasource.agency_id">
+                                                <template v-if="agency.value == Rights_entry_config.agency_id">
                                                     {{ agency.label }}
                                                 </template>
                                             </template>
                                         </span>
+
+                                        <!-- <span
+                                            v-bind:key=Rights_entry_config.agency_id
+                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
+                                            :class="state.options.agencies.find(a => a.value === datasource.agency_id)?.color">
+                                             <template v-for="agency in state.options.agencies">
+                                                <template v-if="agency.value ==   Rights_entry_config.agency_id  ">
+                                                    {{ agency.label }}
+                                                </template>
+                                            </template>
+                                        </span> -->
                                     </td>
 
                                     
@@ -570,6 +581,7 @@ const state = reactive({
     selected_sequence_header: '',
     selected_description: '',
     selected_group: 0,
+    selected_agency_id: 0, 
 
     report_details: [],
     report_years: [],
@@ -705,25 +717,27 @@ function closeAlertModal() {
 function getclicked(Rights_entry_config){
   
      state.selected_sequence_header = Rights_entry_config.sequence_header
+     state.selected_agency_id = Rights_entry_config.agency_id
      state.selected_description = Rights_entry_config.description
      state.selected_group_header = Rights_entry_config.group_header
      state.selected_group = Rights_entry_config.group
      state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
-     console.log(state.Selected_Rights_entry_config_group.data)
-     if (state.Selected_Rights_entry_config_group.data != null){ 
-       var data = [];
-       var datasources = [];
-       datasources = state.Selected_Rights_entry_config_group.data[0].datasources
+
+    //  console.log(state.Selected_Rights_entry_config_group.data)
+    //  if (state.Selected_Rights_entry_config_group.data != null){ 
+    //    var data = [];
+    //    var datasources = [];
+    //    datasources = state.Selected_Rights_entry_config_group.data[0].datasources
        
-            for (const i in datasources){
-                const value = datasources[i].agency_id;
-                if (!datasources.includes(value)){
-                    data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
-                }
-            }
-        state.options.datasources = data;
+    //         for (const i in datasources){
+    //             const value = datasources[i].agency_id;
+    //             if (!datasources.includes(value)){
+    //                 data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
+    //             }
+    //         }
+    //     state.options.datasources = data;
         
-        }
+    //     }
 }
 
 function changeData(){
@@ -1110,6 +1124,7 @@ function closeAddEntryModal() {
 
 
 function openAddEntryModal() {
+// state.selected_datasourece =     
 
 clearData();
 state.buttonsavenew = false;
