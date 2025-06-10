@@ -271,7 +271,8 @@
                             :displaytext="'Select Datasource:'" />
                         <FormSelect v-model="state.edit_selected_datasource" :options="state.options.datasources"
                             :class="'sm:col-span-8 text-xl  text-center bg-green-300  border-2 border-solid border-r  border-t border-grey pb-4'" @click="fetchReports_Details_Edit()" /> -->
-
+                           
+                            
                         <GridCell
                             class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey pb-6"
                             :displaytext=state.selected_group_header />
@@ -720,6 +721,7 @@ function getclicked(Rights_entry_config){
      state.selected_agency_id = Rights_entry_config.agency_id
      state.selected_description = Rights_entry_config.description
      state.selected_group_header = Rights_entry_config.group_header
+     state.datasource_id = Rights_entry_config.agency_id
      state.selected_group = Rights_entry_config.group
      state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
 
@@ -1155,6 +1157,7 @@ state.buttonsavenew = false;
 function openEditModal() {
     state.isEditModalOpen = true;
     state.buttoncomputeEdit = false;
+    clearEditData()
     //fetchReports_Details_Edit()
 }
 
@@ -1162,44 +1165,62 @@ async function fetchReports_Details_Edit() {
 
     clearEditData()
 
-    try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: state.selected_edit_entry_type,
-            group_agency_datasource_id: state.edit_selected_datasource
-        }
+    // try {
+    //     let params = {
+    //         group_id: state.selected_group,
+    //         report_year_id: state.selected_year_id,
+    //         is_active: 1,
+    //         entry_type: state.selected_edit_entry_type,
+    //         group_agency_datasource_id: state.edit_selected_datasource
+    //     }
        
-        const response = await reportDetailsService.getReportDetails(params)
-        //console.log(response)
-        //console.log(params)
-        if (response.data) {
-            state.report_details.data = response.data
+    //     const response = await reportDetailsService.getReportDetails(params)
+    //     //console.log(response)
+    //     //console.log(params)
+    //     if (response.data) {
+    //         state.report_details.data = response.data
           
-            if (response) {
-                for (const c in state.report_details.data) {
-                    state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
-                    state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
-                    state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
-                    //state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
-                    //state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
-                    state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
+    //         if (response) {
+    //             console.log(state.report_details.data)
+    //             for (const c in state.report_details.data) {
 
-                    // for actual
-                }
-            } else {
-                //alert('No data found for ACTUAL Entries. ')  
-            }
+    //                 console.log('totaled from **',state.report_details.data[c].totaled_from)
+
+    //                 // if (state.report_details.data[c].totaled_from == 'NA'){
+                         
+    //                     state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
+    //                     state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
+    //                     state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
+    //                     //state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
+    //                     //state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
+    //                     state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
+
+    //                 //     // state.edit_female[state.report_details.data[c].sequence_header] = 0;
+    //                 //     //  state.edit_male[state.report_details.data[c].sequence_header] = 0;
+    //                 //     //  state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
+    //                 // }else{
+                       
+
+    //                 // }
+
+                  
+    //                 // for actual
+    //             }
+    //         } else {
+    //             //alert('No data found for ACTUAL Entries. ')  
+    //         }
             
 
-        }
-    } catch (error) {
-        console.log(error)
-    }
+    //     }
+    // } catch (error) {
+    //     console.log(error)
+    // }
 }
 
+
+
 function computeEditEntryModal(){
+    //clearEditData()
     compute_verticalEdit()
     state.buttoncomputeEdit = true
     state.buttonsaveEdit = false
@@ -1231,34 +1252,56 @@ function clearEditData(){
 
 function compute_verticalEdit(){
     
+    
     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-        if (totaled_to == 'NA') {
-
-
-
-        } else {
+       
+      
             if (totaled_from != 'NA') {
 
                 state.edit_total[sequence_header] = 0;
-                // state.edit_male[sequence_header] = 0;
-                // state.edit_female[sequence_header] = 0;
-                // state.edit_grand_total[sequence_header] = 0;
+                state.edit_male[sequence_header] = 0;
+                state.edit_female[sequence_header] = 0;
+                state.edit_grand_total[sequence_header] = 0;
 
 
-            } else {
+            } 
+            
+            if (totaled_to == 'NA' && totaled_from != 'NA') {
+
+                state.edit_total[sequence_header] = 0;
+                state.edit_male[sequence_header] = 0;
+                state.edit_female[sequence_header] = 0;
+                state.edit_grand_total[sequence_header] = 0;
+
+                 //state.edit_total[sequence_header] = 0;
+                 //state.edit_grand_total[sequence_header] = 0;
 
             }
 
-        }
+            if (totaled_to == 'NA' && totaled_from == 'NA') {
+            //    state.edit_total[sequence_header] = 0;
+            //    state.edit_male[sequence_header] = 0;
+            //    state.edit_female[sequence_header] = 0;
+            //    state.edit_grand_total[sequence_header] = 0;
+            }
+
+        
     }
+
+
 
     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
+
+
+        console.log('totaled_to', totaled_to)
+        console.log('totaled_from', totaled_from)
+        console.log('sequence_header', sequence_header) 
         if (totaled_to == 'NA'){
             if (totaled_from == 'NA'){
                 state.edit_total[sequence_header] = parseFloat(state.edit_male[sequence_header]) + parseFloat(state.edit_female[sequence_header]);
@@ -1285,12 +1328,12 @@ async function SaveEditEntryModal(){
     var successcount = 0;
     var errorcount = 0;
 
-    if (state.edit_selected_datasource == 0){
-        alert("Please select a datasource.")
-        //openAlertModal(state.group, 'Please select a datasource.', state.group_header, errorcount, successcount)
+    // if (state.edit_selected_datasource == 0){
+    //     alert("Please select a datasource.")
+    //     //openAlertModal(state.group, 'Please select a datasource.', state.group_header, errorcount, successcount)
         
-        return;
-    }
+    //     return;
+    // }
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
 
