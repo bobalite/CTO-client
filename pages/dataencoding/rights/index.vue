@@ -571,7 +571,7 @@ const state = reactive({
 
     selected_entry_type: 'Actual',
     selected_view_entry_type: 'Projected',
-    selected_year_id: 2,
+    selected_year_id: 0,
     datasource_id: 0,
     datasources: [],
 
@@ -964,7 +964,39 @@ function closeViewModal() {
 
 
 //---------------------------------------------------Add Entry Functions--------------------------------------------------------------
+
+async function check_fetchReports_Details_Add() {
+
+    try {
+        let params = {
+            group_id: state.selected_group,
+            report_year_id: state.selected_year_id,
+            is_active: 1,
+            entry_type: state.selected_edit_entry_type,
+            group_agency_datasource_id: state.edit_selected_datasource
+        }
+      
+        const response = await reportDetailsService.getReportDetails(params)
+       
+        console.log(params)
+        if (response.data.length > 0) {
+               alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
+           
+        }
+        else {
+        //alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')  
+           
+        }   
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
 async function saveReportDetails(){
+
+    
 
     var successcount = 0;
     var errorcount = 0;
@@ -1062,6 +1094,9 @@ function clearData(){
 }
 
 function computeAddEntryModal(){
+
+    check_fetchReports_Details_Add()
+
     compute_vertical()
     state.buttoncompute = true
     state.buttonsavenew = false
@@ -1157,89 +1192,112 @@ state.buttonsavenew = false;
 function openEditModal() {
     state.isEditModalOpen = true;
     state.buttoncomputeEdit = false;
-    clearEditData()
-    //fetchReports_Details_Edit()
+    initial_clear_data()
+    fetchReports_Details_Edit()
 }
 
 async function fetchReports_Details_Edit() {
 
-    clearEditData()
+   initial_clear_data()
 
-    // try {
-    //     let params = {
-    //         group_id: state.selected_group,
-    //         report_year_id: state.selected_year_id,
-    //         is_active: 1,
-    //         entry_type: state.selected_edit_entry_type,
-    //         group_agency_datasource_id: state.edit_selected_datasource
-    //     }
+    try {
+        let params = {
+            group_id: state.selected_group,
+            report_year_id: state.selected_year_id,
+            is_active: 1,
+            entry_type: state.selected_edit_entry_type,
+            group_agency_datasource_id: state.edit_selected_datasource
+        }
+      
+        const response = await reportDetailsService.getReportDetails(params)
        
-    //     const response = await reportDetailsService.getReportDetails(params)
-    //     //console.log(response)
-    //     //console.log(params)
-    //     if (response.data) {
-    //         state.report_details.data = response.data
+        console.log(params)
+        if (response.data.length > 0) {
+            state.report_details.data = response.data
           
-    //         if (response) {
-    //             console.log(state.report_details.data)
-    //             for (const c in state.report_details.data) {
+           
+                console.log(state.report_details.data)
+                for (const c in state.report_details.data) {
 
-    //                 console.log('totaled from **',state.report_details.data[c].totaled_from)
-
-    //                 // if (state.report_details.data[c].totaled_from == 'NA'){
+                
                          
-    //                     state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
-    //                     state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
-    //                     state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
-    //                     //state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
-    //                     //state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
-    //                     state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
+                        state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
+                        state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
+                        state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
+                        state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
+                        state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
+                        state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
 
-    //                 //     // state.edit_female[state.report_details.data[c].sequence_header] = 0;
-    //                 //     //  state.edit_male[state.report_details.data[c].sequence_header] = 0;
-    //                 //     //  state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
-    //                 // }else{
-                       
-
-    //                 // }
-
-                  
-    //                 // for actual
-    //             }
-    //         } else {
-    //             //alert('No data found for ACTUAL Entries. ')  
-    //         }
+                 
+                }
+           
+              
             
 
-    //     }
-    // } catch (error) {
-    //     console.log(error)
-    // }
+        }
+        else {
+        alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')  
+           
+        }   
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 
 
 function computeEditEntryModal(){
-    //clearEditData()
+  
     compute_verticalEdit()
-    state.buttoncomputeEdit = true
+   
     state.buttonsaveEdit = false
 
 }
 
 
-function clearEditData(){
+function clear_totaled_EditData(){
    
     try {
         
          for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
 
-                state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+            var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
+            var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+            
+                if (totaled_to == 'NA' && totaled_from == 'NA') {
+
+                    state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+                }
                 
+                
+         }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+function initial_clear_data(){ // this function is used to clear the data before computing the edit entry modal
+     try {
+        
+         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+            var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
+            var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+            
+              
+
+                    state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                    state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+              
                 
                 
          }
@@ -1276,17 +1334,11 @@ function compute_verticalEdit(){
                 state.edit_female[sequence_header] = 0;
                 state.edit_grand_total[sequence_header] = 0;
 
-                 //state.edit_total[sequence_header] = 0;
-                 //state.edit_grand_total[sequence_header] = 0;
+           
 
             }
 
-            if (totaled_to == 'NA' && totaled_from == 'NA') {
-            //    state.edit_total[sequence_header] = 0;
-            //    state.edit_male[sequence_header] = 0;
-            //    state.edit_female[sequence_header] = 0;
-            //    state.edit_grand_total[sequence_header] = 0;
-            }
+          
 
         
     }
@@ -1299,9 +1351,7 @@ function compute_verticalEdit(){
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
 
 
-        console.log('totaled_to', totaled_to)
-        console.log('totaled_from', totaled_from)
-        console.log('sequence_header', sequence_header) 
+      
         if (totaled_to == 'NA'){
             if (totaled_from == 'NA'){
                 state.edit_total[sequence_header] = parseFloat(state.edit_male[sequence_header]) + parseFloat(state.edit_female[sequence_header]);
@@ -1328,21 +1378,11 @@ async function SaveEditEntryModal(){
     var successcount = 0;
     var errorcount = 0;
 
-    // if (state.edit_selected_datasource == 0){
-    //     alert("Please select a datasource.")
-    //     //openAlertModal(state.group, 'Please select a datasource.', state.group_header, errorcount, successcount)
-        
-    //     return;
-    // }
+  
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
 
-                        //state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header]
-                        // // var remarks = state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header]
-                        // if (state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header].length = 0){
-                        //    remarks = 'NA'
-
-                      
+                                   
 
                     let params = {
 
@@ -1368,7 +1408,7 @@ async function SaveEditEntryModal(){
                     }
     }
     if (successcount > 0){
-        //successAlert("Success!", 'Successfully Added to database.')
+       
         state.successcount = successcount;
         state.errorcount = errorcount;
         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)

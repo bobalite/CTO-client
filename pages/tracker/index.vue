@@ -57,37 +57,28 @@
                                     v-bind:key=Rights_entry_config.id @click="getclicked(Rights_entry_config)">
 
                                     <template v-if="Rights_entry_config.tier_level == 1">
-
-
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             {{ Rights_entry_config.description }}
                                         </td>
-
-
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <span v-for="datasource in Rights_entry_config.datasources"
-                                                v-bind:key=Rights_entry_config.datasources.agency_id
+                                            <span 
+                                                v-bind:key=Rights_entry_config.agency_id
                                                 class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
-                                                :class="state.options.agencies.find(a => a.value === datasource.agency_id)?.color">
+                                                :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
                                                 <template v-for="agency in state.options.agencies">
-                                                    <template v-if="agency.value == datasource.agency_id">
-                                                        {{ agency.label }}
+                                                    <template v-if="agency.value == Rights_entry_config.agency_id">
+                                                    {{ agency.label }}
                                                     </template>
                                                 </template>
                                             </span>
                                         </td>
-
                                         
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             {{ '0%' }}
                                         </td>
-
-
-
-
                                     </template>
                                 </tr>
                             </tbody>
