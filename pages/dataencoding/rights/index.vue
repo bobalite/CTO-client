@@ -967,6 +967,42 @@ function closeViewModal() {
 
 async function check_fetchReports_Details_Add() {
 
+
+     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
+        var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
+        var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+        var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
+       
+      
+            if (totaled_from != 'NA') {
+
+
+                
+                state.total[sequence_header] = 0;
+                state.male[sequence_header] = 0;
+                state.female[sequence_header] = 0;
+                state.grand_total[sequence_header] = 0;
+
+
+            } 
+            
+            if (totaled_to == 'NA' && totaled_from != 'NA') {
+
+                state.total[sequence_header] = 0;
+                state.male[sequence_header] = 0;
+                state.female[sequence_header] = 0;
+                state.grand_total[sequence_header] = 0;
+
+           
+
+            }
+
+          
+
+        
+    }
+
+
     try {
         let params = {
             group_id: state.selected_group,
@@ -1098,7 +1134,10 @@ function computeAddEntryModal(){
     check_fetchReports_Details_Add()
 
     compute_vertical()
-    state.buttoncompute = true
+    
+    
+    
+    //state.buttoncompute = true
     state.buttonsavenew = false
 
 }

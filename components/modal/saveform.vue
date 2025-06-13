@@ -49,7 +49,7 @@ const props = defineProps({
         required: true,
     },
     close: { // closing function
-        type: Object,
+        type: [Function, Object],
         required: false,
     },
     title: { // displayed as h3

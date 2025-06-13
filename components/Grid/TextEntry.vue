@@ -51,7 +51,10 @@ data_type: {
 const emit = defineEmits(['update:modelValue'])
 
 function updateValue(event: any) {
-emit('update:modelValue', event.target.value)
+ const numericValue = Number(event.target.value);
+  emit('update:modelValue', isNaN(numericValue) ? null : numericValue);
+
+//emit('update:modelValue', event.target.value)
 }
 
 </script>
