@@ -36,8 +36,8 @@ disabled: {
     default: false,
 },
 entrystatus: {
-    type: String,
-    default: '0',
+    type: [String, Number],
+    default: 0,
 },
 data_type: {
     type: String,

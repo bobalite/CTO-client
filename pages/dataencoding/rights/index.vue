@@ -881,17 +881,17 @@ function changeViewdata() {
 
 async function fetchReports_Details_Actuals() {
     try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: 'Actual',//state.selected_view_entry_type,
-            group_agency_datasource_id: 0 //state.view_selected_datasource
-        }
+        // let params = {
+        //     group_id: state.selected_group,
+        //     report_year_id: state.selected_year_id,
+        //     is_active: 1,
+        //     entry_type: 'Actual',//state.selected_view_entry_type,
+        //     group_agency_datasource_id: 0 //state.view_selected_datasource
+        // }
 
-        console.log('params-getReportDetails',params)
+        //console.log('params-getReportDetails',params)
         //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
 
         
         //console.log(response)
@@ -927,24 +927,24 @@ async function fetchReports_Details_Actuals() {
 
 async function fetchReports_Details_Projected() {
     try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: state.selected_view_entry_type,
-            group_agency_datasource_id: 0 //state.view_selected_datasource
-        }
+        // let params = {
+        //     group_id: state.selected_group,
+        //     report_year_id: state.selected_year_id,
+        //     is_active: 1,
+        //     entry_type: state.selected_view_entry_type,
+        //     group_agency_datasource_id: 0 //state.view_selected_datasource
+        // }
 
 
         //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
 
 
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_view_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-        console.log( 'filtered - projected', state.Rights_detail_filtered)
 
+        console.log( 'filtered - projected', state.Rights_detail_filtered)
         console.log('view - response projected', response)
-        console.log('view - params projected', params)
+        console.log('view - params projected', state.selected_view_entry_type)
 
         if (response.data) {
             state.report_details.data =  state.Rights_detail_filtered.data
@@ -1026,13 +1026,13 @@ async function check_fetchReports_Details_Add() {
 
     try {
        
-          let params = {
-            group_id: 1,
-            report_year_id: state.selected_year_id, // need to be passed from the dashboard main page
-            is_active: 1,
-            // entry_type: "Actual",//state.selected_view_entry_type,
-            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
-        }
+        //   let params = {
+        //     group_id: 1,
+        //     report_year_id: state.selected_year_id, // need to be passed from the dashboard main page
+        //     is_active: 1,
+        //     // entry_type: "Actual",//state.selected_view_entry_type,
+        //     group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
+        // }
       
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
@@ -1040,7 +1040,7 @@ async function check_fetchReports_Details_Add() {
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         
        
-        console.log('params -add - check' ,params)
+        //console.log('params -add - check' ,params)
         if (state.Rights_detail_filtered.data.length > 0) {
             alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
             state.buttonsavenew = true
@@ -1266,21 +1266,19 @@ async function fetchReports_Details_Edit() {
    initial_clear_data()
 
     try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: state.selected_edit_entry_type,
-            group_agency_datasource_id: 0 //state.edit_selected_datasource
-        }
+        // let params = {
+        //     group_id: state.selected_group,
+        //     report_year_id: state.selected_year_id,
+        //     is_active: 1,
+        //     entry_type: state.selected_edit_entry_type,
+        //     group_agency_datasource_id: 0 //state.edit_selected_datasource
+        // }
       
         //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_edit_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-       
-
-       
-        console.log(params)
+        console.log('edit - response', state.Rights_detail_filtered)     
+        
         if (state.Rights_detail_filtered.data.length > 0) {
             state.report_details.data = state.Rights_detail_filtered.data
           

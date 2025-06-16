@@ -40,7 +40,7 @@ disabled: {
     default: false,
 },
 entrystatus: {
-    type: Number,
+     type: [String, Number],
     default: 0,
 },
 data_type: {
