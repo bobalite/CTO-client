@@ -140,7 +140,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
-        console.log('params-getReportDetailsGroups',params)
+        //console.log('params-getReportDetailsGroups',params)
        
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()

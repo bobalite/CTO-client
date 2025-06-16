@@ -475,7 +475,7 @@ import {report_yearService } from '~/components/api/ReportYears';
 const userStore = useUserStore()
 
 
-console.log(userStore.getUser.user_dashboard_widgets)
+//console.log(userStore.getUser.user_dashboard_widgets)
 
 
 definePageMeta({
@@ -551,7 +551,7 @@ function saveDashboardSettings() {
   loopthroughNewSettings()
   fetchUserDashboardWidgets()
   loop_through_user_widgets()
-  console.log('saved')
+  //console.log('saved')
   state.isSlideModalOpen = false
 }
 
@@ -567,7 +567,7 @@ if (state.refresh_graphs_toggle == false){
 } 
 
   refresh_graphs()
-  console.log('report_year', state.report_year)
+  //console.log('report_year', state.report_year)
   
 }
 
@@ -579,14 +579,14 @@ async function deleteUserDashboardWidgets(){
      await userDashboardWidgetsService.deleteUserDashboardWidgets(state.user_id);
    
     } catch (error) {
-        console.log(error)
+        //console.log(error)
         state.errorcount = state.errorcount + 1;
     }
 }
 
 function loopthroughNewSettings(){
 
-  console.log('loop thru start')
+  //console.log('loop thru start')
 
   if (state.showGraphsGrp01) {
     SaveUserDashboardWidgets(1)
@@ -686,10 +686,10 @@ async function SaveUserDashboardWidgets(group_id){
       
 
     } catch (error) {
-        console.log(error)
+        //console.log(error)
         state.errorcount = state.errorcount + 1;
     }finally {
-        console.log('saved user dashboard widget', group_id)
+        //console.log('saved user dashboard widget', group_id)
     }
 
    
@@ -726,10 +726,10 @@ async function fetchreportyear() {
 
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 
-    console.log(state.options.report_years)
+    //console.log(state.options.report_years)
 }
 
 async function fetchUserDashboardWidgets() {
@@ -738,11 +738,11 @@ async function fetchUserDashboardWidgets() {
 
     if (response.data) {
             state.user_dashboard_widgets.data = response.data
-            console.log( state.user_dashboard_widgets.data)
+            //console.log( state.user_dashboard_widgets.data)
         }
         else{
             state.user_dashboard_widgets = []
-            console.log( 'empty',state.user_dashboard_widgets.data)
+            //console.log( 'empty',state.user_dashboard_widgets.data)
 
         }
     
@@ -754,7 +754,7 @@ async function fetchUserDashboardWidgets() {
 }
 
 function refresh_graphs(){
-  console.log('refresh graphs')
+  //console.log('refresh graphs')
   destroy_graphs()
   fetchUserDashboardWidgets()
   loop_through_user_widgets()
@@ -795,11 +795,11 @@ async function destroy_graphs(){
 function loop_through_user_widgets(){
 
   
-  console.log( 'loop', state.user_dashboard_widgets)
+  //console.log( 'loop', state.user_dashboard_widgets)
 
   for (let i = 0; i < state.user_dashboard_widgets.length; i++) {
     const group_id = state.user_dashboard_widgets[i].group_id;
-    console.log('group_id', group_id)
+    //console.log('group_id', group_id)
     
     if (group_id === 1) {
       state.showGraphsGrp01 = true

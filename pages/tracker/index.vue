@@ -60,7 +60,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr v-for="Rights_entry_config in state.Selected_Rights_entry_config.data"
-                                    v-bind:key=Rights_entry_config.id @click="getclicked(Rights_entry_config)">
+                                    v-bind:key=Rights_entry_config.id >
 
                                     <template v-if="Rights_entry_config.tier_level == 1">
                                          <td
@@ -74,7 +74,7 @@
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                             <span 
-                                                v-bind:key=Rights_entry_config.agency_id
+                                               
                                                 class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
                                                 :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
                                                 <template v-for="agency in state.options.agencies">
@@ -331,7 +331,7 @@ async function fetchreportyear() {
 
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -343,10 +343,10 @@ async function fetchrole() {
         if (response.data) {
             state.roles = response.data
          
-            console.log(state.roles)
+            //console.log(state.roles)
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -357,7 +357,7 @@ function getclicked(Rights_entry_config){
      state.selected_group_header = Rights_entry_config.group_header
      state.selected_group = Rights_entry_config.group
      state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
-     console.log(state.Selected_Rights_entry_config_group.data)
+     //console.log(state.Selected_Rights_entry_config_group.data)
      if (state.Selected_Rights_entry_config_group.data != null){ 
        var data = [];
        var datasources = [];
@@ -413,7 +413,7 @@ async function fetchRights(){
        
         if (response.data) {
             state.Rights.data = response.data
-            console.log(state.Rights.data[0].description)
+            //console.log(state.Rights.data[0].description)
         }
 
        var data = [];
@@ -424,10 +424,10 @@ async function fetchRights(){
         }
 
         state.options.rights = data;
-        console.log( state.options.rights)
+        //console.log( state.options.rights)
 
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -446,10 +446,10 @@ async function fetchRights_entry_config() {
             state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            console.log(response.data)
+            //console.log(response.data)
         }
     } catch (error) { 
-        console.log(error)
+        //.log(error)
     }
 }
 
@@ -463,7 +463,7 @@ async function fetchReports_Details_Actuals() {
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
        
        
-        console.log(response)
+        //console.log(response)
         
         if (response.data) {
 
@@ -487,7 +487,7 @@ async function fetchReports_Details_Actuals() {
                 }
 
                 state.Tracked_details = data;
-                console.log('tracked_details = ', state.Tracked_details)
+                //console.log('tracked_details = ', state.Tracked_details)
 
             } else {
                 alert('No data found for Tracker. ')  
@@ -495,7 +495,7 @@ async function fetchReports_Details_Actuals() {
 
         }
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 

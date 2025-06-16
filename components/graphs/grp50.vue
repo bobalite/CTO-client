@@ -126,7 +126,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
     console.log('current report year', props.report_year)
 
     if (!props.report_year){
-        console.log('No report year found')
+        //console.log('No report year found')
         state.graphSeriesMale = [0,0,0,0,0,0,0,0,0]
         state.graphSeriesFemale = [0,0,0,0,0,0,0,0,0]
         return  
@@ -140,7 +140,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
-        console.log('params-getReportDetailsGroups',params)
+        //console.log('params-getReportDetailsGroups',params)
        
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
@@ -192,7 +192,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
   
         }
     } catch (error) {
-        console.log(error)
+        //console.log(error)
   
         state.graphSeriesMale = [0,0,0,0,0,0,0,0,0]
         state.graphSeriesFemale = [0,0,0,0,0,0,0,0,0]

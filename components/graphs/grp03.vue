@@ -8,6 +8,7 @@
         <h1 class="text-7xl text-center font-bold">{{state.prevalence}} %</h1>
         <h1 class="text-md text-center font-bold border-solid decoration-red-50 border-blue-black border-t"></h1>
       </GridCard>
+      
 
     
 </template>
@@ -107,7 +108,7 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
             group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
 
-        console.log('params-getReportDetailsGroups',params)
+        //console.log('params-getReportDetailsGroups',params)
        
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()

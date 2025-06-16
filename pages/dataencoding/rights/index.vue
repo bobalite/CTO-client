@@ -685,7 +685,7 @@ async function fetchreportyear() {
 
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -700,10 +700,10 @@ async function fetchrole() {
         if (response.data) {
             state.roles = response.data
          
-            console.log(state.roles)
+            //console.log(state.roles)
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -787,7 +787,7 @@ async function fetchRights(){
        
         if (response.data) {
             state.Rights.data = response.data
-            console.log(state.Rights.data[0].description)
+            //console.log(state.Rights.data[0].description)
         }
 
        var data = [];
@@ -798,10 +798,10 @@ async function fetchRights(){
         }
 
         state.options.rights = data;
-        console.log( state.options.rights)
+        //console.log( state.options.rights)
 
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -820,10 +820,10 @@ async function fetchRights_entry_config() {
             state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            console.log(response.data)
+            //console.log(response.data)
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -868,7 +868,7 @@ function clearViewData(){
          }
     }
     catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -886,7 +886,7 @@ async function fetchReports_Details_Actuals() {
      
      
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === 'Actual' && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-        console.log( 'filtered - actual', state.Rights_detail_filtered)
+        //console.log( 'filtered - actual', state.Rights_detail_filtered)
 
         if (state.Rights_detail_filtered) {
             state.report_details.data = state.Rights_detail_filtered.data
@@ -908,7 +908,7 @@ async function fetchReports_Details_Actuals() {
 
         }
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -929,14 +929,14 @@ async function fetchReports_Details_Projected() {
 
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_view_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
 
-        console.log( 'filtered - projected', state.Rights_detail_filtered)
-        console.log('view - response projected', response)
-        console.log('view - params projected', state.selected_view_entry_type)
+        //console.log( 'filtered - projected', state.Rights_detail_filtered)
+        //console.log('view - response projected', response)
+        //console.log('view - params projected', state.selected_view_entry_type)
 
         if (response.data) {
             state.report_details.data =  state.Rights_detail_filtered.data
           
-            if (state.report_details.data.length > 0){
+            if (state.report_details.data){
 
                 for (const c in state.report_details.data) {
                     state.view_female_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
@@ -957,7 +957,7 @@ async function fetchReports_Details_Projected() {
 
         }
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1028,7 +1028,7 @@ async function check_fetchReports_Details_Add() {
         
        
         //console.log('params -add - check' ,params)
-        if (state.Rights_detail_filtered.data.length > 0) {
+        if (state.Rights_detail_filtered.data) {
             alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
             state.buttonsavenew = true
         }
@@ -1037,7 +1037,7 @@ async function check_fetchReports_Details_Add() {
             state.buttonsavenew = false
         }   
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1079,7 +1079,7 @@ async function saveReportDetails(){
                         is_active: 1,
                     }
                    
-                        console.log('params', params)
+                        //console.log('params', params)
                         const response = await reportDetailsService.createReportDetails(params);
                         if (response.data) {
                             successcount = successcount + 1; 
@@ -1089,7 +1089,7 @@ async function saveReportDetails(){
                         }   
        
                     } catch (error) {
-                        console.log('error', error)
+                        //console.log('error', error)
                         errorcount = errorcount + 1;
                         alert("Error in saving data. Please check the values you entered.")
                         state.isAddModalOpen = false
@@ -1138,7 +1138,7 @@ function clearData(){
          }
     }
     catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1224,12 +1224,12 @@ var size = Object.keys(state.Selected_Rights_entry_config_group.data).length;
     
     }
 
-console.log(state.totaled_from)
+// console.log(state.totaled_from)
 
-for (let i = size; i > size; i--) {
-    console.log(state.totaled_from[i])
+// for (let i = size; i > size; i--) {
+//     console.log(state.totaled_from[i])
     
-} 
+// } 
 state.isAddModalOpen = true;
 state.buttoncompute = false;
 state.buttonsavenew = false;
@@ -1264,13 +1264,13 @@ async function fetchReports_Details_Edit() {
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_edit_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-        console.log('edit - response', state.Rights_detail_filtered)     
+        //console.log('edit - response', state.Rights_detail_filtered)     
         
-        if (state.Rights_detail_filtered.data.length > 0) {
+        if (state.Rights_detail_filtered.data) {
             state.report_details.data = state.Rights_detail_filtered.data
           
            
-                console.log(state.report_details.data)
+                //console.log(state.report_details.data)
                 for (const c in state.report_details.data) {
 
                 
@@ -1294,7 +1294,7 @@ async function fetchReports_Details_Edit() {
            
         }   
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1331,7 +1331,7 @@ function clear_totaled_EditData(){
          }
     }
     catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1357,7 +1357,7 @@ function initial_clear_data(){ // this function is used to clear the data before
          }
     }
     catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
@@ -1448,7 +1448,7 @@ async function SaveEditEntryModal(){
                        
                     }
                    
-                    console.log(params)
+                    //console.log(params)
                     const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
                      if (response.data) {
                         successcount = successcount + 1; 
@@ -1457,7 +1457,7 @@ async function SaveEditEntryModal(){
        
                     } catch (error) {
                         state.errormessage = error.response.data.message
-                        console.log(error)
+                        //console.log(error)
                         errorcount = errorcount + 1;
                     }
     }
