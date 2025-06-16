@@ -505,7 +505,10 @@ import {
 } from '@headlessui/vue'
 
 import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
+
 import {Childrens_rightsService } from '~/components/api/Rights'; 
 import {rolesService } from '~/components/api/Roles'; 
 import {useUserStore} from '~/store/user'
@@ -600,6 +603,9 @@ const state = reactive({
     Rights_entry_config4: [],
     Rights_entry_config5: [],
     Rights_entry_config6: [],
+
+    Rights_detail_filtered: [],    
+
     text: null,
     selected_rights_id: 1,
    
@@ -880,15 +886,23 @@ async function fetchReports_Details_Actuals() {
             report_year_id: state.selected_year_id,
             is_active: 1,
             entry_type: 'Actual',//state.selected_view_entry_type,
-            group_agency_datasource_id: state.view_selected_datasource
+            group_agency_datasource_id: 0 //state.view_selected_datasource
         }
 
         console.log('params-getReportDetails',params)
-        const response = await reportDetailsService.getReportDetails(params)
+        //const response = await reportDetailsService.getReportDetails(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+
+        
         //console.log(response)
         //console.log(params)
-        if (response.data) {
-            state.report_details.data = response.data
+        // const rights_id1 = state.Rights_entry_config.data.find(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+
+        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === 'Actual' && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+        console.log( 'filtered - actual', state.Rights_detail_filtered)
+
+        if (state.Rights_detail_filtered) {
+            state.report_details.data = state.Rights_detail_filtered.data
           
             if (response) {
                 for (const c in state.report_details.data) {
@@ -918,17 +932,24 @@ async function fetchReports_Details_Projected() {
             report_year_id: state.selected_year_id,
             is_active: 1,
             entry_type: state.selected_view_entry_type,
-            group_agency_datasource_id: state.view_selected_datasource
+            group_agency_datasource_id: 0 //state.view_selected_datasource
         }
 
 
-        const response = await reportDetailsService.getReportDetails(params)
-        //console.log(response)
-        console.log(params)
+        //const response = await reportDetailsService.getReportDetails(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+
+
+        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_view_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+        console.log( 'filtered - projected', state.Rights_detail_filtered)
+
+        console.log('view - response projected', response)
+        console.log('view - params projected', params)
+
         if (response.data) {
-            state.report_details.data = response.data
+            state.report_details.data =  state.Rights_detail_filtered.data
           
-            if (response.data.length > 0){
+            if (state.report_details.data.length > 0){
 
                 for (const c in state.report_details.data) {
                     state.view_female_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
@@ -1004,24 +1025,29 @@ async function check_fetchReports_Details_Add() {
 
 
     try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
+       
+          let params = {
+            group_id: 1,
+            report_year_id: state.selected_year_id, // need to be passed from the dashboard main page
             is_active: 1,
-            entry_type: state.selected_edit_entry_type,
-            group_agency_datasource_id: state.edit_selected_datasource
+            // entry_type: "Actual",//state.selected_view_entry_type,
+            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
         }
       
-        const response = await reportDetailsService.getReportDetails(params)
+        //const response = await reportDetailsService.getReportDetails(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
+        
+        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+        
        
-        console.log(params)
-        if (response.data.length > 0) {
-               alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
-           
+        console.log('params -add - check' ,params)
+        if (state.Rights_detail_filtered.data.length > 0) {
+            alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
+            state.buttonsavenew = true
         }
         else {
         //alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')  
-           
+            state.buttonsavenew = false
         }   
     } catch (error) {
         console.log(error)
@@ -1245,14 +1271,18 @@ async function fetchReports_Details_Edit() {
             report_year_id: state.selected_year_id,
             is_active: 1,
             entry_type: state.selected_edit_entry_type,
-            group_agency_datasource_id: state.edit_selected_datasource
+            group_agency_datasource_id: 0 //state.edit_selected_datasource
         }
       
-        const response = await reportDetailsService.getReportDetails(params)
+        //const response = await reportDetailsService.getReportDetails(params)
+        const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_edit_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+       
+
        
         console.log(params)
-        if (response.data.length > 0) {
-            state.report_details.data = response.data
+        if (state.Rights_detail_filtered.data.length > 0) {
+            state.report_details.data = state.Rights_detail_filtered.data
           
            
                 console.log(state.report_details.data)

@@ -25,7 +25,7 @@
 import ApexCharts from 'vue3-apexcharts';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
 //import { report_yearService } from '../api/ReportYears';
-import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+//import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
 //reportDetailsService
 
 const props = defineProps({
