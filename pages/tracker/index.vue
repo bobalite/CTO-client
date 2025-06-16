@@ -41,13 +41,19 @@
                             <thead class="bg-gray-50">
                                 <tr>
 
-
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Group</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Description</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Datasources</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Progress</th>
+                                        Actual</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Projected</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        National Projected</th>
+                                
 
 
                                 </tr>
@@ -57,8 +63,12 @@
                                     v-bind:key=Rights_entry_config.id @click="getclicked(Rights_entry_config)">
 
                                     <template v-if="Rights_entry_config.tier_level == 1">
-                                        <td
+                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                            {{ Rights_entry_config.group }}
+                                        </td>
+                                        <td
+                                            class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             {{ Rights_entry_config.description }}
                                         </td>
                                         <td
@@ -74,12 +84,55 @@
                                                 </template>
                                             </span>
                                         </td>
-                                        
+
                                         <td
-                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
-                                            {{ '0%' }}
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                          
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual'" >
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                            DONE
+                                                        </span>
+                                                        
+                                                    </template>
+                                                  
+                                                </template>
+                                           
                                         </td>
-                                    </template>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                           
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' ">
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                            DONE
+                                                        </span>
+                                                    </template>
+                                                </template>
+                                           
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                           
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' ">
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                             DONE
+                                                        </span>
+                                                    </template>
+                                                </template>
+                                           
+                                        </td>
+                                        
+                                     </template>
                                 </tr>
                             </tbody>
                         </table>
@@ -100,7 +153,7 @@ import {
 } from '@headlessui/vue'
 
 import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
-import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
+import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
 import {Childrens_rightsService } from '~/components/api/Rights'; 
 import {rolesService } from '~/components/api/Roles'; 
 import {useUserStore} from '~/store/user'
@@ -118,6 +171,8 @@ definePageMeta({
 const state = reactive({
    
     Rights:[],
+
+    Tracked_details: [],
 
     isViewModalOpen: false,
     isAddModalOpen: false,
@@ -246,6 +301,7 @@ onMounted(() => {
     fetchRights()
     fetchRights_entry_config()
     fetchrole()
+    fetchReports_Details_Actuals()
    
 })
 
@@ -403,35 +459,39 @@ async function fetchRights_entry_config() {
 
 async function fetchReports_Details_Actuals() {
     try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: 'Actual',//state.selected_view_entry_type,
-            group_agency_datasource_id: state.view_selected_datasource
-        }
-
-
-        const response = await reportDetailsService.getReportDetails(params)
-        //console.log(response)
-        //console.log(params)
+       
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
+       
+       
+        console.log(response)
+        
         if (response.data) {
+
+        
             state.report_details.data = response.data
           
             if (response) {
-                for (const c in state.report_details.data) {
-                    state.view_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
-                    state.view_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
-                    state.view_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
-                    state.view_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
-                    state.view_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
-
-                    // for actual
+                const seen = new Set();
+                var data = [];
+               for (const item of state.report_details.data) {
+                    const key = `${item.group_id}|${item.entry_type}|${item.report_year_id}`;
+                    if (!seen.has(key)){
+                         seen.add(key)
+                        data.push({
+                            group_id: item.group_id,
+                            entry_type: item.entry_type,
+                            report_year_id: item.report_year_id
+                            
+                        });
+                    }
                 }
+
+                state.Tracked_details = data;
+                console.log('tracked_details = ', state.Tracked_details)
+
             } else {
-                //alert('No data found for ACTUAL Entries. ')  
+                alert('No data found for Tracker. ')  
             }
-            
 
         }
     } catch (error) {
@@ -439,47 +499,6 @@ async function fetchReports_Details_Actuals() {
     }
 }
 
-async function fetchReports_Details_Projected() {
-    try {
-        let params = {
-            group_id: state.selected_group,
-            report_year_id: state.selected_year_id,
-            is_active: 1,
-            entry_type: state.selected_view_entry_type,
-            group_agency_datasource_id: state.view_selected_datasource
-        }
-
-
-        const response = await reportDetailsService.getReportDetails(params)
-        //console.log(response)
-        console.log(params)
-        if (response.data) {
-            state.report_details.data = response.data
-          
-            if (response){
-
-                for (const c in state.report_details.data) {
-                    state.view_female_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
-                    state.view_male_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
-                    state.view_total_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
-                    state.view_grand_total_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
-                    state.view_remarks_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
-
-                    // for actual
-                }
-               
-            } else {
-                //alert('No data found for this Projected Entry. ')
-            }
-
-            
-            
-
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 
 

@@ -881,23 +881,10 @@ function changeViewdata() {
 
 async function fetchReports_Details_Actuals() {
     try {
-        // let params = {
-        //     group_id: state.selected_group,
-        //     report_year_id: state.selected_year_id,
-        //     is_active: 1,
-        //     entry_type: 'Actual',//state.selected_view_entry_type,
-        //     group_agency_datasource_id: 0 //state.view_selected_datasource
-        // }
-
-        //console.log('params-getReportDetails',params)
-        //const response = await reportDetailsService.getReportDetails(params)
+     
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
-
-        
-        //console.log(response)
-        //console.log(params)
-        // const rights_id1 = state.Rights_entry_config.data.find(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-
+     
+     
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === 'Actual' && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         console.log( 'filtered - actual', state.Rights_detail_filtered)
 
