@@ -52,8 +52,8 @@ const props = defineProps({
         required: true,
     },
     close: {
-        type: Object,
-        required: true,
+        type: [Function, Object],
+        required: false,
     },
     title: {
         type: String,

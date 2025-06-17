@@ -15,7 +15,7 @@ const props = defineProps({
     },
     options: {
         type: Object,
-        required: true,
+        required: false,
     },
     searchable: {
         type: Boolean,

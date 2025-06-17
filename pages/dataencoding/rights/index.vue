@@ -404,6 +404,9 @@
                                         Description</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Datasources</th>
+
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Entry Type</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Action</th>
 
@@ -423,7 +426,7 @@
                                         </td>
              
                                         <td
-                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                        class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                         {{ Rights_entry_config.description }}
                                         </td>
 
@@ -445,19 +448,23 @@
                                             </template>
                                         </span>
 
-                                        <!-- <span
-                                            v-bind:key=Rights_entry_config.agency_id
-                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
-                                            :class="state.options.agencies.find(a => a.value === datasource.agency_id)?.color">
-                                             <template v-for="agency in state.options.agencies">
-                                                <template v-if="agency.value ==   Rights_entry_config.agency_id  ">
-                                                    {{ agency.label }}
-                                                </template>
-                                            </template>
-                                        </span> -->
+                                       
                                     </td>
 
-                                    
+                                    <td
+                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                        <span v-if="Rights_entry_config.is_annual == 1"
+                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                        </span>
+
+                                        <span v-if="Rights_entry_config.is_annual == 0"
+                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                        </span>
+
+                                    </td>
+
 
                                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         <FormDropdown>
@@ -662,6 +669,7 @@ onMounted(() => {
 async function fetchreportyear() {
     try {
            const response = await report_yearService.getReportYears()
+           console.log(response)
         if (response.data) {
             
             state.report_years.data = response.data
@@ -676,11 +684,12 @@ async function fetchreportyear() {
                     if (!datasources.includes(value)) {
 
                         if(datasources[i].status == 1){
-                        data[i] = { "value": datasources[i].id, "label": datasources[i].name };
+                        data[i] = { "value": datasources[i].id, "label": datasources[i].name , "year": datasources[i].year  };
                         }
                     }
                 }
                 state.options.report_years = data;
+                console.log(state.options.report_years)
             }
 
         }
@@ -811,7 +820,7 @@ async function fetchRights_entry_config() {
             page: currentPage
         }
         const response = await Rights_entry_configServices.getRights_entry_config(params)
-        //console.log(response)
+        console.log(response)
         if (response.data) {
             state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
@@ -1027,7 +1036,7 @@ async function check_fetchReports_Details_Add() {
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         
        
-        //console.log('params -add - check' ,params)
+        console.log('params -add - check' ,params)
         if (state.Rights_detail_filtered.data) {
             alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
             state.buttonsavenew = true
@@ -1077,9 +1086,10 @@ async function saveReportDetails(){
                         group_id: state.Selected_Rights_entry_config_group.data[i].group,
                         group_agency_datasource_id: state.datasource_id,
                         is_active: 1,
+                        //report_year: state.options.report_years[state.selected_year_id].year,
                     }
                    
-                        //console.log('params', params)
+                        console.log('params', params)
                         const response = await reportDetailsService.createReportDetails(params);
                         if (response.data) {
                             successcount = successcount + 1; 
@@ -1089,7 +1099,7 @@ async function saveReportDetails(){
                         }   
        
                     } catch (error) {
-                        //console.log('error', error)
+                        console.log('error', error)
                         errorcount = errorcount + 1;
                         alert("Error in saving data. Please check the values you entered.")
                         state.isAddModalOpen = false

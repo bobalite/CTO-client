@@ -123,7 +123,7 @@ populationHoriOptions: {
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
 
-    console.log('current report year', props.report_year)
+    
 
     if (!props.report_year){
         //console.log('No report year found')
