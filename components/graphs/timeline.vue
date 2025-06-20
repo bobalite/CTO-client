@@ -32,6 +32,9 @@ const props = defineProps({
     graph_series:{
       type: Object,
       required: false
+    },passed_data: {
+        type: Object,
+        required: true,
     }
 })
 

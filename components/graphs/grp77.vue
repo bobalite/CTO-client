@@ -15,8 +15,6 @@
 
 <script setup>
 import ApexCharts from 'vue3-apexcharts';
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 
 const fakedata =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 const fakedata2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -36,6 +34,9 @@ const props = defineProps({
     },report_year:{
         type: Number,
         required: false,
+    },passed_data: {
+        type: Object,
+        required: true,
     }
   
 })
@@ -131,23 +132,8 @@ populationHoriOptions: {
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
        try {
-        let params = {
-            group_id: 77,
-            report_year_id: props.report_year, // need to be passed from the dashboard main page
-            is_active: 1,
-            // entry_type: "Actual",//state.selected_view_entry_type,
-            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
-        }
-
-        //console.log('params-getReportDetailsGroups',params)
-       
-        //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups()
- 
-        //
-        if (response.data) {
-             state.report_details.data = response.data          
-             if (response) {
+                await props.passed_data.data
+                state.report_details.data = props.passed_data.data
                 state.graphSeriesMale =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                 state.graphSeriesFemale =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                 for (const c in state.report_details.data) {
@@ -208,16 +194,11 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
                         state.graphSeriesFemale[17] = parseFloat(state.graphSeriesFemale[17]) + parseFloat( state.report_details.data[c].female)
                     }
                 }
-               
-            } else {
-                //alert('No data found for ACTUAL Entries. ')  
-            }
- 
+             
+        
             state.graphSeriesAll[0] =  { name: "Male", data: state.graphSeriesMale};
             state.graphSeriesAll[1] =  { name: "Female", data: state.graphSeriesFemale};
- 
-        }
-    } catch (error) {
+     } catch (error) {
         state.graphSeriesMale = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         state.graphSeriesFemale = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }

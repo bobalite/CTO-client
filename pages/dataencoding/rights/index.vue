@@ -41,14 +41,7 @@
 
                         <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type"
                             :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" />
-                        <!-- <GridCell
-                            class="sm:col-span-4 text-center  table-header-1  border-1 border-t border-r border-solid border-grey border-l pb-4"
-                            :displaytext="'Select Datasource:'" />
-
-                        <FormSelect v-model="state.view_selected_datasource" :options="state.options.datasources"
-                            :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'"
-                            :displaytext="''" @click="changeViewdata()" /> -->
-
+                      
                         <GridCell
                              class="sm:col-span-12 flex justify-center items-center text-xl text-white table-header-text  border-white border-t border-l border-r border-b border-grey pb-6"
                             :displaytext=state.selected_group_header />
@@ -173,14 +166,11 @@
                         <GridCell
                             class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey  border-l  pb-4"
                             :displaytext="'Select Entry Type:'" />
-                        <GridSelect v-model="state.selected_entry_type" :options="state.options.entry_type"
+                             <!-- <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type" -->
+                        
+                             <GridSelect v-model="state.selected_entry_type" :options="state.options.entry_type" 
                             :class="'sm:col-span-8 text-xl  text-center  border-2 border-solid border-r  border-grey  border-t  pb-4'" />
-                        <!-- <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey  border-l border-t pb-4"
-                            :displaytext="'Select Datasource:'" />
-                        <GridSelect v-model="state.datasource_id" :options="state.options.datasources"
-                            :class="'sm:col-span-8 text-xl  text-center border-2 border-solid border-r  border-t border-grey  pb-4'" /> -->
-
+                     
                         <GridCell
                             class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey  pb-6"
                             :displaytext=state.selected_group_header />
@@ -266,13 +256,7 @@
                             :displaytext="'Select Entry Type:'" />
                         <GridSelect v-model="state.selected_edit_entry_type" :options="state.options.entry_type"
                             :class="'sm:col-span-8 text-xl text-center border-2 border-solid border-r  border-grey border-t  pb-4'" @click="fetchReports_Details_Edit()"/>
-                        <!-- <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-white border-l border-t pb-4"
-                            :displaytext="'Select Datasource:'" />
-                        <FormSelect v-model="state.edit_selected_datasource" :options="state.options.datasources"
-                            :class="'sm:col-span-8 text-xl  text-center bg-green-300  border-2 border-solid border-r  border-t border-grey pb-4'" @click="fetchReports_Details_Edit()" /> -->
-                           
-                            
+                                              
                         <GridCell
                             class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey pb-6"
                             :displaytext=state.selected_group_header />
@@ -341,19 +325,6 @@
                             Save 
                         </button>
 
-
-
-                        <!-- <GridCell class="sm:col-span-7 pb-6" :displaytext="''" />
-
-
-                        <button
-                            class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                            @click="closeEditModal"> Cancel </button>
-                        <GridCell class="sm:col-span-1 pb-6" :displaytext="''" />
-                        <button
-                            class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                            @click="closeEditModal"> Save </button> -->
-
                     </div>
                 </form>
             </ModalSaveform>
@@ -401,12 +372,12 @@
                                         Group No. </th>
 
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Description</th>
+                                        Indicator</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Datasources</th>
+                                        Agency</th>
 
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Entry Type</th>
+                                        Report Submission</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Action</th>
 
@@ -455,42 +426,47 @@
                                         class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         <span v-if="Rights_entry_config.is_annual == 1"
                                             class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
-                                            {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annual' : 'Quarterly' }}
                                         </span>
 
                                         <span v-if="Rights_entry_config.is_annual == 0"
                                             class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
-                                            {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annual' : 'Quarterly' }}
                                         </span>
 
                                     </td>
 
+                                    <!-- <td 
+                                        class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                        {{ Rights_entry_config.agency_id }} + {{ state.currentUser }}
+                                    </td> -->
 
-                                    <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                    <td v-if="Rights_entry_config.agency_id === state.currentUser || state.roles.name == 'ADMIN'"  class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         <FormDropdown>
                                             <MenuItem v-if="state.roles.allow_view == 1" :key="'view'">
-                                            <NuxtLink @click="openViewModal"
-                                                class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                View Entries
-                                            </NuxtLink>
+                                                <NuxtLink @click="openViewModal"
+                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
+                                                    View Entries
+                                                </NuxtLink>
                                             </MenuItem>
 
                                             <MenuItem v-if="state.roles.allow_add == 1" :key="'add'">
-                                            <NuxtLink @click="openAddEntryModal"
-                                                class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                Add Entry
-                                            </NuxtLink>
+                                                <NuxtLink @click="openAddEntryModal"
+                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
+                                                    Add Entry
+                                                </NuxtLink>
                                             </MenuItem>
 
                                             <MenuItem v-if="state.roles.allow_edit == 1" :key="'edit'">
-                                            <NuxtLink @click="openEditModal"
-                                                class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                Edit Entry
-                                            </NuxtLink>
+                                                <NuxtLink @click="openEditModal"
+                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
+                                                    Edit Entry
+                                                </NuxtLink>
                                             </MenuItem>
 
                                         </FormDropdown>
                                     </td>
+
                                 </template>
                                 </tr>
                             </tbody>
@@ -532,6 +508,8 @@ const state = reactive({
    
     Rights:[],
 
+    currentUser: '', //userStore.currentUser,
+
     isViewModalOpen: false,
     isAddModalOpen: false,
     isEditModalOpen: false,
@@ -543,6 +521,8 @@ const state = reactive({
 
     buttoncompute: false,
     buttonsavenew: true,
+
+    
 
     buttoncomputeEdit: false,
     buttonsaveEdit: true,
@@ -593,6 +573,7 @@ const state = reactive({
     selected_description: '',
     selected_group: 0,
     selected_agency_id: 0, 
+    selected_submission:'',
 
     report_details: [],
     report_years: [],
@@ -705,7 +686,13 @@ async function fetchrole() {
     try {
        
         const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
-        //console.log(response)
+        console.log('response',response)
+        state.currentUser = userStore.getUser.user_roles.agency_id
+        console.log('user_agency', state.currentUser)
+        console.log(state.currentUser.id)
+        console.log('user_role', userStore.getUser.user_roles.name)
+        console.log('user_role_id', state.roles)
+
         if (response.data) {
             state.roles = response.data
          
@@ -739,22 +726,13 @@ function getclicked(Rights_entry_config){
      state.datasource_id = Rights_entry_config.agency_id
      state.selected_group = Rights_entry_config.group
      state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
+     state.selected_submission = Rights_entry_config.is_annual
+     //console.log('Rights_entry_config.is_annual', Rights_entry_config.is_annual)    
 
-    //  console.log(state.Selected_Rights_entry_config_group.data)
-    //  if (state.Selected_Rights_entry_config_group.data != null){ 
-    //    var data = [];
-    //    var datasources = [];
-    //    datasources = state.Selected_Rights_entry_config_group.data[0].datasources
-       
-    //         for (const i in datasources){
-    //             const value = datasources[i].agency_id;
-    //             if (!datasources.includes(value)){
-    //                 data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
-    //             }
-    //         }
-    //     state.options.datasources = data;
-        
-    //     }
+
+     
+
+   
 }
 
 function changeData(){
@@ -820,7 +798,7 @@ async function fetchRights_entry_config() {
             page: currentPage
         }
         const response = await Rights_entry_configServices.getRights_entry_config(params)
-        console.log(response)
+        //console.log(response)
         if (response.data) {
             state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
@@ -989,64 +967,64 @@ async function check_fetchReports_Details_Add() {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-       
-      
             if (totaled_from != 'NA') {
-
-
-                
                 state.total[sequence_header] = 0;
                 state.male[sequence_header] = 0;
                 state.female[sequence_header] = 0;
                 state.grand_total[sequence_header] = 0;
-
-
             } 
-            
             if (totaled_to == 'NA' && totaled_from != 'NA') {
-
                 state.total[sequence_header] = 0;
                 state.male[sequence_header] = 0;
                 state.female[sequence_header] = 0;
                 state.grand_total[sequence_header] = 0;
-
-           
-
             }
-
-          
-
-        
     }
-
-
     try {
-       
-        //   let params = {
-        //     group_id: 1,
-        //     report_year_id: state.selected_year_id, // need to be passed from the dashboard main page
-        //     is_active: 1,
-        //     // entry_type: "Actual",//state.selected_view_entry_type,
-        //     group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
-        // }
-      
-        //const response = await reportDetailsService.getReportDetails(params)
+
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
-        
-        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-        
-       
-        console.log('params -add - check' ,params)
-        if (state.Rights_detail_filtered.data) {
-            alert('Entry Type ' + state.selected_edit_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
-            state.buttonsavenew = true
+
+        // console.log('response -add', response)
+
+        // console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year) 
+        // console.log('state.selected_year_id -add',  state.selected_year_id)    
+        // console.log('state.selected_submission -add',  state.selected_submission) 
+
+        if (state.selected_submission == 1) {
+            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year === state.report_years.data[state.selected_year_id].year && filtered_detail.is_active === 1)
+        } else {
+            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+
         }
-        else {
-        //alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')  
-            state.buttonsavenew = false
-        }   
+       
+       
+        // if ( ){
+
+        // }
+        
+        
+        // console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year)   
+        // console.log('state.selected_entry_type -add',  state.selected_entry_type) 
+        // console.log('state.selected_year_id -add',  state.selected_year_id)  
+         console.log('state.Rights_detail_filtered.data -add - check' ,state.Rights_detail_filtered.data)
+       
+       
+        if (state.Rights_detail_filtered.data.length > 0 && state.selected_submission == 0) {
+            alert('Entry Type ' + state.selected_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
+            //state.buttonsavenew = true
+            //state.buttonsavenew = false
+        }
+        else if (state.Rights_detail_filtered.data.length > 0 && state.selected_submission == 1) {
+            alert('Entry Type ' + state.selected_entry_type + ' has been found for the year ' + state.report_years.data[state.selected_year_id].year + ', Please select another entry type or Edit the existing entry.')
+            //state.buttonsavenew = true
+            //state.buttonsavenew = false
+        } else {
+            
+            state.buttonsavenew = false;
+            
+        }
     } catch (error) {
-        //console.log(error)
+        console.log('catch error in checking', error)
     }
 }
 
@@ -1089,7 +1067,7 @@ async function saveReportDetails(){
                         //report_year: state.options.report_years[state.selected_year_id].year,
                     }
                    
-                        console.log('params', params)
+                        //console.log('params', params)
                         const response = await reportDetailsService.createReportDetails(params);
                         if (response.data) {
                             successcount = successcount + 1; 
@@ -1099,7 +1077,7 @@ async function saveReportDetails(){
                         }   
        
                     } catch (error) {
-                        console.log('error', error)
+                        //console.log('error', error)
                         errorcount = errorcount + 1;
                         alert("Error in saving data. Please check the values you entered.")
                         state.isAddModalOpen = false
@@ -1113,11 +1091,8 @@ async function saveReportDetails(){
         state.isAddModalOpen = false
     }
         
-    // } catch (error) {
-    //     console.log(error)
-    //     errorcount = errorcount + 1;
-    // }
-   
+  
+    //state.buttonsavenew = true;
    
 }
 
@@ -1127,8 +1102,11 @@ async function saveReportDetails(){
 function SaveAddEntryModal(){
 
 saveReportDetails()
+state.buttonsavenew = true;
 
 }
+
+
 
 function clearData(){
     state.male = [],
@@ -1152,16 +1130,19 @@ function clearData(){
     }
 }
 
+
 function computeAddEntryModal(){
 
     check_fetchReports_Details_Add()
+    //console.log(' state.selected_entry_type', state.selected_entry_type)
+    
 
     compute_vertical()
-    
+    //state.buttonsavenew
     
     
     //state.buttoncompute = true
-    state.buttonsavenew = false
+    //state.buttonsavenew = false
 
 }
 
@@ -1225,24 +1206,26 @@ function closeAddEntryModal() {
 function openAddEntryModal() {
 // state.selected_datasourece =     
 
-clearData();
-state.buttonsavenew = false;
+    clearData();
+    //state.buttonsavenew = false;
+    console.log('state.Selected_Rights_entry_config_group', state.Selected_Rights_entry_config_group)
 
-var size = Object.keys(state.Selected_Rights_entry_config_group.data).length;
-  for (let i = 0; i < size ; i++) {
-    state.totaled_from[state.Selected_Rights_entry_config_group.data[i].sequence_header] = state.Selected_Rights_entry_config_group.data[i].totaled_from ;
-    
+    var size = Object.keys(state.Selected_Rights_entry_config_group.data).length;
+
+    for (let i = 0; i < size; i++) {
+        state.totaled_from[state.Selected_Rights_entry_config_group.data[i].sequence_header] = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+
     }
 
-// console.log(state.totaled_from)
+     console.log(state.totaled_from)
 
-// for (let i = size; i > size; i--) {
-//     console.log(state.totaled_from[i])
-    
-// } 
-state.isAddModalOpen = true;
-state.buttoncompute = false;
-state.buttonsavenew = false;
+    // for (let i = size; i > size; i--) {
+    //     console.log(state.totaled_from[i])
+
+    // } 
+    state.isAddModalOpen = true;
+    state.buttoncompute = false;
+    state.buttonsavenew = true;
 }
 
 
@@ -1337,7 +1320,6 @@ function clear_totaled_EditData(){
                     state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
                 }
                 
-                
          }
     }
     catch (error) {
@@ -1353,16 +1335,11 @@ function initial_clear_data(){ // this function is used to clear the data before
 
             var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
             var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
-            
-              
-
                     state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
                     state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
                     state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
                     state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
                     state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
-              
-                
                 
          }
     }
@@ -1387,8 +1364,6 @@ function compute_verticalEdit(){
                 state.edit_male[sequence_header] = 0;
                 state.edit_female[sequence_header] = 0;
                 state.edit_grand_total[sequence_header] = 0;
-
-
             } 
             
             if (totaled_to == 'NA' && totaled_from != 'NA') {
@@ -1397,24 +1372,13 @@ function compute_verticalEdit(){
                 state.edit_male[sequence_header] = 0;
                 state.edit_female[sequence_header] = 0;
                 state.edit_grand_total[sequence_header] = 0;
-
-           
-
             }
-
-          
-
-        
     }
-
-
 
     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-
-
       
         if (totaled_to == 'NA'){
             if (totaled_from == 'NA'){
@@ -1438,16 +1402,10 @@ function compute_verticalEdit(){
 }
 
 async function SaveEditEntryModal(){
-
     var successcount = 0;
     var errorcount = 0;
-
-  
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
-
-                                   
-
                     let params = {
 
                         male: state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
@@ -1455,24 +1413,18 @@ async function SaveEditEntryModal(){
                         total: state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         grand_total: state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         remarks: ' ' + state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                       
                     }
-                   
-                    //console.log(params)
                     const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
                      if (response.data) {
                         successcount = successcount + 1; 
-                 
                      }   
        
                     } catch (error) {
                         state.errormessage = error.response.data.message
-                        //console.log(error)
                         errorcount = errorcount + 1;
                     }
     }
     if (successcount > 0){
-       
         state.successcount = successcount;
         state.errorcount = errorcount;
         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)
@@ -1480,10 +1432,6 @@ async function SaveEditEntryModal(){
     }else{
         openAlertModal(state.group, state.errormessage, state.group_header, errorcount, successcount)
     }
-
-   
-
-
 }
 
 

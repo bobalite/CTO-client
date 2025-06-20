@@ -44,9 +44,11 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Group</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Description</th>
+                                        Indicator</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Datasources</th>
+                                        Agency</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Entry Type</th>    
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Actual</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -83,6 +85,20 @@
                                                     </template>
                                                 </template>
                                             </span>
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                <span v-if="Rights_entry_config.is_annual == 1"
+                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
+                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                                </span>
+
+                                                <span v-if="Rights_entry_config.is_annual == 0"
+                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
+                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                                </span>
+
                                         </td>
 
                                         <td

@@ -33,6 +33,9 @@ const props = defineProps({
     },report_year:{
         type: Number,
         required: false,
+    },passed_data: {
+        type: Object,
+        required: true,
     }
   
 })
@@ -47,101 +50,28 @@ onMounted(() => {
 
 const state = reactive({
 
-graphSeries: []   ,
 report_details: [],
 prevalence: 0,
 
-OptionsPieDatasource: {
-       chart: {
-           width: 380,
-           type: 'pie',
-       },
-       colors: [
-           '#701a75',
-           '#db2777',
-           '#9d174d'
-        ],
-       dataLabels: {
-           enabled: true
-       },
-       plotOptions: {
-         pie: {
-           dataLabels: {
-             offset: -5,
-           },
-         },
-       },
-       grid: {
-         padding: {
-           top: 0,
-           bottom: 0,
-           left: 0,
-           right: 0,
-         },
-       },
-       dataLabels: {
-         formatter(val, opts) {
-           const name = opts.w.globals.labels[opts.seriesIndex]
-           return [name, val.toFixed(1) + '%']
-         },
-       },
-       legend: {
-         show: false,
-       },
-       labels: [ // need to retrive labels from database based on group id
-           '10-14 years old PW',
-           '15-17 years old PW',
-           '18 years old and above PW'
-       ],
-   }
+
 })
 
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
       try {
-        let params = {
-            group_id: 5,
-            report_year_id: props.report_year, // need to be passed from the dashboard main page
-            is_active: 1,
-            // entry_type: "Actual",//state.selected_view_entry_type,
-            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
+       
+        await props.passed_data.data
+        state.report_details.data = props.passed_data.data
+        for (const c in state.report_details.data) {
+
+          if (state.report_details.data[c].sequence_header == '1.1.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
+            state.prevalence = parseFloat(state.prevalence) + parseFloat(state.report_details.data[c].total)
+          }
         }
 
-        //console.log('params-getReportDetailsGroups',params)
-       
-        //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups()
-   
-        //
-        if (response.data) {
-
-
-             state.report_details.data = response.data          
-            
-             if (response) {
-                state.graphSeries = [0,0,0]
-                for (const c in state.report_details.data) {
-
-                 if (state.report_details.data[c].sequence_header == '1.1.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year){
-                        state.prevalence = parseFloat(state.prevalence) +  parseFloat( state.report_details.data[c].total)
-
-                    }
-                   
-                  
-
-                    // for actual
-                }
-              
-            } else {
-                //alert('No data found for ACTUAL Entries. ')  
-            }
-            
-
-        }
-    } catch (error) {
-       
-        state.graphSeries = [0,0,0]
-    }
+      } catch (error) {
+        state.graphSeries = [0, 0, 0]
+      }
 }
 
 </script>

@@ -12,7 +12,7 @@ const props = defineProps({
         default: 'border-solid',
     },
     displaytext:{
-        type: String,
+        type: [String, Number],
         required: false,
     }
   

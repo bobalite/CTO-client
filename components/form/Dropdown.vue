@@ -33,7 +33,5 @@ import {
     MenuItems,
 } from '@headlessui/vue'
 
-definePageMeta({
-    layout: 'main'
-})
+
 </script>

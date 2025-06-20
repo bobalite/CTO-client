@@ -17,138 +17,138 @@
 
   <div>
 
-    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
+    <div v-if="state.loading == false" class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
 
-      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year">
       </GraphsGrp01>
 
-      <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" :report_year="state.report_year">
       </GraphsGrp02>
 
-      <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Proportion/percentage of nutritionally-at-risk PW'" :report_year="state.report_year">
       </GraphsGrp03>
 
-      <GraphsGrp04 v-if="state.showGraphsGrp04 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp04 v-if="state.showGraphsGrp04 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of PW with at least 4 pre-natal check-ups'" :report_year="state.report_year">
       </GraphsGrp04>
 
-      <GraphsGrp05 v-if="state.showGraphsGrp05 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp05 v-if="state.showGraphsGrp05 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Proportion/percentage of PW with at least 4 pre-natal check-ups'"
         :report_year="state.report_year">
       </GraphsGrp05>
 
-      <GraphsGrp06 v-if="state.showGraphsGrp06 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp06 v-if="state.showGraphsGrp06 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total Number of deliveries attended by skilled health professionals'"
         :report_year="state.report_year">
       </GraphsGrp06>
 
-      <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Net Enrolment rate:'" :report_year="state.report_year">
       </GraphsGrp37>
 
-      <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total number of Out- of- school children and youth (OSCY)'" :report_year="state.report_year">
       </GraphsGrp45>
 
-      <GraphsGrp48 v-if="state.showGraphsGrp48 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp48 v-if="state.showGraphsGrp48 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of violence against children cases, by type of violence'"
         :report_year="state.report_year">
       </GraphsGrp48>
 
-      <GraphsGrp49 v-if="state.showGraphsGrp49 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp49 v-if="state.showGraphsGrp49 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of violence against children cases resolved, by type of violence'"
         :report_year="state.report_year">
       </GraphsGrp49>
 
-      <GraphsGrp50 v-if="state.showGraphsGrp50 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp50 v-if="state.showGraphsGrp50 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of reported Children In-Need of Special Protection (CNSP) cases'"
         :report_year="state.report_year">
       </GraphsGrp50>
 
-      <GraphsGrp55 v-if="state.showGraphsGrp55 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp55 v-if="state.showGraphsGrp55 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total Number of Crimes Committed by Children, by type/category of crime committed:'"
         :report_year="state.report_year">
       </GraphsGrp55>
 
-      <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
         :report_year="state.report_year">
       </GraphsGrp59>
 
-      <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-6 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Established and updated database on children, with all of the following disaggregated information on children'"
         :report_year="state.report_year">
       </GraphsGrp65>
 
-      <GraphsGrp68 v-if="state.showGraphsGrp68 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp68 v-if="state.showGraphsGrp68 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
       </GraphsGrp68>
 
 
-      <GraphsGrp70 v-if="state.showGraphsGrp70 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp70 v-if="state.showGraphsGrp70 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age:  Learning Disability'"
         :report_year="state.report_year">
       </GraphsGrp70>
 
-      <GraphsGrp71 v-if="state.showGraphsGrp71 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp71 v-if="state.showGraphsGrp71 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age:   Psychosocial Disability'"
         :report_year="state.report_year">
       </GraphsGrp71>
 
-      <GraphsGrp72 v-if="state.showGraphsGrp72 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp72 v-if="state.showGraphsGrp72 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age:  Visual Disability'"
         :report_year="state.report_year">
       </GraphsGrp72>
-      <GraphsGrp73 v-if="state.showGraphsGrp73 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp73 v-if="state.showGraphsGrp73 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age:  Intellectual Disability'"
         :report_year="state.report_year">
       </GraphsGrp73>
 
-      <GraphsGrp74 v-if="state.showGraphsGrp74 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp74 v-if="state.showGraphsGrp74 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Physical Disability'"
         :report_year="state.report_year">
       </GraphsGrp74>
-      <GraphsGrp75 v-if="state.showGraphsGrp75 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp75 v-if="state.showGraphsGrp75 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Speech & Language Impairment'"
         :report_year="state.report_year">
       </GraphsGrp75>
 
-      <GraphsGrp76 v-if="state.showGraphsGrp76 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp76 v-if="state.showGraphsGrp76 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Deaf or Hard of Hearing'"
         :report_year="state.report_year">
       </GraphsGrp76>
-      <GraphsGrp77 v-if="state.showGraphsGrp77 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp77 v-if="state.showGraphsGrp77 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Rare Diseases (RA 10747)'"
         :report_year="state.report_year">
       </GraphsGrp77>
 
-      <GraphsGrp78 v-if="state.showGraphsGrp78 == true" :key="state.refresh_graphs_toggle"
+      <GraphsGrp78 v-if="state.showGraphsGrp78 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Cancer (RA 11215)'"
         :report_year="state.report_year">
@@ -471,7 +471,8 @@
 //import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
 import {useUserStore} from '~/store/user'
 import {userDashboardWidgetsService } from '~/components/api/UserDashboardWidgetsService'; 
-import {report_yearService } from '~/components/api/ReportYears'; 
+import {report_yearService } from '~/components/api/ReportYears';
+import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
 const userStore = useUserStore()
 
 
@@ -485,17 +486,23 @@ definePageMeta({
 
 
 onMounted(() => {
+  fetchData()
   //fetchRights_entry_config()
   fetchreportyear()
   loop_through_user_widgets()
+  
 })
 
 
 
 const state = reactive({
 
+    loading: true,
+
     user_dashboard_widgets: userStore.getUser.user_dashboard_widgets,
     user_id: userStore.getUser.id,
+
+    passed_data: [],
 
     isPageLoading: false,
     isSlideModalOpen: false,
@@ -571,7 +578,14 @@ if (state.refresh_graphs_toggle == false){
   
 }
 
-
+async function fetchData() {
+  state.isPageLoading = true
+  const response = await reportDetailsGroupsService.getReportDetailsGroups()
+  state.passed_data.data = response.data
+  console.log('fetchData', state.passed_data)
+  state.loading = false
+ 
+}   
 
 
 async function deleteUserDashboardWidgets(){

@@ -34,6 +34,9 @@ const props = defineProps({
     },report_year:{
         type: Number,
         required: false,
+    },passed_data: {
+        type: Object,
+        required: true,
     }
   
 })

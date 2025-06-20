@@ -31,16 +31,9 @@
 import {
     Dialog,
     DialogPanel,
-    DialogTitle,
     TransitionChild,
     TransitionRoot,
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Menu,
-    MenuButton,
-    MenuItems,
-    MenuItem
+  
 } from '@headlessui/vue'
 
 const props = defineProps({

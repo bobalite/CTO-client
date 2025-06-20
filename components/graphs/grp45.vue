@@ -34,6 +34,9 @@ const props = defineProps({
     },report_year:{
         type: Number,
         required: false,
+    },passed_data: {
+        type: Object,
+        required: true,
     }
   
 })
@@ -108,64 +111,23 @@ OptionsPieDatasource: {
 
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
-       try {
-        let params = {
-            group_id: 45,
-            report_year_id: props.report_year, // need to be passed from the dashboard main page
-            is_active: 1,
-            // entry_type: "Actual",//state.selected_view_entry_type,
-            group_agency_datasource_id: 0 // set to 0 for non specific of the datasource
-        }
-
-        //console.log('params-getReportDetailsGroups',params)
-       
-        //const response = await reportDetailsService.getReportDetails(params)
-        const response = await reportDetailsGroupsService.getReportDetailsGroups()
-   
-        //
-        if (response.data) {
-
-
-             state.report_details.data = response.data          
-            
-             if (response) {
-                state.graphSeries = [0,0,0,0]
-                for (const c in state.report_details.data) {
-
-                    if (state.report_details.data[c].sequence_header == '2.11.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-   
-                        state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat( state.report_details.data[c].total)
-
-                    } else if (state.report_details.data[c].sequence_header == '2.11.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-
-   
-                        state.graphSeries[1] = parseFloat(state.graphSeries[1]) +  parseFloat( state.report_details.data[c].total)
-
-                    } else if (state.report_details.data[c].sequence_header == '2.11.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-   
-                        state.graphSeries[2] = parseFloat(state.graphSeries[2]) +  parseFloat( state.report_details.data[c].total)
-                    }else if (state.report_details.data[c].sequence_header == '2.11.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-   
-                        state.graphSeries[3] = parseFloat(state.graphSeries[3]) +  parseFloat( state.report_details.data[c].total)
-                    }
-                   
-                  
-
-                    // for actual
-                }
-
-   
-                //state.graphSeries = [10,10,10]
-   
-            } else {
-                //alert('No data found for ACTUAL Entries. ')  
+    try {
+        await props.passed_data.data
+        state.report_details.data = props.passed_data.data
+        state.graphSeries = [0, 0, 0, 0]
+        for (const c in state.report_details.data) {
+            if (state.report_details.data[c].sequence_header == '2.11.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
+                state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat(state.report_details.data[c].total)
+            } else if (state.report_details.data[c].sequence_header == '2.11.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
+                state.graphSeries[1] = parseFloat(state.graphSeries[1]) + parseFloat(state.report_details.data[c].total)
+            } else if (state.report_details.data[c].sequence_header == '2.11.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
+                state.graphSeries[2] = parseFloat(state.graphSeries[2]) + parseFloat(state.report_details.data[c].total)
+            } else if (state.report_details.data[c].sequence_header == '2.11.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
+                state.graphSeries[3] = parseFloat(state.graphSeries[3]) + parseFloat(state.report_details.data[c].total)
             }
-            
-
         }
     } catch (error) {
-   
-        state.graphSeries = [0,0,0,0]
+        state.graphSeries = [0, 0, 0, 0]
     }
 }
 
