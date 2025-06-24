@@ -21,7 +21,7 @@
 
       <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year">
+        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp01>
 
       <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
@@ -53,7 +53,7 @@
 
       <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Net Enrolment rate:'" :report_year="state.report_year">
+        :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp37>
 
       <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
@@ -88,7 +88,7 @@
       <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-3 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
-        :report_year="state.report_year">
+        :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp59>
 
       <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
@@ -103,7 +103,7 @@
       </GraphsGrp68>
 
 
-      <GraphsGrp70 v-if="state.showGraphsGrp70 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <!-- <GraphsGrp70 v-if="state.showGraphsGrp70 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age:  Learning Disability'"
         :report_year="state.report_year">
@@ -152,7 +152,7 @@
         class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total population of children with disabilities, by type of disability, by age: Cancer (RA 11215)'"
         :report_year="state.report_year">
-      </GraphsGrp78>
+      </GraphsGrp78> -->
 
 
     </div>
@@ -183,7 +183,7 @@
                     <GridCheckbox v-model="state.showGraphsGrp01" :value="state.showGraphsGrp01" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Teenage Pregnancy'" />
+                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Group 1: Teenage Pregnancy'" />
                   </th>
                 </tr>
 
@@ -193,7 +193,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" />
+                      :displaytext="'Group 2: Total number of nutritionally-at-risk pregnant women (PW)'" />
                   </th>
                 </tr>
 
@@ -203,7 +203,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Proportion/percentage of nutritionally-at-risk PW'" />
+                      :displaytext="'Group 3: Proportion/percentage of nutritionally-at-risk PW'" />
                   </th>
                 </tr>
                 <tr>
@@ -212,7 +212,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of PW with at least 4 pre-natal check-ups'" />
+                      :displaytext="'Group 4: Total number of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
                 <tr>
@@ -221,7 +221,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Proportion/percentage of PW with at least 4 pre-natal check-ups'" />
+                      :displaytext="'Group 5: Proportion/percentage of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
 
@@ -231,7 +231,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total Number of deliveries attended by skilled health professionals'" />
+                      :displaytext="'Group 6: Total Number of deliveries attended by skilled health professionals'" />
                   </th>
                 </tr>
 
@@ -245,7 +245,7 @@
                     <GridCheckbox v-model="state.showGraphsGrp37" :value="state.showGraphsGrp37" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Net Enrolment rate:'" />
+                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Group 37: Net Enrolment rate:'" />
                   </th>
                 </tr>
 
@@ -255,7 +255,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of Out- of- school children and youth (OSCY)'" />
+                      :displaytext="'Group 45: Total number of Out- of- school children and youth (OSCY)'" />
                   </th>
                 </tr>
 
@@ -271,7 +271,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of violence against children cases, by type of violence'" />
+                      :displaytext="'Group 48: Total number of violence against children cases, by type of violence'" />
                   </th>
                 </tr>
 
@@ -281,7 +281,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of violence against children cases resolved, by type of violence'" />
+                      :displaytext="'Group 49: Total number of violence against children cases resolved, by type of violence'" />
                   </th>
 
                 </tr>
@@ -292,7 +292,7 @@
                   </th>
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total number of reported Children In-Need of Special Protection (CNSP) cases'" />
+                      :displaytext="'Group 50: Total number of reported Children In-Need of Special Protection (CNSP) cases'" />
                   </th>
 
                 </tr>
@@ -303,7 +303,7 @@
 
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total Number of Crimes Committed by Children, by type/category of crime committed:'" />
+                      :displaytext="'Group 55: Total Number of Crimes Committed by Children, by type/category of crime committed:'" />
                   </th>
 
                 </tr>
@@ -316,7 +316,7 @@
 
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'" />
+                      :displaytext="'Group 59: Total Number of BCPC with child representatives, by type of selection process:'" />
                   </th>
 
                 </tr>
@@ -330,29 +330,22 @@
 
                   <th>
                     <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Established and updated database on children, with all of the following disaggregated information on children'" />
+                      :displaytext="'Group 65: Established and updated database on children, with all of the following disaggregated information on children'" />
                   </th>
 
                 </tr>
-                <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    <GridCheckbox v-model="state.showGraphsGrp68" :value="state.showGraphsGrp68" :dissabled="false" />
-                  </th>
-
-                  <th>
-                    <GridCell class="px-3 py-3.5 text-left"
-                      :displaytext="'Total population of children, by sex, by age group'" />
-                  </th>
-
-                </tr>
-
-
-
-
               </thead>
-
               <thead class="bg-green-200" pl-4> General Information Widgets.
                 <tr>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <GridCheckbox v-model="state.showGraphsGrp68" :value="state.showGraphsGrp68" :dissabled="false"  :displaytext="'Group 68'" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Group 68: Total population of children, by sex, by age group'" />
+                  </th>
+                </tr>
+                <!-- <tr>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     <GridCheckbox v-model="state.showGraphsGrp70" :value="state.showGraphsGrp70" :dissabled="false" />
                   </th>
@@ -448,7 +441,7 @@
                       :displaytext="'Total population of children with disabilities, by type of disability, by age: Cancer (RA 11215)'" />
                   </th>
 
-                </tr>
+                </tr> -->
 
 
               </thead>
@@ -486,9 +479,9 @@ definePageMeta({
 
 
 onMounted(() => {
-  fetchData()
-  //fetchRights_entry_config()
   fetchreportyear()
+  fetchData()
+ 
   loop_through_user_widgets()
   
 })
@@ -508,13 +501,14 @@ const state = reactive({
     isSlideModalOpen: false,
     options: {
       report_years:[
-            {value: '1', label: 'Jan - Dec 2024' },
-            {value: '2', label: 'Jan - Dec 2025' },
+            {value: '1', label: 'Jan - Dec 2024', year: '2024' },
+            {value: '2', label: 'Jan - Dec 2025', year: '2025' },
 
         ],},
     report_year: 1,
 
     report_years: [],
+    year: '2025',
 
     refresh_graphs_toggle: false,
     showGraphsGrp01: false,
@@ -558,13 +552,16 @@ function saveDashboardSettings() {
   loopthroughNewSettings()
   fetchUserDashboardWidgets()
   loop_through_user_widgets()
-  //console.log('saved')
-  state.isSlideModalOpen = false
+ 
+   state.isSlideModalOpen = false
 }
 
 function change_selected_year(){
 
-  //state.report_year = state.report_years.value
+  // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
+
+  //state.year = state.report_years.value
+  //console.log('state. in change',state.report_year)
   //state.refresh_graphs01 = true
 
 if (state.refresh_graphs_toggle == false){
@@ -582,7 +579,7 @@ async function fetchData() {
   state.isPageLoading = true
   const response = await reportDetailsGroupsService.getReportDetailsGroups()
   state.passed_data.data = response.data
-  console.log('fetchData', state.passed_data)
+  //console.log('fetchData', state.passed_data)
   state.loading = false
  
 }   
@@ -730,7 +727,7 @@ async function fetchreportyear() {
                     if (!datasources.includes(value)) {
 
                         if(datasources[i].status == 1){
-                        data[i] = { "value": datasources[i].id, "label": datasources[i].name };
+                        data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year  };
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">{{props.displaytext}}</h3>
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 2. {{props.displaytext}}</h3>
         <ApexCharts height="200" width="120%" :options="state.OptionsPieDatasource"
           :series="state.graphSeries" />
            
@@ -108,8 +108,8 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
       
         await props.passed_data.data
         state.report_details.data = props.passed_data.data  
-
         state.graphSeries = [0, 0, 0]
+
         for (const c in state.report_details.data) {
             if (state.report_details.data[c].sequence_header == '1.1.2.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                 state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat(state.report_details.data[c].total)

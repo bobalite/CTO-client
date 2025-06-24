@@ -218,6 +218,11 @@
                         <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Group:'" />
                         <GridCell class="sm:col-span-10 pb-6 text-xl font-bold"
                             :displaytext=state.Selected_Rights_entry_config_group.data[0].group />
+
+                         <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Schedule:'" />
+                        <GridCell class="sm:col-span-10 pb-6 text-xl font-bold"
+                            :displaytext=state.report_schedule />
+
                         <GridCell class="sm:col-span-4 pb-6" :displaytext="''" />
 
                         <GridCell class="sm:col-span-2 pb-6" :displaytext="''" />     
@@ -426,12 +431,12 @@
                                         class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         <span v-if="Rights_entry_config.is_annual == 1"
                                             class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
-                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annual' : 'Quarterly' }}
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annualy' : 'Quarterly' }}
                                         </span>
 
                                         <span v-if="Rights_entry_config.is_annual == 0"
                                             class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
-                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annual' : 'Quarterly' }}
+                                            {{ Rights_entry_config.is_annual  == 1 ? 'Annualy' : 'Quarterly' }}
                                         </span>
 
                                     </td>
@@ -521,6 +526,8 @@ const state = reactive({
 
     buttoncompute: false,
     buttonsavenew: true,
+
+    report_schedule: '',
 
     
 
@@ -650,7 +657,7 @@ onMounted(() => {
 async function fetchreportyear() {
     try {
            const response = await report_yearService.getReportYears()
-           console.log(response)
+           //console.log(response)
         if (response.data) {
             
             state.report_years.data = response.data
@@ -670,7 +677,7 @@ async function fetchreportyear() {
                     }
                 }
                 state.options.report_years = data;
-                console.log(state.options.report_years)
+                //console.log(state.options.report_years)
             }
 
         }
@@ -686,12 +693,12 @@ async function fetchrole() {
     try {
        
         const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
-        console.log('response',response)
+        //console.log('response',response)
         state.currentUser = userStore.getUser.user_roles.agency_id
-        console.log('user_agency', state.currentUser)
-        console.log(state.currentUser.id)
-        console.log('user_role', userStore.getUser.user_roles.name)
-        console.log('user_role_id', state.roles)
+        // console.log('user_agency', state.currentUser)
+        // console.log(state.currentUser.id)
+        // console.log('user_role', userStore.getUser.user_roles.name)
+        // console.log('user_role_id', state.roles)
 
         if (response.data) {
             state.roles = response.data
@@ -727,15 +734,15 @@ function getclicked(Rights_entry_config){
      state.selected_group = Rights_entry_config.group
      state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
      state.selected_submission = Rights_entry_config.is_annual
-     //console.log('Rights_entry_config.is_annual', Rights_entry_config.is_annual)    
-
-
+     state.report_schedule = (Rights_entry_config.is_annual  == 1 ? 'Annualy' : 'Quarterly')
+     //console.log('state.report_schedule', state.report_schedule)
      
-
    
 }
 
 function changeData(){
+   
+   
     switch (state.selected_rights_id){
         case(0):
         state.Selected_Rights_entry_config  = state.Rights_entry_config
@@ -1064,6 +1071,7 @@ async function saveReportDetails(){
                         group_id: state.Selected_Rights_entry_config_group.data[i].group,
                         group_agency_datasource_id: state.datasource_id,
                         is_active: 1,
+                        report_schedule: state.report_schedule
                         //report_year: state.options.report_years[state.selected_year_id].year,
                     }
                    
@@ -1208,7 +1216,7 @@ function openAddEntryModal() {
 
     clearData();
     //state.buttonsavenew = false;
-    console.log('state.Selected_Rights_entry_config_group', state.Selected_Rights_entry_config_group)
+    //console.log('state.Selected_Rights_entry_config_group', state.Selected_Rights_entry_config_group)
 
     var size = Object.keys(state.Selected_Rights_entry_config_group.data).length;
 

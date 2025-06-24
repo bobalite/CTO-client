@@ -2,7 +2,7 @@
    
     <GridCard
         class="sm:col-span-3 text-xl font-bold  text-left m-1 pl-2 border-1 border-solid border-blue-black bg-green-100 rounded-xl border-blue-900 border-t border-b border-l border-r ">
-        <h1 class="text-1xl font-bold"> Proportion/percentage of PW with at least 4 pre-natal check-ups</h1>
+        <h1 class="text-1xl font-bold">Group 5. Proportion/percentage of PW with at least 4 pre-natal check-ups</h1>
         <h1 class="text-1xl font-bold"></h1>
         <h1 class="text-4xl text-center font-bold"></h1>
         <h1 class="text-7xl text-center font-bold">{{state.prevalence}} %</h1>

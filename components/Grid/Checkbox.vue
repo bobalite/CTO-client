@@ -1,8 +1,5 @@
 <template >
             <input type="checkbox" v-model=model :name="props.name" :id="props.inputId"  :checked="props.value" :disabled="props.dissabled" class="props.inputclass"> 
-            
-           
-           
 </template>
 
 <script setup lang="ts">

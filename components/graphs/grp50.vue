@@ -1,7 +1,7 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">{{props.displaytext}}</h3>
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 50. {{props.displaytext}}</h3>
         <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
             :series="state.graphSeriesAll" />
            
@@ -15,8 +15,8 @@
 
 <script setup>
 import ApexCharts from 'vue3-apexcharts';
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
+//import {reportDetailsService } from '~/components/api/ReportDetailsService';
+//import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 const fakedata = [10,20,30,40,50,60,70,80,90]
 const fakedata2 = [120,110,100,90,80,70,60,50,40]
 
@@ -120,7 +120,9 @@ populationHoriOptions: {
             
             ],
         },
-    },
+},
+
+
 })
 
 

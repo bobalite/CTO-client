@@ -1,7 +1,7 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">{{props.displaytext}}</h3>
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 1. {{props.displaytext}}</h3>
         <ApexCharts height="200" width="120%" :options="state.OptionsPieDatasource"
           :series="state.graphSeries" />
            
@@ -46,7 +46,13 @@ const props = defineProps({
     },passed_data: {
         type: Object,
         required: true,
-    }
+    },year: {
+        type: String,
+        required: false,
+    },passed_year_data: {
+         type: Object,
+        required: true,
+    } 
   
 })
 
@@ -110,13 +116,20 @@ OptionsPieDatasource: {
 })
 
 async  function fetchReports_Details_Actuals() { // main fetching function for actuals
+
+    
+
+
     try {
      
         //await reportDetailsGroupsService.getReportDetailsGroups()
         await props.passed_data.data
+        await props.passed_year_data.data
         state.report_details.data = props.passed_data.data   
             //console.log('state.report_details.data', state.report_details.data) 
         state.graphSeries = [0,0,0]
+        //console.log('props.passed_year_data',props.passed_year_data)
+
         for (const c in state.report_details.data) {
            if (state.report_details.data[c].sequence_header == '1.1.1.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
                 state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat( state.report_details.data[c].total)
