@@ -1056,13 +1056,23 @@ async function saveReportDetails(){
 
          for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
+                    let true_grand_total = 0
+
+                        if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
+                            
+                            true_grand_total = state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+
+                        }else{
+                            true_grand_total = 0
+
+                        }
                     let params = {
 
                         sequence_header: state.Selected_Rights_entry_config_group.data[i].sequence_header,
                         male: state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         female: state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         total: state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        grand_total: state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                        grand_total: true_grand_total,
                         remarks: state.remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         entry_type: state.selected_entry_type,
                         rights_entry_config_id: state.Selected_Rights_entry_config_group.data[i].id,
@@ -1414,12 +1424,20 @@ async function SaveEditEntryModal(){
     var errorcount = 0;
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
+
+                        let true_grand_total = 0
+                        if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
+                            true_grand_total = state.state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+                        }else{
+                            true_grand_total = 0
+                        }
+
                     let params = {
 
                         male: state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         female: state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                         total: state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        grand_total: state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                        grand_total: true_grand_total,
                         remarks: ' ' + state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                     }
                     const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);

@@ -126,8 +126,8 @@ function fetchReports_Details_Actuals() { // main fetching function for actuals
         state.graphSeriesMale = [0, 0, 0]
         state.graphSeriesFemale = [0, 0, 0]
         const report_schedule = state.report_details.data[0].report_schedule
-        console.log('report_schedule', report_schedule)
-        console.log('props.report_year' ,props.report_year )
+        //console.log('report_schedule', report_schedule)
+        //console.log('props.report_year' ,props.report_year )
       
             for (const c in props.passed_year_data.data) {
                 if (props.passed_year_data.data[c].id == props.report_year) {
@@ -135,9 +135,9 @@ function fetchReports_Details_Actuals() { // main fetching function for actuals
                 }
             }
 
-            console.log('state.report_year', state.report_year) 
-            console.log('props.props.passed_year_data.data =', props.passed_year_data.data)
-            console.log('state.report_year_grp37 =', state.report_year)
+            //console.log('state.report_year', state.report_year) 
+            //console.log('props.props.passed_year_data.data =', props.passed_year_data.data)
+            //console.log('state.report_year_grp37 =', state.report_year)
             for (const c in state.report_details.data) {
                 if (state.report_details.data[c].sequence_header == '2.3.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year == state.report_year) {
                     state.graphSeriesMale[0] = parseFloat(state.graphSeriesMale[0]) + parseFloat(state.report_details.data[c].male)

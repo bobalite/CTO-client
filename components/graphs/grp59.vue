@@ -119,23 +119,23 @@ function fetchReports_Details_Actuals() { // main fetching function for actuals
 
         state.report_details.data = props.passed_data.data
         state.graphSeries = [0, 0]
-        const report_schedule = state.report_details.data[0].report_schedule
+        //const report_schedule = state.report_details.data[0].report_schedule
 
-        if (report_schedule == 'Annualy') {
-            for (const c in props.passed_year_data.data) {
-                        if (props.passed_year_data.data[c].id == props.report_year) {
-                            state.report_year = props.passed_year_data.data[c].year
-                        }
-            }   
 
-            for (const c in state.report_details.data) {
-                if (state.report_details.data[c].sequence_header == '4.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year == state.report_year) {
-                    state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat(state.report_details.data[c].total)
-                } else if (state.report_details.data[c].sequence_header == '4.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year == props.report_year) {
-                    state.graphSeries[1] = parseFloat(state.graphSeries[1]) + parseFloat(state.report_details.data[c].total)
-                }
+        for (const c in props.passed_year_data.data) {
+            if (props.passed_year_data.data[c].id == props.report_year) {
+                state.report_year = props.passed_year_data.data[c].year
             }
         }
+
+        for (const c in state.report_details.data) {
+            if (state.report_details.data[c].sequence_header == '4.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year == state.report_year) {
+                state.graphSeries[0] = parseFloat(state.graphSeries[0]) + parseFloat(state.report_details.data[c].total)
+            } else if (state.report_details.data[c].sequence_header == '4.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year == props.report_year) {
+                state.graphSeries[1] = parseFloat(state.graphSeries[1]) + parseFloat(state.report_details.data[c].total)
+            }
+        }
+       
 
     } catch (error) {
 

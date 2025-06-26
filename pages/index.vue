@@ -2,8 +2,9 @@
     <div class="flex h-screen flex-1">
         <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div class="mx-auto w-full max-w-sm lg:w-96">
-                <div>
-                    <img class="h-32 w-auto place-self-center" src="/assets/images/file.png" alt="socc logo" />
+                
+                <div >
+                    <img class="h-full w-full object-contain" src="/assets/images/file.png" alt="socc logo" />
 
                     <!--<h1 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     SPECIAL OFFICE FOR CHILDREN'S CONCERNS

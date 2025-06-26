@@ -1,191 +1,195 @@
-
 <template>
-    <div>
-        <!-- <Loader v-if="state.isPageLoading" /> -->
-        <!-- <ModulesDashboardCard :complainants="totalComplainants" @isPageLoading="pageLoads" /> -->
-        
-       
-
-        <div class=" mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-100 border-solid  rounded-xl border-blue-900 border-t border-b border-l border-r pb-4">
-
-            <div  class="sm:col-span-12 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h3 class="text-lg font-bold"> AREA OF CHILD RIGHTS/LIFE STAGE: SURVIVAL</h3>
-            </div>
-           
-            <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Accomplishments vs Projected</h2>
-               
-                <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
-                    :series="state.survivalOptions.series" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Percentage</h2>
-               
-                <ApexCharts type="area" height="500" width="80%" :options="state.survivalOptions"
-                    :series="state.survivalOptions.series_percentage" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Total Services Given</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPie"
-                    :series="state.survivalOptionsPie.series" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Datasources</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPieDatasource"
-                    :series="state.survivalOptionsPieDatasource.series" />
-            </div>
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">ACCOMPLISHMENTS</h1>
+        <div class="flex items-center space-x-4">
 
         </div>
     </div>
 
-    <div>
-       
-        <div class=" mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-100 border-solid  rounded-xl border-blue-900 border-t border-b border-l border-r pb-4">
+    <div class="px-4 sm:px-6 lg:px-8">
+        <div class="sm:flex sm:items-center">
 
-            <div  class="sm:col-span-12 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h3 class="text-lg font-bold"> AREA OF CHILD RIGHTS/LIFE STAGE: DEVELOPMENT</h3>
-            </div>
-           
-            <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Accomplishments vs Projected</h2>
-               
-                <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
-                    :series="state.survivalOptions.series" />
-            </div>
+            <div class="mt-8 flow-root">
+                <p class="mb-1 text-lg font-normal text-gray-500 lg:text-xl sm:px-10 xl:px-1 dark:text-black">Children's
+                    Rights Situational Analysis (CRSA)</p>
+                <div class="sm:flex-auto">
+                    <p>Select Report Year</p>
+                    <div>
+                        <FormSelect name="selected_year" v-model="state.selected_year_id"
+                            :options="state.options.report_years" />
+                    </div>
+                </div>
 
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Percentage</h2>
-               
-                <ApexCharts type="area" height="500" width="80%" :options="state.survivalOptions"
-                    :series="state.survivalOptions.series_percentage" />
-            </div>
+                <div class="sm:flex-auto">
 
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Total Services Given</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPie"
-                    :series="state.survivalOptionsPie.series" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Datasources</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPieDatasource"
-                    :series="state.survivalOptionsPieDatasource.series" />
+                    <p>Select Right</p>
+                    <div>
+                        <FormSelect :options="state.options.rights " v-model="state.selected_rights_id"
+                            @click="changeData()" />
+                    </div>
+                </div>
             </div>
 
         </div>
 
-       
-
-
-    </div>
-
-    <div>
-        <div class=" mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-100 border-solid  rounded-xl border-blue-900 border-t border-b border-l border-r pb-4">
-
-            <div  class="sm:col-span-12 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h3 class="text-lg font-bold">AREA OF CHILD RIGHTS/LIFE STAGE: PROTECTION</h3>
-            </div>
-
-           
-            <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Accomplishments vs Projected</h2>
+           <!-- <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
+                <h2 class="text-lg font-bold">Accomplishments vs Projected and National Projected</h2>
                
                 <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
                     :series="state.survivalOptions.series" />
-            </div>
+            </div> -->
 
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Percentage</h2>
-               
-                <ApexCharts type="area" height="500" width="80%" :options="state.survivalOptions"
-                    :series="state.survivalOptions.series_percentage" />
-            </div>
 
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Total Services Given</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPie"
-                    :series="state.survivalOptionsPie.series" />
-            </div>
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead class="bg-gray-50">
+                                <tr>
 
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Datasources</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPieDatasource"
-                    :series="state.survivalOptionsPieDatasource.series" />
-            </div>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Group</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Indicator</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Agency</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Entry Type</th>    
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Actual</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Projected</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        National</th>
+                                
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr v-for="Rights_entry_config in state.Selected_Rights_entry_config.data"
+                                    v-bind:key=Rights_entry_config.id >
 
+                                    <template v-if="Rights_entry_config.tier_level == 1">
+                                         <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                            {{ Rights_entry_config.group }}
+                                        </td>
+                                        <td
+                                            class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                            {{ Rights_entry_config.description }}
+                                        </td>
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                            <span 
+                                               
+                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
+                                                :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
+                                                <template v-for="agency in state.options.agencies">
+                                                    <template v-if="agency.value == Rights_entry_config.agency_id">
+                                                    {{ agency.label }}
+                                                    </template>
+                                                </template>
+                                            </span>
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                <span v-if="Rights_entry_config.is_annual == 1"
+                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
+                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                                </span>
+
+                                                <span v-if="Rights_entry_config.is_annual == 0"
+                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
+                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
+                                                </span>
+
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                          
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual' && tracked.grand_total != '0'" >
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                            {{tracked.grand_total}}
+                                                        </span>
+                                                        
+                                                    </template>
+                                                  
+                                                </template>
+                                           
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                           
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0'">
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                            {{tracked.grand_total}}
+                                                        </span>
+                                                    </template>
+                                                </template>
+                                           
+                                        </td>
+
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                           
+                                                <template v-for="tracked in state.Tracked_details">
+                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' && tracked.grand_total != '0'">
+                                                         <span 
+                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
+                                                            >
+                                                            {{tracked.grand_total}}
+                                                        </span>
+                                                    </template>
+                                                </template>
+                                           
+                                        </td>
+                                        
+                                     </template>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
         </div>
-
-       
-
 
     </div>
 
-    <div>
-        <div class=" mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-100 border-solid  rounded-xl border-blue-900 border-t border-b border-l border-r pb-4">
-
-            <div  class="sm:col-span-12 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h3 class="text-lg font-bold">AREA OF CHILD RIGHTS/LIFE STAGE: PARTICIPATION</h3>
-            </div>
-           
-            <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Accomplishments vs Projected</h2>
-               
-                <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
-                    :series="state.survivalOptions.series" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Percentage</h2>
-               
-                <ApexCharts type="area" height="500" width="80%" :options="state.survivalOptions"
-                    :series="state.survivalOptions.series_percentage" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Total Services Given</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPie"
-                    :series="state.survivalOptionsPie.series" />
-            </div>
-
-            <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Datasources</h2>
-               
-                <ApexCharts  height="400" width="80%" :options="state.survivalOptionsPieDatasource"
-                    :series="state.survivalOptionsPieDatasource.series" />
-            </div>
-
-        </div>
-
-       
-
-
-    </div>
 </template>
 
-<script setup>
+<script setup >
+
+import {
+       MenuItem
+} from '@headlessui/vue'
+
+import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
+import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
+import {Childrens_rightsService } from '~/components/api/Rights'; 
+import {rolesService } from '~/components/api/Roles'; 
+import {useUserStore} from '~/store/user'
+import {report_yearService } from '~/components/api/ReportYears'; 
+
 import ApexCharts from 'vue3-apexcharts';
-// import { dashboardService } from '@/components/api/DashboardService';
+
+const userStore = useUserStore()
 
 
+
+let currentPage = 1;
 definePageMeta({
     layout: 'main'
 })
-
-// onMounted(() => {
-//     fetchMonthlyComplainantCount()
-//     fetchMonthlyRespondentCount()
-//     fetchCaseTypes()
-// }) horizontal: true
 
 const fakedata = [21,45,70,46,31,31,37,13,32,33,
                   99,80,21,45,70,46,31,31,43,13,
@@ -193,12 +197,13 @@ const fakedata = [21,45,70,46,31,31,37,13,32,33,
                   13,13,32,33,99,80,32,33,99,80,
                   70,46,31,31,39,13,32,33,99,80,
                   32,33,99,80]
+
 const fakedata2 =[80,21,45,70,46,31,31,73,13,32,
                   33,99,80,21,45,70,46,31,31,43,
                   13,32,53,21,45,70,46,31,31,13,
                   13,32,33,99,80,32,33,99,80,70,
                   46,31,31,33,13,32,33,99,80,32,
-                  33,99,80,20]
+                  33,99,80,20]                  
 
 const dummyActualSurvival =[212,305,920,640,150,1456]
 const dummyProjectedSurvival =[250,345,1010,748,200,1500]
@@ -209,374 +214,134 @@ const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]
 
 
 
-const fakedata4 =[100,90,70,80,95,100]
-const fakedata5 =[70,100,100,50,60,100]
-
-const fakedata6 =[70,100,100,50,60,100,70,100,100,50,60,100,70,100,100,50,60,100, 10]
-
-const fakedata7 =[70,100,100,50,60,100, 55]
-                 
-
+               
 
 
 const state = reactive({
-    isPageLoading: false,
+   
+    Rights:[],
 
-    survivalOptions: {
-        
-        chart: {
-            type: 'area',
-            toolbar: {
-            show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        colors: ['#818cf8', '#f472b6'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
+    Tracked_details: [],
 
-        series: [ {
-            name: 'Accomplishment',
-            data: dummyActualSurvival
-        },{
-            name: 'Projected (Local) ',
-            data: dummyProjectedSurvival
-        },{
-            name: 'Projected (National) ',
-            data: dummyProjNationalSurvival
-        }
-        ],
-        series_percentage: [ {
-            name: 'Accomplishment Vs Local',
-            data: dummyPercentageActualvsLocal
-            
-        },{
-            name: 'Accomplishment Vs National',
-            data: dummyPercentageActualvsNAtional
-        }
-        ],
+    isViewModalOpen: false,
+    isAddModalOpen: false,
+    isEditModalOpen: false,
+    isAlertModalOpen: false,
+    alertmessage: '',
+    successcount: '',
+    errorcount:  '',
+    errormessage: '',
 
+    buttoncompute: false,
+    buttonsavenew: true,
 
+    buttoncomputeEdit: false,
+    buttonsaveEdit: true,
 
-        xaxis: {
-            categories: [
-            '1.1 Maternal Care and Services',
-                '1.2 Child Care and Services',
-                '1.3 Maternal and Child Mortality',
-                '1.4 Nutrition Services for Pre-school children',
-                '1.5 Nutrition Services for School Children',
-                '1.6 Access to Services and Facilities'
-            ],
-        },
-    },
+    roles:[{}],
 
    
-    survivalOptionsPie: {
-        
-        chart: {
-            width: 380,
-            type: 'pie',
-        },
-       
-        colors: ['#0891b2',
-            '#164e63',
-            '#4f46e5',
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        plotOptions: {
-          pie: {
-            dataLabels: {
-              offset: -5,
-            },
-          },
-        },
-        grid: {
-          padding: {
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-          },
-        },
-        dataLabels: {
-          formatter(val, opts) {
-            const name = opts.w.globals.labels[opts.seriesIndex]
-            return [name, val.toFixed(1) + '%']
-          },
-        },
-        legend: {
-          show: false,
-        },
+    male:[{}],
+    female:[{}],
+    total:[{}],
+    grand_total:[{}],
+    remarks:[{}],
 
-        series: [212,305,920,640,150,1456],
-        labels: [
-            '1.1 Maternal Care and Services',
-            '1.2 Child Care and Services',
-            '1.3 Maternal and Child Mortality',
-            '1.4 Nutrition Services for Pre-school children',
-            '1.5 Nutrition Services for School Children',
-            '1.6 Access to Services and Facilities'
+    edit_ids:[{}],
+    edit_female:[{}],
+    edit_total:[{}],
+    edit_male:[{}],
+    edit_grand_total:[{}],
+    edit_remarks:[{}],
+
+    view_male:[{}],
+    view_female:[{}],
+    view_total:[{}],
+    view_grand_total:[{}],
+    view_remarks:[{}],
+    view_selected_datasource: 1,
+
+    view_male_projected:[{}],
+    view_female_projected:[{}],
+    view_total_projected:[{}],
+    view_grand_total_projected:[{}],
+    view_remarks_projected:[{}],
+
+    totaled_from:[{}],
+    test: [{}], 
+
+    selected_entry_type: 'Actual',
+    selected_view_entry_type: 'Projected',
+    selected_year_id: 0,
+    datasource_id: 0,
+    datasources: [],
+
+    selected_edit_entry_type: 'Actual',
+    edit_selected_datasource: 0,
+
+    selected_rights_id: 0,
+    selected_sequence_header: '',
+    selected_description: '',
+    selected_group: 0,
+
+    report_details: [],
+    report_years: [],
+
+    selected_group_header: '',
+    Selected_Rights_entry_config_parent: [],
+    Selected_Rights_entry_config_group: [],
+
+    clicked_Rights_entry_config: [],
+    Selected_Rights_entry_config: [],
+    Rights_entry_config: [],
+    Rights_entry_config1: [],
+    Rights_entry_config2: [],
+    Rights_entry_config3: [],
+    Rights_entry_config4: [],
+    Rights_entry_config5: [],
+    Rights_entry_config6: [],
+    text: null,
+    selected_rights_id: 1,
+   
+    options: {
+        entry_type: [
+            { value: 'Actual', label: 'Actual' },
+            { value: 'Projected', label: 'Projected' },
+            { value: 'National Projected', label: 'National Projected' },
         ],
-
-
-
-        // xaxis: {
-        //     categories: [
-        //     '1.1 Maternal Care and Services',
-        //         '1.2 Child Care and Services',
-        //         '1.3 Maternal and Child Mortality',
-        //         '1.4 Nutrition Services for Pre-school children',
-        //         '1.5 Nutrition Services for School Children',
-        //         '1.6 Access to Services and Facilities'
-        //     ],
-        // },
-    },
-
-
-    survivalOptionsPieDatasource: {
-        
-        chart: {
-            width: 380,
-            type: 'pie',
-        },
-       
-        colors: ['#0891b2',
-            '#164e63',
-            '#4f46e5',
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: true
-        },
-        plotOptions: {
-          pie: {
-            dataLabels: {
-              offset: -5,
-            },
-          },
-        },
-        grid: {
-          padding: {
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-          },
-        },
-        dataLabels: {
-          formatter(val, opts) {
-            const name = opts.w.globals.labels[opts.seriesIndex]
-            return [name, val.toFixed(1) + '%']
-          },
-        },
-        legend: {
-          show: false,
-        },
-
-        series: [212],
-        labels: [
-            'City Health Office (CHO)',
+        view_entry_type: [
             
+            { value: 'Projected', label: 'Projected' },
+            { value: 'National Projected', label: 'National Projected' },
         ],
-
-    },
-
-
-
-
-    developmentOptions: {
-        
-        chart: {
-            type: 'bar',
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-
-        plotOptions: {
-            bar: {
-                horizontal: true
-            }
-        },
-
-        colors: ['#818cf8', '#f472b6'],
-        dataLabels: {
-            enabled: true
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-
-        series: [{
-            name: ' City Health Office (CHO)',
-            data: fakedata6
-        }, {
-            name: 'Department of Education (DepEd)',
-            data: fakedata6
-        },{
-            name: ' City Social Welfare and Development Office (CSWDO)',
-            data: fakedata6
-        }
+        is_disabled: [
+            { value: '1', label: 'Not Applicable' },
+            { value: '2', label: 'Enabled' },
         ],
-        xaxis: {
-            categories: [
-                '2.1 Early Childhood Care and Development',
-                '2.2 School Enrolment (kindergarten, primary, secondary)',
-                '2.3 Net Enrolment rate',
-                '2.4 Completion rate',
-                '2.5  School Leaver (Drop-outs) (5-17 years old)',
-                '2.6 School leaver rate (drop-out rate)',
+        years:[
+            {value: '1', label: 'Jan - Dec 2024' },
+            {value: '2', label: 'Jan - Dec 2025' },
 
-                '2.7 No. of IP children enrolled',
-                '2.8 Number of Muslim Children enrolled',
-                '2.9 No. of children with disabilities enrolled',
-                '2.10 Total number of children enrolled/passers in ALS',
-                '2.11 Total number of Out- of- school children and youth (OSCY)',
-                '2.12 Total number of OSCY enrolled in Elementary/Secondary School',
-                '2.13 Total number of OSCY enrolled in Alternative Learning System (ALS)',
-                '2.14. Total number of 5-17 years old OSCY assissted for enrollment',
-                '2.15 Total number of school dropouts reintegrated in formal school',
-                '2.16 Total number of school dropouts aged 5-17 years old',
-                '2.17 Total number of children aged 5-17 years old',
-                '2.18 Total number of barangays with play, recreational area',
-                '2.19 Total number of barangays with library, reading centers'
-            ],
-        },
-    },
-
-
-    ProtectionOptions: {
-        
-        chart: {
-            type: 'bar',
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-
-        plotOptions: {
-            bar: {
-                horizontal: true
-            }
-        },
-        colors: ['#0891b2',
-            '#164e63',
-            '#4f46e5',
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: true
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-
-        series: [ {
-            name: 'Department of Education (DepEd)',
-            data: fakedata7
-        },{
-            name: ' City Social Welfare and Development Office (CSWDO)',
-            data: fakedata7
-        },{
-            name: 'Davao City Police Office (DCPO) - Women and Children Protection Unit (WCPU)',
-            data: fakedata7
-
-        },{
-            name: 'Special Office for Childrens Concerns (SOCC) - Integrated Gender and Development Division (IGDD)',
-            data: fakedata7
-
-        }
-         
-         
-         
         ],
+        agencies: [
+            { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
+            { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
+            { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
+            { value: 4, label: 'CSWDO', color: 'bg-yellow-500 border-yellow-400' },
+            { value: 5, label: 'CHED', color: 'bg-purple-500 border-purple-400' },
+            { value: 6, label: 'DCPO', color: 'bg-pink-500 border-pink-400' },
+            { value: 7, label: 'DILG', color: 'bg-indigo-500 border-indigo-400' },
+            { value: 8, label: 'IGDD', color: 'bg-teal-500 border-teal-400' },
+            { value: 9, label: 'CBO', color: 'bg-orange-500 border-orange-400' },
+            { value: 10, label: 'CPDO', color: 'bg-gray-500 border-gray-400' },
+            { value: 11, label: 'CCRO', color: 'bg-lime-500 border-lime-400' },
+            { value: 12, label: 'CDRRMO', color: 'bg-rose-500 border-rose-400' },
+            { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
+            { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
+            { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
+        ]
 
-
-
-        xaxis: {
-            categories: [
-            '3.1 Violence Against Children',
-                '3.2 Total number of NGOs or SWADIS providing services',
-                '3.3 As available, total number of children affected by HIV/AIDS, MRRS-GCRV, emergencies and disasters, etc',
-                '3.4 Number of Barangays with institutionalized Barangay Council for the Protection of Children (BCPC)',
-                '3.5 Number of Barangays with Child Protection Policy',
-                '3.6 Number of functional BVAWC Desks',
-                '3.7 Number of Child Protection Working Groups established'
-            ],
-        },
-    },
-
-
-
-
-
-
-    populationAreaOptions: {
-        chart: {
-            type: 'area',
-            toolbar: {
-            show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        colors: ['#818cf8', '#f472b6'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        series: [{
-            name: 'Male',
-            data: fakedata
-        }, {
-            name: 'Female',
-            data: fakedata2
-        }],
-
-
-        xaxis: {
-            categories: [
-                '1.1 Maternal Care and Services',
-                '1.2 Child Care and Services',
-                '1.3 Maternal and Child Mortality',
-                '1.4 Nutrition Services for Pre-school children',
-                '1.5 Nutrition Services for School Children',
-                '1.6 Access to Services and Facilities'
-                
-            ],
-        },
+           
     },
 
     populationHoriOptions: {
@@ -676,185 +441,276 @@ const state = reactive({
         },
     },
 
-
-
-    casesBarOptions: {
-        chart: {
-            type: 'bar',
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        plotOptions: {
-            bar: {
-                barHeight: '100%',
-                distributed: true,
-                horizontal: true,
-                dataLabels: {
-                    position: 'bottom'
-                },
-            }
-        },
-        series: [{
-            name: 'Male',
-            data: []
-        },{
-            name: 'Female',
-            data: []
-        }
-           
-        ],
-        colors: [
-            '#fb7185',
-            '#f472b6',
-            '#e879f9',
-            '#c084fc',
-            '#a78bfa',
-            '#818cf8',
-            '#60a5fa',
-            '#38bdf8',
-            '#22d3ee',
-            '#34d399',
-            '#4ade80',
-            '#a3e635',
-            '#facc15',
-            '#fbbf24',
-            '#fb923c',
-            '#f87171',
-            '#a8a29e',
-            '#a3a3a3',
-            '#a1a1aa',
-            '#9ca3af',
-            '#94a3b8'
-        ],
-        dataLabels: {
-            enabled: true,
-            textAnchor: 'start',
-            style: {
-                colors: ['#fff']
-            },
-            formatter: function (val, opt) {
-                return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val
-            },
-            offsetX: 0,
-            dropShadow: {
-                enabled: true
-            }
-        },
-        stroke: {
-            width: 1,
-
-
-colors: ['#fff']
-        },
-        xaxis: {
-            categories: [],
-        },
-        yaxis: {
-            labels: {
-                show: false
-            }
-        },
-        tooltip: {
-            theme: 'dark',
-            x: {
-                show: false
-            },
-            y: {
-                title: {
-                    formatter: function () {
-                        return ''
-                    }
-                }
-            }
-        }
-    },
-
-
-    respondentOptions: {
+     survivalOptions: {
+        
         chart: {
             type: 'area',
             toolbar: {
-                show: false
+            show: false
             },
             zoom: {
                 enabled: false
             }
         },
-        colors: ['#FF0000'],
+        colors: ['#818cf8', '#f472b6'],
         dataLabels: {
-            enabled: true
+            enabled: false
         },
         stroke: {
             curve: 'smooth'
         },
-        series: [{
-            name: 'respondent',
-            data: []
-        }],
+
+        series: [ {
+            name: 'Accomplishment',
+            data: dummyActualSurvival
+        },{
+            name: 'Projected (Local) ',
+            data: dummyProjectedSurvival
+        },{
+            name: 'Projected (National) ',
+            data: dummyProjNationalSurvival
+        }
+        ],
+        series_percentage: [ {
+            name: 'Accomplishment Vs Local',
+            data: dummyPercentageActualvsLocal
+            
+        },{
+            name: 'Accomplishment Vs National',
+            data: dummyPercentageActualvsNAtional
+        }
+        ],
+
+
+
         xaxis: {
             categories: [
-                'Jan', 'Feb', 'Mar',
-                'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep',
-                'Oct', 'Nov', 'Dec',
+            '1.1 Maternal Care and Services',
+                '1.2 Child Care and Services',
+                '1.3 Maternal and Child Mortality',
+                '1.4 Nutrition Services for Pre-school children',
+                '1.5 Nutrition Services for School Children',
+                '1.6 Access to Services and Facilities'
             ],
         },
     },
-    error: null
+
 })
 
+onMounted(() => {
+    fetchreportyear()
+    fetchRights()
+    fetchRights_entry_config()
+    fetchrole()
+    fetchReports_Details_Actuals()
+   
+})
 
-// state.populationOptions.series[0].data = fakedata
-// state.casesBarOptions.series[0].data = fakedata2
-// state.respondentOptions.series[0].data = fakedata
+async function fetchreportyear() {
+    try {
+           const response = await report_yearService.getReportYears()
+        if (response.data) {
+            
+            state.report_years.data = response.data
+            var data = [];
+            var datasources = [];
+            if (state.report_years.data != null) {
+                
+                datasources = state.report_years.data
 
-// async function fetchMonthlyComplainantCount() {
-//     state.isPageLoading = true
-//     try {
-//         const response = await dashboardService.getComplainantMonthlyCount()
-//         if (response.data) {
-//             state.complainantOptions.series[0].data = response.data
-//         }
-//     } catch (error) {
-//         state.error = error
-//     }
-//     state.isPageLoading = false
-// }
+                for (const i in datasources) {
+                    const value = datasources[i].id;
+                    if (!datasources.includes(value)) {
 
-// async function fetchMonthlyRespondentCount() {
-//     state.isPageLoading = true
-//     try {
-//         const response = await dashboardService.getRespondentMonthlyCount()
-//         if (response.data) {
-//             state.respondentOptions.series[0].data = response.data
-//         }
-//     } catch (error) {
-//         state.error = error
-//     }
-//     state.isPageLoading = false
-// }
+                        if(datasources[i].status == 1){
+                        data[i] = { "value": datasources[i].id, "label": datasources[i].name };
+                        }
+                    }
+                }
+                state.options.report_years = data;
+            }
 
-// async function fetchCaseTypes() {
-//     state.isPageLoading = true
-//     try {
-//         const response = await dashboardService.getCaseTypes()
-//         if (response.data) {
-//             response.data.cases.forEach(item => {
-//                 state.casesBarOptions.xaxis.categories.push(item)
-//             })
-//             state.casesBarOptions.series[0].data = response.data.count
-//         }
-//     } catch (error) {
-//         state.error = error
-//     }
-//     state.isPageLoading = false
-// }
-
-function pageLoads(value) {
-    state.isPageLoading = value
+        }
+    } catch (error) { 
+        //console.log(error)
+    }
 }
+
+async function fetchrole() {
+    try {
+       
+        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        //console.log(response)
+        if (response.data) {
+            state.roles = response.data
+         
+            //console.log(state.roles)
+        }
+    } catch (error) { 
+        //console.log(error)
+    }
+}
+
+function getclicked(Rights_entry_config){
+  
+     state.selected_sequence_header = Rights_entry_config.sequence_header
+     state.selected_description = Rights_entry_config.description
+     state.selected_group_header = Rights_entry_config.group_header
+     state.selected_group = Rights_entry_config.group
+     state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
+     //console.log(state.Selected_Rights_entry_config_group.data)
+     if (state.Selected_Rights_entry_config_group.data != null){ 
+       var data = [];
+       var datasources = [];
+       datasources = state.Selected_Rights_entry_config_group.data[0].datasources
+       
+            for (const i in datasources){
+                const value = datasources[i].agency_id;
+                if (!datasources.includes(value)){
+                    data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
+                }
+            }
+        state.options.datasources = data;
+        
+        }
+}
+
+function changeData(){
+    switch (state.selected_rights_id){
+        case(0):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config
+        break;
+        case(1):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config1
+        break;
+        case(2):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config2
+        break;
+        case(3):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config3
+        break;
+        case(4):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config4
+        break;
+        case(5):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config5
+        break;
+        case(6):
+        state.Selected_Rights_entry_config  = state.Rights_entry_config6
+        break;
+        default:
+        state.Selected_Rights_entry_config  = state.Rights_entry_config
+        //console.log(state.Selected_Rights_entry_config)
+
+    }
+}
+
+async function fetchRights(){
+    try {
+        let params = {
+            page: currentPage
+        }
+        const response = await Childrens_rightsService.getRights(params)
+       
+        if (response.data) {
+            state.Rights.data = response.data
+            //console.log(state.Rights.data[0].description)
+        }
+
+       var data = [];
+       for (const i in state.Rights.data){
+
+        data[i] =  { "value":  state.Rights.data[i].id, "label": state.Rights.data[i].description };
+        
+        }
+
+        state.options.rights = data;
+        //console.log( state.options.rights)
+
+    } catch (error) {
+        //console.log(error)
+    }
+}
+
+async function fetchRights_entry_config() {
+    try {
+        let params = {
+            page: currentPage
+        }
+        const response = await Rights_entry_configServices.getRights_entry_config(params)
+        //console.log(response)
+        if (response.data) {
+            state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            //console.log(response.data)
+        }
+    } catch (error) { 
+        //.log(error)
+    }
+}
+
+
+//---------------------------------------------------View Entry Functions--------------------------------------------------------------
+
+
+async function fetchReports_Details_Actuals() {
+    try {
+       
+        const response = await reportDetailsGroupsService.getReportDetailsGroups()
+       
+       
+        //console.log(response)
+        
+        if (response.data) {
+
+        
+            state.report_details.data = response.data
+          
+            if (response) {
+                const seen = new Set();
+                var data = [];
+               for (const item of state.report_details.data) {
+                    const key = `${item.group_id}|${item.entry_type}|${item.report_year_id}||${item.grand_total} `;
+                    console.log('key = ', key)
+                    if (!seen.has(key)){
+                         seen.add(key)
+                        data.push({
+                            group_id: item.group_id,
+                            entry_type: item.entry_type,
+                            report_year_id: item.report_year_id,
+                            grand_total: item.grand_total
+
+                            
+                        });
+                    }
+                }
+
+                state.Tracked_details = data;
+                console.log('tracked_details = ', state.Tracked_details)
+
+            } else {
+                alert('No data found for Tracker. ')  
+            }
+
+        }
+    } catch (error) {
+        //console.log(error)
+    }
+}
+
+
+
+
+//---------------------------------------------------View Entry Functions--------------------------------------------------------------
+
+
+
+
+
+
 </script>
