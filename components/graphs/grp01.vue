@@ -117,9 +117,6 @@ OptionsPieDatasource: {
 
 async  function fetchReports_Details_Actuals() { // main fetching function for actuals
 
-    
-
-
     try {
      
         //await reportDetailsGroupsService.getReportDetailsGroups()

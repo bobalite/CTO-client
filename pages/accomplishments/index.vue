@@ -32,12 +32,46 @@
 
         </div>
 
-           <!-- <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
-                <h2 class="text-lg font-bold">Accomplishments vs Projected and National Projected</h2>
+        <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
+
+            <ModalAlert :show="state.isGraphModalOpen" :close="state.closeGraphModal" :title=state.alertmessage>
+               
+                <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+                    :series="state.graphseries_all" />
+
+                <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
+
+                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
+                    <GridCell class="sm:col-span-8  pb-4" :displaytext="''" />
+
+                    <!-- <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
+                        :displaytext="'Rows Inserted:'" />
+                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.successcount />
+
+                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
+                        :displaytext="'Errors Encountered:'" />
+                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.errorcount />
+
+
+                    <GridCell class="sm:col-span-10 " :displaytext="''" /> -->
+
+
+
+
+
+
+                    <button
+                        class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
+                        @click="closeGraphModal"> Close </button>
+
+                </div>
+
+            </ModalAlert>
+            <!-- <h2 class="text-lg font-bold">Accomplishments vs Projected and National Projected</h2>
                
                 <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
-                    :series="state.survivalOptions.series" />
-            </div> -->
+                    :series="state.survivalOptions.series" /> -->
+        </div>
 
 
         <div class="mt-8 flow-root">
@@ -55,38 +89,36 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Agency</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Entry Type</th>    
+                                        Entry Type</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Actual</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Projected</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         National</th>
-                                
+
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr v-for="Rights_entry_config in state.Selected_Rights_entry_config.data"
-                                    v-bind:key=Rights_entry_config.id >
+                                    v-bind:key=Rights_entry_config.id @click="getclicked(Rights_entry_config)">
 
                                     <template v-if="Rights_entry_config.tier_level == 1">
-                                         <td
+                                        <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             {{ Rights_entry_config.group }}
                                         </td>
-                                        <td
-                                            class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                        <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             {{ Rights_entry_config.description }}
                                         </td>
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <span 
-                                               
+                                            <span
                                                 class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
                                                 :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
                                                 <template v-for="agency in state.options.agencies">
                                                     <template v-if="agency.value == Rights_entry_config.agency_id">
-                                                    {{ agency.label }}
+                                                        {{ agency.label }}
                                                     </template>
                                                 </template>
                                             </span>
@@ -94,66 +126,72 @@
 
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                                <span v-if="Rights_entry_config.is_annual == 1"
-                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
-                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
-                                                </span>
+                                            <span v-if="Rights_entry_config.is_annual == 1"
+                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
+                                                {{ Rights_entry_config.is_annual == 1 ? 'A' : 'Q' }}
+                                            </span>
 
-                                                <span v-if="Rights_entry_config.is_annual == 0"
-                                                    class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
-                                                    {{ Rights_entry_config.is_annual  == 1 ? 'A' : 'Q' }}
-                                                </span>
+                                            <span v-if="Rights_entry_config.is_annual == 0"
+                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
+                                                {{ Rights_entry_config.is_annual == 1 ? 'A' : 'Q' }}
+                                            </span>
 
                                         </td>
 
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                          
-                                                <template v-for="tracked in state.Tracked_details">
-                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual' && tracked.grand_total != '0'" >
-                                                         <span 
-                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
-                                                            >
-                                                            {{tracked.grand_total}}
-                                                        </span>
-                                                        
-                                                    </template>
-                                                  
+
+                                            <template v-for="tracked in state.Tracked_details">
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual' && tracked.grand_total != '0'">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
+
                                                 </template>
-                                           
+
+                                            </template>
+
                                         </td>
 
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                           
-                                                <template v-for="tracked in state.Tracked_details">
-                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0'">
-                                                         <span 
-                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
-                                                            >
-                                                            {{tracked.grand_total}}
-                                                        </span>
-                                                    </template>
+
+                                            <template v-for="tracked in state.Tracked_details">
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0'">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
                                                 </template>
-                                           
+                                            </template>
+
                                         </td>
 
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                           
-                                                <template v-for="tracked in state.Tracked_details">
-                                                    <template v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' && tracked.grand_total != '0'">
-                                                         <span 
-                                                            class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2"
-                                                            >
-                                                            {{tracked.grand_total}}
-                                                        </span>
-                                                    </template>
+
+                                            <template v-for="tracked in state.Tracked_details">
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' && tracked.grand_total != '0'">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
                                                 </template>
-                                           
+                                            </template>
+
                                         </td>
-                                        
-                                     </template>
+
+                                        <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                            <NuxtLink @click="OpenGraphModal(Rights_entry_config)">
+                                                <IconGraph />
+                                            </NuxtLink>
+                                        </td>
+
+                                    </template>
                                 </tr>
                             </tbody>
                         </table>
@@ -191,36 +229,30 @@ definePageMeta({
     layout: 'main'
 })
 
-const fakedata = [21,45,70,46,31,31,37,13,32,33,
-                  99,80,21,45,70,46,31,31,43,13,
-                  32,33,99,80,21,45,70,46,31,31,
-                  13,13,32,33,99,80,32,33,99,80,
-                  70,46,31,31,39,13,32,33,99,80,
-                  32,33,99,80]
-
-const fakedata2 =[80,21,45,70,46,31,31,73,13,32,
-                  33,99,80,21,45,70,46,31,31,43,
-                  13,32,53,21,45,70,46,31,31,13,
-                  13,32,33,99,80,32,33,99,80,70,
-                  46,31,31,33,13,32,33,99,80,32,
-                  33,99,80,20]                  
-
-const dummyActualSurvival =[212,305,920,640,150,1456]
-const dummyProjectedSurvival =[250,345,1010,748,200,1500]
-const dummyProjNationalSurvival =[240,305,950,700,120,1400]
 
 const dummyPercentageActualvsLocal =[84.8,88.4,91.1,85.6,75,97]
 const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]
 
+const years = [2021,2022,2023,2024,2025]
 
+let Actuals = [0,0,0,0,0]
+let Projected = [0,0,0,0,0]
+let NationalProjected = [0,0,0,0,0]
 
-               
 
 
 const state = reactive({
-   
-    Rights:[],
 
+
+
+    Actuals: [0,0,0,0,0],
+    Projected: [0,0,0,0,0],
+    NationalProjected: [0,0,0,0,0], 
+
+    graphseries_all: [],
+
+    isGraphModalOpen: false, 
+    Rights:[],
     Tracked_details: [],
 
     isViewModalOpen: false,
@@ -302,6 +334,16 @@ const state = reactive({
     Rights_entry_config6: [],
     text: null,
     selected_rights_id: 1,
+
+
+    categories: ['2020',  
+                '2021',
+                '2022',
+                '2023',
+                '2024',
+                '2025',],
+
+
    
     options: {
         entry_type: [
@@ -346,7 +388,7 @@ const state = reactive({
 
     populationHoriOptions: {
         chart: {
-            type: 'bar',
+            type: 'line',
             stacked: false,
             toolbar: {
                 show: false
@@ -358,7 +400,7 @@ const state = reactive({
 
         plotOptions: {
             bar: {
-                horizontal: true
+                horizontal: false
             }
         },
         colors: ['#0891b2',
@@ -375,101 +417,25 @@ const state = reactive({
         stroke: {
             curve: 'smooth'
         },
-        
-        group: {
+
+        title: {
+            text: 'Actual vs Projected and National Projected Comparisons',
+            align: 'center',
             style: {
-              fontSize: '10px',
-              fontWeight: 700
-            },
-            groups: [
-              { title: 'NON IP/MORO', cols: 2 },
-              { title: 'MORO', cols: 2 },
-              { title: 'IP', cols: 2 },
-              { title: 'BADJAO', cols: 2 },
-            ]
-          },    
-
-
-        series: [
-            {
-            name: 'Male NON IP/MORO',
-            data: fakedata
-            }, 
-            {
-            name: 'Female NON IP/MORO',
-            data: fakedata2
-            },
-            {
-            name: 'Male MORO',
-            data: fakedata
-            }, 
-            {
-            name: 'Female MORO',
-            data: fakedata2
-            },
-            {
-            name: 'Male IP',
-            data: fakedata
-            }, 
-            {
-            name: 'Female IP',
-            data: fakedata2
-            },
-            {
-            name: 'Male BADJAO',
-            data: fakedata
-            }, 
-            {
-            name: 'Female BADJAO',
-            data: fakedata2
-            },
-
-           
-    
-    
-        ],
-        xaxis: {
-            categories: [
-                '1.1 Maternal Care and Services',
-                '1.2 Child Care and Services',
-                '1.3 Maternal and Child Mortality',
-                '1.4 Nutrition Services for Pre-school children',
-                '1.5 Nutrition Services for School Children',
-                '1.6 Access to Services and Facilities'
-                
-            ],
-        },
-    },
-
-     survivalOptions: {
+                fontSize: '20px',
+                fontWeight: 'bold'
+            }},
         
-        chart: {
-            type: 'area',
-            toolbar: {
-            show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        colors: ['#818cf8', '#f472b6'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-
-        series: [ {
+           series: [ {
             name: 'Accomplishment',
-            data: dummyActualSurvival
-        },{
+            data: Actuals
+            },{
             name: 'Projected (Local) ',
-            data: dummyProjectedSurvival
-        },{
+            data: Projected
+            },{
             name: 'Projected (National) ',
-            data: dummyProjNationalSurvival
-        }
+            data: NationalProjected
+            }
         ],
         series_percentage: [ {
             name: 'Accomplishment Vs Local',
@@ -480,20 +446,12 @@ const state = reactive({
             data: dummyPercentageActualvsNAtional
         }
         ],
-
-
-
         xaxis: {
-            categories: [
-            '1.1 Maternal Care and Services',
-                '1.2 Child Care and Services',
-                '1.3 Maternal and Child Mortality',
-                '1.4 Nutrition Services for Pre-school children',
-                '1.5 Nutrition Services for School Children',
-                '1.6 Access to Services and Facilities'
-            ],
+            categories: years
         },
     },
+
+
 
 })
 
@@ -553,26 +511,30 @@ async function fetchrole() {
 
 function getclicked(Rights_entry_config){
   
-     state.selected_sequence_header = Rights_entry_config.sequence_header
-     state.selected_description = Rights_entry_config.description
-     state.selected_group_header = Rights_entry_config.group_header
-     state.selected_group = Rights_entry_config.group
-     state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
-     //console.log(state.Selected_Rights_entry_config_group.data)
-     if (state.Selected_Rights_entry_config_group.data != null){ 
-       var data = [];
-       var datasources = [];
-       datasources = state.Selected_Rights_entry_config_group.data[0].datasources
+    //  state.selected_sequence_header = Rights_entry_config.sequence_header
+    //  state.selected_description = Rights_entry_config.description
+    //  state.selected_group_header = Rights_entry_config.group_header
+    //  state.selected_group = Rights_entry_config.group
+    //  state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
+     
+     
+    //  console.log('CLICKED')
+
+
+    //  if (state.Selected_Rights_entry_config_group.data != null){ 
+    //    var data = [];
+    //    var datasources = [];
+    //    datasources = state.Selected_Rights_entry_config_group.data[0].datasources
        
-            for (const i in datasources){
-                const value = datasources[i].agency_id;
-                if (!datasources.includes(value)){
-                    data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
-                }
-            }
-        state.options.datasources = data;
+    //         for (const i in datasources){
+    //             const value = datasources[i].agency_id;
+    //             if (!datasources.includes(value)){
+    //                 data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
+    //             }
+    //         }
+    //     state.options.datasources = data;
         
-        }
+    //     }
 }
 
 function changeData(){
@@ -667,15 +629,13 @@ async function fetchReports_Details_Actuals() {
         //console.log(response)
         
         if (response.data) {
-
-        
             state.report_details.data = response.data
-          
-            if (response) {
+            console.log('report_details = ', state.report_details.data)
+              if (state.report_details) {
                 const seen = new Set();
                 var data = [];
                for (const item of state.report_details.data) {
-                    const key = `${item.group_id}|${item.entry_type}|${item.report_year_id}||${item.grand_total} `;
+                    const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
                     console.log('key = ', key)
                     if (!seen.has(key)){
                          seen.add(key)
@@ -683,19 +643,37 @@ async function fetchReports_Details_Actuals() {
                             group_id: item.group_id,
                             entry_type: item.entry_type,
                             report_year_id: item.report_year_id,
+                            report_year: item.report_year,
                             grand_total: item.grand_total
-
-                            
                         });
                     }
+
+                    // for(const i in years){
+                    //     if(item.report_year == years[i]){
+                    //         if(item.entry_type == 'Actual' && item.grand_total != '0'){
+                    //             Actuals[i] = item.grand_total
+                             
+                    //         }else if(item.entry_type == 'Projected' && item.grand_total != '0'){
+                    //             Projected[i] = item.grand_total
+                             
+                    //         }else if(item.entry_type == 'National Projected' && item.grand_total != '0'){
+                    //             NationalProjected[i] = item.grand_total
+                             
+                    //         }
+                    //     }
+                    // }
                 }
 
                 state.Tracked_details = data;
-                console.log('tracked_details = ', state.Tracked_details)
+
+
+                //console.log('Actuals = ', state.Actuals)
 
             } else {
                 alert('No data found for Tracker. ')  
             }
+
+
 
         }
     } catch (error) {
@@ -710,7 +688,83 @@ async function fetchReports_Details_Actuals() {
 
 
 
+//---------------------------------------------------Graph Modal-----------------------------------------------------------------------
 
+function closeGraphModal(){
+    state.isGraphModalOpen = false
+} 
+
+
+function OpenGraphModal(Rights_entry_config){
+
+    state.selected_group = Rights_entry_config.group
+
+
+
+    state.Actuals = [0,0,0,0,0]
+    state.Projected = [0,0,0,0,0]
+    state.NationalProjected = [0,0,0,0,0]
+
+    console.log('selected_group = ', state.selected_group)
+
+            if (state.report_details) {
+                const seen = new Set();
+                var data = [];
+               for (const item of state.report_details.data) {
+                    const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
+                    console.log('key = ', key)
+                    if (!seen.has(key)){
+                         seen.add(key)
+                        data.push({
+                            group_id: item.group_id,
+                            entry_type: item.entry_type,
+                            report_year_id: item.report_year_id,
+                            report_year: item.report_year,
+                            grand_total: item.grand_total
+                        });
+                    }
+
+                    for(const i in years){
+                        if(item.report_year == years[i]){
+                            if(item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group){
+                                state.Actuals[i] = item.grand_total
+                                console.log( 'group_id',item.group_id + ' ' +  state.selected_group)
+                             
+                            }else if(item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group){
+                                state.Projected[i] = item.grand_total
+                             
+                            }else if(item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group){
+                                state.NationalProjected[i] = item.grand_total
+                             
+                            }
+                        }
+                    }
+                }
+
+                state.Tracked_details = data;
+
+                // Actuals = state.Actuals 
+                // Projected = state.Projected
+                // NationalProjected = state.NationalProjected
+
+                state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
+                state.graphseries_all[1] = { name: "Projected", data: state.Projected };
+                state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
+
+
+                console.log('Actuals = ', state.graphseries_all)
+            } else {
+                
+                state.Actuals = [0, 0, 0, 0, 0]
+                state.Projected = [0, 0, 0, 0, 0]
+                state.NationalProjected = [0, 0, 0, 0, 0]
+                alert('No data found for Tracker. ')
+
+            }
+
+    state.isGraphModalOpen = true
+}
+//---------------------------------------------------Graph Modal-----------------------------------------------------------------------
 
 
 </script>
