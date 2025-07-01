@@ -16,7 +16,7 @@
                     <p>Select Report Year</p>
                     <div>
                         <FormSelect name="selected_year" v-model="state.selected_year_id"
-                            :options="state.options.report_years" />
+                            :options="state.options.report_years" @click="changeYear()" />
                     </div>
                 </div>
 
@@ -28,6 +28,14 @@
                             @click="changeData()" />
                     </div>
                 </div>
+                <div class="sm:flex-auto">
+
+                    <p>Select Graph Type</p>
+                    <div>
+                        <FormSelect name="selected_year" v-model="state.selected_graph_type"
+                            :options="state.options.selected_graph_type" />
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -35,9 +43,10 @@
         <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
 
             <ModalAlert :show="state.isGraphModalOpen" :close="state.closeGraphModal" :title=state.alertmessage>
-               
-                <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
-                    :series="state.graphseries_all" />
+
+
+                <ApexCharts :type="state.selected_graph_type" height="400" width="100%"
+                    :options="state.populationHoriOptions" :series="state.graphseries_all" />
 
                 <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
 
@@ -143,7 +152,15 @@
 
                                             <template v-for="tracked in state.Tracked_details">
                                                 <template
-                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual' && tracked.grand_total != '0'">
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year == state.selected_year  && tracked.entry_type == 'Actual' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 1 ">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
+
+                                                </template>
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id  && tracked.entry_type == 'Actual' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 0">
                                                     <span
                                                         class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
                                                         {{tracked.grand_total}}
@@ -160,7 +177,15 @@
 
                                             <template v-for="tracked in state.Tracked_details">
                                                 <template
-                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0'">
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year == state.selected_year && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 1">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
+                                                </template>
+
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 0">
                                                     <span
                                                         class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
                                                         {{tracked.grand_total}}
@@ -175,7 +200,15 @@
 
                                             <template v-for="tracked in state.Tracked_details">
                                                 <template
-                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' && tracked.grand_total != '0'">
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year == state.selected_year && tracked.entry_type == 'National Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 1">
+                                                    <span
+                                                        class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
+                                                        {{tracked.grand_total}}
+                                                    </span>
+                                                </template>
+
+                                                <template
+                                                    v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'National Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 0">
                                                     <span
                                                         class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
                                                         {{tracked.grand_total}}
@@ -233,7 +266,7 @@ definePageMeta({
 const dummyPercentageActualvsLocal =[84.8,88.4,91.1,85.6,75,97]
 const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]
 
-const years = [2021,2022,2023,2024,2025]
+const years = [2021,2022,2023,2024,2025,2026]
 
 let Actuals = [0,0,0,0,0]
 let Projected = [0,0,0,0,0]
@@ -248,7 +281,7 @@ const state = reactive({
     Actuals: [0,0,0,0,0],
     Projected: [0,0,0,0,0],
     NationalProjected: [0,0,0,0,0], 
-
+    selected_graph_type: 'bar',
     graphseries_all: [],
 
     isGraphModalOpen: false, 
@@ -305,6 +338,7 @@ const state = reactive({
     selected_entry_type: 'Actual',
     selected_view_entry_type: 'Projected',
     selected_year_id: 0,
+    selected_year: '',
     datasource_id: 0,
     datasources: [],
 
@@ -381,7 +415,13 @@ const state = reactive({
             { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
             { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
             { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
-        ]
+        ],selected_graph_type: [
+            { value: 'bar', label: 'Bar' },
+            { value: 'line', label: 'Line' },
+            { value: 'area', label: 'Area' },
+            
+        
+        ],
 
            
     },
@@ -481,7 +521,7 @@ async function fetchreportyear() {
                     if (!datasources.includes(value)) {
 
                         if(datasources[i].status == 1){
-                        data[i] = { "value": datasources[i].id, "label": datasources[i].name };
+                        data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
                         }
                     }
                 }
@@ -567,6 +607,17 @@ function changeData(){
     }
 }
 
+function changeYear() {
+    //console.log('changeYear')
+    state.selected_year_id = state.selected_year_id
+
+
+    state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
+    console.log('selected_year = ', state.selected_year)
+
+    
+}
+
 async function fetchRights(){
     try {
         let params = {
@@ -630,13 +681,13 @@ async function fetchReports_Details_Actuals() {
         
         if (response.data) {
             state.report_details.data = response.data
-            console.log('report_details = ', state.report_details.data)
+            //console.log('report_details = ', state.report_details.data)
               if (state.report_details) {
                 const seen = new Set();
                 var data = [];
                for (const item of state.report_details.data) {
                     const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
-                    console.log('key = ', key)
+                    //console.log('key = ', key)
                     if (!seen.has(key)){
                          seen.add(key)
                         data.push({
@@ -647,28 +698,9 @@ async function fetchReports_Details_Actuals() {
                             grand_total: item.grand_total
                         });
                     }
-
-                    // for(const i in years){
-                    //     if(item.report_year == years[i]){
-                    //         if(item.entry_type == 'Actual' && item.grand_total != '0'){
-                    //             Actuals[i] = item.grand_total
-                             
-                    //         }else if(item.entry_type == 'Projected' && item.grand_total != '0'){
-                    //             Projected[i] = item.grand_total
-                             
-                    //         }else if(item.entry_type == 'National Projected' && item.grand_total != '0'){
-                    //             NationalProjected[i] = item.grand_total
-                             
-                    //         }
-                    //     }
-                    // }
                 }
 
                 state.Tracked_details = data;
-
-
-                //console.log('Actuals = ', state.Actuals)
-
             } else {
                 alert('No data found for Tracker. ')  
             }
@@ -698,7 +730,7 @@ function closeGraphModal(){
 function OpenGraphModal(Rights_entry_config){
 
     state.selected_group = Rights_entry_config.group
-
+    const type = Rights_entry_config.is_annual
 
 
     state.Actuals = [0,0,0,0,0]
@@ -706,6 +738,7 @@ function OpenGraphModal(Rights_entry_config){
     state.NationalProjected = [0,0,0,0,0]
 
     console.log('selected_group = ', state.selected_group)
+    console.log('type = ', type)
 
             if (state.report_details) {
                 const seen = new Set();
@@ -724,24 +757,45 @@ function OpenGraphModal(Rights_entry_config){
                         });
                     }
 
-                    for(const i in years){
-                        if(item.report_year == years[i]){
-                            if(item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group){
-                                state.Actuals[i] = item.grand_total
-                                console.log( 'group_id',item.group_id + ' ' +  state.selected_group)
-                             
-                            }else if(item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group){
-                                state.Projected[i] = item.grand_total
-                             
-                            }else if(item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group){
-                                state.NationalProjected[i] = item.grand_total
-                             
+                    if (type == 1){ // annual
+                        
+                        for (const i in years) {
+                            if (item.report_year == years[i]) {
+                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group) {
+                                    state.Actuals[i] = item.grand_total
+                                    console.log('group_id', item.group_id + ' ' + state.selected_group)
+
+                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
+                                    state.Projected[i] = item.grand_total
+
+                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
+                                    state.NationalProjected[i] = item.grand_total
+
+                                }
+                            }
+                        }
+                    }else{ // quarterly
+                         for (const i in years) {
+                            if (item.report_year == years[i]) {
+                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
+                                    state.Actuals[i] = item.grand_total
+                                    console.log('group_id', item.group_id + ' ' + state.selected_group)
+
+                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
+                                    state.Projected[i] = item.grand_total
+
+                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
+                                    state.NationalProjected[i] = item.grand_total
+
+                                }
                             }
                         }
                     }
                 }
 
                 state.Tracked_details = data;
+
+                console.log('Tracked_details = ', state.Tracked_details)
 
                 // Actuals = state.Actuals 
                 // Projected = state.Projected

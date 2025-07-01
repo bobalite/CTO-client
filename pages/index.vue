@@ -97,11 +97,14 @@
 
                             <!-- Logos in a grid -->
                             <div
-                                style="display: grid; grid-template-columns: 1fr 1fr; justify-items: center; align-items: center;">
+                                style="display: grid; grid-template-columns: 1fr 1fr 1fr; justify-items: center; align-items: center;">
+                                <!-- Logo 3 -->
+                                <img src="/assets/images/dcplinado.png" style="width: 230px; height: 100px; ">
                                 <!-- Logo 1 -->
                                 <img src="/assets/images/davao.png" style="width: 100px; height: auto; ">
                                 <!-- Logo 2 -->
                                 <img src="/assets/images/Davao_City_Logo.png" style="width: 230px; height: 75px; ">
+                               
                             </div>
 
                             <h2 style="font-size: clamp(24px, 4vw, 36px); padding-top: 24px; color: white">

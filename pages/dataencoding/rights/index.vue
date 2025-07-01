@@ -17,7 +17,7 @@
                     <p>Select Report Year</p>
                     <div>
                         <FormSelect name="selected_year" v-model="state.selected_year_id"
-                            :options="state.options.report_years" />
+                            :options="state.options.report_years" @click="changeYear()"/>
                     </div>
                 </div>
 
@@ -588,6 +588,7 @@ const state = reactive({
     selected_group_header: '',
     Selected_Rights_entry_config_parent: [],
     Selected_Rights_entry_config_group: [],
+    selected_year: '',
 
     clicked_Rights_entry_config: [],
     Selected_Rights_entry_config: [],
@@ -684,6 +685,12 @@ async function fetchreportyear() {
     } catch (error) { 
         //console.log(error)
     }
+}
+
+function changeYear() {
+    state.selected_year_id = state.selected_year_id
+    state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
+    console.log('selected_year = ', state.selected_year)
 }
 
 
@@ -991,44 +998,31 @@ async function check_fetchReports_Details_Add() {
 
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
 
-        // console.log('response -add', response)
+        //  console.log('response -add', response)
+        //  console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year) 
+        //  console.log('state.selected_year_id -add',  state.selected_year_id)    
+        //  console.log('state.selected_submission -add',  state.selected_submission) 
 
-        // console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year) 
-        // console.log('state.selected_year_id -add',  state.selected_year_id)    
-        // console.log('state.selected_submission -add',  state.selected_submission) 
 
-        if (state.selected_submission == 1) {
-            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year === state.report_years.data[state.selected_year_id].year && filtered_detail.is_active === 1)
-        } else {
+        if (state.selected_submission == 1) { // if annual
+            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year === state.selected_year && filtered_detail.is_active === 1)
+        } else { // if quarterly
             state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
-
         }
-       
-       
-        // if ( ){
-
-        // }
+           
         
-        
-        // console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year)   
-        // console.log('state.selected_entry_type -add',  state.selected_entry_type) 
-        // console.log('state.selected_year_id -add',  state.selected_year_id)  
-         console.log('state.Rights_detail_filtered.data -add - check' ,state.Rights_detail_filtered.data)
-       
+        //  console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year)   
+        //  console.log('state.selected_entry_type -add',  state.selected_entry_type) 
+        //  console.log('state.selected_year_id -add',  state.selected_year_id)  
+        //  console.log('state.Rights_detail_filtered.data -add - check' ,state.Rights_detail_filtered.data)
        
         if (state.Rights_detail_filtered.data.length > 0 && state.selected_submission == 0) {
             alert('Entry Type ' + state.selected_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
-            //state.buttonsavenew = true
-            //state.buttonsavenew = false
         }
         else if (state.Rights_detail_filtered.data.length > 0 && state.selected_submission == 1) {
-            alert('Entry Type ' + state.selected_entry_type + ' has been found for the year ' + state.report_years.data[state.selected_year_id].year + ', Please select another entry type or Edit the existing entry.')
-            //state.buttonsavenew = true
-            //state.buttonsavenew = false
+            alert('Entry Type ' + state.selected_entry_type + ' has been found for the year ' + state.selected_year + ', Please select another entry type or Edit the existing entry.')
         } else {
-            
             state.buttonsavenew = false;
-            
         }
     } catch (error) {
         console.log('catch error in checking', error)
@@ -1422,12 +1416,15 @@ function compute_verticalEdit(){
 async function SaveEditEntryModal(){
     var successcount = 0;
     var errorcount = 0;
+    var true_grand_total = 0;
+
+    //console.log('state.Selected_Rights_entry_config_group.data', state.Selected_Rights_entry_config_group.data)
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
 
-                        let true_grand_total = 0
+                       
                         if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
-                            true_grand_total = state.state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+                            true_grand_total = state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
                         }else{
                             true_grand_total = 0
                         }
@@ -1440,13 +1437,20 @@ async function SaveEditEntryModal(){
                         grand_total: true_grand_total,
                         remarks: ' ' + state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
                     }
+                    
+                    
+                    //console.log('params', params)
+                    
                     const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
                      if (response.data) {
-                        successcount = successcount + 1; 
+                        successcount = successcount + 1;
+                        //console.log('success', response.data) 
                      }   
        
                     } catch (error) {
-                        state.errormessage = error.response.data.message
+                        //state.errormessage = error.response.data.message
+                        alert("Error in saving data. Please check the values you entered." , error)
+                        //console.log('error', error)
                         errorcount = errorcount + 1;
                     }
     }
