@@ -1,10 +1,10 @@
 <template>
     <div class="flex h-screen flex-1">
-        <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div class="flex flex-1 flex-col justify-center px-4 py-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div class="mx-auto w-full max-w-sm lg:w-96">
                 
-                <div >
-                    <img class="h-full w-full object-contain" src="/assets/images/file.png" alt="socc logo" />
+                <div class="flex flex-col items-center">
+                    <img class="h-3/4 w-3/4 object-contain" src="/assets/images/file.png" alt="socc logo" />
 
                     <!--<h1 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     SPECIAL OFFICE FOR CHILDREN'S CONCERNS
@@ -56,17 +56,35 @@
                                 <FormError :error="state.api_error" />
 
                             </div>
+                            <div
+                                style="display: grid; grid-template-columns: 1fr 1fr ; justify-items: center; align-items: center;">
+                                <!-- Logo 3 -->
+                                <img src="/assets/images/dcplinado.png" style="width: 200px; height: 200px; "> 
+                                <!-- Logo 1 -->
+                                <img src="/assets/images/davao.png" style="width: 120px; height: auto; "> 
+                                <!-- Logo 2 -->
+                                <!-- <img src="/assets/images/Davao_City_Logo.png" style="width: 230px; height: 75px; "> -->
+                               
+                            </div>
                         </form>
                     </div>
 
                     <div class="mt-10">
                         <div class="relative">
                             <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                                <div class="w-full border-t border-gray-200" />
-                            </div>
-                            <div class="relative flex justify-center text-sm font-medium leading-6">
+                                <div class="w-full border-t py-6" 
+                                    style="display: grid; grid-template-columns: 1fr 1fr ; justify-items: center; align-items: center;">
+                                <!-- Logo 3 -->
+                                    <!-- <img src="/assets/images/dcplinado.png" style="width: 200px; height: 200px; "> -->
+                                <!-- Logo 1 -->
+                                    <!-- <img src="/assets/images/davao.png" style="width: 120px; height: auto; "> -->
+                                <!-- Logo 2 -->
+                                <!-- <img src="/assets/images/Davao_City_Logo.png" style="width: 230px; height: 75px; "> -->
+                                </div>
 
                             </div>
+                           
+                            
                         </div>
 
                         <div class="mt-6 grid grid-cols-2 gap-4">
@@ -99,11 +117,11 @@
                             <div
                                 style="display: grid; grid-template-columns: 1fr 1fr 1fr; justify-items: center; align-items: center;">
                                 <!-- Logo 3 -->
-                                <img src="/assets/images/dcplinado.png" style="width: 230px; height: 100px; ">
+                                <!-- <img src="/assets/images/dcplinado.png" style="width: 230px; height: 100px; "> -->
                                 <!-- Logo 1 -->
-                                <img src="/assets/images/davao.png" style="width: 100px; height: auto; ">
+                                <!-- <img src="/assets/images/davao.png" style="width: 100px; height: auto; "> -->
                                 <!-- Logo 2 -->
-                                <img src="/assets/images/Davao_City_Logo.png" style="width: 230px; height: 75px; ">
+                                <!-- <img src="/assets/images/Davao_City_Logo.png" style="width: 230px; height: 75px; "> -->
                                
                             </div>
 
