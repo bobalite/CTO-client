@@ -44,6 +44,7 @@
 
             <ModalAlert :show="state.isGraphModalOpen" :close="state.closeGraphModal" :title=state.alertmessage>
 
+               
 
                 <ApexCharts :type="state.selected_graph_type" height="400" width="100%"
                     :options="state.populationHoriOptions" :series="state.graphseries_all" />
@@ -64,6 +65,8 @@
 
                     <GridCell class="sm:col-span-10 " :displaytext="''" /> -->
 
+                    <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
+
 
 
 
@@ -76,10 +79,7 @@
                 </div>
 
             </ModalAlert>
-            <!-- <h2 class="text-lg font-bold">Accomplishments vs Projected and National Projected</h2>
-               
-                <ApexCharts type="bar" height="500" width="80%" :options="state.populationHoriOptions"
-                    :series="state.survivalOptions.series" /> -->
+          
         </div>
 
 
@@ -339,12 +339,13 @@ const state = reactive({
     selected_view_entry_type: 'Projected',
     selected_year_id: 0,
     selected_year: '',
+    selected_quarter: '',
     datasource_id: 0,
     datasources: [],
 
     selected_edit_entry_type: 'Actual',
     edit_selected_datasource: 0,
-
+    is_annual: 0,
     selected_rights_id: 0,
     selected_sequence_header: '',
     selected_description: '',
@@ -610,9 +611,11 @@ function changeData(){
 function changeYear() {
     //console.log('changeYear')
     state.selected_year_id = state.selected_year_id
+    
 
 
     state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
+    state.selected_quarter = state.options.report_years.find(year => year.value === state.selected_year_id)?.label || '';
     console.log('selected_year = ', state.selected_year)
 
     
@@ -730,6 +733,7 @@ function closeGraphModal(){
 function OpenGraphModal(Rights_entry_config){
 
     state.selected_group = Rights_entry_config.group
+    state.is_annual = Rights_entry_config.is_annual
     const type = Rights_entry_config.is_annual
 
 
