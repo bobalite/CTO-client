@@ -617,7 +617,7 @@ function changeData(){
 function changeYear() {
     //console.log('changeYear')
     //state.selected_year_id = state.selected_year_id
-    console.log('selected_year_id = ', state.selected_year_id)  
+    //console.log('selected_year_id = ', state.selected_year_id)  
 
     try {
         state.selected_year = state.options.report_years[state.selected_year_id - 1].year
@@ -653,8 +653,8 @@ function changeYear() {
     // }
     //console.log('state.options.report_years = ', state.options.report_years)
 
-    console.log('selected_year = ', state.selected_year)
-    console.log('selected_quarter = ', state.selected_quarter)
+    //console.log('selected_year = ', state.selected_year)
+    //console.log('selected_quarter = ', state.selected_quarter)
 
     
 }
