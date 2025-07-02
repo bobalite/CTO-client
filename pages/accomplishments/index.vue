@@ -176,14 +176,19 @@
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 
                                             <template v-for="tracked in state.Tracked_details">
-                                                <template
+                                                
+                                                <!-- annual-->
+                                                <template 
                                                     v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year == state.selected_year && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 1">
                                                     <span
                                                         class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
                                                         {{tracked.grand_total}}
+                                                        
                                                     </span>
                                                 </template>
 
+                                                
+                                                <!-- quarterly-->
                                                 <template
                                                     v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 0">
                                                     <span
@@ -527,6 +532,7 @@ async function fetchreportyear() {
                     }
                 }
                 state.options.report_years = data;
+                //console.log('report_years = ', state.options.report_years.data)
             }
 
         }
@@ -610,13 +616,45 @@ function changeData(){
 
 function changeYear() {
     //console.log('changeYear')
-    state.selected_year_id = state.selected_year_id
+    //state.selected_year_id = state.selected_year_id
+    console.log('selected_year_id = ', state.selected_year_id)  
+
+    try {
+        state.selected_year = state.options.report_years[state.selected_year_id - 1].year
+        state.selected_quarter = state.options.report_years[state.selected_year_id - 1].label
+    } catch (error) {
+        state.selected_year = 0
+    }
+
     
 
+    //state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
+    //state.selected_quarter = state.options.report_years.find(year => year.value === state.selected_year_id)?.label || '';
 
-    state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
-    state.selected_quarter = state.options.report_years.find(year => year.value === state.selected_year_id)?.label || '';
+
+    // console.log('lenght = ', state.options.report_years.lenght)
+    // state.options.report_years.forEach(value => {
+    //     if (value.value == state.selected_year_id) {
+    //         state.selected_year = value.year
+    //         state.selected_quarter = value.label
+    //     }
+    // });
+
+    // foreach(  state.options.report_years  ){
+
+    //     console.log('y = ', state.options.report_yearsp[y].year)
+    //     // if (y.value == state.selected_year_id ){
+    //     //     state.selected_year = y.year
+    //     //     state.selected_quarter = y.label
+
+
+    //     // }
+
+    // }
+    //console.log('state.options.report_years = ', state.options.report_years)
+
     console.log('selected_year = ', state.selected_year)
+    console.log('selected_quarter = ', state.selected_quarter)
 
     
 }
@@ -704,6 +742,7 @@ async function fetchReports_Details_Actuals() {
                 }
 
                 state.Tracked_details = data;
+                console.log('Tracked_details = ', state.Tracked_details)
             } else {
                 alert('No data found for Tracker. ')  
             }
@@ -737,9 +776,9 @@ function OpenGraphModal(Rights_entry_config){
     const type = Rights_entry_config.is_annual
 
 
-    state.Actuals = [0,0,0,0,0]
-    state.Projected = [0,0,0,0,0]
-    state.NationalProjected = [0,0,0,0,0]
+      state.Actuals = [0, 0, 0, 0, 0, 0 ]
+      state.Projected = [0, 0, 0, 0, 0, 0]
+      state.NationalProjected = [0, 0, 0, 0, 0, 0]
 
     console.log('selected_group = ', state.selected_group)
     console.log('type = ', type)
@@ -813,9 +852,9 @@ function OpenGraphModal(Rights_entry_config){
                 console.log('Actuals = ', state.graphseries_all)
             } else {
                 
-                state.Actuals = [0, 0, 0, 0, 0]
-                state.Projected = [0, 0, 0, 0, 0]
-                state.NationalProjected = [0, 0, 0, 0, 0]
+                state.Actuals = [0, 0, 0, 0, 0, 0 ]
+                state.Projected = [0, 0, 0, 0, 0, 0]
+                state.NationalProjected = [0, 0, 0, 0, 0, 0]
                 alert('No data found for Tracker. ')
 
             }
