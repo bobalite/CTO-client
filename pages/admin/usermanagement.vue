@@ -594,7 +594,7 @@
 
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
 
-                    <GridCell
+                    <!-- <GridCell
                         class="sm:col-span-2  text-center text-md  border-l border-b  border-r border-green-600   pb-4"
                         :displaytext="'Agency:'" />
                     <GridCell
@@ -602,7 +602,7 @@
                         :displaytext="state.current_user_agency.long_name" />
 
                     <GridCell class="sm:col-span-12  pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-12  pb-4" :displaytext="''" />
+                    <GridCell class="sm:col-span-12  pb-4" :displaytext="''" /> -->
 
                     <GridCell class="sm:col-span-2  font-bold text-center text-md   pb-4"
                         :displaytext="'Access Role:'" />
@@ -707,7 +707,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <Pagination :data="state.users" @previous="previous" @next="next" />
+                    <!-- <Pagination :data="state.users" @previous="previous" @next="next" /> -->
                 </div>
             </div>
         </div>
@@ -1057,21 +1057,34 @@ async function fetchUsers() {
         logout()
     }
 
-    console.log(userStore.getUser.user_roles.roles_id)
+    //console.log(userStore.getUser.user_roles.roles_id)
 
+
+    // try {
+    //     let params = {
+    //         page: currentPage
+    //     }
+    //     const response = await userService.getUsers(params)
+    //     if (response.data) {
+    //         state.users = response
+    //         console.log(state.users.data)
+    //     }
+    // } catch (error) { 
+    //     console.log(error)
+    // }
 
     try {
-        let params = {
-            page: currentPage
-        }
-        const response = await userService.getUsers(params)
+        
+        const response = await userService.getUsers()
         if (response.data) {
             state.users = response
-            console.log(state.users.data)
+            //console.log(state.users.data)
         }
     } catch (error) { 
-        console.log(error)
+        //console.log(error)
     }
+
+
 }
 
 function getrole(id){
@@ -1134,7 +1147,8 @@ function openAddUserModal() {
 
 function closeAddModal() {
       SaveNewUser();
-     state.current_user = [];
+      state.isAddModalOpen = false;
+    
 }
 
 function cancelAddModal() {
@@ -1212,8 +1226,8 @@ async function SaveEditModal(){
 
             }
 
-            console.log(params)
-            console.log(state.current_user.id)
+            //console.log(params)
+            // console.log(state.current_user.id)
             const response = await userService.updateUser(state.current_user.id, params);
             if (response.data) {
                 state.successcount = state.successcount + 1;
@@ -1276,9 +1290,10 @@ async function SaveNewUser(){
     if (state.successcount > 0){
         state.successcount = state.successcount;
         state.errorcount = state.errorcount;
+        openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, state.errorcount, state.successcount)
         fetchUsers();
         state.isAddModalOpen = false;
-        openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, state.errorcount, state.successcount)
+        
     }else{
 
         openAlertModal(state.group, 'Errors were encountered ', state.group_header, state.errorcount, state.successcount)
@@ -1288,13 +1303,15 @@ async function SaveNewUser(){
    
 }
 
-function previous() {
-    currentPage--
-    fetchUsers()
-}
+ state.current_user = [];
 
-function next() {
-    currentPage++
-    fetchUsers()
-}
+// function previous() {
+//     currentPage--
+//     fetchUsers()
+// }
+
+// function next() {
+//     currentPage++
+//     fetchUsers()
+// }
 </script>

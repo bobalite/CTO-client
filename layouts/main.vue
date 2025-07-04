@@ -28,7 +28,7 @@
                             <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-green-600 px-6 pb-4">
                                 <div class="flex h-16 shrink-0 items-center">
                                     <img class="h-8 w-auto" src="/assets/images/file.png"
-                                        alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
+                                        alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN Analytical and Reporting System" />
                                 </div>
                                 <nav class="flex flex-1 flex-col">
                                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -107,7 +107,7 @@
             <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-green-900 px-6 pb-4">
                 <div class="flex h-16 shrink-0 items-center">
                     <img class="h-8 w-auto" src="/assets/images/file.png" alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
-                    <div class='text-white'> SPECIAL OFFICE FOR CHILDREN'S CONCERNS </div>
+                    <div class='text-white'> S.O.A.R System </div>
                 </div>
                 <nav class="flex flex-1 flex-col">
                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -224,7 +224,7 @@
                                 <MenuItems
                                     class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                                     <MenuItem>
-                                    <NuxtLink @click="logout"
+                                    <NuxtLink 
                                         class="cursor-pointer  hover:bg-green-700 hover:text-white block px-3 py-1 text-sm leading-6 text-gray-900 mouse-pointer">
                                         <div class="mouse-pointer">Help</div>
                                     </NuxtLink>
@@ -297,20 +297,22 @@
                     <GridCell class="sm:col-span-2 text-white" :displaytext="userStore.getUser.fname" />
                     <GridCell class="sm:col-span-8 " :displaytext="''" />
 
-
+<!-- 
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Current Password: '" />
-                    <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" />
+                    <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" /> -->
 
-                    <GridCell class="sm:col-span-1 " :displaytext="''" />
+                    <!-- <GridCell class="sm:col-span-1 " :displaytext="''" /> -->
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'New Password: '" />
-                    <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" />
+                    <GridText2 v-model="state.password1" type="password" class="sm:col-span-3 pb-4" :displaytext="state.password1" />
+                    <GridErrorIcon class="sm:col-span-1 " :error="state.password_error" />
 
-                    <GridCell class="sm:col-span-1 " :displaytext="''" />
+                    
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Re-Type New Password: '" />
-                    <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" />
+                    <GridText2 v-model="state.password2" type="password" class="sm:col-span-3 pb-4" :displaytext="state.password2" />
+                    <GridErrorIcon class="sm:col-span-1 " :error="state.password_error" />
                     <GridCell class="sm:col-span-8 " :displaytext="''" />
 
                     <GridCell class="sm:col-span-8 pb-4 " :displaytext="' '" />
@@ -322,7 +324,7 @@
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <button
                         class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="closeSlideModal"> Save </button>
+                        @click="SaveNewPasswordUser"> Save </button>
 
                 </div>
 
@@ -339,8 +341,10 @@
 </template>
 
 <script setup>
-import { useUserStore } from '~/store/user'
+
 import { authService } from '~/components/api/AuthService'
+import {userService } from '~/components/api/UserService';
+import {useUserStore} from '~/store/user'
 import { ref } from 'vue'
 import {
     Dialog,
@@ -367,12 +371,29 @@ import {
 } from '@heroicons/vue/24/outline/index.js'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid/index.js'
 
+import Alert from '~/components/modal/alert.vue'
+const userStore = useUserStore()
 //@heroicons/vue/24/outline/
 
+//console.log(userStore.getUser.user_roles.roles_id)
 
 
 const state = reactive({
     isSlideModalOpen: false,
+    username: '',
+    password: '',
+    fname: '',
+    lname: '',
+    mname: '',
+    email: '',
+    roles_id: '',
+    agency_id: '',
+    is_active: 1,
+    user_id: '',
+
+    password1: '',
+    password2: '',
+    password1_error: 0,    
     
 })
 
@@ -386,7 +407,6 @@ function closeSlideModal() {
 }
 
 
-const userStore = useUserStore()
 
 const navigation = [
     { name: 'Dashboard', link: '/dashboard', icon: HomeIcon, current: false },
@@ -424,6 +444,29 @@ const userNavigation = [
 
 const sidebarOpen = ref(false)
 
+
+
+const check_errors = computed(() => {
+
+    try {
+        if (state.password1 === '') {
+            state.password1_error = 2
+        } else if (state.password1.length <= 5) {
+            state.password1_error = 1
+        }
+        else if (state.password1 > 5) {
+            state.password1_error = 3
+        } else {
+            state.password1_error = 0
+        }
+
+    } catch (error) {
+        state.password1_error = 2
+    }
+
+  
+})
+
 async function logout() {
     try {
         const response = await authService.logout()
@@ -442,47 +485,83 @@ async function logout() {
 
 async function SaveNewPasswordUser(){
 
-try {
+
+
+console.log('userStore.getUser',userStore.getUser)
+
+state.username = userStore.getUser.username
+state.password  = userStore.getUser.password
+state.user_id = userStore.getUser.id
+state.fname = userStore.getUser.fname
+state.lname = userStore.getUser.lname
+state.mname = userStore.getUser.mname
+state.email = userStore.getUser.email
+state.roles_id = userStore.getUser.user_roles.roles_id
+state.agency_id = userStore.getUser.user_roles.agency_id
+
+
+if (state.password1 !== state.password2) {
+    alert('Passwords do not match. Please try again.');
+    return;
+} 
+
+state.password = state.password1; // Set the new password to the state
+
+
+ try {
+
     let params = {
-        username: state.current_user.username,
-        password: state.current_user.password,
-        fname: state.current_user.fname,
-        lname: state.current_user.lname,
-        mname: state.current_user.mname,
-        email: state.current_user.email,
-        roles_id: state.selected_user_role,
-        agency_id: state.current_user_agency.id,
+        username: state.username,
+        password: state.password,
+        email: state.email,
+        roles_id: state.roles_id,
+        agency_id: state.agency_id,
+        fname: state.fname,
+        lname: state.lname,
+        mname: state.mname,
+        email: state.email,
         is_active: 1,
     }
 
-    console.log(params);
+    //console.log('params' , params)
+    //console.log('state.user_id' , state.user_id)
 
-    const response = await userService.updateUser(params);
-    if (response.data) {
-        state.successcount = state.successcount + 1;
-    }
+    const response = await userService.updateUser(state.user_id, params);
+     if (response.data) {
+         state.successcount = state.successcount + 1;
+        //  console.log('User updated successfully:', response.data);
+         alert('Successfully Changed Password ')
+        closeSlideModal()
+     }
 } catch (error) {
+
+    //console.error('Error updating password:', error);
+    alert('Error updating password : ' + error.message);
     state.errorcount = state.errorcount + 1;
 }
 
+// console.log('state.successcount', state.successcount)
+// if (state.successcount > 0){
+//     state.successcount = state.successcount;
+//     state.errorcount = state.errorcount;
+   
+//     state.isAddModalOpen = false;
+//       alert('Successfully Changed Password ')
 
-if (state.successcount > 0){
-    state.successcount = state.successcount;
-    state.errorcount = state.errorcount;
-    fetchUsers();
-    state.isAddModalOpen = false;
-    openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, state.errorcount, state.successcount)
-}else{
-
-    openAlertModal(state.group, 'Errors were encountered ', state.group_header, state.errorcount, state.successcount)
+//     //openAlertModal(state.group, 'Successfully Changed Password', state.group_header, state.errorcount, state.successcount)
+// }else{
+//         alert('Error in Changing Password ')
+      
+//     //openAlertModal(state.group, 'Errors were encountered ', state.group_header, state.errorcount, state.successcount)
     
-    //state.isAddModalOpen = false;
-}
+//     //state.isAddModalOpen = false;
+// }
 
 }
 
 
 function openProfile(){
+    console.log(userStore.getUser)
     openSlideModal()
 }
 </script>

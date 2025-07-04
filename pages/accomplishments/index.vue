@@ -556,33 +556,7 @@ async function fetchrole() {
     }
 }
 
-function getclicked(Rights_entry_config){
-  
-    //  state.selected_sequence_header = Rights_entry_config.sequence_header
-    //  state.selected_description = Rights_entry_config.description
-    //  state.selected_group_header = Rights_entry_config.group_header
-    //  state.selected_group = Rights_entry_config.group
-    //  state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
-     
-     
-    //  console.log('CLICKED')
 
-
-    //  if (state.Selected_Rights_entry_config_group.data != null){ 
-    //    var data = [];
-    //    var datasources = [];
-    //    datasources = state.Selected_Rights_entry_config_group.data[0].datasources
-       
-    //         for (const i in datasources){
-    //             const value = datasources[i].agency_id;
-    //             if (!datasources.includes(value)){
-    //                 data[i] =  { "value":  datasources[i].agency_id, "label": datasources[i].description };
-    //             }
-    //         }
-    //     state.options.datasources = data;
-        
-    //     }
-}
 
 function changeData(){
     switch (state.selected_rights_id){
@@ -615,10 +589,7 @@ function changeData(){
 }
 
 function changeYear() {
-    //console.log('changeYear')
-    //state.selected_year_id = state.selected_year_id
-    //console.log('selected_year_id = ', state.selected_year_id)  
-
+   
     try {
         state.selected_year = state.options.report_years[state.selected_year_id - 1].year
         state.selected_quarter = state.options.report_years[state.selected_year_id - 1].label
@@ -626,37 +597,6 @@ function changeYear() {
         state.selected_year = 0
     }
 
-    
-
-    //state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
-    //state.selected_quarter = state.options.report_years.find(year => year.value === state.selected_year_id)?.label || '';
-
-
-    // console.log('lenght = ', state.options.report_years.lenght)
-    // state.options.report_years.forEach(value => {
-    //     if (value.value == state.selected_year_id) {
-    //         state.selected_year = value.year
-    //         state.selected_quarter = value.label
-    //     }
-    // });
-
-    // foreach(  state.options.report_years  ){
-
-    //     console.log('y = ', state.options.report_yearsp[y].year)
-    //     // if (y.value == state.selected_year_id ){
-    //     //     state.selected_year = y.year
-    //     //     state.selected_quarter = y.label
-
-
-    //     // }
-
-    // }
-    //console.log('state.options.report_years = ', state.options.report_years)
-
-    //console.log('selected_year = ', state.selected_year)
-    //console.log('selected_quarter = ', state.selected_quarter)
-
-    
 }
 
 async function fetchRights(){
@@ -780,8 +720,8 @@ function OpenGraphModal(Rights_entry_config){
       state.Projected = [0, 0, 0, 0, 0, 0]
       state.NationalProjected = [0, 0, 0, 0, 0, 0]
 
-    console.log('selected_group = ', state.selected_group)
-    console.log('type = ', type)
+    //console.log('selected_group = ', state.selected_group)
+    //console.log('type = ', type)
 
             if (state.report_details) {
                 const seen = new Set();
@@ -820,15 +760,15 @@ function OpenGraphModal(Rights_entry_config){
                     }else{ // quarterly
                          for (const i in years) {
                             if (item.report_year == years[i]) {
-                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
-                                    state.Actuals[i] = item.grand_total
-                                    console.log('group_id', item.group_id + ' ' + state.selected_group)
+                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group ) {
+                                    state.Actuals[i] = parseInt(state.Actuals[i] )+ parseInt(item.grand_total)
+                                    //console.log('group_id', item.group_id + ' ' + state.selected_group)
 
-                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
-                                    state.Projected[i] = item.grand_total
+                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group ) {
+                                    state.Projected[i] =  parseInt(state.Projected[i]) + parseInt(item.grand_total)
 
-                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group && item.report_year_id == state.selected_year_id) {
-                                    state.NationalProjected[i] = item.grand_total
+                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group ) {
+                                    state.NationalProjected[i] =  parseInt(state.NationalProjected[i]) + parseInt(item.grand_total)
 
                                 }
                             }
@@ -847,6 +787,8 @@ function OpenGraphModal(Rights_entry_config){
                 state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
                 state.graphseries_all[1] = { name: "Projected", data: state.Projected };
                 state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
+
+                console.log('Actuals = ', state.Actuals)
 
 
                 console.log('Actuals = ', state.graphseries_all)

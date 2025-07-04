@@ -126,7 +126,7 @@
                             </div>
 
                             <h2 style="font-size: clamp(24px, 4vw, 36px); padding-top: 24px; color: white">
-                                SPECIAL OFFICE FOR CHILDREN'S CONCERN
+                                SPECIAL OFFICE FOR CHILDREN'S CONCERN Analytical and Reporting System
                             </h2>
 
                             <div class="contact-info mt-0"

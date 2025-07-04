@@ -2,7 +2,8 @@ import BaseAPIService from "./BaseAPIService";
 
 class UserService extends BaseAPIService {
     async getUsers(params: object): Promise<any> { 
-        return await this.request(`/users`, "GET", params);
+        //return await this.request(`/users`, "GET", params);
+        return await this.request(`/users`, "GET");
     }
 
     async getUser(id: any): Promise<any> {

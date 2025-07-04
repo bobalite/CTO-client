@@ -11,6 +11,8 @@
   </div>
 
   <div class="flex justify-between items-center mt-4">
+
+    
     <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years" @change = "change_selected_year()"/>
   </div>
 
@@ -103,57 +105,7 @@
       </GraphsGrp68>
 
 
-      <!-- <GraphsGrp70 v-if="state.showGraphsGrp70 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age:  Learning Disability'"
-        :report_year="state.report_year">
-      </GraphsGrp70>
-
-      <GraphsGrp71 v-if="state.showGraphsGrp71 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age:   Psychosocial Disability'"
-        :report_year="state.report_year">
-      </GraphsGrp71>
-
-      <GraphsGrp72 v-if="state.showGraphsGrp72 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age:  Visual Disability'"
-        :report_year="state.report_year">
-      </GraphsGrp72>
-      <GraphsGrp73 v-if="state.showGraphsGrp73 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age:  Intellectual Disability'"
-        :report_year="state.report_year">
-      </GraphsGrp73>
-
-      <GraphsGrp74 v-if="state.showGraphsGrp74 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age: Physical Disability'"
-        :report_year="state.report_year">
-      </GraphsGrp74>
-      <GraphsGrp75 v-if="state.showGraphsGrp75 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age: Speech & Language Impairment'"
-        :report_year="state.report_year">
-      </GraphsGrp75>
-
-      <GraphsGrp76 v-if="state.showGraphsGrp76 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age: Deaf or Hard of Hearing'"
-        :report_year="state.report_year">
-      </GraphsGrp76>
-      <GraphsGrp77 v-if="state.showGraphsGrp77 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age: Rare Diseases (RA 10747)'"
-        :report_year="state.report_year">
-      </GraphsGrp77>
-
-      <GraphsGrp78 v-if="state.showGraphsGrp78 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-9 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total population of children with disabilities, by type of disability, by age: Cancer (RA 11215)'"
-        :report_year="state.report_year">
-      </GraphsGrp78> -->
-
+     
 
     </div>
 
