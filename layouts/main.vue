@@ -193,12 +193,12 @@
                         <Menu as="div" class="relative">
                             <MenuButton class="-m-1.5 flex items-center p-1.5">
                                 <span class="sr-only">Open user menu</span>
-                                <template v-if="userStore.getUser.email == 'test@email.com'">
+                                <template v-if="userStore.getUser.email == 'admin@davaocity.citc'">
                                     <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg"
                                         alt="" />
 
                                 </template>
-                                <template v-else-if="userStore.getUser.email == 'cath@email.com'">
+                                <template v-else-if="userStore.getUser.email == 'cath@davaocity.citc'">
                                     <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
                                 </template>
                                 <template v-else>
@@ -254,11 +254,11 @@
                 <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-8">
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <div class="sm:col-span-7  ">
-                        <template v-if="userStore.getUser.email == 'test@email.com'">
+                        <template v-if="userStore.getUser.email == 'admin@davaocity.citc'">
                             <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg"
                                 alt="" />
                         </template>
-                        <template v-else-if="userStore.getUser.email == 'cath@email.com'">
+                        <template v-else-if="userStore.getUser.email == 'cath@davaocity.citc'">
                             <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
                         </template>
                         <template v-else>
