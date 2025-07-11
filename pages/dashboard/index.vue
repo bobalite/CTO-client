@@ -6,7 +6,7 @@
     <div class="flex items-center space-x-4">
       <button @click="openSlideModal()" class="btn btn-primary">My Dashboard Settings</button>
       <!-- <button class="btn btn-primary">Export</button> -->
-      <button class="btn btn-primary">Print</button>
+      <button @click="printWindow()" class="btn btn-primary">Print</button>
     </div>
   </div>
 
@@ -814,5 +814,9 @@ function loop_through_user_widgets(){
 
 function pageLoads(value) {
     state.isPageLoading = value
+}
+
+function printWindow(){
+  window.print();
 }
 </script>
