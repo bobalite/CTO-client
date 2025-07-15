@@ -1,23 +1,27 @@
 <template>
-  <section id="services" class="services section">
-    <div class="container">
-      <div class="row gy-4">
+  <section id="services" class="py-16 bg-white text-gray-800">
+    <div class="max-w-screen-xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div
-          class="col-md-4"
           v-for="(service, index) in services"
           :key="index"
-          :data-aos="'fade-up'"
-          :data-aos-delay="(index + 1) * 100"
+          class="flex items-start gap-4 relative h-full"
+          data-aos="fade-up"
+          :data-aos-delay="100 * (index + 1)"
         >
-          <div class="service-item d-flex position-relative h-100">
-            <i :class="service.icon + ' icon flex-shrink-0'"></i>
-            <div>
-              <h4 class="title">
-                <NuxtLink to="service-details.html">{{ service.title }}</NuxtLink>
-              </h4>
-              <p class="description">{{ service.description }}</p>
-              <img :src="service.image" alt="" class="img-fluid mt-3" />
-            </div>
+          <i :class="`${service.icon} text-3xl text-primary flex-shrink-0`"></i>
+          <div>
+            <h4 class="text-lg font-semibold mb-1">
+              <a :href="service.link" class="hover:underline">
+                {{ service.title }}
+              </a>
+            </h4>
+            <p class="text-sm text-gray-600">{{ service.description }}</p>
+            <img
+              :src="service.image"
+              :alt="`${service.title} image`"
+              class="mt-3 w-full h-auto object-cover rounded shadow"
+            />
           </div>
         </div>
       </div>
@@ -29,24 +33,27 @@
 const services = [
   {
     title: 'Reports and Analysis',
+    link: 'service-details.html',
+    icon: 'bi bi-clipboard-data',
     description:
       'Generates comprehensive reports and visual analytics to assess child welfare data and trends.',
-    icon: 'bi bi-clipboard-data',
-    image: '/assets/img/funtion/dashboard.PNG'
+    image: 'assets/img/funtion/dashboard.PNG',
   },
   {
     title: 'Sectioned Rights Encoding',
+    link: 'service-details.html',
+    icon: 'bi bi-diagram-3',
     description:
       'Organizes and records data based on child rights categories for accurate monitoring and evaluation.',
-    icon: 'bi bi-diagram-3',
-    image: '/assets/img/funtion/dataentry.PNG'
+    image: 'assets/img/funtion/dataentry.PNG',
   },
   {
     title: 'User Management',
+    link: 'service-details.html',
+    icon: 'bi bi-sliders',
     description:
       'Manages system users, roles, and access permissions to ensure secure and efficient data handling.',
-    icon: 'bi bi-sliders',
-    image: '/assets/img/funtion/users.PNG'
-  }
+    image: 'assets/img/funtion/users.PNG',
+  },
 ]
 </script>

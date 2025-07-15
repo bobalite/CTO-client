@@ -1,12 +1,12 @@
 <template>
-  <section id="stats" class="stats section light-background">
-    <div class="container">
-      <div class="row gy-4">
-        <div class="col-lg-3 col-md-6" v-for="(stat, index) in stats" :key="index">
-          <div class="stats-item text-center w-100 h-100">
-            <span class="purecounter" :data-purecounter-end="stat.value"></span>
-            <p>{{ stat.label }}</p>
-          </div>
+  <section id="stats" class="bg-gray-100 py-16">
+    <div class="max-w-screen-xl mx-auto px-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div v-for="stat in stats" :key="stat.label" class="flex flex-col items-center justify-center h-full">
+          <LandingAnimatedCounter :end="stat.value" />
+          <p class="mt-2 text-green-700 text-lg md:text-xl font-medium">
+            {{ stat.label }}
+          </p>
         </div>
       </div>
     </div>
@@ -14,10 +14,13 @@
 </template>
 
 <script setup>
-const stats = [
-  { value: 232, label: 'Over all Children Served' },
-  { value: 521, label: 'Total Agencies' },
-  { value: 1453, label: 'Child Welfare Services' },
-  { value: 32, label: 'Programs' }
-]
+import { ref } from 'vue'
+
+
+const stats = ref([
+  { label: 'Total Barangays Monitored', value: 182 },
+  { label: 'Mother-Child Services Provided', value: 521 },
+  { label: 'Child Friendly Indicators', value: 700 },
+  { label: 'Involved Local and National Agencies', value: 14 },
+])
 </script>
