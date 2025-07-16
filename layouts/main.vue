@@ -485,8 +485,6 @@ async function logout() {
 
 async function SaveNewPasswordUser(){
 
-
-
 console.log('userStore.getUser',userStore.getUser)
 
 state.username = userStore.getUser.username
@@ -503,7 +501,24 @@ state.agency_id = userStore.getUser.user_roles.agency_id
 if (state.password1 !== state.password2) {
     alert('Passwords do not match. Please try again.');
     return;
-} 
+}
+ if (state.password1.length < 8) {
+    alert('Must be at least 8 characters.')
+     return;
+  }
+ if (!/[A-Z]/.test(state.password1)) {
+    alert('Must include at least one uppercase letter.')
+     return;
+  }
+ if (!/[0-9]/.test(state.password1)) {
+     alert('Must include at least one number.')
+     return;
+ }
+ if (!/[!@#$%^&*(),.?":{}|<>]/.test(state.password1)) {
+     alert('Must include at least one special character.')
+      return;
+ }
+
 
 state.password = state.password1; // Set the new password to the state
 
