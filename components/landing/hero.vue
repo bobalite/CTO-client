@@ -1,5 +1,5 @@
 <template>
-   <section class="hero p-0 relative">
+  <section class="hero p-0 relative">
     <div class="carousel w-full min-h-[100vh] p-0 m-0 relative bg-[var(--background-color)]">
       <div
         class="carousel-item absolute inset-0 bg-cover bg-center bg-no-repeat overflow-hidden before:content-[''] before:absolute before:inset-0 before:z-2 before:bg-[color-mix(in_srgb,var(--background-color),transparent_30%)]">
@@ -35,7 +35,13 @@
                       <i class="bi bi-envelope-fill"></i>
                       <span>socc@davaocity.gov.ph</span>
                     </a>
+
+
                   </div>
+
+                  <NuxtLink to="/login"
+                    class="bg-green-700 text-white font-medium text-lg tracking-wider px-6 py-3 rounded-full transition inline-flex items-center justify-center no-underline normal-case">
+                    Get Started</NuxtLink>
                 </div>
               </div>
             </div>

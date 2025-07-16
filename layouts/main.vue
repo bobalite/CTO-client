@@ -342,7 +342,7 @@
 
 <script setup>
 
-import { authService } from '~/components/api/AuthService'
+import {authService } from '~/components/api/AuthService'
 import {userService } from '~/components/api/UserService';
 import {useUserStore} from '~/store/user'
 import { ref } from 'vue'
@@ -473,7 +473,7 @@ async function logout() {
         if (response) {
             userStore.resetUser()
             localStorage.removeItem("_token");
-            navigateTo('/')
+            navigateTo('/login')
         }
     } catch (error) {
         console.log(error)

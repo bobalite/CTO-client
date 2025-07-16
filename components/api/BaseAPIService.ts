@@ -47,11 +47,11 @@ class BaseAPIService {
                     throw new APIError(error.response._data);
                     // throw new APIError("404 Not Found");
                 case 401:
-                    //this.revokeAccess();
+                    this.revokeAccess();
                     throw new APIError(error.response._data);
                     // throw new APIError("401 Unauthorized");
                 case 500:
-                    //this.revokeAccess();
+                    this.revokeAccess();
                     //throw new APIError(error.response._data);
                     throw new APIError({
                         message:
@@ -68,7 +68,7 @@ class BaseAPIService {
 
     revokeAccess() {
         localStorage.removeItem("_token");
-        navigateTo("/");
+        navigateTo("/login");
     }
 }
 

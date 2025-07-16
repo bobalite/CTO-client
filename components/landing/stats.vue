@@ -16,11 +16,11 @@
 <script setup>
 import { ref } from 'vue'
 
-
 const stats = ref([
   { label: 'Total Barangays Monitored', value: 182 },
   { label: 'Mother-Child Services Provided', value: 521 },
-  { label: 'Child Friendly Indicators', value: 700 },
-  { label: 'Involved Local and National Agencies', value: 14 },
+  { label: 'Child Friendly Indicators', value: 527 },
+  { label: 'Involved Agencies', value: 16 },
+  
 ])
 </script>
