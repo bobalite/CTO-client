@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <div class="px-4 sm:px-6 lg:px-8">
+    <div class="print:hidden px-4 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
 
             <div class="mt-8 flow-root">
@@ -235,6 +235,12 @@
 
                                         <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             <NuxtLink @click="OpenGraphModal(Rights_entry_config)">
+                                                <IconGraph />
+                                            </NuxtLink>
+                                        </td>
+
+                                         <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                            <NuxtLink @click="DisplayPrint(Rights_entry_config)">
                                                 <IconGraph />
                                             </NuxtLink>
                                         </td>
@@ -728,6 +734,14 @@ async function fetchReports_Details_Actuals() {
 function closeGraphModal(){
     state.isGraphModalOpen = false
 } 
+
+function DisplayPrint(Rights_entry_config){
+    
+    const name = ref(Rights_entry_config.group)
+    const message = ref(Rights_entry_config.description)
+    const query = new URLSearchParams({ name: name.value, message: message.value }).toString()
+    window.open(`/print/accomplishment?${query}`, '_blank')
+}
 
 
 function OpenGraphModal(Rights_entry_config){

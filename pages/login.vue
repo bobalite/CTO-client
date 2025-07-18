@@ -117,6 +117,14 @@ const state = reactive({
     api_error: null,
 });
 
+onMounted(() => {
+        localStorage.removeItem("_token");
+    
+});
+
+
+ 
+
 
 const rules = computed(() => {
     return {
