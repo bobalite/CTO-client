@@ -43,7 +43,7 @@ class BaseAPIService {
                     throw new APIError(error.response._data);
                     // throw new APIError("422 Unprocessable Entity");
                 case 404:
-                    throw navigateTo("/404");
+                    throw navigateTo("/Login");
                     throw new APIError(error.response._data);
                     // throw new APIError("404 Not Found");
                 case 401:
@@ -68,7 +68,7 @@ class BaseAPIService {
 
     revokeAccess() {
         localStorage.removeItem("_token");
-        navigateTo("/login");
+        navigateTo("/Login");
     }
 }
 

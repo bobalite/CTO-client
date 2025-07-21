@@ -11,8 +11,6 @@
   </div>
 
   <div class="flex justify-between items-center mt-4">
-
-    
     <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years" @change = "change_selected_year()"/>
   </div>
 
