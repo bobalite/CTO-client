@@ -1,10 +1,20 @@
 <template>
    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
 
-      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
-      </GraphsGrp01>
+
+      <div class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid border-blue-black bg-green-100 rounded-xl border-blue-900 border-t border-b border-l border-r">
+        <h1 class="text-center">Accomplishment Report</h1>
+        
+       <h2 v-for="detail in state.report_details.data" class="text-center">Selected Group: {{ detail.entry_type }}</h2>
+      
+      </div>
+
+      
+
+      <button class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 no-print" @click="showgraph1()">
+        Generate Printout
+      </button>
+    
 
       <button class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 no-print" @click="printpage()">
         Print This Page
@@ -17,6 +27,9 @@
 import { useRoute } from 'vue-router'
 import {report_yearService } from '~/components/api/ReportYears';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
+import {useUserStore} from '~/store/user'
+
+const userStore = useUserStore()
 
 const route = useRoute()
 const name = route.query.name || 'Friend'
@@ -24,6 +37,7 @@ const message = route.query.message || '(No message)'
 
 const state = reactive({
   selected_group: 1,
+  showGraphsGrp01: false,
   refresh_graphs_toggle: 0,
   passed_data: [],
   report_years: [],
@@ -49,7 +63,13 @@ onMounted(() => {
 
 function printpage() {
   window.print()
-}   
+}
+
+function showgraph1() {
+  state.showGraphsGrp01 = true
+  state.refresh_graphs_toggle += 1
+  console.log('showgraph1 called, refresh_graphs_toggle:', state.refresh_graphs_toggle)
+}
 
 async function fetchReports_Details_Actuals() {
   try {

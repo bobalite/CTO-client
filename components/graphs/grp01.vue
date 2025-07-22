@@ -59,8 +59,6 @@ const props = defineProps({
 
 
 onMounted(() => {
-   
-  
     fetchReports_Details_Actuals()
 })
 
@@ -116,9 +114,7 @@ OptionsPieDatasource: {
 })
 
 async  function fetchReports_Details_Actuals() { // main fetching function for actuals
-
-    try {
-     
+   try {
         //await reportDetailsGroupsService.getReportDetailsGroups()
         await props.passed_data.data
         await props.passed_year_data.data

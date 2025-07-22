@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-between items-center">
+    <div class="print:hidden flex justify-between items-center">
         <h1 class="text-2xl font-bold">ACCOMPLISHMENTS</h1>
         <div class="flex items-center space-x-4">
 
@@ -115,6 +115,10 @@
                                         Projected</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         National</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Stat</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Print</th>     
 
                                 </tr>
                             </thead>
@@ -235,13 +239,13 @@
 
                                         <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             <NuxtLink @click="OpenGraphModal(Rights_entry_config)">
-                                                <IconGraph />
+                                                <IconPresentation />
                                             </NuxtLink>
                                         </td>
 
                                          <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             <NuxtLink @click="DisplayPrint(Rights_entry_config)">
-                                                <IconGraph />
+                                                <IconPrint />
                                             </NuxtLink>
                                         </td>
 
