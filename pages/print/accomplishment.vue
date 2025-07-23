@@ -1,25 +1,33 @@
 <template>
-   <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
+  <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
 
 
-      <div class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid border-blue-black bg-green-100 rounded-xl border-blue-900 border-t border-b border-l border-r">
-        <h1 class="text-center">Accomplishment Report</h1>
-        
-       <h2 v-for="detail in state.report_details.data" class="text-center">Selected Group: {{ detail.entry_type }}</h2>
-      
-      </div>
+    <div class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 ">
+      <h1 class="text-center">Accomplishment Report{{ group }}</h1>
+    </div>
 
-      
+    <div class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 ">
+     
+      <h2 v-for="detail in state.report_details.data" class="text-center">Selected Group: {{ detail.entry_type }}</h2>
+    </div>
 
+    <div class="sm:col-span-6 text-xl font-bold text-left m-1 pl-2 ">
       <button class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 no-print" @click="showgraph1()">
         Generate Printout
       </button>
-    
+    </div>
 
+    <div class="sm:col-span-6 text-xl font-bold text-left m-1 pl-2 ">
       <button class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 no-print" @click="printpage()">
         Print This Page
       </button>
-    
+    </div>
+
+
+
+
+
+
   </div>
 </template>
 

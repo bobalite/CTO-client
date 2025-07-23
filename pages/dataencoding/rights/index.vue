@@ -396,7 +396,7 @@
                                         <td
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                             <span
-                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border border-red-400 bg-red-500  font-large text-black">
+                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border border-green-400 bg-green-500  font-large text-black">
                                                 {{ Rights_entry_config.group }}
                                             </span>
                                         </td>
@@ -1044,10 +1044,7 @@ async function saveReportDetails(){
         
         return;
     }
-    
-
-    
-
+     
          for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
                  try {
                     let true_grand_total = 0
@@ -1057,8 +1054,9 @@ async function saveReportDetails(){
                             true_grand_total = state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
 
                         }else{
-                            true_grand_total = 0
-
+                            // this should be changed for those entries that are not human count.
+                            //true_grand_total = 0
+                            //-----------------------------------------------------------    
                         }
                     let params = {
 
@@ -1147,33 +1145,24 @@ function computeAddEntryModal(){
 
     check_fetchReports_Details_Add()
     //console.log(' state.selected_entry_type', state.selected_entry_type)
-    
-
     compute_vertical()
     //state.buttonsavenew
-    
-    
-    //state.buttoncompute = true
     //state.buttonsavenew = false
 
 }
 
 function compute_vertical(){
-    
+    console.log('compute_vertical')
     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
         if (totaled_to == 'NA'){
-
-         
            
         }else{
             if (totaled_from != 'NA'){
-          
-             state.total[sequence_header] = 0;
-          
-
+                state.total[sequence_header] = 0;
+                console.log('compute_vertical 2')
             }else{
                
             }
@@ -1185,28 +1174,48 @@ function compute_vertical(){
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-        if (totaled_to == 'NA'){
-            if (totaled_from == 'NA'){
-                state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
-                state.grand_total[sequence_header] = state.total[sequence_header];
-            }
 
-        } else {
-            for (let x = state.Selected_Rights_entry_config_group.data.length - 1; x >= 0; x--) {
-                if (state.Selected_Rights_entry_config_group.data[x].sequence_header == totaled_to) {
+        // if (state.Selected_Rights_entry_config_group.data[i].grand_totaL != '2') {
 
-                    state.male[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.male[sequence_header]);
-                    state.female[totaled_to] = parseFloat(state.female[totaled_to]) + parseFloat(state.female[sequence_header]);
+        // } else {
 
-                    state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
-                    state.grand_total[sequence_header] =  state.total[sequence_header]
+            if (totaled_to == 'NA') {
+                if (totaled_from == 'NA') {
+                    console.log('compute_vertical 3')
+
+                    if (parseFloat(state.male[sequence_header]) == 0 && parseFloat(state.female[sequence_header]) == 0) {
+                        state.grand_total[sequence_header] = state.total[sequence_header];
+                        console.log('compute_vertical 4', state.total[sequence_header] , state.grand_total[sequence_header])
                     
-                    state.total[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.female[totaled_to]);
-                    state.grand_total[totaled_to]  = state.total[totaled_to] 
+                    }else {
+                    state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
+                    state.grand_total[sequence_header] = state.total[sequence_header];
+                    console.log('compute_vertical 5', state.male[sequence_header] , state.female[sequence_header])
+                    }
+                   
+                }
+
+            } else {
+                for (let x = state.Selected_Rights_entry_config_group.data.length - 1; x >= 0; x--) {
+                    if (state.Selected_Rights_entry_config_group.data[x].sequence_header == totaled_to) {
+                        console.log('compute_vertical 6')
+
+                        state.male[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.male[sequence_header]);
+                        state.female[totaled_to] = parseFloat(state.female[totaled_to]) + parseFloat(state.female[sequence_header]);
+
+                        state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
+                        state.grand_total[sequence_header] = state.total[sequence_header]
+
+                        state.total[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.female[totaled_to]);
+                        state.grand_total[totaled_to] = state.total[totaled_to]
+                    }
                 }
             }
-        }
+        // }
+
+       
     }
+    console.log('compute_vertical 7')
 }
 
 function closeAddEntryModal() {
@@ -1439,7 +1448,7 @@ async function SaveEditEntryModal(){
                     }
                     
                     
-                    //console.log('params', params)
+                    console.log('params', params)
                     
                     const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
                      if (response.data) {

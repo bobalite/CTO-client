@@ -43,44 +43,23 @@
         <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
 
             <ModalAlert :show="state.isGraphModalOpen" :close="state.closeGraphModal" :title=state.alertmessage>
-
-               
-
                 <ApexCharts :type="state.selected_graph_type" height="400" width="100%"
                     :options="state.populationHoriOptions" :series="state.graphseries_all" />
-
                 <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
-                
                 <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
-
                 <GraphsGrp01 v-if="state.selected_group == 1" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
                     class="sm:col-span-5 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
                     :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
                 </GraphsGrp01>
-
                     <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
                     <GridCell class="sm:col-span-8  pb-4" :displaytext="'DATASOURCE: ' + state.selected_datasource" />
-
-                 
-
-                 
-                    <!-- <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
-                        :displaytext="'Rows Inserted:'" />
-                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.successcount />
-
-                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
-                        :displaytext="'Errors Encountered:'" />
-                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.errorcount />
-
-
-                    <GridCell class="sm:col-span-10 " :displaytext="''" /> -->
                     <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
                     <GridCell class="sm:col-span-8  pb-4" :displaytext="' '" />
                    
 
-                     <button
+                     <!-- <button
                         class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="PrintGraphModal"> 🖨️ Print </button>
+                        @click="PrintGraphModal"> 🖨️ Print </button> -->
 
                     <button
                         class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
@@ -626,9 +605,7 @@ function changeYear() {
 
 }
 
-function PrintGraphModal(){
-  window.print();
-}
+
 
 async function fetchRights(){
     try {
@@ -737,25 +714,29 @@ async function fetchReports_Details_Actuals() {
 
 function closeGraphModal(){
     state.isGraphModalOpen = false
-} 
+}
+
+
+function PrintGraphModal(){
+  window.print();
+}
+
 
 function DisplayPrint(Rights_entry_config){
     
-    const name = ref(Rights_entry_config.group)
-    const message = ref(Rights_entry_config.description)
-    const query = new URLSearchParams({ name: name.value, message: message.value }).toString()
+    const group = ref(Rights_entry_config.group)
+    const description = ref(Rights_entry_config.description)
+    const report_year = ref(Rights_entry_config.description)
+    const query = new URLSearchParams({ group: group.value, description: description.value, report_year: report_year.value }).toString()
     window.open(`/print/accomplishment?${query}`, '_blank')
 }
 
 
 function OpenGraphModal(Rights_entry_config){
-
     state.selected_group = Rights_entry_config.group
     //state.selected_datasource = Rights_entry_config.datasource_id
     state.is_annual = Rights_entry_config.is_annual
     const type = Rights_entry_config.is_annual
-
-
       state.Actuals = [0, 0, 0, 0, 0, 0 ]
       state.Projected = [0, 0, 0, 0, 0, 0]
       state.NationalProjected = [0, 0, 0, 0, 0, 0]
@@ -765,17 +746,7 @@ function OpenGraphModal(Rights_entry_config){
     catch{
 
     }
-
-    // <template v-for="agency in state.options.agencies">
-    //                                                 <template v-if="agency.value == Rights_entry_config.agency_id">
-    //                                                     {{ agency.label }}
-    //                                                 </template>
-    //                                             </template>
-      
-
-    //console.log('selected_group = ', state.selected_group)
-    //console.log('type = ', type)
-
+ 
             if (state.report_details) {
                 const seen = new Set();
                 var data = [];
