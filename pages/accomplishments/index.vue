@@ -427,12 +427,11 @@ const state = reactive({
             { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
             { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
             { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
-        ],selected_graph_type: [
+        ],
+        selected_graph_type: [
             { value: 'bar', label: 'Bar' },
             { value: 'line', label: 'Line' },
             { value: 'area', label: 'Area' },
-            
-        
         ],
 
            
@@ -726,9 +725,10 @@ function DisplayPrint(Rights_entry_config){
     
     const group = ref(Rights_entry_config.group)
     const description = ref(Rights_entry_config.description)
-    const report_year = ref(Rights_entry_config.description)
+    const report_year = ref(state.selected_year_id)
     const query = new URLSearchParams({ group: group.value, description: description.value, report_year: report_year.value }).toString()
     window.open(`/print/accomplishment?${query}`, '_blank')
+
 }
 
 

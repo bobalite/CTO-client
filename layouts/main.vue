@@ -297,12 +297,7 @@
                     <GridCell class="sm:col-span-2 text-white" :displaytext="userStore.getUser.fname" />
                     <GridCell class="sm:col-span-8 " :displaytext="''" />
 
-<!-- 
-                    <GridCell class="sm:col-span-1 " :displaytext="''" />
-                    <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Current Password: '" />
-                    <GridText2 type="password" class="sm:col-span-3 pb-4" :displaytext="''" /> -->
 
-                    <!-- <GridCell class="sm:col-span-1 " :displaytext="''" /> -->
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'New Password: '" />
                     <GridText2 v-model="state.password1" type="password" class="sm:col-span-3 pb-4" :displaytext="state.password1" />
@@ -372,6 +367,7 @@ import {
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid/index.js'
 
 import Alert from '~/components/modal/alert.vue'
+import { PrinterIcon } from '@heroicons/vue/16/solid';
 const userStore = useUserStore()
 //@heroicons/vue/24/outline/
 
@@ -413,24 +409,16 @@ const navigation = [
     { name: 'Datasource Tracker', link: '/tracker', icon: ChartPieIcon, current: false },
     { name: 'Calendar and Schedules', link: '/calendar', icon: CalendarIcon, current: false },
     { name: 'Accomplishments', link: '/accomplishments', icon: TrophyIcon, current: false },
-    // { name: 'Reports', link: '/reports', icon: FolderIcon, current: false },
+    { name: 'Reports', link: '/reports', icon: PrinterIcon, current: false },
 ]
 const encoding_forms = [
     { id: 8, name: 'Sectioned Rights Encoding', link: '/dataencoding/rights', initial: 'R', current: false },
-    // { id: 1, name: 'Rights to Survival', link: '/dataencoding/survival_encoding', initial: 'S', current: false },
-    // { id: 2, name: 'Rights to Development', link: '/dataencoding/development_encoding', initial: 'Dev', current: false },
-    // { id: 3, name: 'Rights to Protection', link: '/dataencoding/protection_encoding', initial: 'Pro', current: false },
-    // { id: 4, name: 'Rights to Participation', link: '/dataencoding/participation_encoding', initial: 'Part', current: false },
-    // { id: 5, name: 'Other Areas', link: '/dataencoding/other_areas_encoding', initial: 'O', current: false },
-    // { id: 6, name: 'General Information', link: '/dataencoding/general_information_encoding', initial: 'GI', current: false },
-    // { id: 7, name: 'Survival V1', link: '/dataencoding/development', initial: 'DV', current: false },
-
+    
 ]
 
 const admin_pages = [
     { id: 1, name: 'Rights Entry Configuration', link: '/admin', initial: 'R', current: false },
     { id: 2, name: 'User Management', link: '/admin/usermanagement', initial: 'R', current: false },
-    //{ id: 3, name: 'Manage Datasources ', link: '/admin/usermanagement', initial: 'R', current: false },
     { id: 3, name: 'Manage Report Schedules ', link: '/admin/managereportschedules', initial: 'R', current: false },
 
 ]
