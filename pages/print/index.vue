@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="print:hidden sm:flex sm:items-center">
+    <!-- <div class="print:hidden sm:flex sm:items-center">
 
       <div class="mt-8 flow-root">
         <p class="mb-1 text-lg font-normal text-gray-500 lg:text-xl sm:px-10 xl:px-1 dark:text-black">Children's
@@ -30,14 +30,14 @@
         </div>
       </div>
 
-    </div>
+    </div> -->
 
 
-    <div v-if= "state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
+    <div ref="printSection" class="p-6 bg-white">
       <ApexCharts ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
     </div>
 
-    <button @click="printChart" class="print:hidden mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+    <button @click="printChart" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
       Print Chart
     </button>
   </div>
@@ -60,7 +60,6 @@ import {useUserStore} from '~/store/user'
 import {report_yearService } from '~/components/api/ReportYears'; 
 
 const userStore = useUserStore()
-let currentPage = 1;
 
 const chartOptions = {
   chart: {
@@ -94,80 +93,18 @@ onMounted(() => {
 })
 
 const state = reactive({
-
-  selected_rights_id: 1,
   selected_year_id: 0,
   selected_year: 0,
   refresh_graphs_toggle: 0,
   selected_quarter: '',
-  Rights:[],
-  selected_graph_type: 'none',
-
-  Rights_entry_config: [],
-  Rights_entry_config1: [],
-  Rights_entry_config2: [],
-  Rights_entry_config3: [],
-  Rights_entry_config4: [],
-  Rights_entry_config5: [],
-  Rights_entry_config6: [],
-
-
   options: {
-    entry_type: [
-      { value: 'Actual', label: 'Actual' },
-      { value: 'Projected', label: 'Projected' },
-      { value: 'National Projected', label: 'National Projected' },
-    ],
-
     report_years: [
       { year: 2020, label: '2020' },
       { year: 2021, label: '2021' },
       { year: 2022, label: '2022' },
       { year: 2023, label: '2023' }
-    ],
-    view_entry_type: [
-
-      { value: 'Projected', label: 'Projected' },
-      { value: 'National Projected', label: 'National Projected' },
-    ],
-    is_disabled: [
-      { value: '1', label: 'Not Applicable' },
-      { value: '2', label: 'Enabled' },
-    ],
-    years: [
-      { value: '1', label: 'Jan - Dec 2024' },
-      { value: '2', label: 'Jan - Dec 2025' },
-
-    ],
-    agencies: [
-      { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
-      { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
-      { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
-      { value: 4, label: 'CSWDO', color: 'bg-yellow-500 border-yellow-400' },
-      { value: 5, label: 'CHED', color: 'bg-purple-500 border-purple-400' },
-      { value: 6, label: 'DCPO', color: 'bg-pink-500 border-pink-400' },
-      { value: 7, label: 'DILG', color: 'bg-indigo-500 border-indigo-400' },
-      { value: 8, label: 'IGDD', color: 'bg-teal-500 border-teal-400' },
-      { value: 9, label: 'CBO', color: 'bg-orange-500 border-orange-400' },
-      { value: 10, label: 'CPDO', color: 'bg-gray-500 border-gray-400' },
-      { value: 11, label: 'CCRO', color: 'bg-lime-500 border-lime-400' },
-      { value: 12, label: 'CDRRMO', color: 'bg-rose-500 border-rose-400' },
-      { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
-      { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
-      { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
-    ],
-    selected_graph_type: [
-      { value: 'none', label: 'None' },
-      { value: 'bar', label: 'Bar' },
-      { value: 'line', label: 'Line' },
-      { value: 'area', label: 'Area' },
-      
-    ],
-
-
+    ]
   },
-
-
   showGraphsGrp01: true,
   passed_data: {},
   report_years: {}
@@ -176,37 +113,6 @@ const state = reactive({
 
 
 //-----------------------------------------------// Props and reactive state----------------------------
-
-function changeData(){
-    switch (state.selected_rights_id){
-        case(0):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
-        break;
-        case(1):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config1
-        break;
-        case(2):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config2
-        break;
-        case(3):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config3
-        break;
-        case(4):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config4
-        break;
-        case(5):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config5
-        break;
-        case(6):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config6
-        break;
-        default:
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
-        //console.log(state.Selected_Rights_entry_config)
-
-    }
-}
-
 
 async function fetchreportyear() {
     try {
@@ -270,16 +176,14 @@ async function fetchRights(){
         }
 
         state.options.rights = data;
-        console.log( state.options.rights)
+        //console.log( state.options.rights)
 
     } catch (error) {
-        console.log(error)
+        //console.log(error)
     }
 }
 
 async function fetchRights_entry_config() {
-
-  
     try {
         let params = {
             page: currentPage

@@ -281,21 +281,16 @@ let NationalProjected = [0,0,0,0,0]
 
 const state = reactive({
 
-
-
     Actuals: [0,0,0,0,0],
     Projected: [0,0,0,0,0],
     NationalProjected: [0,0,0,0,0], 
     selected_graph_type: 'bar',
     selected_datasource: '',
     graphseries_all: [],
-
     passed_data: [],
-
     isGraphModalOpen: false, 
     Rights:[],
     Tracked_details: [],
-
     isViewModalOpen: false,
     isAddModalOpen: false,
     isEditModalOpen: false,
@@ -304,42 +299,33 @@ const state = reactive({
     successcount: '',
     errorcount:  '',
     errormessage: '',
-
     buttoncompute: false,
     buttonsavenew: true,
-
     buttoncomputeEdit: false,
     buttonsaveEdit: true,
-
     roles:[{}],
-
-   
     male:[{}],
     female:[{}],
     total:[{}],
     grand_total:[{}],
     remarks:[{}],
-
     edit_ids:[{}],
     edit_female:[{}],
     edit_total:[{}],
     edit_male:[{}],
     edit_grand_total:[{}],
     edit_remarks:[{}],
-
     view_male:[{}],
     view_female:[{}],
     view_total:[{}],
     view_grand_total:[{}],
     view_remarks:[{}],
     view_selected_datasource: 1,
-
     view_male_projected:[{}],
     view_female_projected:[{}],
     view_total_projected:[{}],
     view_grand_total_projected:[{}],
     view_remarks_projected:[{}],
-
     totaled_from:[{}],
     test: [{}], 
 
@@ -354,7 +340,7 @@ const state = reactive({
     selected_edit_entry_type: 'Actual',
     edit_selected_datasource: 0,
     is_annual: 0,
-    selected_rights_id: 0,
+    //selected_rights_id: 0,
     selected_sequence_header: '',
     selected_description: '',
     selected_group: 0,
@@ -397,19 +383,10 @@ const state = reactive({
             { value: 'Projected', label: 'Projected' },
             { value: 'National Projected', label: 'National Projected' },
         ],
-        view_entry_type: [
-            
-            { value: 'Projected', label: 'Projected' },
-            { value: 'National Projected', label: 'National Projected' },
-        ],
-        is_disabled: [
-            { value: '1', label: 'Not Applicable' },
-            { value: '2', label: 'Enabled' },
-        ],
+      
         years:[
             {value: '1', label: 'Jan - Dec 2024' },
             {value: '2', label: 'Jan - Dec 2025' },
-
         ],
         agencies: [
             { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
@@ -612,7 +589,7 @@ async function fetchRights(){
             page: currentPage
         }
         const response = await Childrens_rightsService.getRights(params)
-       
+     
         if (response.data) {
             state.Rights.data = response.data
             //console.log(state.Rights.data[0].description)
@@ -727,7 +704,7 @@ function DisplayPrint(Rights_entry_config){
     const description = ref(Rights_entry_config.description)
     const report_year = ref(state.selected_year_id)
     const query = new URLSearchParams({ group: group.value, description: description.value, report_year: report_year.value }).toString()
-    window.open(`/print/accomplishment?${query}`, '_blank')
+    window.open(`/print?${query}`, '_blank')
 
 }
 
@@ -746,8 +723,7 @@ function OpenGraphModal(Rights_entry_config){
     catch{
 
     }
- 
-            if (state.report_details) {
+             if (state.report_details) {
                 const seen = new Set();
                 var data = [];
                for (const item of state.report_details.data) {
@@ -799,30 +775,18 @@ function OpenGraphModal(Rights_entry_config){
                         }
                     }
                 }
-
                 state.Tracked_details = data;
-
                 console.log('Tracked_details = ', state.Tracked_details)
-
-                // Actuals = state.Actuals 
-                // Projected = state.Projected
-                // NationalProjected = state.NationalProjected
-
                 state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
                 state.graphseries_all[1] = { name: "Projected", data: state.Projected };
                 state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
-
                 console.log('Actuals = ', state.Actuals)
-
-
                 console.log('Actuals = ', state.graphseries_all)
             } else {
-                
                 state.Actuals = [0, 0, 0, 0, 0, 0 ]
                 state.Projected = [0, 0, 0, 0, 0, 0]
                 state.NationalProjected = [0, 0, 0, 0, 0, 0]
                 alert('No data found for Tracker. ')
-
             }
 
     state.isGraphModalOpen = true
