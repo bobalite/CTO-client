@@ -1,0 +1,24 @@
+<template>
+    <div :class=props.class >
+        {{ props.displaytext }}
+        <slot />
+    </div>
+     
+</template>
+
+<script setup lang="ts">
+const props = defineProps({
+    class: {
+        type: String,
+        required: true,
+        default: 'border-solid',
+    },
+    displaytext:{
+        type: [String, Number],
+        required: false,
+    }
+  
+})
+
+//sm:col-span-4
+</script>

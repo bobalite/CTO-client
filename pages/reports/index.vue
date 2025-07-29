@@ -22,23 +22,36 @@
         </div>
         <div class="sm:flex-auto">
 
-          <p>Select Graph Type</p>
+          <p>Select Report Type</p>
           <div>
-            <FormSelect name="selected_year" v-model="state.selected_graph_type"
-              :options="state.options.selected_graph_type" />
+            <FormSelect name="selected_report_type" v-model="state.selected_graph_type"
+              :options="state.options.selected_graph_type" @click="changeGraphType()" />
           </div>
         </div>
       </div>
 
     </div>
 
+    <PrintHeader  />
+    
+    
 
-    <div v-if= "state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
+    <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
       <ApexCharts ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
     </div>
 
+    <div v-if="state.selected_graph_type != 'none'" class="mt-6">
+      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
+        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
+      </GraphsGrp01>
+    </div>
+
+
+
     <button @click="printChart" class="print:hidden mt-4 bg-blue-500 text-white px-4 py-2 rounded">
-      Print Chart
+      Print Report
     </button>
   </div>
 </template>
@@ -58,6 +71,7 @@ import {Childrens_rightsService } from '~/components/api/Rights';
 import {rolesService } from '~/components/api/Roles'; 
 import {useUserStore} from '~/store/user'
 import {report_yearService } from '~/components/api/ReportYears'; 
+
 
 const userStore = useUserStore()
 let currentPage = 1;
@@ -102,6 +116,7 @@ const state = reactive({
   selected_quarter: '',
   Rights:[],
   selected_graph_type: 'none',
+  passed_data: [],
 
   Rights_entry_config: [],
   Rights_entry_config1: [],
@@ -156,11 +171,12 @@ const state = reactive({
       { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
       { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
     ],
+
     selected_graph_type: [
-      { value: 'none', label: 'None' },
-      { value: 'bar', label: 'Bar' },
-      { value: 'line', label: 'Line' },
-      { value: 'area', label: 'Area' },
+      { value: 'none', label: 'DILG Format' },
+      { value: 'type1', label: 'DILG Format + Dashboard Statistics' },
+      { value: 'type2', label: 'DILG Format + Accomplishment Statistics' },
+      { value: 'type3', label: 'All Options' },
       
     ],
 
@@ -169,8 +185,10 @@ const state = reactive({
 
 
   showGraphsGrp01: true,
-  passed_data: {},
-  report_years: {}
+  
+  report_years: [],
+  year: '2025',
+  report_year: 1,
 })
 
 
@@ -204,6 +222,14 @@ function changeData(){
         state.Selected_Rights_entry_config  = state.Rights_entry_config
         //console.log(state.Selected_Rights_entry_config)
 
+    }
+}
+
+function changeGraphType() {
+    if (state.selected_graph_type === 'none') {
+        state.showGraphsGrp01 = false;
+    } else {
+        state.showGraphsGrp01 = true;
     }
 }
 
@@ -320,42 +346,48 @@ async function fetchReports_Details_Actuals() {
     try {
        
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
+        state.passed_data.data = response.data
        
-       
-        //console.log(response)
+        console.log('response e', response)
         
-        if (response.data) {
-            state.report_details.data = response.data
-            state.passed_data.data = response.data
-              if (state.report_details) {
-                const seen = new Set();
-                var data = [];
-               for (const item of state.report_details.data) {
-                    const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
-                    //console.log('key = ', key)
-                    if (!seen.has(key)){
-                         seen.add(key)
-                        data.push({
-                            group_id: item.group_id,
-                            entry_type: item.entry_type,
-                            report_year_id: item.report_year_id,
-                            report_year: item.report_year,
-                            grand_total: item.grand_total
-                        });
-                    }
-                }
+        // if (response.data) {
 
-                state.Tracked_details = data;
-                console.log('Tracked_details = ', state.Tracked_details)
-            } else {
-                alert('No data found for Tracker. ')  
-            }
+        //     console.log('response.data = ', response.data)
+        //     state.report_details.data = response.data
+            
+        //     console.log('report_details = ', state.report_details.data)
+        //     console.log('passed_data = ', state.passed_data)
+        //       if (state.report_details) {
+        //         const seen = new Set();
+        //         var data = [];
+        //        for (const item of state.report_details.data) {
+        //             const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
+        //             //console.log('key = ', key)
+        //             if (!seen.has(key)){
+        //                  seen.add(key)
+        //                 data.push({
+        //                     group_id: item.group_id,
+        //                     entry_type: item.entry_type,
+        //                     report_year_id: item.report_year_id,
+        //                     report_year: item.report_year,
+        //                     grand_total: item.grand_total
+        //                 });
+        //             }
+        //         }
+
+        //         state.Tracked_details = data;
+        //         console.log('Tracked_details = ', state.Tracked_details)
+        //     } else {
+        //         alert('No data found for Tracker. ')  
+        //     }
 
 
 
-        }
+        // }
+
+
     } catch (error) {
-        //console.log(error)
+        console.log(error)
     }
 }
 

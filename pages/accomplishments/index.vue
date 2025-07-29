@@ -96,8 +96,8 @@
                                         National</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Stat</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Print</th>     
+                                    <!-- <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Print</th>      -->
 
                                 </tr>
                             </thead>
@@ -222,11 +222,11 @@
                                             </NuxtLink>
                                         </td>
 
-                                         <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                         <!-- <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             <NuxtLink @click="DisplayPrint(Rights_entry_config)">
                                                 <IconPrint />
                                             </NuxtLink>
-                                        </td>
+                                        </td> -->
 
                                     </template>
                                 </tr>
