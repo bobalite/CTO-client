@@ -33,12 +33,19 @@
     </div>
 
     <PrintHeader  />
+   
+   
+    <PrintRowheader  />
+   
+   
+    <PrintRow  />
     
     
 
     <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
       <ApexCharts ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
     </div>
+
 
     <div v-if="state.selected_graph_type != 'none'" class="mt-6">
       <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"

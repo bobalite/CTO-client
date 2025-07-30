@@ -46,18 +46,23 @@
                 <ApexCharts :type="state.selected_graph_type" height="400" width="100%"
                     :options="state.populationHoriOptions" :series="state.graphseries_all" />
                 <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
-                <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
-                <GraphsGrp01 v-if="state.selected_group == 1" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-                    class="sm:col-span-5 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-                    :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
-                </GraphsGrp01>
+                <div
+                    class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
+                    <GraphsGrp01 v-if="state.selected_group == 1" :key="state.refresh_graphs_toggle"
+                        :passed_data="state.passed_data"
+                        class="sm:col-span-5 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+                        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year"
+                        :passed_year_data="state.report_years">
+                    </GraphsGrp01>
+
+
                     <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
                     <GridCell class="sm:col-span-8  pb-4" :displaytext="'DATASOURCE: ' + state.selected_datasource" />
                     <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
                     <GridCell class="sm:col-span-8  pb-4" :displaytext="' '" />
-                   
 
-                     <!-- <button
+
+                    <!-- <button
                         class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
                         @click="PrintGraphModal"> 🖨️ Print </button> -->
 
@@ -68,7 +73,7 @@
                 </div>
 
             </ModalAlert>
-          
+
         </div>
 
 
@@ -169,18 +174,18 @@
                                             class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 
                                             <template v-for="tracked in state.Tracked_details">
-                                                
+
                                                 <!-- annual-->
-                                                <template 
+                                                <template
                                                     v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year == state.selected_year && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 1">
                                                     <span
                                                         class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-left rounded-2xl border bg-green-500 font-large text-black mr-2 mb-2">
                                                         {{tracked.grand_total}}
-                                                        
+
                                                     </span>
                                                 </template>
 
-                                                
+
                                                 <!-- quarterly-->
                                                 <template
                                                     v-if="tracked.group_id == Rights_entry_config.group && tracked.report_year_id == state.selected_year_id && tracked.entry_type == 'Projected' && tracked.grand_total != '0' && Rights_entry_config.is_annual == 0">
@@ -222,7 +227,7 @@
                                             </NuxtLink>
                                         </td>
 
-                                         <!-- <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
+                                        <!-- <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
                                             <NuxtLink @click="DisplayPrint(Rights_entry_config)">
                                                 <IconPrint />
                                             </NuxtLink>
