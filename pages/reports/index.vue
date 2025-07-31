@@ -33,12 +33,11 @@
     </div>
 
     <PrintHeader  />
-   
-   
+     
     <PrintRowheader  />
    
    
-    <PrintRow  />
+    <PrintRow :name="'test'" />
     
     
 

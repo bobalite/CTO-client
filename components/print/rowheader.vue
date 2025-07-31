@@ -8,7 +8,7 @@
         :displaytext="'GROUP: group_number'" /> 
 
    <GridCell
-        class="sm:col-span-14 text-center border-grey border-t border-l  border-b pb-6"
+        class="sm:col-span-14 text-center border-grey border-t border-l  border-r border-b pb-6"
         :displaytext="'group_header'" /> 
 
      <GridCell
