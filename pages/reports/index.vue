@@ -33,13 +33,24 @@
     </div>
 
     <PrintHeader  />
-     
+
+
+     <template v-for="group in state.Selected_Rights_entry_config_group.data">
+
+      <PrintRowheader :group_number="group.group_number" :group_header="group.group_header" />
+      <!-- <PrintRow
+        v-for="(row, index) in state.Selected_Rights_entry_config.data.filter(item => item.group_id === group.id)"
+        :key="index"
+        :indicator="row.indicator"
+        :actual />  -->
+
+     </template>
+
     <PrintRowheader  />
-   
-   
-    <PrintRow :name="'test'" />
-    
-    
+    <PrintRow :indicator="'afasdf'" />
+    <!-- <PrintRow :indicator="'teaadfst2'" />
+    <PrintRow :indicator="'adffa'" /> -->
+
 
     <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
       <ApexCharts ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
@@ -124,6 +135,9 @@ const state = reactive({
   selected_graph_type: 'none',
   passed_data: [],
 
+  Selected_Rights_entry_config: [],
+  Selected_Rights_entry_config_group: [],
+
   Rights_entry_config: [],
   Rights_entry_config1: [],
   Rights_entry_config2: [],
@@ -202,6 +216,9 @@ const state = reactive({
 //-----------------------------------------------// Props and reactive state----------------------------
 
 function changeData(){
+
+
+
     switch (state.selected_rights_id){
         case(0):
         state.Selected_Rights_entry_config  = state.Rights_entry_config
@@ -226,7 +243,7 @@ function changeData(){
         break;
         default:
         state.Selected_Rights_entry_config  = state.Rights_entry_config
-        //console.log(state.Selected_Rights_entry_config)
+        console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
 
     }
 }
@@ -317,7 +334,7 @@ async function fetchRights_entry_config() {
             page: currentPage
         }
         const response = await Rights_entry_configServices.getRights_entry_config(params)
-        //console.log(response)
+        console.log('fetchRights_entry_config',response)
         if (response.data) {
             state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
@@ -326,10 +343,10 @@ async function fetchRights_entry_config() {
             state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            //console.log(response.data)
+            console.log(state.Rights_entry_config1.data)
         }
     } catch (error) { 
-        //.log(error)
+        console.log(error)
     }
 }
 
