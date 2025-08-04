@@ -35,20 +35,41 @@
     <PrintHeader  />
 
 
-     <template v-for="group in state.Selected_Rights_entry_config_group.data">
+     <template v-for="selected_right in state.Selected_Rights_entry_config.data">
 
-      <PrintRowheader :group_number="group.group_number" :group_header="group.group_header" />
-      <!-- <PrintRow
-        v-for="(row, index) in state.Selected_Rights_entry_config.data.filter(item => item.group_id === group.id)"
-        :key="index"
-        :indicator="row.indicator"
-        :actual />  -->
+      <template v-if="selected_right.tier_level == 1">
+        <PrintRowheader v-if="selected_right.tier_level == 1" :group_number="selected_right.group"
+          :group_header="selected_right.group_header" :datasource="selected_right.agency_id" :is_annual = "selected_right.is_annual" />
+
+        <!-- <PrintRow
+          v-for="(row, index) in state.Selected_Rights_entry_config.data.filter(item => item.group_id === selected_right.group)"
+          :key="index"
+          :indicator="row.indicator"
+         /> -->
+
+         <template v-for="group_row in state.Selected_Rights_entry_config.data">
+              <PrintRow v-if="group_row.group == selected_right.group" 
+              :indicator = "group_row.description" 
+              :male = "group_row.male" 
+              :female = "group_row.female" 
+              :total = "group_row.total" 
+              :grand_total = "group_row.grand_total" 
+              />
+               
+              
+          </template> 
+
+      </template>    
+
+     
+
 
      </template>
 
+<!-- 
     <PrintRowheader  />
     <PrintRow :indicator="'afasdf'" />
-    <!-- <PrintRow :indicator="'teaadfst2'" />
+    <PrintRow :indicator="'teaadfst2'" />
     <PrintRow :indicator="'adffa'" /> -->
 
 
@@ -218,6 +239,8 @@ const state = reactive({
 function changeData(){
 
 
+console.log('changeData', state.selected_rights_id)
+
 
     switch (state.selected_rights_id){
         case(0):
@@ -246,6 +269,8 @@ function changeData(){
         console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
 
     }
+
+     console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
 }
 
 function changeGraphType() {

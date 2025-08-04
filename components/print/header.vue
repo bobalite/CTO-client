@@ -36,7 +36,7 @@
     <div class="mt-0 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-20">
 
 
-      <GridCell class="sm:col-span-3 text-center table-header-4 border-white border-l border-b border-grey pb-6"
+      <GridCell class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-grey pb-6"
         :displaytext="''" />
       <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-white border-b border-grey pb-6"
         :displaytext="'ACTUAL DATA'" />
@@ -44,13 +44,12 @@
         :displaytext="'PROJECTED TARGETS '" />
       <GridCell class="sm:col-span-4 text-center table-header-4 border-white  border-l border-b border-grey pb-6"
         :displaytext="'NATIONAL PROJECTED TARGETS'" />
-      <GridCell class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-6"
+     
+      <GridCell
+        class="sm:col-span-4 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
         :displaytext="''" />
       <GridCell
-        class="sm:col-span-3 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
-        :displaytext="''" />
-      <GridCell
-        class="sm:col-span-3 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
+        class="sm:col-span-4 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
         :displaytext="'INDICATOR / DATA NEEDED'" />
 
       <GridCell
@@ -85,7 +84,7 @@
       <GridCell class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-6"
         :displaytext="'DATASOURCES'" />
       <GridCell
-        class="sm:col-span-3 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
+        class="sm:col-span-2 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
         :displaytext="'REMARKS'" />
 
 
