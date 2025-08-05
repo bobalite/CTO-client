@@ -48,12 +48,25 @@
          /> -->
 
          <template v-for="group_row in state.Selected_Rights_entry_config.data">
+
               <PrintRow v-if="group_row.group == selected_right.group" 
               :indicator = "group_row.description" 
               :male = "group_row.male" 
               :female = "group_row.female" 
               :total = "group_row.total" 
-              :grand_total = "group_row.grand_total" 
+              :grand_total = "group_row.grand_total"
+              :actual_male = "0"
+              :actual_female = "0"
+              :actual_total = "0"
+              :actual_grand_total = "500000" 
+              :projected_male = "0"
+              :projected_female = "0"
+              :projected_total = "0"
+              :projected_grand_total = "0" 
+              :national_proj_male = "0"
+              :national_proj_female = "0"
+              :national_proj_total = "0"
+              :national_proj_grand_total = "0" 
               />
                
               
@@ -65,12 +78,6 @@
 
 
      </template>
-
-<!-- 
-    <PrintRowheader  />
-    <PrintRow :indicator="'afasdf'" />
-    <PrintRow :indicator="'teaadfst2'" />
-    <PrintRow :indicator="'adffa'" /> -->
 
 
     <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
@@ -85,6 +92,8 @@
         :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp01>
     </div>
+
+    <PrintFooter />
 
 
 
@@ -176,10 +185,9 @@ const state = reactive({
     ],
 
     report_years: [
-      { year: 2020, label: '2020' },
-      { year: 2021, label: '2021' },
-      { year: 2022, label: '2022' },
-      { year: 2023, label: '2023' }
+      { value: 2024, label: '2024' },
+      { value: 2025, label: '2025' },
+    
     ],
     view_entry_type: [
 
@@ -230,6 +238,8 @@ const state = reactive({
   report_years: [],
   year: '2025',
   report_year: 1,
+
+  
 })
 
 
@@ -283,34 +293,34 @@ function changeGraphType() {
 
 
 async function fetchreportyear() {
-    try {
-           const response = await report_yearService.getReportYears()
-        if (response.data) {
+    // try {
+    //        const response = await report_yearService.getReportYears()
+    //     if (response.data) {
             
-            state.report_years.data = response.data
-            var data = [];
-            var datasources = [];
-            if (state.report_years.data != null) {
+    //         state.report_years.data = response.data
+    //         var data = [];
+    //         var datasources = [];
+    //         if (state.report_years.data != null) {
                 
-                datasources = state.report_years.data
+    //             datasources = state.report_years.data
 
-                for (const i in datasources) {
-                    const value = datasources[i].id;
-                    if (!datasources.includes(value)) {
+    //             for (const i in datasources) {
+    //                 const value = datasources[i].id;
+    //                 if (!datasources.includes(value)) {
 
-                        if(datasources[i].status == 1){
-                        data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
-                        }
-                    }
-                }
-                state.options.report_years = data;
-                //console.log('report_years = ', state.options.report_years.data)
-            }
+    //                     if(datasources[i].status == 1){
+    //                     data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
+    //                     }
+    //                 }
+    //             }
+    //             state.options.report_years = data;
+    //             //console.log('report_years = ', state.options.report_years.data)
+    //         }
 
-        }
-    } catch (error) { 
-        //console.log(error)
-    }
+    //     }
+    // } catch (error) { 
+    //     //console.log(error)
+    // }
 }
 
 function changeYear() {
@@ -396,7 +406,7 @@ async function fetchReports_Details_Actuals() {
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
         state.passed_data.data = response.data
        
-        console.log('response e', response)
+        console.log('fetchReports_Details_Actuals', response)
         
         // if (response.data) {
 
