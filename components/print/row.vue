@@ -94,11 +94,16 @@ const props = defineProps({
     required: false,
     default: ''
   },
+   group:{
+        type: Number,
+        required: false,
+        default: 0
+    },
   
   actual_male:{
         type: Number,
         required: false,
-        default: 54454
+        default: 0
     }, actual_female:{
         type: Number,
         required: false,
@@ -108,7 +113,7 @@ const props = defineProps({
         required: false,
         default: 0
     },actual_grand_total:{
-        type: Number,
+        type: [String, Number],
         required: false,
         default: 0
     }, projected_male:{
@@ -124,7 +129,7 @@ const props = defineProps({
         required: false,
         default: 0
     },projected_grand_total:{
-        type: Number,
+        type: [String, Number],
         required: false,
         default: 0
     }, national_proj_male:{
@@ -140,7 +145,7 @@ const props = defineProps({
         required: false,
         default: 0
     },national_proj_grand_total:{
-        type: Number,
+       type: [String, Number],
         required: false,
         default: 0
     },remarks:{
@@ -164,7 +169,7 @@ const props = defineProps({
         required: false,
         default: 0
     },grand_total : {
-        type: Number,   
+        type: [String, Number], 
         required: false,
         default: 0  
     }      

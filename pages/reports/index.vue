@@ -9,7 +9,7 @@
           <p>Select Report Year</p>
           <div>
             <FormSelect name="selected_year" v-model="state.selected_year_id" :options="state.options.report_years"
-              @click="changeYear()" />
+              @update:modelValue="changeYear()" />
           </div>
         </div>
 
@@ -32,52 +32,40 @@
 
     </div>
 
-    <PrintHeader  />
+    <PrintHeader />
 
 
-     <template v-for="selected_right in state.Selected_Rights_entry_config.data">
+    <template v-for="selected_right in state.Selected_Rights_entry_config_values">
 
       <template v-if="selected_right.tier_level == 1">
         <PrintRowheader v-if="selected_right.tier_level == 1" :group_number="selected_right.group"
-          :group_header="selected_right.group_header" :datasource="selected_right.agency_id" :is_annual = "selected_right.is_annual" />
+          :group_header="selected_right.group_header" :datasource="selected_right.agency_id"
+          :is_annual="selected_right.is_annual" />
 
-        <!-- <PrintRow
-          v-for="(row, index) in state.Selected_Rights_entry_config.data.filter(item => item.group_id === selected_right.group)"
-          :key="index"
-          :indicator="row.indicator"
-         /> -->
-
-         <template v-for="group_row in state.Selected_Rights_entry_config.data">
-
-              <PrintRow v-if="group_row.group == selected_right.group" 
-              :indicator = "group_row.description" 
-              :male = "group_row.male" 
-              :female = "group_row.female" 
-              :total = "group_row.total" 
-              :grand_total = "group_row.grand_total"
-              :actual_male = "0"
-              :actual_female = "0"
-              :actual_total = "0"
-              :actual_grand_total = "500000" 
-              :projected_male = "0"
-              :projected_female = "0"
-              :projected_total = "0"
-              :projected_grand_total = "0" 
-              :national_proj_male = "0"
-              :national_proj_female = "0"
-              :national_proj_total = "0"
-              :national_proj_grand_total = "0" 
-              />
-               
-              
-          </template> 
-
-      </template>    
-
-     
+        <PrintRow :indicator="selected_right.description" :male="selected_right.male" :female="selected_right.female"
+          :total="selected_right.total" :grand_total="selected_right.grand_total"
+          :actual_male=selected_right.actual_male :actual_female=selected_right.actual_female
+          :actual_total=selected_right.actual_total :actual_grand_total=selected_right.actual_grand_total
+          :projected_male=selected_right.projected_male :projected_female=selected_right.projected_female
+          :projected_total=selected_right.projected_total :projected_grand_total=selected_right.projected_grand_total
+          :national_proj_male=selected_right.national_proj_male
+          :national_proj_female=selected_right.national_proj_female
+          :national_proj_total=selected_right.national_proj_total
+          :national_proj_grand_total=selected_right.national_proj_grand_total />
 
 
-     </template>
+      </template>
+      <PrintRow v-if="selected_right.tier_level != 1" :indicator="selected_right.description" :male="selected_right.male" :female="selected_right.female"
+          :total="selected_right.total" :grand_total="selected_right.grand_total"
+          :actual_male=selected_right.actual_male :actual_female=selected_right.actual_female
+          :actual_total=selected_right.actual_total :actual_grand_total=selected_right.actual_grand_total
+          :projected_male=selected_right.projected_male :projected_female=selected_right.projected_female
+          :projected_total=selected_right.projected_total :projected_grand_total=selected_right.projected_grand_total
+          :national_proj_male=selected_right.national_proj_male
+          :national_proj_female=selected_right.national_proj_female
+          :national_proj_total=selected_right.national_proj_total
+          :national_proj_grand_total=selected_right.national_proj_grand_total />
+    </template>
 
 
     <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
@@ -148,9 +136,10 @@ const printChart = async () => {
 onMounted(() => {
     fetchreportyear()
     fetchRights()
-    fetchRights_entry_config()
+    //fetchRights_entry_config()
     fetchrole()
-    fetchReports_Details_Actuals()
+    //fetchReports_Details_Actuals()
+   
    
 })
 
@@ -158,12 +147,18 @@ const state = reactive({
 
   selected_rights_id: 1,
   selected_year_id: 0,
-  selected_year: 0,
+  selected_year: 2025,
   refresh_graphs_toggle: 0,
   selected_quarter: '',
   Rights:[],
   selected_graph_type: 'none',
   passed_data: [],
+
+  actuals: [],
+  projected: [],
+  national_projected: [],
+  remarks: [], 
+
 
   Selected_Rights_entry_config: [],
   Selected_Rights_entry_config_group: [],
@@ -176,6 +171,8 @@ const state = reactive({
   Rights_entry_config5: [],
   Rights_entry_config6: [],
 
+  Selected_Rights_entry_config_values: [],
+
 
   options: {
     entry_type: [
@@ -185,8 +182,8 @@ const state = reactive({
     ],
 
     report_years: [
-      { value: 2024, label: '2024' },
       { value: 2025, label: '2025' },
+      { value: 2024, label: '2024' },
     
     ],
     view_entry_type: [
@@ -250,8 +247,6 @@ function changeData(){
 
 
 console.log('changeData', state.selected_rights_id)
-
-
     switch (state.selected_rights_id){
         case(0):
         state.Selected_Rights_entry_config  = state.Rights_entry_config
@@ -276,11 +271,13 @@ console.log('changeData', state.selected_rights_id)
         break;
         default:
         state.Selected_Rights_entry_config  = state.Rights_entry_config
-        console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
-
+       // console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
     }
+     //console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
 
-     console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
+
+
+
 }
 
 function changeGraphType() {
@@ -326,12 +323,18 @@ async function fetchreportyear() {
 function changeYear() {
    
     try {
-        state.selected_year = state.options.report_years[state.selected_year_id - 1].year
+        state.selected_year = state.options.report_years[state.selected_year_id - 1].label
         state.selected_quarter = state.options.report_years[state.selected_year_id - 1].label
     } catch (error) {
         state.selected_year = 0
     }
+     console.log('changeYear state.selected_year_id', state.selected_year_id )
+     console.log('changeYear state.selected_year', state.selected_year )
 
+    //arrange_data()
+    fetchRights_entry_config()
+
+    
 }
 
 async function fetchRights(){
@@ -363,26 +366,137 @@ async function fetchRights(){
 
 async function fetchRights_entry_config() {
 
-  
-    try {
-        let params = {
-            page: currentPage
-        }
-        const response = await Rights_entry_configServices.getRights_entry_config(params)
-        console.log('fetchRights_entry_config',response)
-        if (response.data) {
-            state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            console.log(state.Rights_entry_config1.data)
-        }
-    } catch (error) { 
-        console.log(error)
+  try {
+   
+    const response = await Rights_entry_configServices.getRights_entry_config()
+    
+    if (response.data) {
+      state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+
     }
+  } catch (error) {
+    console.log(error)
+  }
+
+
+  try {
+    const response = await reportDetailsGroupsService.getReportDetailsGroups() // data is all of the entries and not filltered by rights_id
+    if (response) {
+      console.log('fetchRights_entry_config -- response', response.data)
+      state.passed_data.data = []
+      //state.passed_data.data = response.data
+     for (const item of response.data){
+
+        if (item.report_year == state.selected_year_id) { // this is done to filter the data by report_year 
+          state.passed_data.data.push(item)
+        } 
+       
+      }
+
+      
+     
+     
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+
+//--------------------------------------------- arrange_data-----------
+  try { // this is done to sum the values of the same sequence_header, entry_type, report_year and grand_total mainly for quarterly reports
+  state.actuals = []
+  console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
+  console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
+  console.log('arrange_data ; state.passed_data --3', state.passed_data)
+  const seen = new Map();
+  const uniqueData = [];
+
+  for (const item of state.passed_data.data) { 
+    const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
+
+    if (!seen.has(key)) {
+      // Add to uniqueData and track index in Map
+      uniqueData.push({
+        sequence_header: item.sequence_header,
+        entry_type: item.entry_type,
+        report_year: item.report_year,
+        male: item.male,
+        female: item.female,
+        total: item.total,
+        grand_total: item.grand_total
+      });
+      seen.set(key, uniqueData.length - 1); // Store index
+    } else {
+      // Duplicate found – sum the values
+      const index = seen.get(key);
+      uniqueData[index].male += item.male;
+      uniqueData[index].female += item.female;
+      uniqueData[index].total += item.total;
+      uniqueData[index].grand_total += item.grand_total;
+    }
+  }
+
+  state.actuals.data = uniqueData;
+  console.log('arrange_data ; state.actuals.data --4', uniqueData)
+  console.log('arrange_data ; state.actuals.data --5', state.actuals.data)    
+  } catch (error) {
+    console.log(error)
+    
+  }
+
+  const year = state.selected_year_id === 0 ? 2025 : state.selected_year_id;
+  console.log('year -- 8', year)
+
+  state.Selected_Rights_entry_config_values = [];
+
+
+  try {
+
+    for (const indicator of state.Rights_entry_config.data) {
+      state.Selected_Rights_entry_config_values.push({
+        sequence_header: indicator.sequence_header,
+        description: indicator.description,
+        tier_level: indicator.tier_level,
+        agency_id: indicator.agency_id,
+        male: indicator.male,
+        female: indicator.female,
+        total: indicator.total,
+        grand_total: indicator.grand_total,
+        is_annual: indicator.is_annual,
+        group_header: indicator.group_header,
+        group: indicator.group,
+
+        //state.options.agencies.find(agency => agency.value === props.datasource)?.label || 'Unknown Agency'
+        actual_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual'  )?.male || 0,
+        actual_female: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' )?.female || 0,
+        actual_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' )?.total || 0,
+        actual_grand_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' )?.grand_total || '',
+        projected_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' )?.male || 0,
+        projected_female:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' )?.female || 0,
+        projected_total:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' )?.total || 0,
+        projected_grand_total:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' )?.grand_total || '',
+        national_proj_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' )?.male || 0, 
+        national_proj_female: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' )?.female || 0, 
+        national_proj_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' )?.total || 0, 
+        national_proj_grand_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' )?.grand_total || '', 
+        remarks: 't4et',
+
+      })
+
+    }
+
+    console.log('Selected_Rights_entry_config_values --6', state.Selected_Rights_entry_config_values)
+
+  } catch (error) {
+    console.log(error)
+  }
+
 }
 
 async function fetchrole() {
@@ -400,48 +514,116 @@ async function fetchrole() {
     }
 }
 
+function arrange_data() {
+ try { // this is done to sum the values of the same sequence_header, entry_type, report_year and grand_total mainly for quarterly reports
+  state.actuals = []
+  state.Selected_Rights_entry_config_values = []
+  console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
+  console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
+  console.log('arrange_data ; state.passed_data --3', state.passed_data)
+  const seen = new Map();
+  const uniqueData = [];
+
+  for (const item of state.passed_data.data) { 
+    const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
+
+    if (!seen.has(key)) {
+      // Add to uniqueData and track index in Map
+      uniqueData.push({
+        sequence_header: item.sequence_header,
+        entry_type: item.entry_type,
+        report_year: item.report_year,
+        male: item.male,
+        female: item.female,
+        total: item.total,
+        grand_total: item.grand_total
+      });
+      seen.set(key, uniqueData.length - 1); // Store index
+    } else {
+      // Duplicate found – sum the values
+      const index = seen.get(key);
+      uniqueData[index].male += item.male;
+      uniqueData[index].female += item.female;
+      uniqueData[index].total += item.total;
+      uniqueData[index].grand_total += item.grand_total;
+    }
+  }
+
+  state.actuals.data = uniqueData;
+  console.log('arrange_data ; state.actuals.data --4', uniqueData)
+  console.log('arrange_data ; state.actuals.data --5', state.actuals.data)    
+  } catch (error) {
+    console.log(error)
+    
+  }
+
+
+  try {
+
+    for (const indicator of state.Rights_entry_config.data) {
+      state.Selected_Rights_entry_config_values.push({
+        sequence_header: indicator.sequence_header,
+        description: indicator.description,
+        tier_level: indicator.tier_level,
+        agency_id: indicator.agency_id,
+        male: indicator.male,
+        female: indicator.female,
+        total: indicator.total,
+        grand_total: indicator.grand_total,
+        is_annual: indicator.is_annual,
+        group_header: indicator.group_header,
+        group: indicator.group,
+
+        //state.options.agencies.find(agency => agency.value === props.datasource)?.label || 'Unknown Agency'
+
+       
+       
+       
+        actual_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.report_year === state.selected_year_id)?.male || 0,
+        actual_female: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.report_year === state.selected_year_id)?.female || 0,
+        actual_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.report_year === state.selected_year_id)?.total || 0,
+        actual_grand_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.report_year === state.selected_year_id)?.grand_total || '',
+        projected_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' && cell.report_year === state.selected_year_id)?.male || 0,
+        projected_female:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' && cell.report_year === state.selected_year_id)?.female || 0,
+        projected_total:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' && cell.report_year === state.selected_year_id)?.total || 0,
+        projected_grand_total:  state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' && cell.report_year === state.selected_year_id)?.grand_total || '',
+        national_proj_male: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' && cell.report_year === state.selected_year_id)?.male || 0, 
+        national_proj_female: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' && cell.report_year === state.selected_year_id)?.female || 0, 
+        national_proj_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' && cell.report_year === state.selected_year_id)?.total || 0, 
+        national_proj_grand_total: state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' && cell.report_year === state.selected_year_id)?.grand_total || '', 
+        remarks: 't4et',
+
+      })
+
+    }
+
+    console.log('Selected_Rights_entry_config_values --6', state.Selected_Rights_entry_config_values)
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+
+
 async function fetchReports_Details_Actuals() {
     try {
        
-        const response = await reportDetailsGroupsService.getReportDetailsGroups()
-        state.passed_data.data = response.data
+        const response = await reportDetailsGroupsService.getReportDetailsGroups() // data is all of the entries and not filltered by rights_id
        
-        console.log('fetchReports_Details_Actuals', response)
-        
-        // if (response.data) {
 
-        //     console.log('response.data = ', response.data)
-        //     state.report_details.data = response.data
+        if (response) {
             
-        //     console.log('report_details = ', state.report_details.data)
-        //     console.log('passed_data = ', state.passed_data)
-        //       if (state.report_details) {
-        //         const seen = new Set();
-        //         var data = [];
-        //        for (const item of state.report_details.data) {
-        //             const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
-        //             //console.log('key = ', key)
-        //             if (!seen.has(key)){
-        //                  seen.add(key)
-        //                 data.push({
-        //                     group_id: item.group_id,
-        //                     entry_type: item.entry_type,
-        //                     report_year_id: item.report_year_id,
-        //                     report_year: item.report_year,
-        //                     grand_total: item.grand_total
-        //                 });
-        //             }
-        //         }
+            state.passed_data.data = response.data
+            console.log('fetchReports_Details_Actuals passed_data', state.passed_data)
+             //arrange_data()
+        }
+       
+       
 
-        //         state.Tracked_details = data;
-        //         console.log('Tracked_details = ', state.Tracked_details)
-        //     } else {
-        //         alert('No data found for Tracker. ')  
-        //     }
+        
 
-
-
-        // }
 
 
     } catch (error) {
