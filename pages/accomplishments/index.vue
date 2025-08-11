@@ -721,6 +721,7 @@ function OpenGraphModal(Rights_entry_config){
     const type = Rights_entry_config.is_annual
       state.Actuals = [0, 0, 0, 0, 0, 0 ]
       state.Projected = [0, 0, 0, 0, 0, 0]
+      
       state.NationalProjected = [0, 0, 0, 0, 0, 0]
     try{
         state.selected_datasource =  state.options.agencies[parseInt(Rights_entry_config.agency_id)].label
