@@ -42,35 +42,40 @@
           :group_header="selected_right.group_header" :datasource="selected_right.agency_id"
           :is_annual="selected_right.is_annual" />
 
-        <PrintRow :indicator="selected_right.description" :male= 1 :female= 1
-          :total= 1 :grand_total="selected_right.grand_total"
-          :actual_male= "''" :actual_female= "''"
-          :actual_total= "''" :actual_grand_total=selected_right.actual_grand_total
-          :projected_male= "''" :projected_female= "''"
-          :projected_total= "''" :projected_grand_total=selected_right.projected_grand_total
-          :national_proj_male= "''"
-          :national_proj_female= "''"
-          :national_proj_total= "''"
+         
+        <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white border-gray-500 border-b-2 border-t-2 border-l-2 border-r-2"  >
+          <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
+            :series="state.graphseries_all"  :title.text= "'Actual vs Projected and National Projected Comparisons'" /> <!-- :options="chartOptions" :series="series" /> -->
+        </div>
+      
+
+        <PrintRow :indicator="selected_right.description" :male=1 :female=1 :total=1
+          :grand_total="selected_right.grand_total" :actual_male="selected_right.actual_male || ''"
+          :actual_female="selected_right.actual_male || ''" :actual_total="''"
+          :actual_grand_total=selected_right.actual_grand_total :projected_male="''" :projected_female="''"
+          :projected_total="''" :projected_grand_total=selected_right.projected_grand_total :national_proj_male="''"
+          :national_proj_female="''" :national_proj_total="''"
           :national_proj_grand_total=selected_right.national_proj_grand_total />
 
 
       </template>
-      <PrintRow v-if="selected_right.tier_level != 1" :indicator="selected_right.description" :male="selected_right.male" :female="selected_right.female"
-          :total="selected_right.total" :grand_total="selected_right.grand_total"
-          :actual_male=selected_right.actual_male :actual_female=selected_right.actual_female
-          :actual_total=selected_right.actual_total :actual_grand_total=selected_right.actual_grand_total
-          :projected_male=selected_right.projected_male :projected_female=selected_right.projected_female
-          :projected_total=selected_right.projected_total :projected_grand_total=selected_right.projected_grand_total
-          :national_proj_male=selected_right.national_proj_male
-          :national_proj_female=selected_right.national_proj_female
-          :national_proj_total=selected_right.national_proj_total
-          :national_proj_grand_total=selected_right.national_proj_grand_total />
+      <PrintRow v-if="selected_right.tier_level != 1" :indicator="selected_right.description"
+        :male="selected_right.male" :female="selected_right.female" :total="selected_right.total"
+        :grand_total="selected_right.grand_total" :actual_male=selected_right.actual_male
+        :actual_female=selected_right.actual_female :actual_total=selected_right.actual_total
+        :actual_grand_total=selected_right.actual_grand_total :projected_male=selected_right.projected_male
+        :projected_female=selected_right.projected_female :projected_total=selected_right.projected_total
+        :projected_grand_total=selected_right.projected_grand_total
+        :national_proj_male=selected_right.national_proj_male :national_proj_female=selected_right.national_proj_female
+        :national_proj_total=selected_right.national_proj_total
+        :national_proj_grand_total=selected_right.national_proj_grand_total />
+
+      
+
     </template>
 
 
-    <div v-if="state.selected_graph_type != 'none'" ref="printSection" class="p-6 bg-white">
-       <ApexCharts ref="chart" width="90%" height="350" type="bar"  :options="state.populationHoriOptions" :series="state.graphseries_all" /> <!-- :options="chartOptions" :series="series" /> -->
-    </div>
+
 
 
     <div v-if="state.selected_graph_type != 'none'" class="mt-6">
@@ -114,12 +119,11 @@ let currentPage = 1;
 const dummyPercentageActualvsLocal =[84.8,88.4,91.1,85.6,75,97]
 const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]
 
-const years = [2021,2022,2023,2024,2025,2026]
+let years = []
 
 let Actuals = [0,0,0,0,0]
 let Projected = [0,0,0,0,0]
 let NationalProjected = [0,0,0,0,0]
-
 
 const chartOptions = {
   chart: {
@@ -138,7 +142,7 @@ const chartOptions = {
     }
   },
   xaxis: {
-    categories: [2020, 2021, 2022, 2023, 2024, 2025]
+    categories: years
   }
 }
 
@@ -156,13 +160,12 @@ const printChart = async () => {
 
 
 onMounted(() => {
+    generateYears()
     fetchreportyear()
     fetchRights()
-    //fetchRights_entry_config()
     fetchrole()
     //fetchReports_Details_Actuals()
-   
-   
+    //fetchRights_entry_config()
 })
 
 const state = reactive({
@@ -298,7 +301,7 @@ const state = reactive({
         },
 
         title: {
-            text: 'Actual vs Projected and National Projected Comparisons',
+            
             align: 'center',
             style: {
                 fontSize: '20px',
@@ -746,7 +749,7 @@ async function fetchReports_Details_Actuals() {
 
 
 
-function OpenGraphModal(Rights_entry_config){
+function ArangeGraphData(Rights_entry_config){
     state.selected_group = Rights_entry_config.group
     //state.selected_datasource = Rights_entry_config.datasource_id
     state.is_annual = Rights_entry_config.is_annual
@@ -830,7 +833,19 @@ function OpenGraphModal(Rights_entry_config){
 }
 //---------------------------------------------------Graph Modal-----------------------------------------------------------------------
 
+function generateYears() {
+  const currentYear = new Date().getFullYear()
+  state.options.years = [] // clear first
 
+    for (let i = 4; i >= 0; i--) {
+        const year = currentYear - i
+        years.push(currentYear - i)
+        state.options.years.push({ value: year, label: String(year) })
+      }
+
+  console.log('generated years', years)
+  console.log('generated years state', state.options.years)
+}
 
 definePageMeta({
     layout: 'main'
