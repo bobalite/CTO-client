@@ -25,12 +25,21 @@
           <p>Select Report Type</p>
           <div>
             <FormSelect name="selected_report_type" v-model="state.selected_graph_type"
-              :options="state.options.selected_graph_type" @click="changeGraphType()" />
+              :options="selected_graph_type" @click="changeGraphType()" />
           </div>
         </div>
       </div>
 
     </div>
+
+
+    <template v-if="state.selected_graph_type != 'none'">
+      <div class="mt-6">
+        <ApexCharts ref="chart" width="90%" height="350" type="area"
+          :options="state.populationHoriOptions" :series="state.graphseries_all"
+          :title.text="'Actual vs Projected and National Projected Comparisons'" />
+      </div>
+    </template>
 
     <PrintHeader />
 
@@ -166,13 +175,57 @@ onMounted(() => {
     fetchrole()
     //fetchReports_Details_Actuals()
     //fetchRights_entry_config()
+   
 })
+
+//--------------------------non-reactive variables----------------------------
+
+let Rights_entry_config = []
+let Rights_entry_config1 = []
+let Rights_entry_config2 = []
+let Rights_entry_config3 = []
+let Rights_entry_config4 = []
+let Rights_entry_config5 = []
+let Rights_entry_config6 = []
+
+
+let  selected_graph_type = [
+      { value: 'none', label: 'DILG Format' },
+      { value: 'type1', label: 'DILG Format + Dashboard Statistics' },
+      { value: 'type2', label: 'DILG Format + Accomplishment Statistics' },
+      { value: 'type3', label: 'All Options' }
+    ]
+
+let agencies = [
+      { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
+      { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
+      { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
+      { value: 4, label: 'CSWDO', color: 'bg-yellow-500 border-yellow-400' },
+      { value: 5, label: 'CHED', color: 'bg-purple-500 border-purple-400' },
+      { value: 6, label: 'DCPO', color: 'bg-pink-500 border-pink-400' },
+      { value: 7, label: 'DILG', color: 'bg-indigo-500 border-indigo-400' },
+      { value: 8, label: 'IGDD', color: 'bg-teal-500 border-teal-400' },
+      { value: 9, label: 'CBO', color: 'bg-orange-500 border-orange-400' },
+      { value: 10, label: 'CPDO', color: 'bg-gray-500 border-gray-400' },
+      { value: 11, label: 'CCRO', color: 'bg-lime-500 border-lime-400' },
+      { value: 12, label: 'CDRRMO', color: 'bg-rose-500 border-rose-400' },
+      { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
+      { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
+      { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
+    ]  
+    
+    let  entry_type = [
+      { value: 'Actual', label: 'Actual' },
+      { value: 'Projected', label: 'Projected' },
+      { value: 'National Projected', label: 'National Projected' },
+    ]
+
+//--------------------------reactive variables----------------------------
 
 const state = reactive({
 
   graphseries_all: [],
-
-  
+  graph_accomplishment: [],
 
   selected_rights_id: 1,
   selected_year_id: 0,
@@ -192,14 +245,6 @@ const state = reactive({
   Selected_Rights_entry_config: [],
   Selected_Rights_entry_config_group: [],
 
-  Rights_entry_config: [],
-  Rights_entry_config1: [],
-  Rights_entry_config2: [],
-  Rights_entry_config3: [],
-  Rights_entry_config4: [],
-  Rights_entry_config5: [],
-  Rights_entry_config6: [],
-
   Selected_Rights_entry_config_values: [],
 
   Actuals: [],
@@ -207,63 +252,23 @@ const state = reactive({
   NationalProjected: [],
 
   options: {
-    entry_type: [
-      { value: 'Actual', label: 'Actual' },
-      { value: 'Projected', label: 'Projected' },
-      { value: 'National Projected', label: 'National Projected' },
-    ],
-
+   
     report_years: [
       { value: 2025, label: '2025' },
       { value: 2024, label: '2024' },
     
     ],
-    view_entry_type: [
-
-      { value: 'Projected', label: 'Projected' },
-      { value: 'National Projected', label: 'National Projected' },
-    ],
-    is_disabled: [
-      { value: '1', label: 'Not Applicable' },
-      { value: '2', label: 'Enabled' },
-    ],
+    
     years: [
       { value: '1', label: 'Jan - Dec 2024' },
       { value: '2', label: 'Jan - Dec 2025' },
 
     ],
-    agencies: [
-      { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
-      { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
-      { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
-      { value: 4, label: 'CSWDO', color: 'bg-yellow-500 border-yellow-400' },
-      { value: 5, label: 'CHED', color: 'bg-purple-500 border-purple-400' },
-      { value: 6, label: 'DCPO', color: 'bg-pink-500 border-pink-400' },
-      { value: 7, label: 'DILG', color: 'bg-indigo-500 border-indigo-400' },
-      { value: 8, label: 'IGDD', color: 'bg-teal-500 border-teal-400' },
-      { value: 9, label: 'CBO', color: 'bg-orange-500 border-orange-400' },
-      { value: 10, label: 'CPDO', color: 'bg-gray-500 border-gray-400' },
-      { value: 11, label: 'CCRO', color: 'bg-lime-500 border-lime-400' },
-      { value: 12, label: 'CDRRMO', color: 'bg-rose-500 border-rose-400' },
-      { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
-      { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
-      { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
-    ],
-
-    selected_graph_type: [
-      { value: 'none', label: 'DILG Format' },
-      { value: 'type1', label: 'DILG Format + Dashboard Statistics' },
-      { value: 'type2', label: 'DILG Format + Accomplishment Statistics' },
-      { value: 'type3', label: 'All Options' },
-      
-    ],
-
 
   },
 
 
   showGraphsGrp01: true,
-  
   report_years: [],
   year: '2025',
   report_year: 1,
@@ -347,35 +352,35 @@ function changeData(){
     switch (state.selected_rights_id){
         case(0):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
+        state.Selected_Rights_entry_config  = Rights_entry_config
         break;
         case(1):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config1
+        state.Selected_Rights_entry_config  = Rights_entry_config1
         break;
         case(2):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config2
+        state.Selected_Rights_entry_config  = Rights_entry_config2
         break;
         case(3):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config3
+        state.Selected_Rights_entry_config  = Rights_entry_config3
         break;
         case(4):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config4
+        state.Selected_Rights_entry_config  = Rights_entry_config4
         break;
         case(5):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config5
+        state.Selected_Rights_entry_config  = Rights_entry_config5
         break;
         case(6):
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config6
+        state.Selected_Rights_entry_config  = Rights_entry_config6
         break;
         default:
         
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
+        state.Selected_Rights_entry_config  = Rights_entry_config
        // console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
     }
      //console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
@@ -447,6 +452,7 @@ function changeYear() {
 
     //arrange_data()
     fetchRights_entry_config()
+    ArangeGraphData()
 
     
 }
@@ -485,13 +491,13 @@ async function fetchRights_entry_config() {
     const response = await Rights_entry_configServices.getRights_entry_config()
     
     if (response.data) {
-      state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-      state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+      Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
 
     }
   } catch (error) {
@@ -513,6 +519,9 @@ async function fetchRights_entry_config() {
        
       }
 
+      console.log('fetchRights_entry_config -- passed_data', state.passed_data.data)
+      console.log('years', state.options.years)
+
       
      
      
@@ -525,11 +534,12 @@ async function fetchRights_entry_config() {
 //--------------------------------------------- arrange_data-----------
   try { // this is done to sum the values of the same sequence_header, entry_type, report_year and grand_total mainly for quarterly reports
   state.actuals = []
-  console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
-  console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
-  console.log('arrange_data ; state.passed_data --3', state.passed_data)
+  // console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
+  // console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
+  // console.log('arrange_data ; state.passed_data --3', state.passed_data)
   const seen = new Map();
   const uniqueData = [];
+  const graphData = [];
 
   for (const item of state.passed_data.data) { 
     const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
@@ -545,6 +555,15 @@ async function fetchRights_entry_config() {
         total: item.total,
         grand_total: item.grand_total
       });
+
+
+      graphData.push({
+        sequence_header: item.sequence_header,
+        entry_type: item.entry_type,
+        report_year: item.report_year
+
+      });
+
       seen.set(key, uniqueData.length - 1); // Store index
     } else {
       // Duplicate found – sum the values
@@ -631,9 +650,9 @@ async function fetchrole() {
 function arrange_data() {
  try { // this is done to sum the values of the same sequence_header, entry_type, report_year and grand_total mainly for quarterly reports
   state.actuals = []
-  console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
-  console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
-  console.log('arrange_data ; state.passed_data --3', state.passed_data)
+  // console.log('fetchRights_entry_config -- 1', state.Rights_entry_config)
+  // console.log('fetchReports_Details_Actuals passed_data -- 2', state.passed_data)
+  // console.log('arrange_data ; state.passed_data --3', state.passed_data)
   const seen = new Map();
   const uniqueData = [];
 
@@ -663,8 +682,8 @@ function arrange_data() {
   }
 
   state.actuals.data = uniqueData;
-  console.log('arrange_data ; state.actuals.data --4', uniqueData)
-  console.log('arrange_data ; state.actuals.data --5', state.actuals.data)    
+  // console.log('arrange_data ; state.actuals.data --4', uniqueData)
+  // console.log('arrange_data ; state.actuals.data --5', state.actuals.data)    
   } catch (error) {
     console.log(error)
     
@@ -709,13 +728,19 @@ function arrange_data() {
 
       })
 
+
+      
+
+     
     }
 
-    console.log('Selected_Rights_entry_config_values --6', state.Selected_Rights_entry_config_values)
+    
 
   } catch (error) {
     console.log(error)
   }
+
+  ArangeGraphData()
 
 }
 
@@ -747,10 +772,39 @@ async function fetchReports_Details_Actuals() {
 
 //------------------------------------------------------------------------------------------------------
 
+function ArangeGraphData() {
 
+    // state.graphseries_all = []
+    // state.graph_accomplishment = []
 
-function ArangeGraphData(Rights_entry_config){
-    state.selected_group = Rights_entry_config.group
+    // state.Actuals = [0, 0, 0, 0, 0, 0 ]
+    // state.Projected = [0, 0, 0, 0, 0, 0]
+    // state.NationalProjected = [0, 0, 0, 0, 0, 0]
+    
+    // console.log('ArangeGraphData Rights_entry_config', Rights_entry_config)
+
+    for (const indicator of state.Rights_entry_config.data) {
+
+      if (!state.graph_accomplishment[indicator.group]) state.graph_accomplishment[indicator.group] = {}
+      for (const i in years) {
+        if (!state.graph_accomplishment[indicator.group][years[i]]) state.graph_accomplishment[indicator.group][years[i]] = {}
+         if (!state.graph_accomplishment[indicator.group][years[i]['Actuals']]) state.graph_accomplishment[indicator.group][years[i]]['Actual'] = 0
+         if (!state.graph_accomplishment[indicator.group][years[i]['Projected']]) state.graph_accomplishment[indicator.group][years[i]]['Projected'] = 0
+         if (!state.graph_accomplishment[indicator.group][years[i]['National Projected']]) state.graph_accomplishment[indicator.group][years[i]]['National Projected'] = 0
+      }
+     
+      //  if(is_annual == 0 && tier_level == 1 ){ // annual
+      //   state.graph_accomplishment[indicator.group][years[i]]['Actual']
+      //   state.graph_accomplishment[indicator.group][years[i]]['Projected'] += parseInt(state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' )?.grand_total || 0)
+      //   state.graph_accomplishment[indicator.group][years[i]]['National Projected'] += parseInt(state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' )?.grand_total || 0)
+      //  }
+    }
+    console.log('graph_accomplishment --6', state.graph_accomplishment)
+ 
+}
+
+function ArangeGraphData1(){
+    state.selected_group = state.Rights_entry_config.group
     //state.selected_datasource = Rights_entry_config.datasource_id
     state.is_annual = Rights_entry_config.is_annual
     const type = Rights_entry_config.is_annual
@@ -758,7 +812,7 @@ function ArangeGraphData(Rights_entry_config){
       state.Projected = [0, 0, 0, 0, 0, 0]
       state.NationalProjected = [0, 0, 0, 0, 0, 0]
     try{
-        state.selected_datasource =  state.options.agencies[parseInt(Rights_entry_config.agency_id)].label
+        state.selected_datasource =  agencies[parseInt(Rights_entry_config.agency_id)].label
     }
     catch{
 

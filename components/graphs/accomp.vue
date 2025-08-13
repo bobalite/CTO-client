@@ -8,7 +8,7 @@
 
 import ApexCharts from 'vue3-apexcharts';
 
-const dummyPercentageActualvsLocal =[84.8,88.4,91.1,85.6,75,97]
+const dummyPercentageActualvsLocal =[1.2,3.4,5.1,85.6,75,97]
 const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]
 
 const years = [2021,2022,2023,2024,2025,2026]
@@ -154,98 +154,6 @@ const state = reactive({
     },
 
 });
-
-async function OpenGraphModal(){
-
-
-    //const response = await reportDetailsGroupsService.getReportDetailsGroups()
-    await props.passed_data.data
-    await props.passed_year_data.data
-    state.report_details.data = props.passed_data.data  
-
-    state.selected_group = props.selected_group
-    //state.selected_datasource = Rights_entry_config.datasource_id
-    state.is_annual = props.is_annual
-    const type = props.is_annual
-    state.Actuals = [0, 0, 0, 0, 0, 0 ]
-    state.Projected = [0, 0, 0, 0, 0, 0]
-    state.NationalProjected = [0, 0, 0, 0, 0, 0]
-
-    try{
-        state.selected_datasource =  props.datasource  
-    }
-    catch{
-
-    }
-             if (state.report_details) {
-                const seen = new Set();
-                var data = [];
-               for (const item of state.report_details.data) {
-                    const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
-                    console.log('key = ', key)
-                    if (!seen.has(key)){
-                         seen.add(key)
-                        data.push({
-                            group_id: item.group_id,
-                            entry_type: item.entry_type,
-                            report_year_id: item.report_year_id,
-                            report_year: item.report_year,
-                            grand_total: item.grand_total
-                        });
-                    }
-
-                    if (type == 1){ // annual
-                        
-                        for (const i in years) {
-                            if (item.report_year == years[i]) {
-                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group) {
-                                    state.Actuals[i] = item.grand_total
-                                    console.log('group_id', item.group_id + ' ' + state.selected_group)
-
-                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-                                    state.Projected[i] = item.grand_total
-
-                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-                                    state.NationalProjected[i] = item.grand_total
-
-                                }
-                            }
-                        }
-                    }else{ // quarterly
-                         for (const i in years) {
-                            if (item.report_year == years[i]) {
-                                if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group ) {
-                                    state.Actuals[i] = parseInt(state.Actuals[i] )+ parseInt(item.grand_total)
-                                    //console.log('group_id', item.group_id + ' ' + state.selected_group)
-
-                                } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group ) {
-                                    state.Projected[i] =  parseInt(state.Projected[i]) + parseInt(item.grand_total)
-
-                                } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group ) {
-                                    state.NationalProjected[i] =  parseInt(state.NationalProjected[i]) + parseInt(item.grand_total)
-
-                                }
-                            }
-                        }
-                    }
-                }
-                state.Tracked_details = data;
-                console.log('Tracked_details = ', state.Tracked_details)
-                state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
-                state.graphseries_all[1] = { name: "Projected", data: state.Projected };
-                state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
-                console.log('Actuals = ', state.Actuals)
-                console.log('Actuals = ', state.graphseries_all)
-            } else {
-                state.Actuals = [0, 0, 0, 0, 0, 0 ]
-                state.Projected = [0, 0, 0, 0, 0, 0]
-                state.NationalProjected = [0, 0, 0, 0, 0, 0]
-                alert('No data found for Tracker. ')
-            }
-
-    state.isGraphModalOpen = true
-}
-
 
 
 
