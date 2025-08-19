@@ -32,97 +32,78 @@
 
     </div>
 
+    <template v-if="state.selected_graph_type == 'none'">
+      <PrintHeader />
 
-    <template v-if="state.selected_graph_type != 'none'">
-      <div class="mt-6">
-        <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
-          :series="state.graphseries_all" :title.text="'Actual vs Projected and National Projected Comparisons'" />
-      </div>
-    </template>
+      <template v-for="selected_right in state.Selected_Rights_entry_config_values">
 
-    <PrintHeader />
+        <template v-if="selected_right.tier_level == 1">
+          <PrintRowheader v-if="selected_right.tier_level == 1" :group_number="selected_right.group"
+            :group_header="selected_right.group_header" :datasource="selected_right.agency_id"
+            :is_annual="selected_right.is_annual" />
 
+          <PrintRow :indicator="selected_right.description" :male=1 :female=1 :total=1
+            :grand_total="selected_right.grand_total" :actual_male="selected_right.actual_male || ''"
+            :actual_female="selected_right.actual_male || ''" :actual_total="''"
+            :actual_grand_total=selected_right.actual_grand_total :projected_male="''" :projected_female="''"
+            :projected_total="''" :projected_grand_total=selected_right.projected_grand_total :national_proj_male="''"
+            :national_proj_female="''" :national_proj_total="''"
+            :national_proj_grand_total=selected_right.national_proj_grand_total />
 
-    <template v-for="selected_right in state.Selected_Rights_entry_config_values">
-
-      <template v-if="selected_right.tier_level == 1">
-        <PrintRowheader v-if="selected_right.tier_level == 1" :group_number="selected_right.group"
-          :group_header="selected_right.group_header" :datasource="selected_right.agency_id"
-          :is_annual="selected_right.is_annual" />
-
-
-        <div v-if="state.selected_graph_type != 'none'" ref="printSection"
-          class="p-6 bg-white border-gray-500 border-b-2 border-t-2 border-l-2 border-r-2">
-          <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
-            :series="state.graphseries_all" :title.text="'Actual vs Projected and National Projected Comparisons'" />
-          <!-- :options="chartOptions" :series="series" /> -->
-        </div>
-
-
-        <PrintRow :indicator="selected_right.description" :male=1 :female=1 :total=1
-          :grand_total="selected_right.grand_total" :actual_male="selected_right.actual_male || ''"
-          :actual_female="selected_right.actual_male || ''" :actual_total="''"
-          :actual_grand_total=selected_right.actual_grand_total :projected_male="''" :projected_female="''"
-          :projected_total="''" :projected_grand_total=selected_right.projected_grand_total :national_proj_male="''"
-          :national_proj_female="''" :national_proj_total="''"
+        </template>
+        <PrintRow v-if="selected_right.tier_level != 1" :indicator="selected_right.description"
+          :male="selected_right.male" :female="selected_right.female" :total="selected_right.total"
+          :grand_total="selected_right.grand_total" :actual_male=selected_right.actual_male
+          :actual_female=selected_right.actual_female :actual_total=selected_right.actual_total
+          :actual_grand_total=selected_right.actual_grand_total :projected_male=selected_right.projected_male
+          :projected_female=selected_right.projected_female :projected_total=selected_right.projected_total
+          :projected_grand_total=selected_right.projected_grand_total
+          :national_proj_male=selected_right.national_proj_male
+          :national_proj_female=selected_right.national_proj_female
+          :national_proj_total=selected_right.national_proj_total
           :national_proj_grand_total=selected_right.national_proj_grand_total />
 
 
+
       </template>
-      <PrintRow v-if="selected_right.tier_level != 1" :indicator="selected_right.description"
-        :male="selected_right.male" :female="selected_right.female" :total="selected_right.total"
-        :grand_total="selected_right.grand_total" :actual_male=selected_right.actual_male
-        :actual_female=selected_right.actual_female :actual_total=selected_right.actual_total
-        :actual_grand_total=selected_right.actual_grand_total :projected_male=selected_right.projected_male
-        :projected_female=selected_right.projected_female :projected_total=selected_right.projected_total
-        :projected_grand_total=selected_right.projected_grand_total
-        :national_proj_male=selected_right.national_proj_male :national_proj_female=selected_right.national_proj_female
-        :national_proj_total=selected_right.national_proj_total
-        :national_proj_grand_total=selected_right.national_proj_grand_total />
-
-
-
     </template>
 
 
+    <template v-if="state.selected_graph_type == 'type1'">
+      <template v-for="selected_right in state.Selected_Rights_entry_config_values">
 
+        <template v-if="selected_right.tier_level == 1">
+          <div class="p-6 py-4 bg-white border-gray-500 border-b-2 border-t-2 border-l-2 border-r-2">
+            <PrintGraphheader :group_number="selected_right.group" :group_header="selected_right.group_header"
+              :datasource="selected_right.agency_id" :is_annual="selected_right.is_annual" />
 
-
-    <div v-if="state.selected_graph_type != 'none'" class="mt-6">
-      <!-- <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
-      </GraphsGrp01> -->
-    </div>
-
+            <PrintGraphrow :GraphData=state.graph_accomplishment[selected_right.group] :Years=years
+              :key="state.refresh_graphs_toggle" />
+          </div>
+        </template>
+      </template>
+    </template>
+    <template v-if="state.selected_graph_type != 'type2'">
+      <!-- <div class="mt-6">
+        <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
+          :series="state.graphseries_all" :title.text="'Actual vs Projected and National Projected Comparisons'" />
+      </div> -->
+    </template>
     <PrintFooter />
-
-
-
     <button @click="printChart" class="print:hidden mt-4 bg-blue-500 text-white px-4 py-2 rounded">
       Print Report
     </button>
   </div>
 </template>
 
-
-
-
-
-
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
-import { ref, nextTick } from 'vue'
 
+import { ref, nextTick } from 'vue'
 import { Rights_entry_configServices } from '~/components/api/Rights_entry_configService';
 import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
 import { Childrens_rightsService } from '~/components/api/Rights';
 import { rolesService } from '~/components/api/Roles';
 import { useUserStore } from '~/store/user'
-import { report_yearService } from '~/components/api/ReportYears';
-import { parse } from 'vue/compiler-sfc';
-
 
 const userStore = useUserStore()
 let currentPage = 1;
@@ -172,11 +153,10 @@ const printChart = async () => {
 
 onMounted(() => {
   generateYears()
-  fetchreportyear()
+  
   fetchRights()
   fetchrole()
-  //fetchReports_Details_Actuals()
-  //fetchRights_entry_config()
+ 
 
 })
 
@@ -191,14 +171,13 @@ let Rights_entry_config5 = []
 let Rights_entry_config6 = []
 
 
-let selected_graph_type = [
+const selected_graph_type = [
   { value: 'none', label: 'DILG Format' },
-  { value: 'type1', label: 'DILG Format + Dashboard Statistics' },
-  { value: 'type2', label: 'DILG Format + Accomplishment Statistics' },
-  { value: 'type3', label: 'All Options' }
+  { value: 'type1', label: 'Accomplishment Statistics' },
+  { value: 'type2', label: 'Dashboard Graphs' }
 ]
 
-let agencies = [
+const agencies = [
   { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
   { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
   { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
@@ -216,7 +195,7 @@ let agencies = [
   { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
 ]
 
-let entry_type = [
+const entry_type = [
   { value: 'Actual', label: 'Actual' },
   { value: 'Projected', label: 'Projected' },
   { value: 'National Projected', label: 'National Projected' },
@@ -228,6 +207,8 @@ const state = reactive({
 
   graphseries_all: [],
   graph_accomplishment: [],
+  
+
 
   selected_rights_id: 1,
   selected_year_id: 0,
@@ -388,12 +369,19 @@ function changeData() {
   }
   //console.log('Selected_Rights_entry_config', state.Selected_Rights_entry_config)
 
+  if (state.refresh_graphs_toggle == false) {
+    state.refresh_graphs_toggle = true
+  } else {
+    state.refresh_graphs_toggle = false
+  }
+
+
 
   arrange_data()
 
-  state.Actuals = [1331, 1570, 980, 950, 1440, 1320]
-  state.Projected = [1540, 1970, 1444, 1333, 1222, 1110]
-  state.NationalProjected = [1560, 1740, 1554, 1450, 1650, 1240]
+  state.Actuals = [1331, 1570, 980, 950, 1440]
+  state.Projected = [1540, 1970, 1444, 1333, 1222]
+  state.NationalProjected = [1560, 1740, 1554, 1450, 1650]
 
 
   state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
@@ -401,6 +389,8 @@ function changeData() {
   state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
 
 }
+
+
 
 function changeGraphType() {
   if (state.selected_graph_type === 'none') {
@@ -411,36 +401,6 @@ function changeGraphType() {
 }
 
 
-async function fetchreportyear() {
-  // try {
-  //        const response = await report_yearService.getReportYears()
-  //     if (response.data) {
-
-  //         state.report_years.data = response.data
-  //         var data = [];
-  //         var datasources = [];
-  //         if (state.report_years.data != null) {
-
-  //             datasources = state.report_years.data
-
-  //             for (const i in datasources) {
-  //                 const value = datasources[i].id;
-  //                 if (!datasources.includes(value)) {
-
-  //                     if(datasources[i].status == 1){
-  //                     data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
-  //                     }
-  //                 }
-  //             }
-  //             state.options.report_years = data;
-  //             //console.log('report_years = ', state.options.report_years.data)
-  //         }
-
-  //     }
-  // } catch (error) { 
-  //     //console.log(error)
-  // }
-}
 
 function changeYear() {
 
@@ -450,12 +410,14 @@ function changeYear() {
   } catch (error) {
     state.selected_year = 0
   }
-  console.log('changeYear state.selected_year_id', state.selected_year_id)
-  console.log('changeYear state.selected_year', state.selected_year)
+  //console.log('changeYear state.selected_year_id', state.selected_year_id)
+  //console.log('changeYear state.selected_year', state.selected_year)
 
   //arrange_data()
   fetchRights_entry_config()
+  
   ArangeGraphData()
+  
 
 
 }
@@ -511,7 +473,7 @@ async function fetchRights_entry_config() {
   try {
     const response = await reportDetailsGroupsService.getReportDetailsGroups() // data is all of the entries and not filltered by rights_id
     if (response) {
-      console.log('fetchRights_entry_config -- response', response.data)
+      //console.log('fetchRights_entry_config -- response', response.data)
       state.passed_data.data = []
       //state.passed_data.data = response.data
       for (const item of response.data) {
@@ -522,8 +484,8 @@ async function fetchRights_entry_config() {
 
       }
 
-      console.log('fetchRights_entry_config -- passed_data', state.passed_data.data)
-      console.log('years', state.options.years)
+      //console.log('fetchRights_entry_config -- passed_data', state.passed_data.data)
+      //console.log('years', state.options.years)
 
 
 
@@ -579,8 +541,8 @@ async function fetchRights_entry_config() {
     }
 
     state.actuals.data = uniqueData;
-    console.log('arrange_data ; state.actuals.data --4', uniqueData)
-    console.log('arrange_data ; state.actuals.data --5', state.actuals.data)
+    //console.log('arrange_data ; state.actuals.data --4', uniqueData)
+    //console.log('arrange_data ; state.actuals.data --5', state.actuals.data)
   } catch (error) {
     console.log(error)
 
@@ -627,7 +589,7 @@ async function fetchRights_entry_config() {
 
     }
 
-    console.log('Selected_Rights_entry_config_values --6', state.Selected_Rights_entry_config_values)
+    //console.log('Selected_Rights_entry_config_values --6', state.Selected_Rights_entry_config_values)
 
   } catch (error) {
     console.log(error)
@@ -693,7 +655,7 @@ function arrange_data() {
   }
 
   const year = state.selected_year_id === 0 ? 2025 : state.selected_year_id;
-  console.log('year -- 8', year)
+  //console.log('year -- 8', year)
 
   state.Selected_Rights_entry_config_values = [];
 
@@ -744,159 +706,65 @@ function arrange_data() {
   }
 
   ArangeGraphData()
+  
 
 }
 
 
 
-// async function fetchReports_Details_Actuals() {
-//   try {
 
-//     const response = await reportDetailsGroupsService.getReportDetailsGroups() // data is all of the entries and not filltered by rights_id
-
-
-//     if (response) {
-
-//       state.passed_data.data = response.data
-//       console.log('fetchReports_Details_Actuals passed_data', state.passed_data)
-//       //arrange_data()
-//     }
-
-
-
-
-
-
-
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 
 //------------------------------------------------------------------------------------------------------
 
 function ArangeGraphData() {
-
-
-
-  console.log('ArangeGraphData actuals', state.actuals.data)
-
+  
   try {
 
     for (const indicator of Rights_entry_config.data) {
 
       if (indicator.tier_level == 1) {
 
-        if (!state.graph_accomplishment[indicator.group]) state.graph_accomplishment[indicator.group] = {}
+        if (!state.graph_accomplishment[indicator.group]) 
+          state.graph_accomplishment[indicator.group] = {} // create group if it doesn't exist
 
-        for (const i in years) {
-          if (!state.graph_accomplishment[indicator.group][years[i]]) state.graph_accomplishment[indicator.group][years[i]] = {}
+          if (!state.graph_accomplishment[indicator.group]['Actuals']) 
+            state.graph_accomplishment[indicator.group]['Actuals'] = {} // create Actuals if it doesn't exist
+          state.graph_accomplishment[indicator.group]['Actuals'] = [0,0,0,0,0]
+          if (!state.graph_accomplishment[indicator.group]['Projected']) 
+            state.graph_accomplishment[indicator.group]['Projected'] = {} // create Projected if it doesn't exist
+          state.graph_accomplishment[indicator.group]['Projected'] = [0,0,0,0,0]
+          if (!state.graph_accomplishment[indicator.group]['NationalProjected']) 
+            state.graph_accomplishment[indicator.group]['NationalProjected'] = {} // create NationalProjected if it doesn't exist
+           state.graph_accomplishment[indicator.group]['NationalProjected'] = [0,0,0,0,0]
 
-          if (!state.graph_accomplishment[indicator.group][years[i]['Actuals']])
-            state.graph_accomplishment[indicator.group][years[i]]['Actual'] = state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.report_year === years[i] )?.grand_total || 0
-          if (!state.graph_accomplishment[indicator.group][years[i]['Projected']])
-            state.graph_accomplishment[indicator.group][years[i]]['Projected'] = state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Projected' && cell.report_year === years[i] )?.grand_total || 0
-          if (!state.graph_accomplishment[indicator.group][years[i]['National Projected']])
-            state.graph_accomplishment[indicator.group][years[i]]['National Projected'] = state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'National Projected' && cell.report_year === years[i])?.grand_total || 0
+        for (let i = 0; i < years.length; i++) {
+
+           state.graph_accomplishment[indicator.group]['Actuals'][i] =  state.actuals.data.find(cell =>
+               cell.sequence_header === indicator.sequence_header &&
+               cell.entry_type === 'Actual' &&
+               cell.report_year === years[i]
+             )?.grand_total || 0
+
+           state.graph_accomplishment[indicator.group]['Projected'][i] =  state.actuals.data.find(cell =>
+               cell.sequence_header === indicator.sequence_header &&
+               cell.entry_type === 'Projected' &&
+               cell.report_year === years[i]
+               )?.grand_total || 0
+           
+           state.graph_accomplishment[indicator.group]['NationalProjected'][i] = state.actuals.data.find(cell =>
+               cell.sequence_header === indicator.sequence_header &&
+               cell.entry_type === 'National Projected' &&
+               cell.report_year === years[i]
+             )?.grand_total || 0
+
         }
       }
     }
 
-    //console.log('graph_accomplishment_test --1', state.actuals.data.find(cell => cell.sequence_header === indicator.sequence_header && cell.entry_type === 'Actual' && cell.year === 2025 )?.grand_total)
-
   } catch (error) {
     console.log('ArangeGraphData error', error)
   }
-  console.log('graph_accomplishment --60', state.graph_accomplishment)
 }
-
-
-
-
-
-// function ArangeGraphData1() {
-//   state.selected_group = state.Rights_entry_config.group
-//   //state.selected_datasource = Rights_entry_config.datasource_id
-//   state.is_annual = Rights_entry_config.is_annual
-//   const type = Rights_entry_config.is_annual
-//   state.Actuals = [0, 0, 0, 0, 0, 0]
-//   state.Projected = [0, 0, 0, 0, 0, 0]
-//   state.NationalProjected = [0, 0, 0, 0, 0, 0]
-//   try {
-//     state.selected_datasource = agencies[parseInt(Rights_entry_config.agency_id)].label
-//   }
-//   catch {
-
-//   }
-//   if (state.report_details) {
-//     const seen = new Set();
-//     var data = [];
-//     for (const item of state.report_details.data) {
-//       const key = `${item.group_id}|${item.entry_type}|${item.report_year}|${item.grand_total} `;
-//       console.log('key = ', key)
-//       if (!seen.has(key)) {
-//         seen.add(key)
-//         data.push({
-//           group_id: item.group_id,
-//           entry_type: item.entry_type,
-//           report_year_id: item.report_year_id,
-//           report_year: item.report_year,
-//           grand_total: item.grand_total
-//         });
-//       }
-
-//       if (type == 1) { // annual
-
-//         for (const i in years) {
-//           if (item.report_year == years[i]) {
-//             if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.Actuals[i] = item.grand_total
-//               console.log('group_id', item.group_id + ' ' + state.selected_group)
-
-//             } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.Projected[i] = item.grand_total
-
-//             } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.NationalProjected[i] = item.grand_total
-
-//             }
-//           }
-//         }
-//       } else { // quarterly
-//         for (const i in years) {
-//           if (item.report_year == years[i]) {
-//             if (item.entry_type == 'Actual' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.Actuals[i] = parseInt(state.Actuals[i]) + parseInt(item.grand_total)
-//               //console.log('group_id', item.group_id + ' ' + state.selected_group)
-
-//             } else if (item.entry_type == 'Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.Projected[i] = parseInt(state.Projected[i]) + parseInt(item.grand_total)
-
-//             } else if (item.entry_type == 'National Projected' && item.grand_total != '0' && item.group_id == state.selected_group) {
-//               state.NationalProjected[i] = parseInt(state.NationalProjected[i]) + parseInt(item.grand_total)
-
-//             }
-//           }
-//         }
-//       }
-//     }
-//     state.Tracked_details = data;
-//     console.log('Tracked_details = ', state.Tracked_details)
-//     state.graphseries_all[0] = { name: "Actuals", data: state.Actuals };
-//     state.graphseries_all[1] = { name: "Projected", data: state.Projected };
-//     state.graphseries_all[2] = { name: "NationalProjected", data: state.NationalProjected };
-//     console.log('Actuals = ', state.Actuals)
-//     console.log('Actuals = ', state.graphseries_all)
-//   } else {
-//     state.Actuals = [0, 0, 0, 0, 0, 0]
-//     state.Projected = [0, 0, 0, 0, 0, 0]
-//     state.NationalProjected = [0, 0, 0, 0, 0, 0]
-//     alert('No data found for Tracker. ')
-//   }
-
-
-// }
-//---------------------------------------------------Graph Modal-----------------------------------------------------------------------
 
 function generateYears() {
   const currentYear = new Date().getFullYear()
@@ -908,8 +776,7 @@ function generateYears() {
     state.options.years.push({ value: year, label: String(year) })
   }
 
-  console.log('generated years', years)
-  console.log('generated years state', state.options.years)
+
 }
 
 definePageMeta({
