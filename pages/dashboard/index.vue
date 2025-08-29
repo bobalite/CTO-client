@@ -4,106 +4,128 @@
   <div class="flex justify-between items-center print:hidden">
     <h1 class="text-md font-bold">MY DASHBOARD</h1>
     <div class="flex items-center space-x-4">
-      <button @click="openSlideModal()" class="btn btn-primary">My Dashboard Settings</button>
+      <button @click="openSlideModal()"
+        class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">My
+        Dashboard Settings</button>
       <!-- <button class="btn btn-primary">Export</button> -->
-      <button @click="printWindow()" class="btn btn-primary">Print</button>
+      <!-- <button @click="printWindow()" class="btn btn-primary">Print</button> -->
     </div>
   </div>
 
   <div class="flex justify-between items-center mt-4">
-    <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years" @change = "change_selected_year()"/>
+    <div class="inline-block origin-left scale-95 w-3/4">
+      <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years"
+        @change="change_selected_year()" class="text-sm py-1 px-2 w-1/4 transform scale-90 origin-left" />
+    </div>
+
   </div>
 
 
   <div>
 
-    <div v-if="state.loading == false" class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
+    <div v-if="state.loading == false"
+      class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
 
-      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp01>
 
-      <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" :report_year="state.report_year">
       </GraphsGrp02>
 
-      <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-6 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Proportion/percentage of nutritionally-at-risk PW'" :report_year="state.report_year">
       </GraphsGrp03>
 
-      <GraphsGrp04 v-if="state.showGraphsGrp04 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp04 v-if="state.showGraphsGrp04 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of PW with at least 4 pre-natal check-ups'" :report_year="state.report_year">
       </GraphsGrp04>
 
-      <GraphsGrp05 v-if="state.showGraphsGrp05 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp05 v-if="state.showGraphsGrp05 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Proportion/percentage of PW with at least 4 pre-natal check-ups'"
         :report_year="state.report_year">
       </GraphsGrp05>
 
-      <GraphsGrp06 v-if="state.showGraphsGrp06 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp06 v-if="state.showGraphsGrp06 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total Number of deliveries attended by skilled health professionals'"
         :report_year="state.report_year">
       </GraphsGrp06>
 
-      <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp37>
 
-      <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total number of Out- of- school children and youth (OSCY)'" :report_year="state.report_year">
       </GraphsGrp45>
 
-      <GraphsGrp48 v-if="state.showGraphsGrp48 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp48 v-if="state.showGraphsGrp48 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of violence against children cases, by type of violence'"
         :report_year="state.report_year">
       </GraphsGrp48>
 
-      <GraphsGrp49 v-if="state.showGraphsGrp49 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp49 v-if="state.showGraphsGrp49 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of violence against children cases resolved, by type of violence'"
         :report_year="state.report_year">
       </GraphsGrp49>
 
-      <GraphsGrp50 v-if="state.showGraphsGrp50 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp50 v-if="state.showGraphsGrp50 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of reported Children In-Need of Special Protection (CNSP) cases'"
         :report_year="state.report_year">
       </GraphsGrp50>
 
-      <GraphsGrp55 v-if="state.showGraphsGrp55 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp55 v-if="state.showGraphsGrp55 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total Number of Crimes Committed by Children, by type/category of crime committed:'"
         :report_year="state.report_year">
       </GraphsGrp55>
 
-      <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
         :report_year="state.report_year" :passed_year_data="state.report_years">
       </GraphsGrp59>
 
-      <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
-        class="sm:col-span-6 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+      <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
+        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Established and updated database on children, with all of the following disaggregated information on children'"
         :report_year="state.report_year">
       </GraphsGrp65>
 
-      <GraphsGrp68 v-if="state.showGraphsGrp68 == true" :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+      <GraphsGrp68 v-if="state.showGraphsGrp68 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
         class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
       </GraphsGrp68>
 
 
-     
+
 
     </div>
 
@@ -120,67 +142,79 @@
 
             <div class="inline-block min-w-full py-2 align-left sm:px-6 lg:px-8">
               <button @click="saveDashboardSettings()"
-                class="relative rounded-md bg-green-400 text-black hover:text-green-900 focus:outline-none focus:ring-2 focus:ring-blue-500">Save
+                class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">Save
                 Dashboard Settings</button>
             </div>
 
 
 
-            <table class="min-w-full divide-y divide-green-400">
+            <table class="table-fixed w-full">
               <thead class="bg-green-200" pl-4> Survival Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp01" :value="state.showGraphsGrp01" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Group 1: Teenage Pregnancy'" />
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200" :displaytext="'Group 1: Teenage Pregnancy'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp02" :value="state.showGraphsGrp02" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 2: Total number of nutritionally-at-risk pregnant women (PW)'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp03" :value="state.showGraphsGrp03" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 3: Proportion/percentage of nutritionally-at-risk PW'" />
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp04" :value="state.showGraphsGrp04" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 4: Total number of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp05" :value="state.showGraphsGrp05" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 5: Proportion/percentage of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp06" :value="state.showGraphsGrp06" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 6: Total Number of deliveries attended by skilled health professionals'" />
                   </th>
                 </tr>
@@ -191,20 +225,24 @@
               <thead class="bg-green-200" pl-4> Development Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp37" :value="state.showGraphsGrp37" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left" :displaytext="'Group 37: Net Enrolment rate:'" />
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200" :displaytext="'Group 37: Net Enrolment rate:'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp45" :value="state.showGraphsGrp45" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 45: Total number of Out- of- school children and youth (OSCY)'" />
                   </th>
                 </tr>
@@ -216,43 +254,51 @@
               <thead class="bg-green-200" pl-4> Protection Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp48" :value="state.showGraphsGrp48" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 48: Total number of violence against children cases, by type of violence'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp49" :value="state.showGraphsGrp49" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 49: Total number of violence against children cases resolved, by type of violence'" />
                   </th>
 
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp50" :value="state.showGraphsGrp50" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 50: Total number of reported Children In-Need of Special Protection (CNSP) cases'" />
                   </th>
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp55" :value="state.showGraphsGrp55" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 55: Total Number of Crimes Committed by Children, by type/category of crime committed:'" />
                   </th>
 
@@ -260,12 +306,14 @@
               </thead>
               <thead class="bg-green-200" pl-4> Participation Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp59" :value="state.showGraphsGrp59" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 59: Total Number of BCPC with child representatives, by type of selection process:'" />
                   </th>
 
@@ -274,12 +322,14 @@
               <thead class="bg-green-200" pl-4> Governance Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp65" :value="state.showGraphsGrp65" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 65: Established and updated database on children, with all of the following disaggregated information on children'" />
                   </th>
 
@@ -287,16 +337,20 @@
               </thead>
               <thead class="bg-green-200" pl-4> General Information Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    <GridCheckbox v-model="state.showGraphsGrp68" :value="state.showGraphsGrp68" :dissabled="false"  :displaytext="'Group 68'" />
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp68" :value="state.showGraphsGrp68" :dissabled="false"
+                      :displaytext="'Group 68'" />
                   </th>
                   <th>
-                    <GridCell class="px-3 py-3.5 text-left"
+                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
                       :displaytext="'Group 68: Total population of children, by sex, by age group'" />
                   </th>
                 </tr>
                 <!-- <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp70" :value="state.showGraphsGrp70" :dissabled="false" />
                   </th>
 
@@ -307,7 +361,8 @@
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp71" :value="state.showGraphsGrp71" :dissabled="false" />
                   </th>
 
@@ -318,7 +373,8 @@
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp72" :value="state.showGraphsGrp72" :dissabled="false" />
                   </th>
                   <th>
@@ -329,7 +385,8 @@
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp73" :value="state.showGraphsGrp73" :dissabled="false" />
                   </th>
                   <th>
@@ -341,7 +398,8 @@
 
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp74" :value="state.showGraphsGrp74" :dissabled="false" />
                   </th>
                   <th>
@@ -351,7 +409,8 @@
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp75" :value="state.showGraphsGrp75" :dissabled="false" />
                   </th>
                   <th>
@@ -361,7 +420,8 @@
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp76" :value="state.showGraphsGrp76" :dissabled="false" />
                   </th>
                   <th>
@@ -372,7 +432,8 @@
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp77" :value="state.showGraphsGrp77" :dissabled="false" />
                   </th>
                   <th>
@@ -383,7 +444,8 @@
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
                     <GridCheckbox v-model="state.showGraphsGrp78" :value="state.showGraphsGrp78" :dissabled="false" />
                   </th>
                   <th>

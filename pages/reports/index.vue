@@ -442,7 +442,7 @@ async function fetchRights() {
     }
 
     state.options.rights = data;
-    console.log(state.options.rights)
+    //console.log(state.options.rights)
 
   } catch (error) {
     console.log(error)
@@ -507,7 +507,8 @@ async function fetchRights_entry_config() {
     const graphData = [];
 
     for (const item of state.passed_data.data) {
-      const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
+      //const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
+      const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}`;
 
       if (!seen.has(key)) {
         // Add to uniqueData and track index in Map
@@ -549,7 +550,7 @@ async function fetchRights_entry_config() {
   }
 
   const year = state.selected_year_id === 0 ? 2025 : state.selected_year_id;
-  console.log('year -- 8', year)
+  //console.log('year -- 8', year)
 
   state.Selected_Rights_entry_config_values = [];
 
@@ -622,7 +623,7 @@ function arrange_data() {
     const uniqueData = [];
 
     for (const item of state.passed_data.data) {
-      const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}|${item.grand_total}`;
+      const key = `${item.report_year}|${item.entry_type}|${item.sequence_header}`;
 
       if (!seen.has(key)) {
         // Add to uniqueData and track index in Map

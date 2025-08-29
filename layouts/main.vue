@@ -48,17 +48,7 @@
                                         <li>
                                             <div class="text-xs font-semibold leading-6 text-green-200">Data Encoding
                                             </div>
-                                            <!-- <ul role="list" class="-mx-2 mt-2 space-y-1">
-                                                <li v-for="team in admin_pages" :key="team.name">
-                                                   <NuxtLink :to="team.link"
-                                                        :class="[team.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                                                        <span
-                                                            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">{{
-                                                                team.initial }}</span>
-                                                        <span class="truncate">{{ team.name }}</span>
-                                                    </NuxtLink>
-                                                </li>
-                                            </ul> -->
+                                           
 
                                                 <li v-for="data_encoding in encoding_forms" :key="data_encoding.name">
                                                     <NuxtLink :to="data_encoding.link"
