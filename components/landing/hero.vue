@@ -26,37 +26,42 @@
 
               <!-- ApexChart (only visible on slide 2) -->
               <transition name="fade">
-                <div v-if="current === 1" class="w-full max-w-3xl h-80">
-                 AREA OF CHILD RIGHTS/LIFE STAGE: SURVIVAL
-                
-                </div>
-              </transition>
-
-                <!-- Chart on Slide 3 -->
-              <transition name="fade">
-                <div v-if="current === 2" class="w-full max-w-3xl h-80">
-                  AREA OF CHILD RIGHTS/LIFE STAGE: DEVELOPMENT
+                <div v-if="current === 1" class="w-full max-w-3xl h-80 text-lg font-bold">
+                  CHILDREN'S RIGHTS TO SURVIVAL
+                  <component :is="Chart" type="line" :options="chartOptions" :series="series" height="80%" width="100%" />
                   
                   
                 </div>
               </transition>
 
-
-                  <!-- Chart on Slide 4 -->
+              <!-- Chart on Slide 3 -->
               <transition name="fade">
-                <div v-if="current === 3" class="w-full max-w-3xl h-80">
-                  AREA OF CHILD RIGHTS/LIFE STAGE: PROTECTION
+                <div v-if="current === 2" class="w-full max-w-3xl h-80 text-lg font-bold">
+                  CHILDREN'S RIGHTS TO  DEVELOPMENT
+                   <component :is="Chart" type="line" :options="chartOptions" :series="series" height="80%" width="100%" />
+
+
                 </div>
               </transition>
 
 
-                  <!-- Chart on Slide 5 -->
+              <!-- Chart on Slide 4 -->
               <transition name="fade">
-                <div v-if="current === 4" class="w-full max-w-3xl h-80">
-                  
-                    AREA OF CHILD RIGHTS/LIFE STAGE: PARTICIPATION
-                  
-                 
+                <div v-if="current === 3" class="w-full max-w-3xl h-80 text-lg font-bold">
+                  CHILDREN'S RIGHTS TO PROTECTION
+                   <component :is="Chart" type="line" :options="chartOptions" :series="series" height="80%" width="100%" />
+                </div>
+              </transition>
+
+
+              <!-- Chart on Slide 5 -->
+              <transition name="fade">
+                <div v-if="current === 4" class="w-full max-w-3xl h-80 text-lg font-bold">
+
+                  CHILDREN'S RIGHTS TO PARTICIPATION
+                   <component :is="Chart" type="line" :options="chartOptions" :series="series" height="80%" width="100%" />
+
+
                 </div>
               </transition>
 
@@ -99,9 +104,15 @@
   </section>
 </template>
 
+
 <script setup>
 import { ref } from 'vue'
+//import ApexCharts from 'vue3-apexcharts';
 
+onMounted(async () => {
+  const module = await import("vue3-apexcharts");
+  Chart.value = module.default;
+});
 
 onMounted(() => {
   setInterval(() => {
@@ -127,24 +138,34 @@ const nextSlide = () => {
 const prevSlide = () => {
   current.value = (current.value - 1 + slides.value.length) % slides.value.length
 }
+const Chart = ref(null);
+const series = [{ name: "Sales", data: [30, 40, 45, 50, 65] }];
+const chartOptions = { 
+  title: {
+   
+    align: 'center',
+    style: {
+      fontSize: '15px',
+      fontWeight: 'bold'
+  }},
+  chart: { id: "vuechart" },  
+  toolbar: { show: true },  
+  stroke: { curve: "smooth", width: 3 },
+  dataLabels: { enabled: true },
+  grid: { borderColor: "#555" },
+  yaxis: {
+    min: 0,
+    max: 100,
+    tickAmount: 5,
+    labels: {
+      formatter: function (val) {
+        return val.toFixed(0) + "%";
+      },
+    },
+  },
+  xaxis: { categories: [2021, 2022, 2023, 2024, 2025] }, 
+  theme: { mode: "dark" },
+};
 
 
-const dummyPercentageActualvsLocal =[10, 41, 35, 51, 49, 62, 69]
-
-
-
-
-
-
-
-// // Chart B (Slide 3)
-// const seriesB = reactive([
-//   { name: "Bar Data", data: [12, 25, 14, 32, 20, 40, 33] },
-// ]);
-// const chartOptionsB = ref({
-//   chart: { toolbar: { show: false }, background: "transparent" },
-//   plotOptions: { bar: { borderRadius: 8, horizontal: false } },
-//   xaxis: { categories: ["A", "B", "C", "D", "E", "F", "G"] },
-//   theme: { mode: "dark" },
-// });
 </script>
