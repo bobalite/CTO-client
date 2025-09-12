@@ -2,7 +2,7 @@
 <template>
 
   <div class="flex justify-between items-center print:hidden">
-    
+    <h1 class="text-md font-bold">MY DASHBOARD</h1>
     <div class="flex items-center space-x-4">
       <button @click="openSlideModal()"
         class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">My
@@ -12,45 +12,13 @@
     </div>
   </div>
 
-  <!-- <div class="flex justify-between items-center mt-4">
+  <div class="flex justify-between items-center mt-4">
     <div class="inline-block origin-left scale-95 w-3/4">
       <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years"
         @change="change_selected_year()" class="text-sm py-1 px-2 w-1/4 transform scale-90 origin-left" />
     </div>
 
-  </div> -->
-
-
-  <div class="flex justify-between items-center mt-4">
-  <div class="inline-block origin-left scale-95 w-3/4">
-    <div class="flex items-center gap-3 text-sm py-1 px-2 w-1/4 transform scale-90 origin-left">
-      
-      <!-- Previous Year -->
-      <button
-        @click="state.report_year--, change_selected_year()"
-        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
-      >
-        Prev
-      </button>
-
-      <!-- Current Year -->
-      <span class="font-semibold">
-        {{ state.options.report_years.filter(item => item.value === state.report_year)[0]?.label || 'Select Quarter' }}
-        
-        <!-- {{ state.options.report_years }} -->
-      </span>
-
-      <!-- Next Year -->
-      <button
-        @click="state.report_year++, change_selected_year()"
-        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
-      >
-        Nxt
-      </button>
-
-    </div>
   </div>
-</div>
 
 
   <div>
@@ -380,7 +348,112 @@
                       :displaytext="'Group 68: Total population of children, by sex, by age group'" />
                   </th>
                 </tr>
-           
+                <!-- <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp70" :value="state.showGraphsGrp70" :dissabled="false" />
+                  </th>
+
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Learning Disability'" />
+                  </th>
+
+                </tr>
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp71" :value="state.showGraphsGrp71" :dissabled="false" />
+                  </th>
+
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age:   Psychosocial Disability'" />
+                  </th>
+
+                </tr>
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp72" :value="state.showGraphsGrp72" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age:  Visual Disability'" />
+                  </th>
+
+                </tr>
+
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp73" :value="state.showGraphsGrp73" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age:  Intellectual Disability'" />
+                  </th>
+
+                </tr>
+
+
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp74" :value="state.showGraphsGrp74" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Physical Disability'" />
+                  </th>
+
+                </tr>
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp75" :value="state.showGraphsGrp75" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Speech & Language Impairment'" />
+                  </th>
+
+                </tr>
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp76" :value="state.showGraphsGrp76" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Deaf or Hard of Hearing'" />
+                  </th>
+
+                </tr>
+
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp77" :value="state.showGraphsGrp77" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Rare Diseases (RA 10747)'" />
+                  </th>
+
+                </tr>
+
+                <tr>
+                  <th scope="col"  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
+             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                    <GridCheckbox v-model="state.showGraphsGrp78" :value="state.showGraphsGrp78" :dissabled="false" />
+                  </th>
+                  <th>
+                    <GridCell class="px-3 py-3.5 text-left"
+                      :displaytext="'Total population of children with disabilities, by type of disability, by age: Cancer (RA 11215)'" />
+                  </th>
+
+                </tr> -->
 
 
               </thead>
@@ -499,8 +572,8 @@ function change_selected_year(){
 
   // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
 
-  state.year = state.report_years.value
-  console.log('state. in change',state.year)
+  //state.year = state.report_years.value
+  //console.log('state. in change',state.report_year)
   //state.refresh_graphs01 = true
 
 if (state.refresh_graphs_toggle == false){

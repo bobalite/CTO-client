@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <TransitionRoot as="template" :show="sidebarOpen">
             <Dialog class="relative z-50 lg:hidden" @close="sidebarOpen = false">
                 <TransitionChild as="template" enter="transition-opacity ease-linear duration-300"
@@ -29,6 +29,7 @@
                                 <div class="flex h-16 shrink-0 items-center">
                                     <img class="h-8 w-auto" src="/assets/images/file.png"
                                         alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN Analytical and Reporting System" />
+                                    <div class='text-white'> S.O.A.R System -- hidden</div>
                                 </div>
                                 <nav class="flex flex-1 flex-col">
                                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -48,18 +49,18 @@
                                         <li>
                                             <div class="text-xs font-semibold leading-6 text-green-200">Data Encoding
                                             </div>
-                                           
 
-                                                <li v-for="data_encoding in encoding_forms" :key="data_encoding.name">
-                                                    <NuxtLink :to="data_encoding.link"
-                                                        :class="[data_encoding.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                                                        <span
-                                                            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">
-                                                            {{ data_encoding.initial }}
-                                                        </span>
-                                                        <span class="truncate">{{ data_encoding.name }}</span>
-                                                    </NuxtLink>
-                                                </li>
+
+                                        <li v-for="data_encoding in encoding_forms" :key="data_encoding.name">
+                                            <NuxtLink :to="data_encoding.link"
+                                                :class="[data_encoding.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                                                <span
+                                                    class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">
+                                                    {{ data_encoding.initial }}
+                                                </span>
+                                                <span class="truncate">{{ data_encoding.name }}</span>
+                                            </NuxtLink>
+                                        </li>
                                         </li>
                                         <li class="mt-auto">
                                             <a href="#"
@@ -91,9 +92,64 @@
             </Dialog>
         </TransitionRoot>
 
-        <!-- Static sidebar for desktop -->
-        <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col print:hidden">
-            <!-- Sidebar component, swap this element with another sidebar if you like -->
+
+
+
+
+        <!--------------------------Static sidebar for desktop---------------------------------------------------------------------------------------------- -->
+     
+
+        <div class="relative print:hidden" @mouseenter="expanded = true" @mouseleave="expanded = false">
+            <!-- Side Menu -->
+            
+            <transition name="slide">
+                <aside
+                    class="fixed left-0 top-0 h-screen bg-green-900 text-white shadow-lg transition-all duration-300 overflow-hidden pt-[0.75in]"
+                    :class="expanded ? 'w-48' : 'w-16'">
+                    <ul>
+                        <template v-if="userStore.getUser.user_roles.roles_id == 1">
+
+                        </template>
+
+                        <li class="flex items-center py-3 px-2 hover:bg-green-900 rounded">
+
+                            <ul role="list" class="-mx-2 space-y-1">
+                                <li v-for="item in navigation" :key="item.name">
+                                    <NuxtLink :to="item.link" :class="[
+                                        item.current
+                                            ? 'bg-green-700 text-white'
+                                            : 'text-green-200 hover:text-white hover:bg-green-700',
+                                        'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                    ]">
+                                        <!-- Dot placeholder (always takes space) -->
+                                        <span :class="[
+                                            'h-2 w-2 rounded-full',
+                                            item.current ? 'bg-white' : 'bg-transparent'
+                                        ]"></span>
+
+                                        <!-- Icon -->
+                                        <component :is="item.icon" :class="[
+                                            item.current ? 'text-white' : 'text-green-200 group-hover:text-white',
+                                            'h-6 w-6 shrink-0'
+                                        ]" aria-hidden="true" />
+
+                                        <!-- Label -->
+                                        <span v-if="expanded" class="ml-3">{{ item.name }}</span>
+                                    </NuxtLink>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                    </ul>
+                </aside>
+            </transition>
+        </div>
+
+
+
+        <!-- <div class="relaitve lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col print:hidden" >
+            
             <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-green-900 px-6 pb-4">
                 <div class="flex h-16 shrink-0 items-center">
                     <img class="h-8 w-auto" src="/assets/images/file.png" alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
@@ -152,14 +208,17 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div> -->
 
-        <div class="lg:pl-72 ">
+        <!-- --------------------- static side menu end --------------------------------------- -->
+
+        <div class="lg:pl-32 ">
             <div
                 class="print:hidden sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                 <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <Bars3Icon class="h-6 w-6" aria-hidden="true" />
+
                 </button>
 
                 <!-- Separator -->
@@ -214,7 +273,7 @@
                                 <MenuItems
                                     class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                                     <MenuItem>
-                                    <NuxtLink 
+                                    <NuxtLink
                                         class="cursor-pointer  hover:bg-green-700 hover:text-white block px-3 py-1 text-sm leading-6 text-gray-900 mouse-pointer">
                                         <div class="mouse-pointer">Help</div>
                                     </NuxtLink>
@@ -290,13 +349,15 @@
 
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'New Password: '" />
-                    <GridText2 v-model="state.password1" type="password" class="sm:col-span-3 pb-4" :displaytext="state.password1" />
+                    <GridText2 v-model="state.password1" type="password" class="sm:col-span-3 pb-4"
+                        :displaytext="state.password1" />
                     <GridErrorIcon class="sm:col-span-1 " :error="state.password_error" />
 
-                    
+
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-3 pb-4 text-white" :displaytext="'Re-Type New Password: '" />
-                    <GridText2 v-model="state.password2" type="password" class="sm:col-span-3 pb-4" :displaytext="state.password2" />
+                    <GridText2 v-model="state.password2" type="password" class="sm:col-span-3 pb-4"
+                        :displaytext="state.password2" />
                     <GridErrorIcon class="sm:col-span-1 " :error="state.password_error" />
                     <GridCell class="sm:col-span-8 " :displaytext="''" />
 
@@ -354,15 +415,20 @@ import {
     XMarkIcon,
     TrophyIcon
 } from '@heroicons/vue/24/outline/index.js'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid/index.js'
 
-import Alert from '~/components/modal/alert.vue'
+import { ChevronDownIcon, 
+        MagnifyingGlassIcon, 
+        PencilSquareIcon, 
+        UsersIcon, 
+        CalendarDaysIcon } from '@heroicons/vue/20/solid/index.js'
+
+//import Alert from '~/components/modal/alert.vue'
 import { PrinterIcon } from '@heroicons/vue/16/solid';
 const userStore = useUserStore()
 //@heroicons/vue/24/outline/
 
 //console.log(userStore.getUser.user_roles.roles_id)
-
+const expanded = ref(false)
 
 const state = reactive({
     isSlideModalOpen: false,
@@ -396,20 +462,27 @@ function closeSlideModal() {
 
 const navigation = [
     { name: 'Dashboard', link: '/dashboard', icon: HomeIcon, current: false },
-    { name: 'Datasource Tracker', link: '/tracker', icon: ChartPieIcon, current: false },
-    { name: 'Calendar and Schedules', link: '/calendar', icon: CalendarIcon, current: false },
+    { name: 'Tracker', link: '/tracker', icon: MagnifyingGlassIcon, current: false },
+    { name: 'Calendar', link: '/calendar', icon: CalendarIcon, current: false },
     { name: 'Accomplishments', link: '/accomplishments', icon: TrophyIcon, current: false },
     { name: 'Reports', link: '/reports', icon: PrinterIcon, current: false },
+    { name: 'Encoding', link: '/reports', icon: PencilSquareIcon, current: false },
+    { name: 'Configurations', link: '/admin', icon: Cog6ToothIcon, current: false },
+    { name: 'Users', link: '/admin/usermanagement', icon: UsersIcon, current: false },
+    { name: 'Schedules ', link: '/admin/managereportschedules', icon: CalendarDaysIcon, current: false },
 ]
 const encoding_forms = [
-    { id: 8, name: 'Sectioned Rights Encoding', link: '/dataencoding/rights', initial: 'R', current: false },
+   
+
+        
     
 ]
 
 const admin_pages = [
-    { id: 1, name: 'Rights Entry Configuration', link: '/admin', initial: 'R', current: false },
-    { id: 2, name: 'User Management', link: '/admin/usermanagement', initial: 'R', current: false },
-    { id: 3, name: 'Manage Report Schedules ', link: '/admin/managereportschedules', initial: 'R', current: false },
+
+
+
+   
 
 ]
 
@@ -420,7 +493,7 @@ const userNavigation = [
     { name: 'Sign out', link: '/', },
 ]
 
-const sidebarOpen = ref(false)
+const sidebarOpen = ref(true)
 
 
 
@@ -463,7 +536,7 @@ async function logout() {
 
 async function SaveNewPasswordUser(){
 
-console.log('userStore.getUser',userStore.getUser)
+//console.log('userStore.getUser',userStore.getUser)
 
 state.username = userStore.getUser.username
 state.password  = userStore.getUser.password
@@ -558,3 +631,15 @@ function openProfile(){
     openSlideModal()
 }
 </script>
+
+
+<style>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0.8;
+}
+</style>

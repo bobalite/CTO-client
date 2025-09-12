@@ -26,7 +26,8 @@
     "vue-router": "^4.3.2",
     "vue3-apexcharts": "^1.5.3",
     "vue3-carousel-nuxt": "^1.1.2",
-    "vue3-notify": "^0.1.0"
+    "vue3-notify": "^0.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",

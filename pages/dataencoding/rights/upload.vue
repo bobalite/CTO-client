@@ -1,9 +1,8 @@
 <template>
     <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">ENCODE INDICATORS</h1>
+        <h1 class="text-2xl font-bold">UPLOAD INDICATORS</h1>
         <div class="flex items-center space-x-4">
-            <button class="btn btn-primary">Export</button>
-            <button class="btn btn-primary">Print</button>
+
         </div>
     </div>
 
@@ -31,361 +30,8 @@
                 </div>
             </div>
             <!-- View Modal -->
-            <ModalSaveform :show="state.isViewModalOpen" :close="state.closeViewModal" :title="'View Entries'">
-                <form @submit.prevent="verifyclosing">
-                    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
-
-                        <GridCell
-                            class="sm:col-span-4 text-center  table-header-1  border-1 border-r border-solid border-grey border-l border-t pb-4"
-                            :displaytext="'Select Projected Type:'" />
-
-                        <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type"
-                            :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" />
-
-                        <GridCell
-                            class="sm:col-span-12 flex justify-center items-center text-xl text-white table-header-text  border-white border-t border-l border-r border-b border-grey pb-6"
-                            :displaytext=state.selected_group_header />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'INDICATOR'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-6"
-                            :displaytext="'MALE'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-6"
-                            :displaytext="'FEMALE'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-6"
-                            :displaytext="'TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l  border-b border-grey pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-r border-grey pb-6"
-                            :displaytext="'REMARKS'" />
-
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
-                            :displaytext="''" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey                                                                                                                                                                     pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey  pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell class="sm:col-span-1 text-center table-header-4 border-white border-l border-b pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center text-wrap table-header-4 border-white border-r border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
 
 
-                        <template v-for="group in state.Selected_Rights_entry_config_group.data">
-                            <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-white ring-1 ring-white  pb-3"
-                                :displaytext=group.description />
-
-                            <GridTextView v-model="state.view_male[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.male" />
-                            <GridTextView v-model="state.view_male_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.male" />
-
-                            <GridTextView v-model="state.view_female[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.female" />
-                            <GridTextView v-model="state.view_female_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.female" />
-
-                            <GridTextView v-model="state.view_total[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.total" />
-                            <GridTextView v-model="state.view_total_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.total" />
-
-                            <GridTextView v-model="state.view_grand_total[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.grand_total" />
-                            <GridTextView v-model="state.view_grand_total_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.grand_total" />
-
-                            <GridTextView v-model="state.view_remarks[group.sequence_header]"
-                                class="sm:col-span-1 text-center border-l  border-b border-grey pb-2"
-                                :entrystatus="group.remarks" />
-                            <GridTextView v-model="state.view_remarks_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-center border-l border-r border-b border-grey pb-2"
-                                :entrystatus="group.remarks" />
-                        </template>
-
-                        <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-                        <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-                        <GridCell class="sm:col-span-5 pb-6" :displaytext="''" />
-
-                        <GridCell class="sm:col-span-1 pb-6" :displaytext="''" />
-                        <button
-                            class="sm:col-span-3 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
-                            @click="changeViewdata">
-                            Load
-                        </button>
-                        <button
-                            class="sm:col-span-3 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                            @click="closeViewModal">
-                            Close
-                        </button>
-
-                    </div>
-                </form>
-            </ModalSaveform>
-
-            <!-- Add Modal -->
-            <ModalSaveform :show="state.isAddModalOpen" :close="state.closeAddEntryModal" :title="'Add Entry'">
-                <form @submit.prevent="verifyclosing">
-                    <div
-                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey  border-t pb-4">
-
-                        <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey  border-l  pb-4"
-                            :displaytext="'Select Entry Type:'" />
-                        <!-- <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type" -->
-
-                        <GridSelect v-model="state.selected_entry_type" :options="state.options.entry_type"
-                            :class="'sm:col-span-8 text-xl  text-center  border-2 border-solid border-r  border-grey  border-t  pb-4'" />
-
-                        <GridCell
-                            class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey  pb-6"
-                            :displaytext=state.selected_group_header />
-                        <GridCell class="sm:col-span-2 text-center table-header-4 border-white ring-1 ring-white pb-6"
-                            :displaytext="'INDICATOR'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center  table-header-4 border-l border-b border-white ring-1 ring-white  pb-6"
-                            :displaytext="'MALE'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white pb-6"
-                            :displaytext="'FEMALE'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white  pb-6"
-                            :displaytext="'TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2  text-center table-header-4  border-l border-b border-white ring-1 ring-white pb-6"
-                            :displaytext="'REMARKS'" />
-
-                        <template v-for="group in state.Selected_Rights_entry_config_group.data">
-                            <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-l border-b border-grey  ring-1 ring-white  pb-3"
-                                :displaytext=group.description />
-                            <GridTextEntry v-model="state.male[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
-                                :displaytext="'male'" :entrystatus="group.male" />
-                            <GridTextEntry v-model="state.female[group.sequence_header]"
-                                class="sm:col-span-2 text-right  border-l border-b border-grey  pb-2"
-                                :displaytext="'female'" :entrystatus="group.female" />
-                            <GridTextEntry v-model="state.total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
-                                :displaytext="'total'" :entrystatus="group.total" />
-                            <GridTextEntry v-model="state.grand_total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
-                                :displaytext="'grand total'" :entrystatus="group.grand_total" />
-                            <GridTextArea v-model="state.remarks[group.sequence_header]"
-                                class="sm:col-span-2 text-center border-l border-r border-b border-grey  pb-2"
-                                :displaytext="'remarks'" />
-
-                        </template>
-                        <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-                        <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Group:'" />
-                        <GridCell class="sm:col-span-10 pb-6 text-xl font-bold"
-                            :displaytext=state.Selected_Rights_entry_config_group.data[0].group />
-
-                        <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Schedule:'" />
-                        <GridCell class="sm:col-span-10 pb-6 text-xl font-bold" :displaytext=state.report_schedule />
-
-                        <GridCell class="sm:col-span-4 pb-6" :displaytext="''" />
-
-                        <GridCell class="sm:col-span-2 pb-6" :displaytext="''" />
-                        <button
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
-                            @click="closeAddEntryModal">
-                            Cancel
-                        </button>
-
-                        <button :disabled="state.buttoncompute"
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
-                            @click="computeAddEntryModal">
-                            Compute
-                        </button>
-
-                        <button :disabled="state.buttonsavenew"
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                            @click="SaveAddEntryModal">
-                            Save
-                        </button>
-
-
-                    </div>
-
-                </form>
-            </ModalSaveform>
-
-            <!-- Edit Modal -->
-            <ModalSaveform :show="state.isEditModalOpen" :close="state.closeEditModal" :title="'Edit Entry'">
-                <form @submit.prevent="verifyclosing">
-                    <div
-                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4">
-
-                        <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey border-l  pb-4"
-                            :displaytext="'Select Entry Type:'" />
-                        <GridSelect v-model="state.selected_edit_entry_type" :options="state.options.entry_type"
-                            :class="'sm:col-span-8 text-xl text-center border-2 border-solid border-r  border-grey border-t  pb-4'"
-                            @click="fetchReports_Details_Edit()" />
-
-                        <GridCell
-                            class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey pb-6"
-                            :displaytext=state.selected_group_header />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4  border-l  border-b border-white  ring-1 ring-white  pb-6"
-                            :displaytext="'INDICATOR'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4  border-l  border-b border-white  ring-1 ring-white pb-6"
-                            :displaytext="'MALE'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l   border-b border-white  ring-1 ring-white pb-6"
-                            :displaytext="'FEMALE'" />
-                        <GridCell
-                            class="sm:col-span-2  text-center table-header-4   border-l border-b border-white  ring-1 ring-white pb-6"
-                            :displaytext="'TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l  border-b border-white  ring-1 ring-white pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-r border-white  ring-1 ring-white pb-6"
-                            :displaytext="'REMARKS'" />
-
-                        <template v-for="group in state.Selected_Rights_entry_config_group.data">
-                            <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-l border-b border-white  ring-1 ring-white pb-3"
-                                :displaytext=group.description />
-                            <GridTextEdit v-model="state.edit_male[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
-                                :displaytext="'male'" :entrystatus="group.male" />
-                            <GridTextEdit v-model="state.edit_female[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
-                                :displaytext="'female'" :entrystatus="group.female" />
-                            <GridTextEdit v-model="state.edit_total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
-                                :displaytext="'total'" :entrystatus="group.total" />
-                            <GridTextEdit v-model="state.edit_grand_total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
-                                :displaytext="'grand total'" :entrystatus="group.grand_total" />
-                            <GridTextArea v-model="state.edit_remarks[group.sequence_header]"
-                                class="sm:col-span-2 text-center border-l border-r border-b border-grey pb-2"
-                                :displaytext="'remarks'" />
-
-                        </template>
-
-                        <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-                        <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-
-
-                        <GridCell class="sm:col-span-6 pb-6" :displaytext="''" />
-
-                        <button
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
-                            @click="closeEditModal">
-                            Cancel
-                        </button>
-
-                        <button :disabled="state.buttoncomputeEdit"
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
-                            @click="computeEditEntryModal">
-                            Compute
-                        </button>
-
-                        <button :disabled="state.buttonsaveEdit"
-                            class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 hover:bg-green-500 focus-visible:outline focus-visible-outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                            @click="SaveEditEntryModal">
-                            Save
-                        </button>
-
-                    </div>
-                </form>
-            </ModalSaveform>
-
-            <ModalAlert :show="state.isAlertModalOpen" :close="state.closeAlertModal" :title=state.alertmessage>
-
-                <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
-
-                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-8  pb-4" :displaytext="''" />
-
-                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
-                        :displaytext="'Rows Inserted:'" />
-                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.successcount />
-
-                    <GridCell class="sm:col-span-4  text-l font-bold text-left   pb-4"
-                        :displaytext="'Errors Encountered:'" />
-                    <GridCell class="sm:col-span-8  pb-4" :displaytext=state.errorcount />
-
-
-                    <GridCell class="sm:col-span-10 " :displaytext="''" />
-                    <button
-                        class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="closeAlertModal"> Close </button>
-
-                </div>
-
-            </ModalAlert>
-
-            <ModalAlert :show="state.isUploadModalOpen" :close="state.closeUploadModal" :title=state.alertmessage>
-
-
-
-                <FormExelUpload />
-
-
-                <GridCell class="sm:col-span-10 " :displaytext="''" />
-
-                <div class="flex justify-center items-center p-4 gap-x-4">
-                    
-
-                    <button
-                        class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 p-4 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="closeUploadModal"> Upload </button>
-              
-
-
-
-                    <button
-                        class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 p-4 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
-                        @click="closeUploadModal"> Close </button>
-                </div>
-
-
-            </ModalAlert>
 
 
 
@@ -393,129 +39,18 @@
         </div>
 
 
-        <div class="mt-8 flow-root">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-300">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col"
-                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                        Group No. </th>
-
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Indicator</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Agency</th>
-
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Report Submission</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Action</th>
-
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="Rights_entry_config in state.Selected_Rights_entry_config.data"
-                                    v-bind:key=Rights_entry_config.id @click="getclicked(Rights_entry_config)">
-
-                                    <template v-if="Rights_entry_config.tier_level == 1">
-                                        <td
-                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <span
-                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border border-green-400 bg-green-500  font-large text-black">
-                                                {{ Rights_entry_config.group }}
-                                            </span>
-                                        </td>
-
-                                        <td class="py-4 pl-4 pr-3 text-md font-medium text-gray-900 sm:pl-6">
-                                            {{ Rights_entry_config.description }}
-                                        </td>
 
 
+    </div>
 
-
-
-                                        <!-- agencies with color -->
-                                        <td
-                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <span v-bind:key=Rights_entry_config.agency_id
-                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl border  font-large text-black mr-2 mb-2"
-                                                :class="state.options.agencies.find(a => a.value === Rights_entry_config.agency_id)?.color">
-                                                <template v-for="agency in state.options.agencies">
-                                                    <template v-if="agency.value == Rights_entry_config.agency_id">
-                                                        {{ agency.label }}
-                                                    </template>
-                                                </template>
-                                            </span>
-
-
-                                        </td>
-
-                                        <td
-                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <span v-if="Rights_entry_config.is_annual == 1"
-                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-green-200 bg-green-200  font-large text-black">
-                                                {{ Rights_entry_config.is_annual == 1 ? 'Annualy' : 'Quarterly' }}
-                                            </span>
-
-                                            <span v-if="Rights_entry_config.is_annual == 0"
-                                                class="h-20 w-20 px-2 py-1 shrink-5 items-center justify-center rounded-2xl  border-red-200 bg-red-200  font-large text-black">
-                                                {{ Rights_entry_config.is_annual == 1 ? 'Annualy' : 'Quarterly' }}
-                                            </span>
-
-                                        </td>
-
-                                        <!-- <td 
-                                        class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                        {{ Rights_entry_config.agency_id }} + {{ state.currentUser }}
-                                    </td> -->
-
-                                        <td v-if="Rights_entry_config.agency_id === state.currentUser || state.roles.name == 'ADMIN'"
-                                            class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            <FormDropdown>
-                                                <MenuItem v-if="state.roles.allow_view == 1" :key="'view'">
-                                                <NuxtLink @click="openViewModal"
-                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                    View Entries
-                                                </NuxtLink>
-                                                </MenuItem>
-
-                                                <MenuItem v-if="state.roles.allow_add == 1" :key="'add'">
-                                                <NuxtLink @click="openAddEntryModal"
-                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                    Add Entry
-                                                </NuxtLink>
-                                                </MenuItem>
-
-                                                <MenuItem v-if="state.roles.allow_edit == 1" :key="'edit'">
-                                                <NuxtLink @click="openEditModal"
-                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                    Edit Entry
-                                                </NuxtLink>
-                                                </MenuItem>
-
-                                                <MenuItem v-if="state.roles.allow_edit == 1 && Rights_entry_config.group == 1 " :key="'upload'">
-                                                <NuxtLink @click="openUploadModal"
-                                                    class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
-                                                    Upload Excel
-                                                </NuxtLink>
-                                                </MenuItem>
-
-                                            </FormDropdown>
-                                        </td>
-
-                                    </template>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+    <div class="mt-8 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <FormExelUpload />
                 </div>
             </div>
         </div>
-
     </div>
 
 </template>
@@ -553,7 +88,6 @@ const state = reactive({
     isAddModalOpen: false,
     isEditModalOpen: false,
     isAlertModalOpen: false,
-    isUploadModalOpen: false,
     alertmessage: '',
     successcount: '',
     errorcount:  '',
@@ -764,10 +298,6 @@ function openAlertModal(group , alertmessage, group_header, errorcount, successc
 
 function closeAlertModal() { 
     state.isAlertModalOpen = false
-} 
-
-function closeUploadModal() { 
-    state.isUploadModalOpen = false
 } 
 
 function getclicked(Rights_entry_config){
@@ -1299,13 +829,6 @@ function openEditModal() {
     state.buttoncomputeEdit = false;
     initial_clear_data()
     fetchReports_Details_Edit()
-}
-
-function openUploadModal() {
-    state.isUploadModalOpen = true;
-    // state.buttoncomputeEdit = false;
-    // initial_clear_data()
-    // fetchReports_Details_Edit()
 }
 
 async function fetchReports_Details_Edit() {
