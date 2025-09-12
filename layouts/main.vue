@@ -97,15 +97,22 @@
 
 
         <!--------------------------Static sidebar for desktop---------------------------------------------------------------------------------------------- -->
-     
 
-        <div class="relative print:hidden" @mouseenter="expanded = true" @mouseleave="expanded = false">
+
+        <div class="relative print:hidden z-50" @mouseenter="expanded = true" @mouseleave="expanded = false">
             <!-- Side Menu -->
-            
+
             <transition name="slide">
                 <aside
                     class="fixed left-0 top-0 h-screen bg-green-900 text-white shadow-lg transition-all duration-300 overflow-hidden pt-[0.75in]"
                     :class="expanded ? 'w-48' : 'w-16'">
+
+                    <!-- 🔹 Logo Section -->
+                    <div class="flex items-center justify-center py-4 border-b border-green-800">
+                         <img class="h-8 w-auto" src="/assets/images/file.png" alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
+                        <!-- <img src="/logo.png" alt="Logo" class="h-8 w-auto" /> -->
+                        <span v-if="expanded" class="ml-2 font-bold text-lg">S.O.A.R.</span>
+                    </div>
                     <ul>
                         <template v-if="userStore.getUser.user_roles.roles_id == 1">
 
