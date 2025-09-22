@@ -4,7 +4,7 @@
   <div class="flex justify-between items-center print:hidden">
     
     <div class="flex items-center space-x-4">
-      <button @click="openSlideModal()"
+      <button @click="openSlideModal(1)"
         class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">My
         Dashboard Settings</button>
       <!-- <button class="btn btn-primary">Export</button> -->
@@ -27,10 +27,11 @@
       
       <!-- Previous Year -->
       <button
-        @click="state.report_year--, change_selected_year()"
-        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
+        @click="change_selected_year(2)"
+        :class="['px-2 py-1  bg-green-700 rounded hover:bg-gray-300 transition', state.report_year <= 1 ? 'opacity-50 cursor-not-allowed bg-green-700' : '']"
       >
-        Prev
+        <ChevronLeftIcon  class="hover:bg-green-700 hover:text-white ml-2 h-5 w-5 text-gray-400"
+                                        aria-hidden="true" />
       </button>
 
       <!-- Current Year -->
@@ -42,10 +43,11 @@
 
       <!-- Next Year -->
       <button
-        @click="state.report_year++, change_selected_year()"
-        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
+        @click="change_selected_year(1)"
+        :class="['px-2 py-1  bg-green-700 rounded hover:bg-gray-300 transition', state.report_year >= state.options.report_years.length ? 'opacity-50 cursor-not-allowed  bg-green-700' : '']"
       >
-        Nxt
+        <ChevronRightIcon  class="hover:bg-green-700 hover:text-white ml-2 h-5 w-5 text-gray-400"
+                                        aria-hidden="true"/>
       </button>
 
     </div>
@@ -405,6 +407,9 @@ import {useUserStore} from '~/store/user'
 import {userDashboardWidgetsService } from '~/components/api/UserDashboardWidgetsService'; 
 import {report_yearService } from '~/components/api/ReportYears';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
+
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
+
 const userStore = useUserStore()
 
 
@@ -495,24 +500,44 @@ function saveDashboardSettings() {
    state.isSlideModalOpen = false
 }
 
-function change_selected_year(){
+
+function change_selected_year(opt){
 
   // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
+  console.log('state.report_year', state.report_year)
+    console.log('state.options.report_years.length', state.options.report_years.length)
+
+  if (opt == 1){
+
+    if (state.report_year < state.options.report_years.length ) {
+      state.report_year++
+    }
+  } 
+  
+  if (opt == 2){
+    if (state.report_year > 1) {
+      state.report_year--
+    }
+  }
 
   state.year = state.report_years.value
-  console.log('state. in change',state.year)
+  //console.log('state. in change',state.year)
   //state.refresh_graphs01 = true
 
-if (state.refresh_graphs_toggle == false){
-  state.refresh_graphs_toggle = true
-}else {
-  state.refresh_graphs_toggle = false
-} 
+  if (state.refresh_graphs_toggle == false) {
+    state.refresh_graphs_toggle = true
+  } else {
+    state.refresh_graphs_toggle = false
+  } 
 
   refresh_graphs()
   //console.log('report_year', state.report_year)
   
 }
+
+
+
+
 
 async function fetchData() {
   state.isPageLoading = true
