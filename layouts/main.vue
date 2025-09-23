@@ -1,7 +1,7 @@
 <template>
     <div>
         <TransitionRoot as="template" :show="sidebarOpen">
-            <Dialog class="relative z-50 lg:hidden" @close="sidebarOpen = false">
+            <Dialog class="relative  lg:hidden" @close="sidebarOpen = false">
                 <TransitionChild as="template" enter="transition-opacity ease-linear duration-300"
                     enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300"
                     leave-from="opacity-100" leave-to="opacity-0">
@@ -63,7 +63,7 @@
                                         </li>
                                         </li>
                                         <li class="mt-auto">
-                                            <a href="#"
+                                            <a href="#" 
                                                 class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-green-200 hover:bg-green-700 hover:text-white">
                                                 <Cog6ToothIcon
                                                     class="h-6 w-6 shrink-0 text-green-200 group-hover:text-white"
@@ -93,9 +93,6 @@
         </TransitionRoot>
 
 
-
-
-
         <!--------------------------Static sidebar for desktop---------------------------------------------------------------------------------------------- -->
 
 
@@ -104,22 +101,21 @@
 
             <transition name="slide">
                 <aside
-                    class="fixed left-0 top-0 h-screen bg-green-900 text-white shadow-lg transition-all duration-300 overflow-hidden pt-[0.75in]"
+                    class="fixed left-0 top-[64px] h-screen bg-green-900 text-white shadow-lg transition-all duration-300 overflow-hidden pt-[0.15in] rounded-r-lg"
                     :class="expanded ? 'w-48' : 'w-16'">
 
                     <!-- 🔹 Logo Section -->
-                    <div class="flex items-center justify-center py-4 border-b border-green-800">
-                         <img class="h-8 w-auto" src="/assets/images/file.png" alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
-                        <!-- <img src="/logo.png" alt="Logo" class="h-8 w-auto" /> -->
-                        <span v-if="expanded" class="ml-2 font-bold text-lg">S.O.A.R.</span>
+                    <div class="flex flex-col items-center justify-center pt-2 pb-3 border-b border-green-800 transition-all duration-200">
+                        <img :class="expanded ? 'h-20 w-auto transition-all duration-200' : 'h-10 w-auto transition-all duration-200'" src="/assets/images/file.png"
+                            alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
+                        <span v-if="expanded" class="mt-1 font-bold text-lg">S.O.A.R.</span>
                     </div>
-                    <ul>
-                        <template v-if="userStore.getUser.user_roles.roles_id == 1">
 
-                        </template>
+                    <ul>
+                       
+                        <template v-if="userStore.getUser.user_roles.roles_id == 1"></template>
 
                         <li class="flex items-center py-3 px-2 hover:bg-green-900 rounded">
-
                             <ul role="list" class="-mx-2 space-y-1">
                                 <li v-for="item in navigation" :key="item.name">
                                     <NuxtLink :to="item.link" :class="[
@@ -128,10 +124,10 @@
                                             : 'text-green-200 hover:text-white hover:bg-green-700',
                                         'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                                     ]">
-                                        <!-- Dot placeholder (always takes space) -->
+                                        <!-- Dot placeholder -->
                                         <span :class="[
                                             'h-2 w-2 rounded-full',
-                                            item.current ? 'bg-white' : 'bg-transparent'
+                                            item.link === route.path ? 'bg-white' : 'bg-transparent'
                                         ]"></span>
 
                                         <!-- Icon -->
@@ -144,78 +140,14 @@
                                         <span v-if="expanded" class="ml-3">{{ item.name }}</span>
                                     </NuxtLink>
                                 </li>
-
-
                             </ul>
                         </li>
                     </ul>
                 </aside>
+
             </transition>
         </div>
 
-
-
-        <!-- <div class="relaitve lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col print:hidden" >
-            
-            <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-green-900 px-6 pb-4">
-                <div class="flex h-16 shrink-0 items-center">
-                    <img class="h-8 w-auto" src="/assets/images/file.png" alt="SPECIAL OFFICE FOR CHILDREN'S CONCERN" />
-                    <div class='text-white'> S.O.A.R System </div>
-                </div>
-                <nav class="flex flex-1 flex-col">
-                    <ul role="list" class="flex flex-1 flex-col gap-y-7">
-                        <li>
-                            <ul role="list" class="-mx-2 space-y-1">
-                                <li v-for="item in navigation" :key="item.name">
-                                    <NuxtLink :to="item.link"
-                                        :class="[item.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                                        <component :is="item.icon"
-                                            :class="[item.current ? 'text-white' : 'text-green-200 group-hover:text-white', 'h-6 w-6 shrink-0']"
-                                            aria-hidden="true" />
-                                        {{ item.name }}
-                                    </NuxtLink>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div class="text-xs font-semibold leading-6 text-green-200">Data Encoding</div>
-                            <ul role="list" class="-mx-2 mt-2 space-y-1">
-                                <li v-for="data_encoding in encoding_forms" :key="data_encoding.name">
-                                    <NuxtLink :to="data_encoding.link"
-                                        :class="[data_encoding.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                                        <span
-                                            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-green-400 bg-green-500 text-[0.625rem] font-medium text-white">
-                                            {{ data_encoding.initial }}
-                                        </span>
-                                        <span class="truncate">{{ data_encoding.name }}</span>
-                                    </NuxtLink>
-                                </li>
-                            </ul>
-
-
-                            <div class="text-xs font-semibold leading-6 text-green-200">Administration</div>
-                            <template v-if="userStore.getUser.user_roles.roles_id == 1 ">
-                                <ul role="list" class="-mx-2 mt-2 space-y-1">
-                                    <li v-for="admin_encoding in admin_pages" :key="admin_encoding.name"
-                                        class="mt-auto">
-                                        <NuxtLink @Click="admin_encoding.current = true" :to="admin_encoding.link"
-                                            class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-green-200 hover:bg-green-700 hover:text-white">
-                                            <Cog6ToothIcon
-                                                class="h-6 w-6 shrink-0 text-green-200 group-hover:text-white"
-                                                aria-hidden="true" />
-                                            <span class="truncate">{{ admin_encoding.name }}</span>
-                                        </NuxtLink>
-                                    </li>
-                                </ul>
-                            </template>
-
-
-                        </li>
-
-                    </ul>
-                </nav>
-            </div>
-        </div> -->
 
         <!-- --------------------- static side menu end --------------------------------------- -->
 
@@ -394,6 +326,9 @@
 </template>
 
 <script setup>
+
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
 import {authService } from '~/components/api/AuthService'
 import {userService } from '~/components/api/UserService';

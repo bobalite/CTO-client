@@ -13,23 +13,18 @@
             <div class="mt-8 flow-root">
                 <p class="mb-1 text-lg font-normal text-gray-500 lg:text-xl sm:px-10 xl:px-1 dark:text-black">Children's
                     Rights Situational Analysis (CRSA)</p>
-                <div class="sm:flex-auto">
-                    <p>Select Report Year</p>
-                    <div>
-                        <FormSelect name="selected_year" v-model="state.selected_year_id"
-                            :options="state.options.report_years" @click="changeYear()" />
+                <div class="flex gap2 sm:gap-3 items-center">
+                    <div class="flex-1">
+                        <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
+                            :change-selected-year="changeYear()" />
                     </div>
-                </div>
-
-                <div class="sm:flex-auto">
-
-                    <p>Select Right</p>
-                    <div>
-                        <FormSelect :options="state.options.rights " v-model="state.selected_rights_id"
-                            @click="changeData()" />
+                    <div class="flex-1">
+                        <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id"
+                            @click="changeData" />
                     </div>
                 </div>
             </div>
+
             <!-- View Modal -->
             <ModalSaveform :show="state.isViewModalOpen" :close="state.closeViewModal" :title="'View Entries'">
                 <form @submit.prevent="verifyclosing">
@@ -370,12 +365,12 @@
                 <GridCell class="sm:col-span-10 " :displaytext="''" />
 
                 <div class="flex justify-center items-center p-4 gap-x-4">
-                    
+
 
                     <button
                         class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 p-4 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-greeen-600"
                         @click="closeUploadModal"> Upload </button>
-              
+
 
 
 
@@ -496,7 +491,9 @@
                                                 </NuxtLink>
                                                 </MenuItem>
 
-                                                <MenuItem v-if="state.roles.allow_edit == 1 && Rights_entry_config.group == 1 " :key="'upload'">
+                                                <MenuItem
+                                                    v-if="state.roles.allow_edit == 1 && Rights_entry_config.group == 1 "
+                                                    :key="'upload'">
                                                 <NuxtLink @click="openUploadModal"
                                                     class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
                                                     Upload Excel
@@ -546,7 +543,7 @@ definePageMeta({
 const state = reactive({
    
     Rights:[],
-
+    
     currentUser: '', //userStore.currentUser,
 
     isViewModalOpen: false,
@@ -603,14 +600,14 @@ const state = reactive({
 
     selected_entry_type: 'Actual',
     selected_view_entry_type: 'Projected',
-    selected_year_id: 0,
+    selected_year_id: 1,
     datasource_id: 0,
     datasources: [],
 
     selected_edit_entry_type: 'Actual',
     edit_selected_datasource: 0,
 
-    selected_rights_id: 0,
+    selected_rights_id: 1,
     selected_sequence_header: '',
     selected_description: '',
     selected_group: 0,
@@ -656,8 +653,8 @@ const state = reactive({
             { value: '2', label: 'Enabled' },
         ],
         years:[
-            {value: '1', label: 'Jan - Dec 2024' },
-            {value: '2', label: 'Jan - Dec 2025' },
+            {value: '1', label: 'Jan - Dec 2024', year: '2024' },
+            {value: '2', label: 'Jan - Dec 2025', year: '2025' },
 
         ],
         agencies: [
@@ -682,6 +679,10 @@ const state = reactive({
     },
 })
 
+
+// options: {
+//      },
+        
 onMounted(() => {
     fetchreportyear()
     fetchRights()
@@ -712,7 +713,7 @@ async function fetchreportyear() {
                         }
                     }
                 }
-                state.options.report_years = data;
+                state.options.years = data;
                 //console.log(state.options.report_years)
             }
 
@@ -724,7 +725,7 @@ async function fetchreportyear() {
 
 function changeYear() {
     state.selected_year_id = state.selected_year_id
-    state.selected_year = state.options.report_years.find(year => year.value === state.selected_year_id)?.year || '';
+    state.selected_year = state.options.years.find(year => year.value === state.selected_year_id)?.year || '';
     console.log('selected_year = ', state.selected_year)
 }
 

@@ -2,58 +2,20 @@
 <template>
 
   <div class="flex justify-between items-center print:hidden">
-    
+
     <div class="flex items-center space-x-4">
       <button @click="openSlideModal(1)"
-        class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">My
+        class="rounded-md px-11 py-2 bg-yellow-400 text-black font-semibold shadow-md hover:bg-green-800 hover:text-white transition-colors duration-200">My
         Dashboard Settings</button>
-      <!-- <button class="btn btn-primary">Export</button> -->
-      <!-- <button @click="printWindow()" class="btn btn-primary">Print</button> -->
-    </div>
-  </div>
-
-  <!-- <div class="flex justify-between items-center mt-4">
-    <div class="inline-block origin-left scale-95 w-3/4">
-      <FormSelect name="selected_year" v-model="state.report_year" :options="state.options.report_years"
-        @change="change_selected_year()" class="text-sm py-1 px-2 w-1/4 transform scale-90 origin-left" />
-    </div>
-
-  </div> -->
-
-
-  <div class="flex justify-between items-center mt-4">
-  <div class="inline-block origin-left scale-95 w-3/4">
-    <div class="flex items-center gap-3 text-sm py-1 px-2 w-1/4 transform scale-90 origin-left">
-      
-      <!-- Previous Year -->
-      <button
-        @click="change_selected_year(2)"
-        :class="['px-2 py-1  bg-green-700 rounded hover:bg-gray-300 transition', state.report_year <= 1 ? 'opacity-50 cursor-not-allowed bg-green-700' : '']"
-      >
-        <ChevronLeftIcon  class="hover:bg-green-700 hover:text-white ml-2 h-5 w-5 text-gray-400"
-                                        aria-hidden="true" />
-      </button>
-
-      <!-- Current Year -->
-      <span class="font-semibold">
-        {{ state.options.report_years.filter(item => item.value === state.report_year)[0]?.label || 'Select Quarter' }}
-        
-        <!-- {{ state.options.report_years }} -->
-      </span>
-
-      <!-- Next Year -->
-      <button
-        @click="change_selected_year(1)"
-        :class="['px-2 py-1  bg-green-700 rounded hover:bg-gray-300 transition', state.report_year >= state.options.report_years.length ? 'opacity-50 cursor-not-allowed  bg-green-700' : '']"
-      >
-        <ChevronRightIcon  class="hover:bg-green-700 hover:text-white ml-2 h-5 w-5 text-gray-400"
-                                        aria-hidden="true"/>
-      </button>
 
     </div>
   </div>
-</div>
 
+
+  <FormYearSelector 
+      v-model="state.report_year" 
+      :options="state.options.report_years" 
+      :change-selected-year="change_selected_year" />
 
   <div>
 
@@ -166,8 +128,8 @@
   </div>
 
   <ModalSlide :show="state.isSlideModalOpen" :close="closeSlideModal" :title="'Select Dashboard Widget'"
-    :dialogClass="'flex h-full flex-col divide-y divide-gray-200 bg-opacity-90 bg-green-200 rounded-2xl shadow-xl'"
-    :buttonClass="'relative rounded-md bg-gray-400 text-black hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500'"
+    :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl'"
+    :buttonClass="'relative rounded-md bg-green-600 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500'"
     :tittleClass="'text-2xl text-right font-bold leading-tight tracking-tight text-black'">
     <div class="mt-8 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -176,79 +138,78 @@
 
             <div class="inline-block min-w-full py-2 align-left sm:px-6 lg:px-8">
               <button @click="saveDashboardSettings()"
-                class="rounded-full px-6 py-2 bg-green-300 text-black font-semibold shadow-md hover:bg-green-400 transition-colors duration-200">Save
+                class="rounded-md px-6 py-2 bg-green-900 text-white  font-semibold shadow-md hover:bg-green-600 hover:text-white transition-colors duration-200">Save
                 Dashboard Settings</button>
             </div>
 
 
 
-            <table class="table-fixed w-full">
-              <thead class="bg-green-200" pl-4> Survival Widgets.
+            <table class="table-fixed w-full bg-opacity-90">
+              <thead class="bg-green-800 text-white" pl-4> Survival Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp01" :value="state.showGraphsGrp01" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200" :displaytext="'Group 1: Teenage Pregnancy'" />
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800" :displaytext="'Group 1: Teenage Pregnancy'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp02" :value="state.showGraphsGrp02" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800"
                       :displaytext="'Group 2: Total number of nutritionally-at-risk pregnant women (PW)'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp03" :value="state.showGraphsGrp03" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
-                      :displaytext="'Group 3: Proportion/percentage of nutritionally-at-risk PW'" />
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800" :displaytext="'Group 3: Proportion/percentage of nutritionally-at-risk PW'" />
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp04" :value="state.showGraphsGrp04" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800"
                       :displaytext="'Group 4: Total number of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp05" :value="state.showGraphsGrp05" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800"
                       :displaytext="'Group 5: Proportion/percentage of PW with at least 4 pre-natal check-ups'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800">
                     <GridCheckbox v-model="state.showGraphsGrp06" :value="state.showGraphsGrp06" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800"
                       :displaytext="'Group 6: Total Number of deliveries attended by skilled health professionals'" />
                   </th>
                 </tr>
@@ -256,27 +217,27 @@
 
 
               </thead>
-              <thead class="bg-green-200" pl-4> Development Widgets.
+              <thead class="bg-green-800 text-white" pl-4> Development Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp37" :value="state.showGraphsGrp37" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200" :displaytext="'Group 37: Net Enrolment rate:'" />
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 " :displaytext="'Group 37: Net Enrolment rate:'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp45" :value="state.showGraphsGrp45" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 45: Total number of Out- of- school children and youth (OSCY)'" />
                   </th>
                 </tr>
@@ -285,104 +246,103 @@
 
               </thead>
 
-              <thead class="bg-green-200" pl-4> Protection Widgets.
+              <thead class="bg-green-800 text-white" pl-4> Protection Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp48" :value="state.showGraphsGrp48" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 48: Total number of violence against children cases, by type of violence'" />
                   </th>
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp49" :value="state.showGraphsGrp49" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 49: Total number of violence against children cases resolved, by type of violence'" />
                   </th>
 
                 </tr>
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp50" :value="state.showGraphsGrp50" :dissabled="false" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 50: Total number of reported Children In-Need of Special Protection (CNSP) cases'" />
                   </th>
 
                 </tr>
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp55" :value="state.showGraphsGrp55" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 55: Total Number of Crimes Committed by Children, by type/category of crime committed:'" />
                   </th>
 
                 </tr>
               </thead>
-              <thead class="bg-green-200" pl-4> Participation Widgets.
+              <thead class="bg-green-800 text-white" pl-4> Participation Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp59" :value="state.showGraphsGrp59" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 59: Total Number of BCPC with child representatives, by type of selection process:'" />
                   </th>
 
                 </tr>
               </thead>
-              <thead class="bg-green-200" pl-4> Governance Widgets.
+              <thead class="bg-green-800 text-white" pl-4> Governance Widgets.
 
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp65" :value="state.showGraphsGrp65" :dissabled="false" />
                   </th>
 
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 "
                       :displaytext="'Group 65: Established and updated database on children, with all of the following disaggregated information on children'" />
                   </th>
 
                 </tr>
               </thead>
-              <thead class="bg-green-200" pl-4> General Information Widgets.
+              <thead class="bg-green-800 text-white" pl-4> General Information Widgets.
                 <tr>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200">
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 ">
                     <GridCheckbox v-model="state.showGraphsGrp68" :value="state.showGraphsGrp68" :dissabled="false"
                       :displaytext="'Group 68'" />
                   </th>
                   <th>
-                    <GridCell  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-             rounded-md bg-green-200 hover:bg-green-300 transition-colors duration-200"
-                      :displaytext="'Group 68: Total population of children, by sex, by age group'" />
+                    <GridCell class="px-3 py-3.5 text-left text-sm font-semibold text-white 
+             rounded-md bg-green-800 " :displaytext="'Group 68: Total population of children, by sex, by age group'" />
                   </th>
                 </tr>
-           
+
 
 
               </thead>
