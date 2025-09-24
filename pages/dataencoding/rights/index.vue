@@ -1,18 +1,17 @@
 <template>
     <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">ENCODE INDICATORS</h1>
-        <div class="flex items-center space-x-4">
+        <h1 class="text-2xl font-bold">ENCODE DATA INDICATORS</h1>
+        <!-- <div class="flex items-center space-x-4">
             <button class="btn btn-primary">Export</button>
             <button class="btn btn-primary">Print</button>
-        </div>
+        </div> -->
     </div>
 
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
 
             <div class="mt-8 flow-root">
-                <p class="mb-1 text-lg font-normal text-gray-500 lg:text-xl sm:px-10 xl:px-1 dark:text-black">Children's
-                    Rights Situational Analysis (CRSA)</p>
+
                 <div class="flex gap2 sm:gap-3 items-center">
                     <div class="flex-1">
                         <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
@@ -28,111 +27,81 @@
             <!-- View Modal -->
             <ModalSaveform :show="state.isViewModalOpen" :close="state.closeViewModal" :title="'View Entries'">
                 <form @submit.prevent="verifyclosing">
-                    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
+                    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16">
 
-                        <GridCell
+                        <!-- <GridCell
                             class="sm:col-span-4 text-center  table-header-1  border-1 border-r border-solid border-grey border-l border-t pb-4"
                             :displaytext="'Select Projected Type:'" />
 
                         <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type"
-                            :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" />
+                            :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" /> -->
+
+                         
+                        <GridCell
+                            class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  rounded-left border-white  border-l  pb-1"
+                            :displaytext="''" />
 
                         <GridCell
-                            class="sm:col-span-12 flex justify-center items-center text-xl text-white table-header-text  border-white border-t border-l border-r border-b border-grey pb-6"
-                            :displaytext=state.selected_group_header />
+                            class="sm:col-span-1 flex bg-yellow-400 justify-center text-xl text-black   border-white  border-l border-r border-b pb-1"
+                            :displaytext="'1'" />
+
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-grey pb-6"
+                            class="sm:col-span-5 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL CARE & SERVICES'" />
+
+                        <GridCell
+                            class="sm:col-span-10 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL DELIVERIES'" />
+                        <GridCell
+                            class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
                             :displaytext="'INDICATOR'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'MALE'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'FEMALE'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-1"
                             :displaytext="'TOTAL'" />
+                    
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l  border-b border-grey pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-r border-grey pb-6"
+                            class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
                             :displaytext="'REMARKS'" />
 
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-white border-l  ring-1 ring-white border-b border-grey pb-6"
-                            :displaytext="''" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey                                                                                                                                                                     pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey  pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell class="sm:col-span-1 text-center table-header-4 border-white border-l border-b pb-6"
-                            :displaytext="'PROJECTED'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center table-header-4 border-white border-l border-b border-grey pb-6"
-                            :displaytext="'ACTUAL'" />
-                        <GridCell
-                            class="sm:col-span-1 text-center text-wrap table-header-4 border-white border-r border-l border-b border-grey pb-6"
-                            :displaytext="'PROJECTED'" />
-
-
                         <template v-for="group in state.Selected_Rights_entry_config_group.data">
+
+                             <GridCell
+                                class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
+                                :displaytext="'1.1.1'" />
+
                             <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-white ring-1 ring-white  pb-3"
+                                class="sm:col-span-5 px-1 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
                                 :displaytext=group.description />
 
                             <GridTextView v-model="state.view_male[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
+                                class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.male" />
-                            <GridTextView v-model="state.view_male_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.male" />
-
+                          
                             <GridTextView v-model="state.view_female[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
+                                class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.female" />
-                            <GridTextView v-model="state.view_female_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.female" />
-
+                            
                             <GridTextView v-model="state.view_total[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
+                                class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.total" />
-                            <GridTextView v-model="state.view_total_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.total" />
+                                                                             
 
-                            <GridTextView v-model="state.view_grand_total[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.grand_total" />
-                            <GridTextView v-model="state.view_grand_total_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-right border-l border-b border-grey pb-2"
-                                :entrystatus="group.grand_total" />
-
-                            <GridTextView v-model="state.view_remarks[group.sequence_header]"
-                                class="sm:col-span-1 text-center border-l  border-b border-grey pb-2"
-                                :entrystatus="group.remarks" />
-                            <GridTextView v-model="state.view_remarks_projected[group.sequence_header]"
-                                class="sm:col-span-1 text-center border-l border-r border-b border-grey pb-2"
-                                :entrystatus="group.remarks" />
+                             <GridCell v-model="state.view_remarks[group.sequence_header]"
+                                class="sm:col-span-4 px-1 table-header-4 text-center text-xs border-l  border-b border-grey pb-1"
+                                :entrystatus="group.remarks"
+                                :displaytext="'The Quick brown fox jumps over the lazy dogs near the bank of the river '"
+                                 />
+                          
                         </template>
+                          <GridCell
+                            class="sm:col-span-16 flex rounded-b-lg bg-green-500 justify-center text-sm text-black  rounded-left border-white  border-l  pb-2"
+                            :displaytext="''" />
 
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
@@ -158,40 +127,47 @@
             <ModalSaveform :show="state.isAddModalOpen" :close="state.closeAddEntryModal" :title="'Add Entry'">
                 <form @submit.prevent="verifyclosing">
                     <div
-                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey  border-t pb-4">
+                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey  pb-6">
+
+                    <GridCell
+                            class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  border-white  border-l  pb-3"
+                            :displaytext="''" />
 
                         <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey  border-l  pb-4"
-                            :displaytext="'Select Entry Type:'" />
-                        <!-- <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type" -->
-
-                        <GridSelect v-model="state.selected_entry_type" :options="state.options.entry_type"
-                            :class="'sm:col-span-8 text-xl  text-center  border-2 border-solid border-r  border-grey  border-t  pb-4'" />
+                            class="sm:col-span-1 flex bg-yellow-400 justify-center text-xl text-black   border-white  border-l border-r border-b pb-1"
+                            :displaytext="'1'" />
 
                         <GridCell
-                            class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey  pb-6"
-                            :displaytext=state.selected_group_header />
-                        <GridCell class="sm:col-span-2 text-center table-header-4 border-white ring-1 ring-white pb-6"
+                            class="sm:col-span-5 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL CARE & SERVICES'" />
+
+                        <GridCell
+                            class="sm:col-span-10 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL DELIVERIES'" />
+                        <GridCell
+                            class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
                             :displaytext="'INDICATOR'" />
                         <GridCell
-                            class="sm:col-span-2 text-center  table-header-4 border-l border-b border-white ring-1 ring-white  pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'MALE'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'FEMALE'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white  pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-1"
                             :displaytext="'TOTAL'" />
+                    
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-white ring-1 ring-white pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2  text-center table-header-4  border-l border-b border-white ring-1 ring-white pb-6"
+                            class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
                             :displaytext="'REMARKS'" />
 
                         <template v-for="group in state.Selected_Rights_entry_config_group.data">
+                             <GridCell
+                                class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
+                                :displaytext="'1.1.1'" />
+
                             <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-l border-b border-grey  ring-1 ring-white  pb-3"
+                                class="sm:col-span-5 text-left table-header-4 border-l text-xs border-b border-grey  ring-1 ring-white  pb-1"
                                 :displaytext=group.description />
                             <GridTextEntry v-model="state.male[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
@@ -202,24 +178,19 @@
                             <GridTextEntry v-model="state.total[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
                                 :displaytext="'total'" :entrystatus="group.total" />
-                            <GridTextEntry v-model="state.grand_total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
-                                :displaytext="'grand total'" :entrystatus="group.grand_total" />
+                           
                             <GridTextArea v-model="state.remarks[group.sequence_header]"
-                                class="sm:col-span-2 text-center border-l border-r border-b border-grey  pb-2"
+                                class="sm:col-span-4 text-center border-l border-r border-b border-grey focus:outline-none pb-2"
                                 :displaytext="'remarks'" />
 
                         </template>
+
+                          <GridCell
+                            class="sm:col-span-16 flex rounded-b-lg bg-green-500 justify-center text-sm text-black  rounded-left border-white  border-l  pb-2"
+                            :displaytext="''" />
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-                        <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Group:'" />
-                        <GridCell class="sm:col-span-10 pb-6 text-xl font-bold"
-                            :displaytext=state.Selected_Rights_entry_config_group.data[0].group />
-
-                        <GridCell class="sm:col-span-2 pb-6 text-xl font-bold" :displaytext="'Schedule:'" />
                         <GridCell class="sm:col-span-10 pb-6 text-xl font-bold" :displaytext=state.report_schedule />
-
                         <GridCell class="sm:col-span-4 pb-6" :displaytext="''" />
-
                         <GridCell class="sm:col-span-2 pb-6" :displaytext="''" />
                         <button
                             class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"

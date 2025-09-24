@@ -1,8 +1,8 @@
 <template>
     <TransitionRoot as="template" :show="props.show">
-        <Dialog class="relative z-60" @click="props.close" @close="props.close">
-            <div class="fixed inset-0" />
-            <div class="fixed inset-0 overflow-hidden">
+        <Dialog class="relative " @click="props.close" @close="props.close">
+            
+            <div class="fixed  z-60 inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
                     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                         <TransitionChild as="template"
@@ -14,7 +14,7 @@
                                 <div :class= props.dialogClass>
                                     <div class="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
                                         <div class="px-4 sm:px-6">
-                                            <div class="flex items-start justify-between mt-14">
+                                            <div class="flex items-start justify-between mt-4">
                                                 <h3
                                                     :class=props.tittleClass>
                                                     {{ props.title }}

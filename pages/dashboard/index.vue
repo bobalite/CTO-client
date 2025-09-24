@@ -128,10 +128,10 @@
   </div>
 
   <ModalSlide :show="state.isSlideModalOpen" :close="closeSlideModal" :title="'Select Dashboard Widget'"
-    :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl'"
+    :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl mt-[4rem]'"
     :buttonClass="'relative rounded-md bg-green-600 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500'"
     :tittleClass="'text-2xl text-right font-bold leading-tight tracking-tight text-black'">
-    <div class="mt-8 flow-root">
+    <div class="mt-8 flow-root ">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-left sm:px-6 lg:px-8">
           <div class="overflow-hidden px-3 py-3.5 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
