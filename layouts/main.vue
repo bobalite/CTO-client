@@ -96,7 +96,9 @@
         <!--------------------------Static sidebar for desktop---------------------------------------------------------------------------------------------- -->
 
 
-        <div class="relative print:hidden z-50" @mouseenter="expanded = true" @mouseleave="expanded = false">
+        <div class="relative print:hidden z-50 hidden md:block" 
+            @mouseenter="expanded = true" 
+            @mouseleave="expanded = false">
             <!-- Side Menu -->
 
             <transition name="slide">

@@ -29,14 +29,7 @@
                 <form @submit.prevent="verifyclosing">
                     <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16">
 
-                        <!-- <GridCell
-                            class="sm:col-span-4 text-center  table-header-1  border-1 border-r border-solid border-grey border-l border-t pb-4"
-                            :displaytext="'Select Projected Type:'" />
 
-                        <GridSelect v-model="state.selected_view_entry_type" :options="state.options.view_entry_type"
-                            :class="'sm:col-span-8 text-center  bg-green-200   border-1 border-solid border-l  border-black border-r pb-4'" /> -->
-
-                         
                         <GridCell
                             class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  rounded-left border-white  border-l  pb-1"
                             :displaytext="''" />
@@ -64,14 +57,14 @@
                         <GridCell
                             class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-1"
                             :displaytext="'TOTAL'" />
-                    
+
                         <GridCell
                             class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
                             :displaytext="'REMARKS'" />
 
                         <template v-for="group in state.Selected_Rights_entry_config_group.data">
 
-                             <GridCell
+                            <GridCell
                                 class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
                                 :displaytext="'1.1.1'" />
 
@@ -82,24 +75,23 @@
                             <GridTextView v-model="state.view_male[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.male" />
-                          
+
                             <GridTextView v-model="state.view_female[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.female" />
-                            
+
                             <GridTextView v-model="state.view_total[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
                                 :entrystatus="group.total" />
-                                                                             
 
-                             <GridCell v-model="state.view_remarks[group.sequence_header]"
+
+                            <GridCell v-model="state.view_remarks[group.sequence_header]"
                                 class="sm:col-span-4 px-1 table-header-4 text-center text-xs border-l  border-b border-grey pb-1"
                                 :entrystatus="group.remarks"
-                                :displaytext="'The Quick brown fox jumps over the lazy dogs near the bank of the river '"
-                                 />
-                          
+                                :displaytext="'The Quick brown fox jumps over the lazy dogs near the bank of the river '" />
+
                         </template>
-                          <GridCell
+                        <GridCell
                             class="sm:col-span-16 flex rounded-b-lg bg-green-500 justify-center text-sm text-black  rounded-left border-white  border-l  pb-2"
                             :displaytext="''" />
 
@@ -126,10 +118,9 @@
             <!-- Add Modal -->
             <ModalSaveform :show="state.isAddModalOpen" :close="state.closeAddEntryModal" :title="'Add Entry'">
                 <form @submit.prevent="verifyclosing">
-                    <div
-                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey  pb-6">
+                    <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey  pb-6">
 
-                    <GridCell
+                        <GridCell
                             class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  border-white  border-l  pb-3"
                             :displaytext="''" />
 
@@ -156,13 +147,13 @@
                         <GridCell
                             class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-1"
                             :displaytext="'TOTAL'" />
-                    
+
                         <GridCell
                             class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
                             :displaytext="'REMARKS'" />
 
                         <template v-for="group in state.Selected_Rights_entry_config_group.data">
-                             <GridCell
+                            <GridCell
                                 class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
                                 :displaytext="'1.1.1'" />
 
@@ -178,14 +169,14 @@
                             <GridTextEntry v-model="state.total[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey  pb-2"
                                 :displaytext="'total'" :entrystatus="group.total" />
-                           
+
                             <GridTextArea v-model="state.remarks[group.sequence_header]"
                                 class="sm:col-span-4 text-center border-l border-r border-b border-grey focus:outline-none pb-2"
                                 :displaytext="'remarks'" />
 
                         </template>
 
-                          <GridCell
+                        <GridCell
                             class="sm:col-span-16 flex rounded-b-lg bg-green-500 justify-center text-sm text-black  rounded-left border-white  border-l  pb-2"
                             :displaytext="''" />
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
@@ -220,40 +211,49 @@
             <ModalSaveform :show="state.isEditModalOpen" :close="state.closeEditModal" :title="'Edit Entry'">
                 <form @submit.prevent="verifyclosing">
                     <div
-                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4">
+                        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey border-t pb-4">
+
 
                         <GridCell
-                            class="sm:col-span-4 text-xl table-header-1 text-center border-1 border-solid border-grey border-l  pb-4"
-                            :displaytext="'Select Entry Type:'" />
-                        <GridSelect v-model="state.selected_edit_entry_type" :options="state.options.entry_type"
-                            :class="'sm:col-span-8 text-xl text-center border-2 border-solid border-r  border-grey border-t  pb-4'"
-                            @click="fetchReports_Details_Edit()" />
+                            class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  rounded-left border-white  border-l  pb-1"
+                            :displaytext="''" />
 
                         <GridCell
-                            class="sm:col-span-12 text-xl text-center table-header-text text-white border-l border-r border-t border-b border-grey pb-6"
-                            :displaytext=state.selected_group_header />
+                            class="sm:col-span-1 flex bg-yellow-400 justify-center text-xl text-black   border-white  border-l border-r border-b pb-1"
+                            :displaytext=state.Selected_Rights_entry_config_group.data[0].group />
+
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4  border-l  border-b border-white  ring-1 ring-white  pb-6"
+                            class="sm:col-span-5 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL CARE & SERVICES'" />
+
+                        <GridCell
+                            class="sm:col-span-10 flex justify-center items-left text-md text-white table-header-text  border-white  border-r border-b pb-1"
+                            :displaytext="'MATERNAL CARE & SERVICES'" />
+                        <GridCell
+                            class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
                             :displaytext="'INDICATOR'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4  border-l  border-b border-white  ring-1 ring-white pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'MALE'" />
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l   border-b border-white  ring-1 ring-white pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
                             :displaytext="'FEMALE'" />
                         <GridCell
-                            class="sm:col-span-2  text-center table-header-4   border-l border-b border-white  ring-1 ring-white pb-6"
+                            class="sm:col-span-2 text-center table-header-4 border-white  border-l border-b border-grey pb-1"
                             :displaytext="'TOTAL'" />
+
                         <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l  border-b border-white  ring-1 ring-white pb-6"
-                            :displaytext="'GRAND TOTAL'" />
-                        <GridCell
-                            class="sm:col-span-2 text-center table-header-4 border-l border-b border-r border-white  ring-1 ring-white pb-6"
+                            class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
                             :displaytext="'REMARKS'" />
 
                         <template v-for="group in state.Selected_Rights_entry_config_group.data">
+
                             <GridCell
-                                class="sm:col-span-2 text-left table-header-4 border-l border-b border-white  ring-1 ring-white pb-3"
+                                class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white  pb-1"
+                                :displaytext="'1.1.1'" />
+
+                            <GridCell
+                                class="sm:col-span-5 text-left px-1 text-sm table-header-4 border-l border-b border-white  ring-1 ring-white pb-3"
                                 :displaytext=group.description />
                             <GridTextEdit v-model="state.edit_male[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
@@ -264,39 +264,35 @@
                             <GridTextEdit v-model="state.edit_total[group.sequence_header]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
                                 :displaytext="'total'" :entrystatus="group.total" />
-                            <GridTextEdit v-model="state.edit_grand_total[group.sequence_header]"
-                                class="sm:col-span-2 text-right border-l border-b border-grey pb-2"
-                                :displaytext="'grand total'" :entrystatus="group.grand_total" />
+
                             <GridTextArea v-model="state.edit_remarks[group.sequence_header]"
-                                class="sm:col-span-2 text-center border-l border-r border-b border-grey pb-2"
+                                class="sm:col-span-4 text-center border-l border-r border-b border-grey focus:outline-none pb-2"
                                 :displaytext="'remarks'" />
 
                         </template>
 
+                        <GridCell
+                            class="sm:col-span-16 flex rounded-b-lg bg-green-500 justify-center text-sm text-black  rounded-left border-white  border-l  pb-2"
+                            :displaytext="''" />
+
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
                         <GridCell class="sm:col-span-12 pb-6" :displaytext="''" />
-
-
                         <GridCell class="sm:col-span-6 pb-6" :displaytext="''" />
-
                         <button
                             class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
                             @click="closeEditModal">
                             Cancel
                         </button>
-
                         <button :disabled="state.buttoncomputeEdit"
                             class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mr-8"
                             @click="computeEditEntryModal">
                             Compute
                         </button>
-
                         <button :disabled="state.buttonsaveEdit"
                             class="sm:col-span-2 block rounded-md primary-green px-3 py-2 text-center text-md font-semibold text-white shadow-sm disabled:bg-gray-300 hover:bg-green-500 focus-visible:outline focus-visible-outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                             @click="SaveEditEntryModal">
                             Save
                         </button>
-
                     </div>
                 </form>
             </ModalSaveform>

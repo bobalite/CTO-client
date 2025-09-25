@@ -1,10 +1,10 @@
 <template>
-    <div class="flex justify-between items-center mt-4">
+    <div class="flex justify-between items-center mt-1">
         <div class="inline-block w-1/4">
             <div class="flex items-center gap-1 text-sm ">
                 <!-- Previous -->
                 <button @click="() => handleClick(2)" :class="[
-                    'flex items-center justify-center bg-green-700 rounded hover:bg-green-900 transition h-full px-2 py-2',
+                    'flex items-center justify-center bg-green-700 rounded hover:bg-green-900 transition h-full px-2 py-1',
                     isPrevDisabled ? 'opacity-50 cursor-not-allowed' : ''
                 ]" :disabled="isPrevDisabled">
                     <ChevronLeftIcon class="h-6 w-3 text-white" aria-hidden="true" />
@@ -12,13 +12,13 @@
 
                 <!-- Current -->
                 <div
-                    class="min-w-[12rem] px-4 py-2 bg-white shadow border text-center font-semibold flex items-center justify-center whitespace-nowrap text-md">
+                    class="min-w-[12rem] px-4 py-1 bg-white shadow border text-center font-semibold flex items-center justify-center whitespace-nowrap text-sm">
                     {{ currentLabel }}
                 </div>
 
                 <!-- Next -->
                 <button @click="() => handleClick(1)" :class="[
-                    'flex items-center justify-center bg-green-700 rounded hover:bg-green-900 transition h-full px-2 py-2',
+                    'flex items-center justify-center bg-green-700 rounded hover:bg-green-900 transition h-full px-2 py-1',
                     isNextDisabled ? 'opacity-50 cursor-not-allowed' : ''
                 ]" :disabled="isNextDisabled">
                     <ChevronRightIcon class="h-6 w-3 text-white" aria-hidden="true" />
