@@ -26,12 +26,9 @@
             <!-- Left group of tabs -->
             <div class="flex space-x-4">
                 <li v-for="tab in tabs" :key="tab.name" class="list-none">
-                    <a href="#" @click.prevent="activeTab = tab.name" :class="[
+                    <a href="#" @click.prevent="state.activeTab = tab.name" :class="[
                         'flex items-center justify-center p-2 rounded-t-md transition-colors',
-                        activeTab === tab.name
-                            ? 'bg-green-100 text-green-900 shadow-inner'
-                            : 'hover:bg-gray-200 text-gray-600'
-                    ]">
+                        state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
                         <span class="material-icons text-xl">{{ tab.icon }}</span>
                     </a>
                 </li>
@@ -48,8 +45,8 @@
         </ul>
 
         <!-- Main Content -->
-        <main class="flex-1 z-0 p-6 overflow-y-auto bg-green-100 text-green-900">
-            <h2 class="text-lg font-semibold ">{{ activeTab.name }}</h2>
+        <main class="flex-1 z-0 p-6 overflow-y-auto bg-green-200 text-green-900">
+            <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
                 <div class="bg-white text-black p-4 rounded-lg shadow">
                     Data Completion
@@ -79,8 +76,8 @@
                         :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year"
                         :passed_year_data="state.report_years">
                     </GraphsGrp01> -->
-<!--
-                    <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
+
+                    <!-- <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
                         :passed_data="state.passed_data"
                         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
                         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'"

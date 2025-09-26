@@ -12,7 +12,7 @@
 
                 <!-- Current -->
                 <div
-                    class="min-w-[12rem] px-4 py-1 bg-white shadow border text-center font-semibold flex items-center justify-center whitespace-nowrap text-sm">
+                    class="min-w-[12rem] px-4 py-1 bg-white shadow border text-center font-semibold flex items-center justify-center whitespace-nowrap text-md">
                     {{ currentLabel }}
                 </div>
 

@@ -1,7 +1,7 @@
 
 <template>
 
-  <div class="flex justify-between items-center print:hidden">
+  <!-- <div class="flex justify-between items-center print:hidden">
 
     <div class="flex items-center space-x-4">
       <button @click="openSlideModal(1)"
@@ -9,18 +9,96 @@
         Dashboard Settings</button>
 
     </div>
-  </div>
+  </div> -->
 
 
-  <FormYearSelector 
+  <!-- <FormYearSelector 
       v-model="state.report_year" 
       :options="state.options.report_years" 
-      :change-selected-year="change_selected_year" />
+      :change-selected-year="change_selected_year" /> -->
+
+
+  <!---------------------------------changes ------------------------------------------->
+  
+   <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between">
+            <!-- Left side: Title + Year Selector -->
+            <div class="flex items-center space-x-4">
+                <h1 class="text-xl font-bold ">My Dashboard</h1>
+
+                <FormYearSelector v-model="state.report_year" :options="state.options.report_years"
+                    :change-selected-year="change_selected_year" />
+            </div>
+
+            <div class="flex items-center space-x-4">
+
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button @click="toggleSidebar" class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">
+                ☰
+            </button>
+
+        </header>
+
+   <!-- Tabs -->
+        <ul class="flex justify-between w-full items-center m-0 p-0">
+            <!-- Left group of tabs -->
+            <div class="flex space-x-4">
+                <li v-for="tab in tabs" :key="tab.name" class="list-none">
+                    <a href="#" @click.prevent="state.activeTab = tab.name" :class="[
+                        'flex items-center justify-center p-2 rounded-t-md transition-colors',
+                        state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
+                        <span class="material-icons text-xl">{{ tab.icon }}</span>
+                    </a>
+                </li>
+            </div>
+
+
+            <!-- Settings on far right -->
+            <li class="list-none">
+                <a href="#" class="flex items-center justify-center p-2 rounded-t-md hover:bg-gray-200"
+                    @click.prevent="openSlideModal(1)">
+                    <span class="material-icons text-xl">settings</span>
+                </a>
+            </li>
+        </ul>
+      
+
+        <main class="flex-1 z-0 p-6 overflow-y-auto bg-green-200 text-green-900">
+            <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+                <div class="bg-white text-black p-4 rounded-lg shadow">
+                    Data Completion
+                </div>
+                <div class="bg-white text-black p-4 rounded-lg shadow">
+                    Data Sources
+                </div>
+                <div class="bg-white text-black p-4 rounded-lg shadow">
+                   Top Performing Indicator  
+                </div>
+                <div class="bg-white text-black p-4 rounded-lg shadow">
+                    Least Performing Indicator
+                </div>
+                <div class="bg-white text-black p-4 rounded-lg shadow">
+                     Overall Data Completion
+                </div>
+            </div>
+
+            
+
+
+        </main>
+
+  <!----------------------------------changes ------------------------------------------------------------>      
+
+
+
+
 
   <div>
 
     <div v-if="state.loading == false"
-      class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
+      class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4">
 
       <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
         :passed_data="state.passed_data"
@@ -382,6 +460,8 @@ definePageMeta({
 
 
 
+
+
 onMounted(() => {
   fetchreportyear()
   fetchData()
@@ -392,10 +472,24 @@ onMounted(() => {
 
 
 
+
+// Sidebar items
+let tabs = [
+    { name: 'Survival', icon: 'favorite' },       // ❤️ (replace with better fit)
+    { name: 'Development', icon: 'trending_up' }, // 📈
+    { name: 'Protection', icon: 'security' },     // 🔒
+    { name: 'Participation', icon: 'groups' },    // 👥
+    { name: 'Governance', icon: 'gavel' },        // ⚖️
+    { name: 'General Information', icon: 'info' } // ℹ️
+]
+
+// Track which tab is active
+
+
 const state = reactive({
 
+    activeTab: tabs[0].name,
     loading: true,
-
     user_dashboard_widgets: userStore.getUser.user_dashboard_widgets,
     user_id: userStore.getUser.id,
 

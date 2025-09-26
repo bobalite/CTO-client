@@ -16,10 +16,12 @@
                     <div class="flex-1">
                         <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
                             :change-selected-year="changeYear()" />
-                    </div>
-                    <div class="flex-1">
+
                         <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id"
                             @click="changeData" />
+                    </div>
+                    <div class="flex-1">
+
                     </div>
                 </div>
             </div>
@@ -459,7 +461,7 @@
                                                 </MenuItem>
 
                                                 <MenuItem
-                                                    v-if="state.roles.allow_edit == 1 && Rights_entry_config.group == 1 "
+                                                    v-if="state.roles.allow_edit == 1 && Rights_entry_config.group == 1"
                                                     :key="'upload'">
                                                 <NuxtLink @click="openUploadModal"
                                                     class="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 bg-white-100 dark:bg-white-900 dark:text-black hover:text-white hover:bg-blue-700">
@@ -484,21 +486,21 @@
 
 </template>
 
-<script setup >
+<script setup>
 
 import {
-       MenuItem
+    MenuItem
 } from '@headlessui/vue'
 
-import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
+import { Rights_entry_configServices } from '~/components/api/Rights_entry_configService';
 
-import {reportDetailsService } from '~/components/api/ReportDetailsService'; 
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
+import { reportDetailsService } from '~/components/api/ReportDetailsService';
+import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
 
-import {Childrens_rightsService } from '~/components/api/Rights'; 
-import {rolesService } from '~/components/api/Roles'; 
-import {useUserStore} from '~/store/user'
-import {report_yearService } from '~/components/api/ReportYears'; 
+import { Childrens_rightsService } from '~/components/api/Rights';
+import { rolesService } from '~/components/api/Roles';
+import { useUserStore } from '~/store/user'
+import { report_yearService } from '~/components/api/ReportYears';
 
 const userStore = useUserStore()
 
@@ -506,11 +508,11 @@ let currentPage = 1;
 definePageMeta({
     layout: 'main'
 })
- 
+
 const state = reactive({
-   
-    Rights:[],
-    
+
+    Rights: [],
+
     currentUser: '', //userStore.currentUser,
 
     isViewModalOpen: false,
@@ -520,7 +522,7 @@ const state = reactive({
     isUploadModalOpen: false,
     alertmessage: '',
     successcount: '',
-    errorcount:  '',
+    errorcount: '',
     errormessage: '',
 
     buttoncompute: false,
@@ -528,42 +530,42 @@ const state = reactive({
 
     report_schedule: '',
 
-    
+
 
     buttoncomputeEdit: false,
     buttonsaveEdit: true,
 
-    roles:[{}],
+    roles: [{}],
 
-   
-    male:[{}],
-    female:[{}],
-    total:[{}],
-    grand_total:[{}],
-    remarks:[{}],
 
-    edit_ids:[{}],
-    edit_female:[{}],
-    edit_total:[{}],
-    edit_male:[{}],
-    edit_grand_total:[{}],
-    edit_remarks:[{}],
+    male: [{}],
+    female: [{}],
+    total: [{}],
+    grand_total: [{}],
+    remarks: [{}],
 
-    view_male:[{}],
-    view_female:[{}],
-    view_total:[{}],
-    view_grand_total:[{}],
-    view_remarks:[{}],
+    edit_ids: [{}],
+    edit_female: [{}],
+    edit_total: [{}],
+    edit_male: [{}],
+    edit_grand_total: [{}],
+    edit_remarks: [{}],
+
+    view_male: [{}],
+    view_female: [{}],
+    view_total: [{}],
+    view_grand_total: [{}],
+    view_remarks: [{}],
     view_selected_datasource: 1,
 
-    view_male_projected:[{}],
-    view_female_projected:[{}],
-    view_total_projected:[{}],
-    view_grand_total_projected:[{}],
-    view_remarks_projected:[{}],
+    view_male_projected: [{}],
+    view_female_projected: [{}],
+    view_total_projected: [{}],
+    view_grand_total_projected: [{}],
+    view_remarks_projected: [{}],
 
-    totaled_from:[{}],
-    test: [{}], 
+    totaled_from: [{}],
+    test: [{}],
 
     selected_entry_type: 'Actual',
     selected_view_entry_type: 'Projected',
@@ -578,8 +580,8 @@ const state = reactive({
     selected_sequence_header: '',
     selected_description: '',
     selected_group: 0,
-    selected_agency_id: 0, 
-    selected_submission:'',
+    selected_agency_id: 0,
+    selected_submission: '',
 
     report_details: [],
     report_years: [],
@@ -599,11 +601,11 @@ const state = reactive({
     Rights_entry_config5: [],
     Rights_entry_config6: [],
 
-    Rights_detail_filtered: [],    
+    Rights_detail_filtered: [],
 
     text: null,
     selected_rights_id: 1,
-   
+
     options: {
         entry_type: [
             { value: 'Actual', label: 'Actual' },
@@ -611,7 +613,7 @@ const state = reactive({
             { value: 'National Projected', label: 'National Projected' },
         ],
         view_entry_type: [
-            
+
             { value: 'Projected', label: 'Projected' },
             { value: 'National Projected', label: 'National Projected' },
         ],
@@ -619,9 +621,9 @@ const state = reactive({
             { value: '1', label: 'Not Applicable' },
             { value: '2', label: 'Enabled' },
         ],
-        years:[
-            {value: '1', label: 'Jan - Dec 2024', year: '2024' },
-            {value: '2', label: 'Jan - Dec 2025', year: '2025' },
+        years: [
+            { value: '1', label: 'Jan - Dec 2024', year: '2024' },
+            { value: '2', label: 'Jan - Dec 2025', year: '2025' },
 
         ],
         agencies: [
@@ -642,41 +644,41 @@ const state = reactive({
             { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
         ]
 
-           
+
     },
 })
 
 
 // options: {
 //      },
-        
+
 onMounted(() => {
     fetchreportyear()
     fetchRights()
     fetchRights_entry_config()
     fetchrole()
-   
+
 })
 
 async function fetchreportyear() {
     try {
-           const response = await report_yearService.getReportYears()
-           //console.log(response)
+        const response = await report_yearService.getReportYears()
+        //console.log(response)
         if (response.data) {
-            
+
             state.report_years.data = response.data
             var data = [];
             var datasources = [];
             if (state.report_years.data != null) {
-                
+
                 datasources = state.report_years.data
 
                 for (const i in datasources) {
                     const value = datasources[i].id;
                     if (!datasources.includes(value)) {
 
-                        if(datasources[i].status == 1){
-                        data[i] = { "value": datasources[i].id, "label": datasources[i].name , "year": datasources[i].year  };
+                        if (datasources[i].status == 1) {
+                            data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
                         }
                     }
                 }
@@ -685,7 +687,7 @@ async function fetchreportyear() {
             }
 
         }
-    } catch (error) { 
+    } catch (error) {
         //console.log(error)
     }
 }
@@ -701,7 +703,7 @@ function changeYear() {
 
 async function fetchrole() {
     try {
-       
+
         const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
         //console.log('response',response)
         state.currentUser = userStore.getUser.user_roles.agency_id
@@ -712,16 +714,16 @@ async function fetchrole() {
 
         if (response.data) {
             state.roles = response.data
-         
+
             //console.log(state.roles)
         }
-    } catch (error) { 
+    } catch (error) {
         //console.log(error)
     }
 }
 
 
-function openAlertModal(group , alertmessage, group_header, errorcount, successcount) { 
+function openAlertModal(group, alertmessage, group_header, errorcount, successcount) {
     state.isAlertModalOpen = true;
     state.alertmessage = alertmessage;
     state.group = group;
@@ -730,79 +732,79 @@ function openAlertModal(group , alertmessage, group_header, errorcount, successc
     state.successcount = successcount;
 }
 
-function closeAlertModal() { 
+function closeAlertModal() {
     state.isAlertModalOpen = false
-} 
-
-function closeUploadModal() { 
-    state.isUploadModalOpen = false
-} 
-
-function getclicked(Rights_entry_config){
-  
-     state.selected_sequence_header = Rights_entry_config.sequence_header
-     state.selected_agency_id = Rights_entry_config.agency_id
-     state.selected_description = Rights_entry_config.description
-     state.selected_group_header = Rights_entry_config.group_header
-     state.datasource_id = Rights_entry_config.agency_id
-     state.selected_group = Rights_entry_config.group
-     state.Selected_Rights_entry_config_group.data  = state.Rights_entry_config.data .filter(Rights_entry_config => Rights_entry_config.group ===  state.selected_group)
-     state.selected_submission = Rights_entry_config.is_annual
-     state.report_schedule = (Rights_entry_config.is_annual  == 1 ? 'Annualy' : 'Quarterly')
-     //console.log('state.report_schedule', state.report_schedule)
-     
-   
 }
 
-function changeData(){
-   
-   
-    switch (state.selected_rights_id){
-        case(0):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
-        break;
-        case(1):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config1
-        break;
-        case(2):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config2
-        break;
-        case(3):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config3
-        break;
-        case(4):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config4
-        break;
-        case(5):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config5
-        break;
-        case(6):
-        state.Selected_Rights_entry_config  = state.Rights_entry_config6
-        break;
+function closeUploadModal() {
+    state.isUploadModalOpen = false
+}
+
+function getclicked(Rights_entry_config) {
+
+    state.selected_sequence_header = Rights_entry_config.sequence_header
+    state.selected_agency_id = Rights_entry_config.agency_id
+    state.selected_description = Rights_entry_config.description
+    state.selected_group_header = Rights_entry_config.group_header
+    state.datasource_id = Rights_entry_config.agency_id
+    state.selected_group = Rights_entry_config.group
+    state.Selected_Rights_entry_config_group.data = state.Rights_entry_config.data.filter(Rights_entry_config => Rights_entry_config.group === state.selected_group)
+    state.selected_submission = Rights_entry_config.is_annual
+    state.report_schedule = (Rights_entry_config.is_annual == 1 ? 'Annualy' : 'Quarterly')
+    //console.log('state.report_schedule', state.report_schedule)
+
+
+}
+
+function changeData() {
+
+
+    switch (state.selected_rights_id) {
+        case (0):
+            state.Selected_Rights_entry_config = state.Rights_entry_config
+            break;
+        case (1):
+            state.Selected_Rights_entry_config = state.Rights_entry_config1
+            break;
+        case (2):
+            state.Selected_Rights_entry_config = state.Rights_entry_config2
+            break;
+        case (3):
+            state.Selected_Rights_entry_config = state.Rights_entry_config3
+            break;
+        case (4):
+            state.Selected_Rights_entry_config = state.Rights_entry_config4
+            break;
+        case (5):
+            state.Selected_Rights_entry_config = state.Rights_entry_config5
+            break;
+        case (6):
+            state.Selected_Rights_entry_config = state.Rights_entry_config6
+            break;
         default:
-        state.Selected_Rights_entry_config  = state.Rights_entry_config
+            state.Selected_Rights_entry_config = state.Rights_entry_config
         //console.log(state.Selected_Rights_entry_config)
 
     }
 }
 
-async function fetchRights(){
+async function fetchRights() {
     try {
         let params = {
             page: currentPage
         }
         const response = await Childrens_rightsService.getRights(params)
-       
+
         if (response.data) {
             state.Rights.data = response.data
             //console.log(state.Rights.data[0].description)
         }
 
-       var data = [];
-       for (const i in state.Rights.data){
+        var data = [];
+        for (const i in state.Rights.data) {
 
-        data[i] =  { "value":  state.Rights.data[i].id, "label": state.Rights.data[i].description };
-        
+            data[i] = { "value": state.Rights.data[i].id, "label": state.Rights.data[i].description };
+
         }
 
         state.options.rights = data;
@@ -823,14 +825,14 @@ async function fetchRights_entry_config() {
         if (response.data) {
             state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6  && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
             //console.log(response.data)
         }
-    } catch (error) { 
+    } catch (error) {
         //console.log(error)
     }
 }
@@ -850,7 +852,7 @@ function openViewModal() {
     state.isViewModalOpen = true;
 }
 
-function clearViewData(){
+function clearViewData() {
     // state.view_male = [],
     // state.view_female = [],
     // state.view_total = [],
@@ -858,22 +860,22 @@ function clearViewData(){
     // state.view_remarks = []
 
     try {
-        
-         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
 
-                state.view_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
-                
-                state.view_male_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_female_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_total_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_grand_total_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.view_remarks_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
-                
-         }
+        for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+            state.view_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+
+            state.view_male_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_female_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_total_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_grand_total_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.view_remarks_projected[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+
+        }
     }
     catch (error) {
         //console.log(error)
@@ -884,21 +886,21 @@ function changeViewdata() {
     clearViewData()
     fetchReports_Details_Actuals()
     fetchReports_Details_Projected()
-    
+
 }
 
 async function fetchReports_Details_Actuals() {
     try {
-     
+
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
-     
-     
+
+
         state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === 'Actual' && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         //console.log( 'filtered - actual', state.Rights_detail_filtered)
 
         if (state.Rights_detail_filtered) {
             state.report_details.data = state.Rights_detail_filtered.data
-          
+
             if (response) {
                 for (const c in state.report_details.data) {
                     state.view_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
@@ -912,7 +914,7 @@ async function fetchReports_Details_Actuals() {
             } else {
                 //alert('No data found for ACTUAL Entries. ')  
             }
-            
+
 
         }
     } catch (error) {
@@ -942,9 +944,9 @@ async function fetchReports_Details_Projected() {
         //console.log('view - params projected', state.selected_view_entry_type)
 
         if (response.data) {
-            state.report_details.data =  state.Rights_detail_filtered.data
-          
-            if (state.report_details.data){
+            state.report_details.data = state.Rights_detail_filtered.data
+
+            if (state.report_details.data) {
 
                 for (const c in state.report_details.data) {
                     state.view_female_projected[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
@@ -955,13 +957,13 @@ async function fetchReports_Details_Projected() {
 
                     // for actual
                 }
-               
+
             } else {
                 //alert('No data found for this Projected Entry. ')
             }
 
-            
-            
+
+
 
         }
     } catch (error) {
@@ -971,7 +973,7 @@ async function fetchReports_Details_Projected() {
 
 function closeViewModal() {
     state.isViewModalOpen = false
-    
+
 }
 
 //---------------------------------------------------View Entry Functions--------------------------------------------------------------
@@ -984,22 +986,22 @@ function closeViewModal() {
 async function check_fetchReports_Details_Add() {
 
 
-     for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
+    for (let i = state.Selected_Rights_entry_config_group.data.length - 1; i >= 0; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-            if (totaled_from != 'NA') {
-                state.total[sequence_header] = 0;
-                state.male[sequence_header] = 0;
-                state.female[sequence_header] = 0;
-                state.grand_total[sequence_header] = 0;
-            } 
-            if (totaled_to == 'NA' && totaled_from != 'NA') {
-                state.total[sequence_header] = 0;
-                state.male[sequence_header] = 0;
-                state.female[sequence_header] = 0;
-                state.grand_total[sequence_header] = 0;
-            }
+        if (totaled_from != 'NA') {
+            state.total[sequence_header] = 0;
+            state.male[sequence_header] = 0;
+            state.female[sequence_header] = 0;
+            state.grand_total[sequence_header] = 0;
+        }
+        if (totaled_to == 'NA' && totaled_from != 'NA') {
+            state.total[sequence_header] = 0;
+            state.male[sequence_header] = 0;
+            state.female[sequence_header] = 0;
+            state.grand_total[sequence_header] = 0;
+        }
     }
     try {
 
@@ -1012,17 +1014,17 @@ async function check_fetchReports_Details_Add() {
 
 
         if (state.selected_submission == 1) { // if annual
-            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year === state.selected_year && filtered_detail.is_active === 1)
+            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_entry_type && filtered_detail.report_year === state.selected_year && filtered_detail.is_active === 1)
         } else { // if quarterly
-            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+            state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         }
-           
-        
+
+
         //  console.log('year for annual -add',  state.report_years.data[state.selected_year_id].year)   
         //  console.log('state.selected_entry_type -add',  state.selected_entry_type) 
         //  console.log('state.selected_year_id -add',  state.selected_year_id)  
         //  console.log('state.Rights_detail_filtered.data -add - check' ,state.Rights_detail_filtered.data)
-       
+
         if (state.Rights_detail_filtered.data.length > 0 && state.selected_submission == 0) {
             alert('Entry Type ' + state.selected_entry_type + ' has been found, Please select another entry type or Edit the existing entry.')
         }
@@ -1038,109 +1040,109 @@ async function check_fetchReports_Details_Add() {
 
 
 
-async function saveReportDetails(){
+async function saveReportDetails() {
 
-    
+
 
     var successcount = 0;
     var errorcount = 0;
 
-    if (state.datasource_id == 0){
+    if (state.datasource_id == 0) {
         alert("Please select a datasource.")
         //openAlertModal(state.group, 'Please select a datasource.', state.group_header, errorcount, successcount)
-        
+
         return;
     }
-     
-         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
-                 try {
-                    let true_grand_total = 0
 
-                        if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
-                            
-                            true_grand_total = state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+    for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+        try {
+            let true_grand_total = 0
 
-                        }else{
-                            // this should be changed for those entries that are not human count.
-                            //true_grand_total = 0
-                            //-----------------------------------------------------------    
-                        }
-                    let params = {
+            if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
 
-                        sequence_header: state.Selected_Rights_entry_config_group.data[i].sequence_header,
-                        male: state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        female: state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        total: state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        grand_total: true_grand_total,
-                        remarks: state.remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        entry_type: state.selected_entry_type,
-                        rights_entry_config_id: state.Selected_Rights_entry_config_group.data[i].id,
-                        report_year_id: state.selected_year_id, 
-                        agency_id: state.datasource_id,
-                        group_id: state.Selected_Rights_entry_config_group.data[i].group,
-                        group_agency_datasource_id: state.datasource_id,
-                        is_active: 1,
-                        report_schedule: state.report_schedule
-                        //report_year: state.options.report_years[state.selected_year_id].year,
-                    }
-                   
-                        //console.log('params', params)
-                        const response = await reportDetailsService.createReportDetails(params);
-                        if (response.data) {
-                            successcount = successcount + 1; 
-                        //successAlert("Success!", 'Successfully Added to database.')
-                        }else{
-                            errorcount = errorcount + 1;
-                        }   
-       
-                    } catch (error) {
-                        //console.log('error', error)
-                        errorcount = errorcount + 1;
-                        alert("Error in saving data. Please check the values you entered.")
-                        state.isAddModalOpen = false
-                    }
+                true_grand_total = state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+
+            } else {
+                // this should be changed for those entries that are not human count.
+                //true_grand_total = 0
+                //-----------------------------------------------------------    
+            }
+            let params = {
+
+                sequence_header: state.Selected_Rights_entry_config_group.data[i].sequence_header,
+                male: state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                female: state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                total: state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                grand_total: true_grand_total,
+                remarks: state.remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                entry_type: state.selected_entry_type,
+                rights_entry_config_id: state.Selected_Rights_entry_config_group.data[i].id,
+                report_year_id: state.selected_year_id,
+                agency_id: state.datasource_id,
+                group_id: state.Selected_Rights_entry_config_group.data[i].group,
+                group_agency_datasource_id: state.datasource_id,
+                is_active: 1,
+                report_schedule: state.report_schedule
+                //report_year: state.options.report_years[state.selected_year_id].year,
+            }
+
+            //console.log('params', params)
+            const response = await reportDetailsService.createReportDetails(params);
+            if (response.data) {
+                successcount = successcount + 1;
+                //successAlert("Success!", 'Successfully Added to database.')
+            } else {
+                errorcount = errorcount + 1;
+            }
+
+        } catch (error) {
+            //console.log('error', error)
+            errorcount = errorcount + 1;
+            alert("Error in saving data. Please check the values you entered.")
+            state.isAddModalOpen = false
         }
-        if (successcount > 0){
+    }
+    if (successcount > 0) {
         //successAlert("Success!", 'Successfully Added to database.')
         state.successcount = successcount;
         state.errorcount = errorcount;
         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)
         state.isAddModalOpen = false
     }
-        
-  
+
+
     //state.buttonsavenew = true;
-   
-}
-
-
-
-
-function SaveAddEntryModal(){
-
-saveReportDetails()
-state.buttonsavenew = true;
 
 }
 
 
 
-function clearData(){
+
+function SaveAddEntryModal() {
+
+    saveReportDetails()
+    state.buttonsavenew = true;
+
+}
+
+
+
+function clearData() {
     state.male = [],
-    state.female = [],
-    state.total = [],
-    state.grand_total = [],
-    state.remarks = []
+        state.female = [],
+        state.total = [],
+        state.grand_total = [],
+        state.remarks = []
 
     try {
-        
-         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
-                
-                state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-         }
+
+        for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+            state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+        }
     }
     catch (error) {
         //console.log(error)
@@ -1148,7 +1150,7 @@ function clearData(){
 }
 
 
-function computeAddEntryModal(){
+function computeAddEntryModal() {
 
     check_fetchReports_Details_Add()
     //console.log(' state.selected_entry_type', state.selected_entry_type)
@@ -1158,26 +1160,26 @@ function computeAddEntryModal(){
 
 }
 
-function compute_vertical(){
+function compute_vertical() {
     console.log('compute_vertical')
-    for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
+    for (let i = state.Selected_Rights_entry_config_group.data.length - 1; i >= 0; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-        if (totaled_to == 'NA'){
-           
-        }else{
-            if (totaled_from != 'NA'){
+        if (totaled_to == 'NA') {
+
+        } else {
+            if (totaled_from != 'NA') {
                 state.total[sequence_header] = 0;
                 console.log('compute_vertical 2')
-            }else{
-               
+            } else {
+
             }
 
         }
     }
 
-    for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
+    for (let i = state.Selected_Rights_entry_config_group.data.length - 1; i >= 0; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
@@ -1186,53 +1188,53 @@ function compute_vertical(){
 
         // } else {
 
-            if (totaled_to == 'NA') {
-                if (totaled_from == 'NA') {
-                    console.log('compute_vertical 3')
+        if (totaled_to == 'NA') {
+            if (totaled_from == 'NA') {
+                console.log('compute_vertical 3')
 
-                    if (parseFloat(state.male[sequence_header]) == 0 && parseFloat(state.female[sequence_header]) == 0) {
-                        state.grand_total[sequence_header] = state.total[sequence_header];
-                        console.log('compute_vertical 4', state.total[sequence_header] , state.grand_total[sequence_header])
-                    
-                    }else {
+                if (parseFloat(state.male[sequence_header]) == 0 && parseFloat(state.female[sequence_header]) == 0) {
+                    state.grand_total[sequence_header] = state.total[sequence_header];
+                    console.log('compute_vertical 4', state.total[sequence_header], state.grand_total[sequence_header])
+
+                } else {
                     state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
                     state.grand_total[sequence_header] = state.total[sequence_header];
-                    console.log('compute_vertical 5', state.male[sequence_header] , state.female[sequence_header])
-                    }
-                   
+                    console.log('compute_vertical 5', state.male[sequence_header], state.female[sequence_header])
                 }
 
-            } else {
-                for (let x = state.Selected_Rights_entry_config_group.data.length - 1; x >= 0; x--) {
-                    if (state.Selected_Rights_entry_config_group.data[x].sequence_header == totaled_to) {
-                        console.log('compute_vertical 6')
+            }
 
-                        state.male[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.male[sequence_header]);
-                        state.female[totaled_to] = parseFloat(state.female[totaled_to]) + parseFloat(state.female[sequence_header]);
+        } else {
+            for (let x = state.Selected_Rights_entry_config_group.data.length - 1; x >= 0; x--) {
+                if (state.Selected_Rights_entry_config_group.data[x].sequence_header == totaled_to) {
+                    console.log('compute_vertical 6')
 
-                        state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
-                        state.grand_total[sequence_header] = state.total[sequence_header]
+                    state.male[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.male[sequence_header]);
+                    state.female[totaled_to] = parseFloat(state.female[totaled_to]) + parseFloat(state.female[sequence_header]);
 
-                        state.total[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.female[totaled_to]);
-                        state.grand_total[totaled_to] = state.total[totaled_to]
-                    }
+                    state.total[sequence_header] = parseFloat(state.male[sequence_header]) + parseFloat(state.female[sequence_header]);
+                    state.grand_total[sequence_header] = state.total[sequence_header]
+
+                    state.total[totaled_to] = parseFloat(state.male[totaled_to]) + parseFloat(state.female[totaled_to]);
+                    state.grand_total[totaled_to] = state.total[totaled_to]
                 }
             }
+        }
         // }
 
-       
+
     }
     console.log('compute_vertical 7')
 }
 
 function closeAddEntryModal() {
     state.isAddModalOpen = false
-   clearData();
+    clearData();
 }
 
 
 function openAddEntryModal() {
-// state.selected_datasourece =     
+    // state.selected_datasourece =     
 
     clearData();
     //state.buttonsavenew = false;
@@ -1245,7 +1247,7 @@ function openAddEntryModal() {
 
     }
 
-     console.log(state.totaled_from)
+    console.log(state.totaled_from)
 
     // for (let i = size; i > size; i--) {
     //     console.log(state.totaled_from[i])
@@ -1278,7 +1280,7 @@ function openUploadModal() {
 
 async function fetchReports_Details_Edit() {
 
-   initial_clear_data()
+    initial_clear_data()
 
     try {
         // let params = {
@@ -1288,39 +1290,39 @@ async function fetchReports_Details_Edit() {
         //     entry_type: state.selected_edit_entry_type,
         //     group_agency_datasource_id: 0 //state.edit_selected_datasource
         // }
-      
+
         //const response = await reportDetailsService.getReportDetails(params)
         const response = await reportDetailsGroupsService.getReportDetailsGroups()
-        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type ===  state.selected_edit_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
+        state.Rights_detail_filtered.data = response.data.filter(filtered_detail => filtered_detail.group_id === state.selected_group && filtered_detail.entry_type === state.selected_edit_entry_type && filtered_detail.report_year_id === state.selected_year_id && filtered_detail.is_active === 1)
         //console.log('edit - response', state.Rights_detail_filtered)     
-        
+
         if (state.Rights_detail_filtered.data) {
             state.report_details.data = state.Rights_detail_filtered.data
-          
-           
-                //console.log(state.report_details.data)
-                for (const c in state.report_details.data) {
 
-                
-                         
-                        state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
-                        state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
-                        state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
-                        state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
-                        state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
-                        state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
 
-                 
-                }
-           
-              
-            
+            //console.log(state.report_details.data)
+            for (const c in state.report_details.data) {
+
+
+
+                state.edit_ids[state.report_details.data[c].sequence_header] = state.report_details.data[c].id;
+                state.edit_female[state.report_details.data[c].sequence_header] = state.report_details.data[c].female;
+                state.edit_male[state.report_details.data[c].sequence_header] = state.report_details.data[c].male;
+                state.edit_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].total;
+                state.edit_grand_total[state.report_details.data[c].sequence_header] = state.report_details.data[c].grand_total;
+                state.edit_remarks[state.report_details.data[c].sequence_header] = state.report_details.data[c].remarks;
+
+
+            }
+
+
+
 
         }
         else {
-        alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')  
-           
-        }   
+            alert('No data found for Entry Type: ' + state.selected_edit_entry_type + '. Please select another entry type.')
+
+        }
     } catch (error) {
         //console.log(error)
     }
@@ -1328,95 +1330,95 @@ async function fetchReports_Details_Edit() {
 
 
 
-function computeEditEntryModal(){
-  
+function computeEditEntryModal() {
+
     compute_verticalEdit()
-   
+
     state.buttonsaveEdit = false
 
 }
 
 
-function clear_totaled_EditData(){
-   
+function clear_totaled_EditData() {
+
     try {
-        
-         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+        for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
 
             var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
             var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
-            
-                if (totaled_to == 'NA' && totaled_from == 'NA') {
 
-                    state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
-                }
-                
-         }
-    }
-    catch (error) {
-        //console.log(error)
-    }
-}
+            if (totaled_to == 'NA' && totaled_from == 'NA') {
 
-
-function initial_clear_data(){ // this function is used to clear the data before computing the edit entry modal
-     try {
-        
-         for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
-
-            var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
-            var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
-                    state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
-                    state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
-                
-         }
-    }
-    catch (error) {
-        //console.log(error)
-    }
-}
-
-
-function compute_verticalEdit(){
-    
-    
-    for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
-        var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
-        var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
-        var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-       
-      
-            if (totaled_from != 'NA') {
-
-                state.edit_total[sequence_header] = 0;
-                state.edit_male[sequence_header] = 0;
-                state.edit_female[sequence_header] = 0;
-                state.edit_grand_total[sequence_header] = 0;
-            } 
-            
-            if (totaled_to == 'NA' && totaled_from != 'NA') {
-
-                state.edit_total[sequence_header] = 0;
-                state.edit_male[sequence_header] = 0;
-                state.edit_female[sequence_header] = 0;
-                state.edit_grand_total[sequence_header] = 0;
+                state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+                state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
             }
-    }
 
-    for (let i = state.Selected_Rights_entry_config_group.data.length -1  ; i >= 0  ; i--) {
+        }
+    }
+    catch (error) {
+        //console.log(error)
+    }
+}
+
+
+function initial_clear_data() { // this function is used to clear the data before computing the edit entry modal
+    try {
+
+        for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
+
+            var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
+            var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+            state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header] = 0
+            state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header] = ''
+
+        }
+    }
+    catch (error) {
+        //console.log(error)
+    }
+}
+
+
+function compute_verticalEdit() {
+
+
+    for (let i = state.Selected_Rights_entry_config_group.data.length - 1; i >= 0; i--) {
         var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
         var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
         var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
-      
-        if (totaled_to == 'NA'){
-            if (totaled_from == 'NA'){
+
+
+        if (totaled_from != 'NA') {
+
+            state.edit_total[sequence_header] = 0;
+            state.edit_male[sequence_header] = 0;
+            state.edit_female[sequence_header] = 0;
+            state.edit_grand_total[sequence_header] = 0;
+        }
+
+        if (totaled_to == 'NA' && totaled_from != 'NA') {
+
+            state.edit_total[sequence_header] = 0;
+            state.edit_male[sequence_header] = 0;
+            state.edit_female[sequence_header] = 0;
+            state.edit_grand_total[sequence_header] = 0;
+        }
+    }
+
+    for (let i = state.Selected_Rights_entry_config_group.data.length - 1; i >= 0; i--) {
+        var totaled_to = state.Selected_Rights_entry_config_group.data[i].totaled_to;
+        var totaled_from = state.Selected_Rights_entry_config_group.data[i].totaled_from;
+        var sequence_header = state.Selected_Rights_entry_config_group.data[i].sequence_header;
+
+        if (totaled_to == 'NA') {
+            if (totaled_from == 'NA') {
                 state.edit_total[sequence_header] = parseFloat(state.edit_male[sequence_header]) + parseFloat(state.edit_female[sequence_header]);
                 state.edit_grand_total[sequence_header] = state.edit_total[sequence_header];
             }
@@ -1427,62 +1429,62 @@ function compute_verticalEdit(){
                     state.edit_male[totaled_to] = parseFloat(state.edit_male[totaled_to]) + parseFloat(state.edit_male[sequence_header]);
                     state.edit_female[totaled_to] = parseFloat(state.edit_female[totaled_to]) + parseFloat(state.edit_female[sequence_header]);
                     state.edit_total[sequence_header] = parseFloat(state.edit_male[sequence_header]) + parseFloat(state.edit_female[sequence_header]);
-                    state.edit_grand_total[sequence_header] =  state.edit_total[sequence_header]
+                    state.edit_grand_total[sequence_header] = state.edit_total[sequence_header]
                     state.edit_total[totaled_to] = parseFloat(state.edit_male[totaled_to]) + parseFloat(state.edit_female[totaled_to]);
-                    state.edit_grand_total[totaled_to]  = state.edit_total[totaled_to] 
+                    state.edit_grand_total[totaled_to] = state.edit_total[totaled_to]
                 }
             }
         }
     }
 }
 
-async function SaveEditEntryModal(){
+async function SaveEditEntryModal() {
     var successcount = 0;
     var errorcount = 0;
     var true_grand_total = 0;
 
     //console.log('state.Selected_Rights_entry_config_group.data', state.Selected_Rights_entry_config_group.data)
     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
-                 try {
+        try {
 
-                       
-                        if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
-                            true_grand_total = state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
-                        }else{
-                            true_grand_total = 0
-                        }
 
-                    let params = {
+            if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
+                true_grand_total = state.edit_grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
+            } else {
+                true_grand_total = 0
+            }
 
-                        male: state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        female: state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        total: state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                        grand_total: true_grand_total,
-                        remarks: ' ' + state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-                    }
-                    
-                    
-                    console.log('params', params)
-                    
-                    const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
-                     if (response.data) {
-                        successcount = successcount + 1;
-                        //console.log('success', response.data) 
-                     }   
-       
-                    } catch (error) {
-                        //state.errormessage = error.response.data.message
-                        alert("Error in saving data. Please check the values you entered." , error)
-                        //console.log('error', error)
-                        errorcount = errorcount + 1;
-                    }
+            let params = {
+
+                male: state.edit_male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                female: state.edit_female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                total: state.edit_total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+                grand_total: true_grand_total,
+                remarks: ' ' + state.edit_remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
+            }
+
+
+            console.log('params', params)
+
+            const response = await reportDetailsService.updateReportDetails(params, state.edit_ids[state.Selected_Rights_entry_config_group.data[i].sequence_header]);
+            if (response.data) {
+                successcount = successcount + 1;
+                //console.log('success', response.data) 
+            }
+
+        } catch (error) {
+            //state.errormessage = error.response.data.message
+            alert("Error in saving data. Please check the values you entered.", error)
+            //console.log('error', error)
+            errorcount = errorcount + 1;
+        }
     }
-    if (successcount > 0){
+    if (successcount > 0) {
         state.successcount = successcount;
         state.errorcount = errorcount;
         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)
         closeEditModal()
-    }else{
+    } else {
         openAlertModal(state.group, state.errormessage, state.group_header, errorcount, successcount)
     }
 }
@@ -1491,7 +1493,7 @@ async function SaveEditEntryModal(){
 
 function closeEditModal() {
     state.isEditModalOpen = false
-    
+
 }
 
 
