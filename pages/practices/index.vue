@@ -73,19 +73,19 @@
                 <div v-if="state.loading == false"
                     class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12  border-solid border-grey border-t pb-4 pt-4">
 
-                    <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
+                     <!-- <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
                         :passed_data="state.passed_data"
                         class="sm:col-span-4 text-xl font-bold text-black text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-700  rounded-xl border-blue-900 border-t border-b border-l border-r"
                         :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year"
                         :passed_year_data="state.report_years">
-                    </GraphsGrp01>
-
+                    </GraphsGrp01> -->
+<!--
                     <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
                         :passed_data="state.passed_data"
                         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
                         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'"
                         :report_year="state.report_year">
-                    </GraphsGrp02>
+                    </GraphsGrp02> -->
                 </div>
             </div>
 
@@ -309,12 +309,12 @@ definePageMeta({
     layout: 'main'
 })
 
-import { ref } from 'vue'
+//import { ref } from 'vue'
 
 
 
 // Sidebar items
-const tabs = [
+let tabs = [
     { name: 'Survival', icon: 'favorite' },       // ❤️ (replace with better fit)
     { name: 'Development', icon: 'trending_up' }, // 📈
     { name: 'Protection', icon: 'security' },     // 🔒
@@ -324,7 +324,7 @@ const tabs = [
 ]
 
 // Track which tab is active
-const activeTab = ref(tabs[0])
+//const activeTab = ref(tabs[0])
 
 const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value
@@ -369,6 +369,7 @@ onMounted(() => {
 
 const state = reactive({
 
+    activeTab: tabs[0],
 
     sidebarOpen: false, // mobile
     desktopCollapsed: false,
