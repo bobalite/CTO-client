@@ -19,77 +19,85 @@
 
 
   <!---------------------------------changes ------------------------------------------->
-  
-   <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between">
-            <!-- Left side: Title + Year Selector -->
-            <div class="flex items-center space-x-4">
-                <h1 class="text-xl font-bold ">My Dashboard</h1>
 
-                <FormYearSelector v-model="state.report_year" :options="state.options.report_years"
-                    :change-selected-year="change_selected_year" />
-            </div>
+  <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between z-1">
+    <!-- Left side: Title + Year Selector -->
+    <div class="flex items-center space-x-4">
+      <h1 class="text-xl font-bold ">My Dashboard</h1>
 
-            <div class="flex items-center space-x-4">
+      <FormYearSelector v-model="state.report_year" :options="state.options.report_years"
+        :change-selected-year="change_selected_year" />
+    </div>
 
-            </div>
+    <div class="flex items-center space-x-4">
 
-            <!-- Mobile Toggle -->
-            <button @click="toggleSidebar" class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">
-                ☰
-            </button>
+    </div>
 
-        </header>
+    <!-- Mobile Toggle -->
+    <button @click="toggleSidebar" class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">
+      ☰
+    </button>
 
-   <!-- Tabs -->
-        <ul class="flex justify-between w-full items-center m-0 p-0">
-            <!-- Left group of tabs -->
-            <div class="flex space-x-4">
-                <li v-for="tab in tabs" :key="tab.name" class="list-none">
-                    <a href="#" @click.prevent="state.activeTab = tab.name" :class="[
+  </header>
+
+  <!-- Tabs -->
+  <ul class="flex justify-between w-full items-center m-0 p-0">
+    <!-- Left group of tabs -->
+    <div class="flex space-x-4">
+      <li v-for="tab in tabs" :key="tab.name" class="list-none">
+        <a href="#" @click.prevent="state.activeTab = tab.name"
+          :class="[
                         'flex items-center justify-center p-2 rounded-t-md transition-colors',
                         state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
-                        <span class="material-icons text-xl">{{ tab.icon }}</span>
-                    </a>
-                </li>
-            </div>
+          <span class="material-icons text-xl">{{ tab.icon }}</span>
+        </a>
+      </li>
+    </div>
 
 
-            <!-- Settings on far right -->
-            <li class="list-none">
-                <a href="#" class="flex items-center justify-center p-2 rounded-t-md hover:bg-gray-200"
-                    @click.prevent="openSlideModal(1)">
-                    <span class="material-icons text-xl">settings</span>
-                </a>
-            </li>
-        </ul>
+    <!-- Settings on far right -->
+    <li class="list-none">
+      <a href="#" class="flex items-center justify-center p-2 rounded-t-md hover:bg-gray-200"
+        @click.prevent="openSlideModal(1)">
+        <span class="material-icons text-xl">settings</span>
+      </a>
+    </li>
+  </ul>
+
+
+  <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
+    <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+      <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-1 -z-1">
+        <GraphsDataCompletion  :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          
+          :displaytext="'Data Completion'" :report_year="'2025'">
+        </GraphsDataCompletion>
+      </div>
       
-
-        <main class="flex-1 z-0 p-6 overflow-y-auto bg-green-200 text-green-900">
-            <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
-                <div class="bg-white text-black p-4 rounded-lg shadow">
-                    Data Completion
-                </div>
-                <div class="bg-white text-black p-4 rounded-lg shadow">
-                    Data Sources
-                </div>
-                <div class="bg-white text-black p-4 rounded-lg shadow">
-                   Top Performing Indicator  
-                </div>
-                <div class="bg-white text-black p-4 rounded-lg shadow">
-                    Least Performing Indicator
-                </div>
-                <div class="bg-white text-black p-4 rounded-lg shadow">
-                     Overall Data Completion
-                </div>
-            </div>
-
-            
+      <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
+          <GraphsDataSources  :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          
+          :displaytext="' Data Sources'" :report_year="'2025'">
+        </GraphsDataSources>
+       
+      </div>
+      <div class="bg-white text-black p-4 rounded-lg shadow sm:col-span-2">
+         Data Statistics
+      </div>
+      
+    
+    </div>
 
 
-        </main>
 
-  <!----------------------------------changes ------------------------------------------------------------>      
+
+  </main>
+
+  <!----------------------------------changes ------------------------------------------------------------>
 
 
 
@@ -111,6 +119,13 @@
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" :report_year="state.report_year">
       </GraphsGrp02>
+
+      <!-- <GraphsDataCompletion v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
+        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+        :displaytext="''" :report_year="state.report_year">
+      </GraphsDataCompletion> -->
+
 
       <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
         :passed_data="state.passed_data"
@@ -475,11 +490,11 @@ onMounted(() => {
 
 // Sidebar items
 let tabs = [
-    { name: 'Survival', icon: 'favorite' },       // ❤️ (replace with better fit)
-    { name: 'Development', icon: 'trending_up' }, // 📈
-    { name: 'Protection', icon: 'security' },     // 🔒
-    { name: 'Participation', icon: 'groups' },    // 👥
-    { name: 'Governance', icon: 'gavel' },        // ⚖️
+    { name: 'Survival', icon: 'monitor_heart' },       // ❤️ (replace with better fit)
+    { name: 'Development', icon: 'school' }, // 📈
+    { name: 'Protection', icon: 'local_police' },     // 🔒
+    { name: 'Participation', icon: 'diversity_3' },    // 👥
+    { name: 'Governance', icon: 'account_balance' },        // ⚖️
     { name: 'General Information', icon: 'info' } // ℹ️
 ]
 

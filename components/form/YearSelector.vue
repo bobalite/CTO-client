@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-between items-center mt-1">
+    <div class="flex justify-between items-center mt-1 z-0">
         <div class="inline-block w-1/4">
             <div class="flex items-center gap-1 text-sm ">
                 <!-- Previous -->
