@@ -1,22 +1,6 @@
 
 <template>
 
-  <!-- <div class="flex justify-between items-center print:hidden">
-
-    <div class="flex items-center space-x-4">
-      <button @click="openSlideModal(1)"
-        class="rounded-md px-11 py-2 bg-yellow-400 text-black font-semibold shadow-md hover:bg-green-800 hover:text-white transition-colors duration-200">My
-        Dashboard Settings</button>
-
-    </div>
-  </div> -->
-
-
-  <!-- <FormYearSelector 
-      v-model="state.report_year" 
-      :options="state.options.report_years" 
-      :change-selected-year="change_selected_year" /> -->
-
 
   <!---------------------------------changes ------------------------------------------->
 
@@ -49,7 +33,24 @@
           :class="[
                         'flex items-center justify-center p-2 rounded-t-md transition-colors',
                         state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
-          <span class="material-icons text-xl">{{ tab.icon }}</span>
+          <span v-if="tab.name == 'Survival'">
+            <IconMaterialSurvival />
+          </span>
+          <span v-if="tab.name == 'Development'">
+            <IconMaterialSchool />
+          </span>
+          <span v-if="tab.name == 'Protection'">
+            <IconMaterialPolice />
+          </span>
+          <span v-if="tab.name == 'Participation'">
+            <IconMaterialParticipation />
+          </span>
+          <span v-if="tab.name == 'Governance'">
+            <IconMaterialGovernance />
+          </span>
+          <span v-if="tab.name == 'General Information'">
+            <IconMaterialGenInfo />
+          </span>
         </a>
       </li>
     </div>
@@ -59,53 +60,57 @@
     <li class="list-none">
       <a href="#" class="flex items-center justify-center p-2 rounded-t-md hover:bg-gray-200"
         @click.prevent="openSlideModal(1)">
-        <span class="material-icons text-xl">settings</span>
+        <span>
+          <IconMaterialSettings />
+        </span>
       </a>
     </li>
   </ul>
 
+
+  
 
   <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
     <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
       <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-1 -z-1">
-        <GraphsDataCompletion  :key="state.refresh_graphs_toggle"
-          :passed_data="state.passed_data"
-          
+        <GraphsDataCompletion :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
           :displaytext="'Data Completion'" :report_year="'2025'">
         </GraphsDataCompletion>
       </div>
-      
+
       <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
-          <GraphsDataSources  :key="state.refresh_graphs_toggle"
-          :passed_data="state.passed_data"
-          
+        <GraphsDataSources :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
           :displaytext="' Data Sources'" :report_year="'2025'">
         </GraphsDataSources>
-       
+
       </div>
-      <div class="bg-white text-black p-4 rounded-lg shadow sm:col-span-2">
-         Data Statistics
+      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
+        <GraphsDataStatistics :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+          :displaytext="' Data Sources'" :report_year="'2025'">
+        </GraphsDataStatistics>
       </div>
-      
-    
+
+
     </div>
+
+    
 
 
 
 
   </main>
 
+
   <!----------------------------------changes ------------------------------------------------------------>
 
+<div class="flex h-screen">
+  <!-- Left: Main Content -->
+  <div class="flex-1 flex flex-col">
 
-
-
-
-  <div>
-
-    <div v-if="state.loading == false"
+  <!------------------------------------------------------------------------------------------------------->
+<div v-if="state.loading == false"
       class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4">
 
       <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
@@ -119,13 +124,6 @@
         class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
         :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" :report_year="state.report_year">
       </GraphsGrp02>
-
-      <!-- <GraphsDataCompletion v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="''" :report_year="state.report_year">
-      </GraphsDataCompletion> -->
-
 
       <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
         :passed_data="state.passed_data"
@@ -213,12 +211,28 @@
         :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
       </GraphsGrp68>
 
-
+      </div>
 
 
     </div>
 
-  </div>
+  <!-- Right Aside -->
+<aside class="w-36 bg-green-200 border-l shadow-lg p-4 overflow-y-auto">
+  <h3 class="text-lg font-bold mb-4">Trends</h3>
+  <p class="text-sm text-gray-600"></p>
+
+
+      <TrendsPregnancy v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
+        :passed_data="state.passed_data"
+        class="sm:col-span-6 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+        :displaytext="''" :report_year="state.report_year">
+      </TrendsPregnancy>
+
+</aside>
+</div>
+  <!------------------------------------------------------------------------------------------------------->
+
+ 
 
   <ModalSlide :show="state.isSlideModalOpen" :close="closeSlideModal" :title="'Select Dashboard Widget'"
     :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl mt-[4rem]'"

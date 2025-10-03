@@ -1,8 +1,8 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 55. {{props.displaytext}}</h3>
-        <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 50. {{props.displaytext}}</h3>
+        <ApexCharts type="bar" height="90%" width="90%" :options="state.populationHoriOptions"
             :series="state.graphSeriesAll" />
            
         </div>
@@ -15,11 +15,10 @@
 
 <script setup>
 import ApexCharts from 'vue3-apexcharts';
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
-
-const fakedata =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-const fakedata2 =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+//import {reportDetailsService } from '~/components/api/ReportDetailsService';
+//import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
+const fakedata = [10,20,30,40,50,60,70,80,90]
+const fakedata2 = [120,110,100,90,80,70,60,50,40]
 
 const props = defineProps({
     class: {
@@ -109,46 +108,40 @@ populationHoriOptions: {
         ],
         xaxis: {
             categories: [
-            'Prevalence/percentage of adolescent pregnancies',
-            'adolescent deliveries (10-19 yrs)',
-            'ALL pregnant w/ @ least 8 antenatal',
-            'Deliveries attended by skilled health professionals',
-            'Facility based deliveries ',
-            'Pregnant adolescents w/ at least 4 postpartum',
-            'Live births',
-            'Low birth weight',
-            'Newborns initiated breastfeeding',
-            'FIC',
-            'Maternal deaths',
-            'RA 10591',
-            'RA 9287',
-            'RA 7610',
-            'RA 11313',
-            'RA 1619'
+            'CNSP',
+            'Curf',
+            'Chil',
+            'Chil',
+            'Chil',
+            'Chil',
+            'Chil',
+            'Chil',
+            'Chil',
+            
             ],
         },
-    },
+},
+
+
 })
 
 
 async function fetchReports_Details_Actuals() { // main fetching function for actuals
+ 
     try {
-
-        await props.passed_data.data
+        // await props.passed_data.data
         state.report_details.data = props.passed_data.data
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-       
-
-
-        state.graphSeriesAll[0] = { name: "2025", data: state.graphSeries2025 };
-        state.graphSeriesAll[1] = { name: "2026", data: state.graphSeries2026 };
-
+        state.graphSeriesMale = [10,20,30,40,50,60,70,80,90]
+        state.graphSeriesFemale = [10,20,30,40,50,60,70,80,90]
+        
+        state.graphSeriesAll[0] = { name: "Male", data: state.graphSeriesMale };
+        state.graphSeriesAll[1] = { name: "Female", data: state.graphSeriesFemale };
 
     } catch (error) {
+        //console.log(error)
 
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        state.graphSeriesMale = [10,20,30,40,50,60,70,80,90]
+        state.graphSeriesFemale = [10,20,30,40,50,60,70,80,90]
     }
 }
 
