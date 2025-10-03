@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between text-left font-bold text-green-800">
             <div>
                 <span class="text-sm font-bold">Pregnancy</span>
-                <h1 class="text-xl font-bold">10,000</h1>
+                <h1 class="text-xl text-center font-bold">10%</h1>
             </div>
             <div class="text-green-800">
                 <IconMaterialDown class="w-10 h-10" />
