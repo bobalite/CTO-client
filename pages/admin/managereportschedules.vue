@@ -586,12 +586,12 @@ function cancelAddModal(){
 async function fetch_logged_user_role() {
     try {
        
-        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log(response)
         if (response.data) {
             state.logged_user_role = response.data
          
-            //console.log(state.current_user_roles)
+            //console.log(state.current_user_role)
         }
     } catch (error) { 
         console.log(error)

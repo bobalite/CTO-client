@@ -419,7 +419,7 @@ async function fetchagencies() {
 
 async function fetchrole() {
     try {
-           const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+           const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         if (response.data) {
             state.roles = response.data
             console.log(state.roles)

@@ -352,7 +352,7 @@ onMounted(() => {
   fetchreportyear()
   fetchData()
  
-  loop_through_user_widgets()
+  //loop_through_user_widgets()
   
 })
 
@@ -420,15 +420,15 @@ function saveDashboardSettings() {
   
   deleteUserDashboardWidgets()
   loopthroughNewSettings()
-  fetchUserDashboardWidgets()
-  loop_through_user_widgets()
+  //fetchUserDashboardWidgets()
+  //loop_through_user_widgets()
  
    state.isSlideModalOpen = false
 }
 
 function change_selected_year(){
 
-  // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
+  // state.current_user_role = state.roles.data[ state.selected_user_role -1]
 
   //state.year = state.report_years.value
   //console.log('state. in change',state.report_year)
@@ -637,8 +637,8 @@ async function fetchUserDashboardWidgets() {
 function refresh_graphs(){
   //console.log('refresh graphs')
   destroy_graphs()
-  fetchUserDashboardWidgets()
-  loop_through_user_widgets()
+  //fetchUserDashboardWidgets()
+  //loop_through_user_widgets()
 
 }
 

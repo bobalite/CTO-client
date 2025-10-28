@@ -704,12 +704,12 @@ function changeYear() {
 async function fetchrole() {
     try {
 
-        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log('response',response)
-        state.currentUser = userStore.getUser.user_roles.agency_id
+        state.currentUser = userStore.getUser.userRole.agency_id
         // console.log('user_agency', state.currentUser)
         // console.log(state.currentUser.id)
-        // console.log('user_role', userStore.getUser.user_roles.name)
+        // console.log('userRole', userStore.getUser.userRole.name)
         // console.log('user_role_id', state.roles)
 
         if (response.data) {
@@ -816,6 +816,29 @@ async function fetchRights() {
 }
 
 async function fetchRights_entry_config() {
+    try {
+        let params = {
+            page: currentPage
+        }
+        const response = await Rights_entry_configServices.getRights_entry_config(params)
+        //console.log(response)
+        if (response.data) {
+            state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+            //console.log(response.data)
+        }
+    } catch (error) {
+        //console.log(error)
+    }
+}
+
+
+async function fetchIndicatorGroups() {
     try {
         let params = {
             page: currentPage

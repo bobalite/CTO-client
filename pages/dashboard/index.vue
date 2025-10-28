@@ -495,7 +495,7 @@ onMounted(() => {
   fetchreportyear()
   fetchData()
  
-  loop_through_user_widgets()
+  //loop_through_user_widgets()
   
 })
 
@@ -577,8 +577,8 @@ function saveDashboardSettings() {
   
   deleteUserDashboardWidgets()
   loopthroughNewSettings()
-  fetchUserDashboardWidgets()
-  loop_through_user_widgets()
+  //fetchUserDashboardWidgets()
+  //loop_through_user_widgets()
  
    state.isSlideModalOpen = false
 }
@@ -586,7 +586,7 @@ function saveDashboardSettings() {
 
 function change_selected_year(opt){
 
-  // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
+  // state.current_user_role = state.roles.data[ state.selected_user_role -1]
   console.log('state.report_year', state.report_year)
     console.log('state.options.report_years.length', state.options.report_years.length)
 
@@ -814,8 +814,8 @@ async function fetchUserDashboardWidgets() {
 function refresh_graphs(){
   //console.log('refresh graphs')
   destroy_graphs()
-  fetchUserDashboardWidgets()
-  loop_through_user_widgets()
+  //fetchUserDashboardWidgets()
+  //loop_through_user_widgets()
 
 }
 

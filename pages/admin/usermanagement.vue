@@ -90,7 +90,7 @@
                     <GridCell class="sm:col-span-2  font-bold text-center text-md   pb-4"
                         :displaytext="'Access Level:'" />
                     <GridCell class="sm:col-span-3 font-bold text-center text-md   pb-4"
-                        :displaytext="state.current_user_roles.name" />
+                        :displaytext="state.current_user_role.name" />
 
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
 
@@ -366,7 +366,7 @@
 
                     <GridCell class="sm:col-span-3 " :displaytext="'New Status:'" />
                     <GridSelect class="sm:col-span-2 " :displaytext="''" 
-                    v-model="state.current_user.user_roles.is_active" :placeholder="state.current_user.user_roles.is_active" 
+                    v-model="state.current_user.user_role.is_active" :placeholder="state.current_user.user_role.is_active" 
                     :options="state.options.user_enable"/>
                     <GridCell class="sm:col-span-7 " :displaytext="''" />
 
@@ -607,7 +607,7 @@
                     <GridCell class="sm:col-span-2  font-bold text-center text-md   pb-4"
                         :displaytext="'Access Role:'" />
                     <GridCell class="sm:col-span-3 font-bold text-center text-md   pb-4"
-                        :displaytext="state.current_user_roles.name" />
+                        :displaytext="state.current_user_role.name" />
 
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <GridCell class="sm:col-span-10 " :displaytext="''" />
@@ -656,14 +656,14 @@
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
-                                        getrole(user.user_roles.roles_id) }}
+                                        getrole(user.user_role.role_id) }}
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
-                                        getagency(user.user_roles.agency_id) }}
+                                        getagency(user.user_role.agency_id) }}
                                     </td>
 
-                                    <td v-if="user.user_roles.is_active == 1"
+                                    <td v-if="user.user_role.is_active == 1"
                                         class="whitespace-nowrap px-3 py-4 text-sm text-green-500">Active
                                     </td>
                                     <td v-else class="whitespace-nowrap px-3 py-4 text-sm text-red-500">Access Blocked
@@ -733,7 +733,7 @@ definePageMeta({
 })
 
 const userStore = useUserStore()
-console.log(userStore.getUser.user_roles.roles_id)
+console.log(userStore.getUser.userRole.role_id)
 
 const state = reactive({
     users: [],
@@ -742,7 +742,7 @@ const state = reactive({
 
     agencies: [],
     current_user:{},
-    current_user_roles:{},
+    current_user_role:{},
     current_user_agency:{},
 
     alertmessage: '',
@@ -959,12 +959,12 @@ const check_errors = computed(() => {
 async function fetch_logged_user_role() {
     try {
        
-        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log(response)
         if (response.data) {
             state.logged_user_role = response.data
          
-            //console.log(state.current_user_roles)
+            //console.log(state.current_user_role)
         }
     } catch (error) { 
         console.log(error)
@@ -974,12 +974,12 @@ async function fetch_logged_user_role() {
 async function fetchrole() {
     try {
        
-        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log(response)
         if (response.data) {
-            state.current_user_roles = response.data
-            state.selected_user_role = state.current_user_roles.id
-            console.log(state.current_user_roles)
+            state.current_user_role = response.data
+            state.selected_user_role = state.current_user_role.id
+            console.log(state.current_user_role)
         }
     } catch (error) { 
         console.log(error)
@@ -1051,13 +1051,13 @@ async function fetchagencies() {
 
 async function fetchUsers() {
 
-    if (userStore.getUser.user_roles.roles_id == 1){
+    if (userStore.getUser.userRole.role_id == 1){
         
     }else{
         logout()
     }
 
-    //console.log(userStore.getUser.user_roles.roles_id)
+    //console.log(userStore.getUser.userRole.role_id)
 
 
     // try {
@@ -1099,16 +1099,16 @@ function getrole(id){
 function change_selected_role(){
 
     try {
-    state.current_user_roles = state.roles.data[ state.selected_user_role -1]
-    state.allow_view = state.current_user_roles.allow_view
-    state.allow_add = state.current_user_roles.allow_add
-    state.allow_edit = state.current_user_roles.allow_edit
-    state.allow_delete = state.current_user_roles.allow_delete
-    state.allow_view_other_entries = state.current_user_roles.allow_view_other_entries
-    state.allow_edit_other_entries = state.current_user_roles.allow_edit_other_entries
-    state.allow_add_other_entries = state.current_user_roles.allow_add_other_entries
-    state.allow_manage_users = state.current_user_roles.allow_manage_users
-    state.allow_manage_roles = state.current_user_roles.allow_manage_roles
+    state.current_user_role = state.roles.data[ state.selected_user_role -1]
+    state.allow_view = state.current_user_role.allow_view
+    state.allow_add = state.current_user_role.allow_add
+    state.allow_edit = state.current_user_role.allow_edit
+    state.allow_delete = state.current_user_role.allow_delete
+    state.allow_view_other_entries = state.current_user_role.allow_view_other_entries
+    state.allow_edit_other_entries = state.current_user_role.allow_edit_other_entries
+    state.allow_add_other_entries = state.current_user_role.allow_add_other_entries
+    state.allow_manage_users = state.current_user_role.allow_manage_users
+    state.allow_manage_roles = state.current_user_role.allow_manage_roles
     } catch (error) {
         state.role_error = 3;
     }
@@ -1190,24 +1190,24 @@ function closeAlertModal(){
 function table_row_getclicked(user) {
 
     state.current_user = user
-    state.current_user_roles = state.roles.data[state.current_user.user_roles.roles_id - 1]
-    state.current_user_agency = state.agencies.data[user.user_roles.agency_id - 1]
-    state.allow_view = state.current_user_roles.allow_view
-    state.allow_add = state.current_user_roles.allow_add
-    state.allow_edit = state.current_user_roles.allow_edit
-    state.allow_delete = state.current_user_roles.allow_delete
-    state.allow_view_other_entries = state.current_user_roles.allow_view_other_entries
-    state.allow_edit_other_entries = state.current_user_roles.allow_edit_other_entries
-    state.allow_add_other_entries = state.current_user_roles.allow_add_other_entries
-    state.allow_manage_users = state.current_user_roles.allow_manage_users
-    state.allow_manage_roles = state.current_user_roles.allow_manage_roles
+    state.current_user_role = state.roles.data[state.current_user.user_role.role_id - 1]
+    state.current_user_agency = state.agencies.data[user.user_role.agency_id - 1]
+    state.allow_view = state.current_user_role.allow_view
+    state.allow_add = state.current_user_role.allow_add
+    state.allow_edit = state.current_user_role.allow_edit
+    state.allow_delete = state.current_user_role.allow_delete
+    state.allow_view_other_entries = state.current_user_role.allow_view_other_entries
+    state.allow_edit_other_entries = state.current_user_role.allow_edit_other_entries
+    state.allow_add_other_entries = state.current_user_role.allow_add_other_entries
+    state.allow_manage_users = state.current_user_role.allow_manage_users
+    state.allow_manage_roles = state.current_user_role.allow_manage_roles
 
 }
 
 
 async function SaveEditModal(){
 
-    if (state.current_user.user_roles.roles_id == 1) {
+    if (state.current_user.user_role.role_id == 1) {
         alert("You Are Not Allowed to edit an Administrator's Access")
     } 
     else {
@@ -1220,9 +1220,9 @@ async function SaveEditModal(){
                 lname: state.current_user.lname,
                 mname: state.current_user.mname,
                 email: state.current_user.email,
-                roles_id: state.selected_user_role,
+                role_id: state.selected_user_role,
                 agency_id: state.current_user_agency.id,
-                is_active: state.current_user.user_roles.is_active,
+                is_active: state.current_user.user_role.is_active,
 
             }
 
@@ -1271,7 +1271,7 @@ async function SaveNewUser(){
             lname: state.current_user.lname,
             mname: state.current_user.mname,
             email: state.current_user.email,
-            roles_id: state.selected_user_role,
+            role_id: state.selected_user_role,
             agency_id: state.current_user_agency.id,
             is_active: 1,
         }

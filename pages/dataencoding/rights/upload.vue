@@ -268,12 +268,12 @@ function changeYear() {
 async function fetchrole() {
     try {
        
-        const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log('response',response)
-        state.currentUser = userStore.getUser.user_roles.agency_id
+        state.currentUser = userStore.getUser.userRole.agency_id
         // console.log('user_agency', state.currentUser)
         // console.log(state.currentUser.id)
-        // console.log('user_role', userStore.getUser.user_roles.name)
+        // console.log('user_role', userStore.getUser.user_role.name)
         // console.log('user_role_id', state.roles)
 
         if (response.data) {

@@ -115,7 +115,7 @@
 
                     <ul>
                        
-                        <template v-if="userStore.getUser.user_roles.roles_id == 1"></template>
+                        <template v-if="userStore.getUser.userRole.role_id == 1"></template>
 
                         <li class="flex items-center py-3 px-2 hover:bg-green-900 rounded">
                             <ul role="list" class="-mx-2 space-y-1">
@@ -371,7 +371,7 @@ import { PrinterIcon } from '@heroicons/vue/16/solid';
 const userStore = useUserStore()
 //@heroicons/vue/24/outline/
 
-//console.log(userStore.getUser.user_roles.roles_id)
+//console.log(userStore.getUser.userRole.role_id)
 const expanded = ref(false)
 
 const state = reactive({
@@ -382,7 +382,7 @@ const state = reactive({
     lname: '',
     mname: '',
     email: '',
-    roles_id: '',
+    role_id: '',
     agency_id: '',
     is_active: 1,
     user_id: '',
@@ -489,8 +489,8 @@ state.fname = userStore.getUser.fname
 state.lname = userStore.getUser.lname
 state.mname = userStore.getUser.mname
 state.email = userStore.getUser.email
-state.roles_id = userStore.getUser.user_roles.roles_id
-state.agency_id = userStore.getUser.user_roles.agency_id
+state.role_id = userStore.getUser.userRole.role_id
+state.agency_id = userStore.getUser.userRole.agency_id
 
 
 if (state.password1 !== state.password2) {
@@ -524,7 +524,7 @@ state.password = state.password1; // Set the new password to the state
         username: state.username,
         password: state.password,
         email: state.email,
-        roles_id: state.roles_id,
+        role_id: state.role_id,
         agency_id: state.agency_id,
         fname: state.fname,
         lname: state.lname,

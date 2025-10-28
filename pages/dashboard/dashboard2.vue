@@ -562,7 +562,7 @@ function saveDashboardSettings() {
   
   deleteUserDashboardWidgets()
   loopthroughNewSettings()
-  fetchUserDashboardWidgets()
+  //fetchUserDashboardWidgets()
   loop_through_user_widgets()
  
    state.isSlideModalOpen = false
@@ -570,7 +570,7 @@ function saveDashboardSettings() {
 
 function change_selected_year(){
 
-  // state.current_user_roles = state.roles.data[ state.selected_user_role -1]
+  // state.current_user_role = state.roles.data[ state.selected_user_role -1]
 
   //state.year = state.report_years.value
   //console.log('state. in change',state.report_year)
@@ -779,7 +779,7 @@ async function fetchUserDashboardWidgets() {
 function refresh_graphs(){
   //console.log('refresh graphs')
   destroy_graphs()
-  fetchUserDashboardWidgets()
+  //fetchUserDashboardWidgets()
   loop_through_user_widgets()
 
 }

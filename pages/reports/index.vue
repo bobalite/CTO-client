@@ -601,7 +601,7 @@ async function fetchRights_entry_config() {
 async function fetchrole() {
   try {
 
-    const response = await rolesService.getRole(userStore.getUser.user_roles.roles_id)
+    const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
     //console.log(response)
     if (response.data) {
       state.roles = response.data
