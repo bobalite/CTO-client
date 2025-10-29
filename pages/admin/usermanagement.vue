@@ -812,7 +812,7 @@ async function logout() {
         if (response) {
             userStore.resetUser()
             localStorage.removeItem("_token");
-            navigateTo('/dashboard')
+            navigateTo('/login')
             console.log('loggin out')
         }
     } catch (error) {

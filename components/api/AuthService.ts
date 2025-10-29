@@ -7,6 +7,7 @@ class AuthService extends BaseAPIService {
 
     async logout(): Promise<any> {
         return await this.request(`/auth/logout`, "POST");
+        //return await authService.logout()
     }
 }
 

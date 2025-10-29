@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-
+  plugins: ['~/plugins/inactivity.client.js'],
+  
   postcss: {
     plugins: {
       tailwindcss: {},
