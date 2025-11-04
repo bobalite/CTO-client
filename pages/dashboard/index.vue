@@ -604,7 +604,7 @@ function change_selected_year(opt){
   }
 
   state.year = state.report_years.value
-  //console.log('state. in change',state.year)
+  console.log('state. in change',state.year)
   //state.refresh_graphs01 = true
 
   if (state.refresh_graphs_toggle == false) {
@@ -614,7 +614,7 @@ function change_selected_year(opt){
   } 
 
   refresh_graphs()
-  //console.log('report_year', state.report_year)
+  console.log('report_year', state.report_year)
   
 }
 

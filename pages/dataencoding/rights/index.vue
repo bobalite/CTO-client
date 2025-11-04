@@ -492,7 +492,7 @@ import {
     MenuItem
 } from '@headlessui/vue'
 
-import { Rights_entry_configServices } from '~/components/api/Rights_entry_configService';
+//import { Rights_entry_configServices } from '~/components/api/Rights_entry_configService';
 
 import { reportDetailsService } from '~/components/api/ReportDetailsService';
 import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
@@ -655,7 +655,7 @@ const state = reactive({
 onMounted(() => {
     fetchreportyear()
     fetchRights()
-    fetchRights_entry_config()
+    fetchIndicatorsConfig()
     fetchrole()
 
 })
@@ -704,7 +704,10 @@ function changeYear() {
 async function fetchrole() {
     try {
 
+        //console.log('userStore.getUser.userRole.role_id',userStore.getUser.userRole.role_id)
+        
         const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
+        
         //console.log('response',response)
         state.currentUser = userStore.getUser.userRole.agency_id
         // console.log('user_agency', state.currentUser)
@@ -718,7 +721,7 @@ async function fetchrole() {
             //console.log(state.roles)
         }
     } catch (error) {
-        //console.log(error)
+        console.log(error)
     }
 }
 
@@ -755,6 +758,13 @@ function getclicked(Rights_entry_config) {
 
 
 }
+
+
+function fetchIndicatorsConfig(){
+
+
+}
+
 
 function changeData() {
 
@@ -816,25 +826,25 @@ async function fetchRights() {
 }
 
 async function fetchRights_entry_config() {
-    try {
-        let params = {
-            page: currentPage
-        }
-        const response = await Rights_entry_configServices.getRights_entry_config(params)
-        //console.log(response)
-        if (response.data) {
-            state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
-            //console.log(response.data)
-        }
-    } catch (error) {
-        //console.log(error)
-    }
+    // try {
+    //     let params = {
+    //         page: currentPage
+    //     }
+    //     const response = await Rights_entry_configServices.getRights_entry_config(params)
+    //     //console.log(response)
+    //     if (response.data) {
+    //         state.Rights_entry_config.data = response.data.filter(rights_id1 => rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config1.data = response.data.filter(rights_id1 => rights_id1.rights_id === 1 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config2.data = response.data.filter(rights_id1 => rights_id1.rights_id === 2 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config3.data = response.data.filter(rights_id1 => rights_id1.rights_id === 3 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config4.data = response.data.filter(rights_id1 => rights_id1.rights_id === 4 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config5.data = response.data.filter(rights_id1 => rights_id1.rights_id === 5 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         state.Rights_entry_config6.data = response.data.filter(rights_id1 => rights_id1.rights_id === 6 && rights_id1.sequence_header !== '0' && rights_id1.parent_entry !== 0)
+    //         //console.log(response.data)
+    //     }
+    // } catch (error) {
+    //     //console.log(error)
+    // }
 }
 
 

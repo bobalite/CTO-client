@@ -314,10 +314,10 @@ const state = reactive({
 
 onMounted(() => {
     fetchreportyear()
-    fetchRights()
-    fetchRights_entry_config()
-    fetchrole()
-    fetchReports_Details_Actuals()
+    //fetchRights()
+    //fetchRights_entry_config()
+    //fetchrole()
+    //fetchReports_Details_Actuals()
    
 })
 
