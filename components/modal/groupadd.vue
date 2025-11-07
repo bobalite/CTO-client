@@ -7,7 +7,7 @@
 
 
                 <div
-                    class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey border-t pb-4">
+                    class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16  border-solid border-grey border-t pb-4 max-h-[80vh] overflow-y-auto">
 
                     <GridCell
                         class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black  rounded-left border-white  border-l  pb-1"
@@ -52,15 +52,15 @@
 
                             <GridTextEntry v-model="state.male[el.indicator_no]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
-                                :entrystatus="1" />
+                                :entrystatus="el.male" />
 
                             <GridTextEntry v-model="state.female[el.indicator_no]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
-                                :entrystatus="2" />
+                                :entrystatus="el.female" />
 
                             <GridTextEntry v-model="state.total[el.indicator_no]"
                                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1"
-                                :entrystatus="0" />
+                                :entrystatus="el.total" />
 
 
                             <GridTextArea v-model="state.remarks[el.indicator_no]"
@@ -89,48 +89,134 @@
     </transition>
 </template>
 
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { reactive, watch } from 'vue'
 
-const props = defineProps({
-    show: { // true-false flag value
-        type: Boolean,
-        required: true,
-    },
-    mode: {  // 'add', 'edit', 'view' 
-        type: String,
-        required: false,
-    },
-    group: {  
-        type: Object,
-        required: true
-    },
-     category: {  
-        type: String,
-        required: false,
-    },
-     subcategory: {  
-        type: String,
-        required: false,
-    },
-})
+interface IndicatorElement {
+  indicator_no: string
+  description?: string
+  value_type: 'count' | 'rate_nocalc' | 'sum' | 'percentage'
+  summed_from?: string
+  divisor?: string | number
+  male?: number
+  female?: number
+  total?: number
+  remarks?: string
+}
 
+interface IndicatorGroup {
+  group_no: string
+  indicator_group_elements: IndicatorElement[]
+}
+
+const props = defineProps<{
+  show: boolean
+  mode?: string
+  group: IndicatorGroup
+  category?: string
+  subcategory?: string
+}>()
 
 const emit = defineEmits(['close'])
-
 const modalTitle = 'Add Entry'
 
-
-const state = reactive({
-
-    male: [{}],
-    female: [{}],
-    total: [{}],
-    grand_total: [{}],
-    remarks: [{}],
-    
+const state = reactive<{
+  male: Record<string, number>
+  female: Record<string, number>
+  total: Record<string, number>
+  remarks: Record<string, string>
+}>({
+  male: {},
+  female: {},
+  total: {},
+  remarks: {},
 })
- 
+
+// ✅ Initialize state defaults
+watch(
+  () => props.group,
+  (group) => {
+    if (!group || !group.indicator_group_elements) return
+    group.indicator_group_elements.forEach((el) => {
+      const key = el.indicator_no
+      state.male[key] = state.male[key] ?? 0
+      state.female[key] = state.female[key] ?? 0
+      state.total[key] = state.total[key] ?? 0
+      state.remarks[key] = state.remarks[key] ?? ''
+    })
+  },
+  { immediate: true }
+)
+
+// ✅ Compute totals dynamically
+let computeTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => [state.male, state.female],
+  () => {
+    if (computeTimer) clearTimeout(computeTimer)
+    computeTimer = setTimeout(() => {
+      props.group.indicator_group_elements.forEach((el) => {
+        const key = el.indicator_no
+        const vt = el.value_type
+
+        if (vt === 'count') {
+          // total = male + female
+          const male = Number(state.male[key]) || 0
+          const female = Number(state.female[key]) || 0
+          state.total[key] = male + female
+        }
+
+        if (vt === 'sum' && el.summed_from) {
+          const refs = el.summed_from
+            .split(';')
+            .map((r) => r.trim())
+            .filter(Boolean)
+
+          const sumMale = refs.reduce((acc, ref) => acc + (Number(state.male[ref]) || 0), 0)
+          const sumFemale = refs.reduce((acc, ref) => acc + (Number(state.female[ref]) || 0), 0)
+          const sumTotal = refs.reduce((acc, ref) => acc + (Number(state.total[ref]) || 0), 0)
+
+          state.male[key] = sumMale
+          state.female[key] = sumFemale
+          state.total[key] = sumTotal
+        }
+
+        if (vt === 'percentage' && el.summed_from) {
+          const refs = el.summed_from
+            .split(';')
+            .map((r) => r.trim())
+            .filter(Boolean)
+
+          if (refs.length >= 2) {
+            const numeratorKey = refs[0]
+            const denominatorKey = refs[1]
+            const divisor = Number(el.divisor) || 100
+
+            // 🧮 Compute percentage for male
+            const numMale = Number(state.male[numeratorKey]) || 0
+            const denMale = Number(state.male[denominatorKey]) || 0
+            state.male[key] =
+              denMale !== 0 ? parseFloat(((numMale / denMale) * divisor).toFixed(2)) : 0
+
+            // 🧮 Compute percentage for female
+            const numFemale = Number(state.female[numeratorKey]) || 0
+            const denFemale = Number(state.female[denominatorKey]) || 0
+            state.female[key] =
+              denFemale !== 0 ? parseFloat(((numFemale / denFemale) * divisor).toFixed(2)) : 0
+
+            // 🧮 Compute percentage for total
+            const numTotal = Number(state.total[numeratorKey]) || 0
+            const denTotal = Number(state.total[denominatorKey]) || 0
+            state.total[key] =
+              denTotal !== 0 ? parseFloat(((numTotal / denTotal) * divisor).toFixed(2)) : 0
+          }
+        }
+      })
+    }, 100)
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
