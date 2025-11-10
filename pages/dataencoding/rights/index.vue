@@ -89,7 +89,7 @@
                               Group {{ group.group_no }}
                             </div>
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 pr-4">
                               <button
                                 class="text-xs bg-green-700 text-white px-2 py-0.5 rounded hover:bg-green-500 hover:text-black"
                                 @click.stop="openGroupModal('add', group, category.description, subcategory.description)">
@@ -152,6 +152,8 @@
       :group="selectedGroup"
       :category="selectedCategoryDesc"
       :subcategory="selectedSubcategoryDesc"
+      :selected_year_id = state.selected_year_id
+      :selected_year = state.selected_year 
       @close="showGroupadd = false"
     />
 
@@ -171,6 +173,7 @@
 <script setup>
 import { ref } from 'vue'
 import { indicatorService } from '~/components/api/IndicatorCategoryService';
+import { reportDetailsService } from '~/components/api/ReportDetailsService';
 import { rolesService } from '~/components/api/Roles';
 import { useUserStore } from '~/store/user'
 import { report_yearService } from '~/components/api/ReportYears';
@@ -401,6 +404,7 @@ if (mode === 'add') {
   showGroupadd.value = true
   selectedCategoryDesc.value = categoryDesc
   selectedSubcategoryDesc.value = subcategoryDesc
+  
 }
 
 if (mode === 'view') {

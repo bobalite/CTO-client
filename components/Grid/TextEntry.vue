@@ -10,7 +10,7 @@
         readonly />
 
     <input v-else-if="props.entrystatus == 0" type="text" :name="props.name" :value="props.modelValue" disabled readonly
-        class="block w-full bg-black border-white px-3 py-1 text-gray-300 focus:outline-none text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+        class="block w-full bg-black border-white px-3 py-1 text-black focus:outline-none text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
 
     <input v-else-if="props.entrystatus == 3" type="text" :name="props.name" :value="props.modelValue"
         @input="updateValue"
