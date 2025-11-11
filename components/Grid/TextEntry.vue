@@ -14,7 +14,7 @@
 
     <input v-else-if="props.entrystatus == 3" type="text" :name="props.name" :value="props.modelValue"
         @input="updateValue"
-        class="block w-full bg-green-400 border-white px-1 py-1 text-black focus:outline-none text-md rounded-md" />
+        class="block w-full bg-green-300 border-white px-1 py-1 text-black focus:outline-none text-md " />
 
 
 

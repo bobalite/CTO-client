@@ -152,10 +152,12 @@
       :group="selectedGroup"
       :category="selectedCategoryDesc"
       :subcategory="selectedSubcategoryDesc"
-      :selected_year_id = state.selected_year_id
-      :selected_year = state.selected_year 
+      :selected_year_id="state.selected_year_id"
+      :selected_year="state.selected_year"
       @close="showGroupadd = false"
     />
+
+    
 
     <ModalGroupview
       :show="showGroupview"
@@ -281,7 +283,7 @@ async function fetchreportyear() {
 function changeYear() {
     state.selected_year_id = state.selected_year_id
     state.selected_year = state.options.years.find(year => year.value === state.selected_year_id)?.year || '';
-    console.log('selected_year = ', state.selected_year)
+    console.log('selected_year_id = ', state.selected_year_id)
 }
 
 

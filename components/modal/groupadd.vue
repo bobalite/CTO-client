@@ -8,8 +8,13 @@
         <div
           class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16 border-solid border-grey border-t pb-4 max-h-[80vh] overflow-y-auto">
           <!-- Header Row -->
+          
           <GridCell
-            class="sm:col-span-16 flex rounded-t-lg bg-green-700 justify-center text-sm text-black border-white border-l pb-1"
+            class="sm:col-span-1 flex bg-yellow-400  justify-center text-xl text-black border-white border-l border-b pb-1"
+            :displaytext="props.selected_year" />
+          
+            <GridCell
+            class="sm:col-span-15 flex  bg-green-700 justify-center text-sm text-black border-white border-r pb-1"
             :displaytext="category" />
 
           <GridCell
@@ -78,6 +83,10 @@
 <script setup>
 import { reactive } from 'vue'
 
+
+ //state.selected_year_id = state.selected_year_id
+ //   state.selected_year 
+
 const props = defineProps({
   show: Boolean,
   mode: String,
@@ -85,6 +94,8 @@ const props = defineProps({
   category: String,
   subcategory: String,
   group: Object,
+  selected_year: [String, Number],
+  selected_year_id: [String, Number], // ✅ flexible, but we'll coerce to Number later
 })
 
 // --- Local reactive state ---
@@ -136,65 +147,116 @@ const computeTotals = () => {
   
   props.group.indicator_group_elements.forEach(el => {
 
-  if (el.value_type === 'sum' && el.summed_from !== 'na') {
-    // Vertical SUM
-    const refs = el.summed_from.split(';').map(r => r.trim())
-    let maleSum = 0
-    let femaleSum = 0
-    let totalSum = 0
+    if (el.value_type === 'sum' && el.summed_from !== 'na') 
+     {
+      // Vertical SUM
+      const refs = el.summed_from.split(';').map(r => r.trim())
+      let maleSum = 0
+      let femaleSum = 0
+      let totalSum = 0
 
-    refs.forEach(refNo => {
-      maleSum += Number(state.male[refNo]) || 0
-      femaleSum += Number(state.female[refNo]) || 0
-      totalSum += Number(state.total[refNo]) || 0
-    })
+      refs.forEach(refNo => {
+        maleSum += Number(state.male[refNo]) || 0
+        femaleSum += Number(state.female[refNo]) || 0
+        totalSum += Number(state.total[refNo]) || 0
+      })
 
-    state.male[el.indicator_no] = maleSum
-    state.female[el.indicator_no] = femaleSum
-    state.total[el.indicator_no] = totalSum
+      state.male[el.indicator_no] = maleSum
+      state.female[el.indicator_no] = femaleSum
+      state.total[el.indicator_no] = totalSum
 
-  } else if (el.value_type === 'percentage' && el.summed_from !== 'na') {
-    // Vertical PERCENTAGE
-    const [ref1, ref2] = el.summed_from.split(';').map(r => r.trim())
-    const divisor = Number(el.divisor) || 1
+    }
+
+    else if (el.value_type === 'percentage' && el.summed_from !== 'na') 
+    {
+      // Vertical PERCENTAGE
+      const [ref1, ref2] = el.summed_from.split(';').map(r => r.trim())
+      const divisor = Number(el.divisor) || 1
 
 
-    const maleDen = Number(state.male[ref2]) || 0
-    const femaleDen = Number(state.female[ref2]) || 0
-    const totalDen = Number(state.total[ref2]) || 0
+      const maleDen = Number(state.male[ref2]) || 0
+      const femaleDen = Number(state.female[ref2]) || 0
+      const totalDen = Number(state.total[ref2]) || 0
 
+      state.male[el.indicator_no] =
+        maleDen
+          ? Number((((Number(state.male[ref1]) || 0) / maleDen) * divisor).toFixed(2))
+          : 0
+
+      state.female[el.indicator_no] =
+        femaleDen
+          ? Number((((Number(state.female[ref1]) || 0) / femaleDen) * divisor).toFixed(2))
+          : 0
+
+      state.total[el.indicator_no] =
+        totalDen
+          ? Number((((Number(state.total[ref1]) || 0) / totalDen) * divisor).toFixed(2))
+          : 0
+    } 
     
-    console.log('maleDen', state.male[ref2])
-     console.log('maleDen', maleDen)
-     console.log('maleDen', femaleDen)
-     console.log('maleDen', totalDen)
+    else if (el.value_type === 'ratio' && el.summed_from !== 'na') 
+    {
+      // Vertical PERCENTAGE
+      const [ref1, ref2] = el.summed_from.split(';').map(r => r.trim())
+      const divisor = Number(el.divisor) || 1
 
-      console.log('divisor', divisor)
-      console.log('ref1', state.male[ref1])
-      console.log('ref1real', ref1)
 
-    state.male[el.indicator_no] =
-    maleDen
-      ? Number((((Number(state.male[ref1]) || 0) / maleDen) * divisor).toFixed(2))
-      : 0
+      const maleDen = Number(state.male[ref2]) || 0
+      const femaleDen = Number(state.female[ref2]) || 0
+      const totalDen = Number(state.total[ref2]) || 0
 
-  state.female[el.indicator_no] =
-    femaleDen
-      ? Number((((Number(state.female[ref1]) || 0) / femaleDen) * divisor).toFixed(2))
-      : 0
+      state.male[el.indicator_no] =
+        maleDen
+          ? Number((((Number(state.male[ref1]) || 0) / maleDen) * divisor).toFixed(2))
+          : 0
 
-  state.total[el.indicator_no] =
-    totalDen
-      ? Number((((Number(state.total[ref1]) || 0) / totalDen) * divisor).toFixed(2))
-      : 0
-  }
+      state.female[el.indicator_no] =
+        femaleDen
+          ? Number((((Number(state.female[ref1]) || 0) / femaleDen) * divisor).toFixed(2))
+          : 0
 
-})
+      state.total[el.indicator_no] =
+        totalDen
+          ? Number((((Number(state.total[ref1]) || 0) / totalDen) * divisor).toFixed(2))
+          : 0
+    } 
+
+    else if (el.value_type === 'rate' && el.summed_from !== 'na') 
+    {
+      // Vertical PERCENTAGE
+      const [ref1, ref2] = el.summed_from.split(';').map(r => r.trim())
+      const divisor = Number(el.divisor) || 1
+
+
+      const maleDen = Number(state.male[ref2]) || 0
+      const femaleDen = Number(state.female[ref2]) || 0
+      const totalDen = Number(state.total[ref2]) || 0
+
+      state.male[el.indicator_no] =
+        maleDen
+          ? Number((((Number(state.male[ref1]) || 0) / maleDen) * divisor).toFixed(2))
+          : 0
+
+      state.female[el.indicator_no] =
+        femaleDen
+          ? Number((((Number(state.female[ref1]) || 0) / femaleDen) * divisor).toFixed(2))
+          : 0
+
+      state.total[el.indicator_no] =
+        totalDen
+          ? Number((((Number(state.total[ref1]) || 0) / totalDen) * divisor).toFixed(2))
+          : 0
+    }
+
+  })
 }
 
 
 const saveIndicators = async () => {
   try {
+    // 🧠 Always ensure report_year_id is a Number
+    const reportYearId = Number(props.selected_year_id)
+
     const payload = props.group.indicator_group_elements.map(el => ({
       indicator_no: el.indicator_no,
       male: Number(state.male[el.indicator_no]) || 0,
@@ -203,25 +265,19 @@ const saveIndicators = async () => {
       remarks: state.remarks[el.indicator_no] || '',
       indicator_group_element_id: el.id,
       indicator_group_id: props.group.id,
-      report_year_id: props.group.report_year_id,
+      report_year_id: reportYearId,   // ✅ numeric, clean for Laravel
       is_active: true,
-      created_by: 1, // TODO: replace with actual logged-in user ID
+      created_by: 1, // TODO: replace with logged-in user ID
       updated_by: 1,
     }))
 
     console.log('Payload to be saved:', payload)
 
-    // POST to backend API
-    const response = await ReportDetailRepository.createReportDetails(payload)
-
-    console.log('Save response:', response)
-
-    // Notify parent (so parent can refresh data)
-    emit('save-success', response)
+    // Example call to backend repo:
+     await ReportDetailRepository.createReportDetails(payload)
 
   } catch (error) {
     console.error('Error saving indicators:', error)
-    emit('save-error', error)
   }
 }
 </script>
