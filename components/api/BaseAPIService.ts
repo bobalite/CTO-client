@@ -119,7 +119,7 @@ class BaseAPIService {
                         throw new APIError(error.response._data);
 
                     case 500:
-                        this.revokeAccess();
+                        //this.revokeAccess();
                         throw new APIError({
                             message:
                                 "API error - 500 Internal Server Error. Please try again later.",

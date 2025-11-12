@@ -95,11 +95,7 @@
                                 @click.stop="openGroupModal('add', group, category.description, subcategory.description)">
                                 Add Entry
                               </button>
-                              <button
-                                class="text-xs bg-yellow-600 text-white px-2 py-0.5 rounded hover:bg-yellow-400 hover:text-black"
-                                @click.stop="openGroupModal('edit', group)">
-                                Edit Group
-                              </button>
+                             
                               <button
                                 class="text-xs bg-blue-700 text-white px-2 py-0.5 rounded hover:bg-blue-500 hover:text-black"
                                 @click.stop="openGroupModal('view', group)">
@@ -137,16 +133,10 @@
     </table>
 
     <!-- MODAL COMPONENT -->
-    <ModalGroupedit
-      :show="showGroupedit"
-      :mode="modalMode"
-      :group="selectedGroup"
-      :category="selectedCategoryDesc"
-      :subcategory="selectedSubcategoryDesc"
-      @close="showGroupedit = false"
-    />
+    
 
     <ModalGroupadd
+      :modalTitle="'Add / Edit Entries'"
       :show="showGroupadd"
       :mode="modalMode"
       :group="selectedGroup"
@@ -160,11 +150,14 @@
     
 
     <ModalGroupview
+      :modalTitle="'View Data Entries'"
       :show="showGroupview"
       :mode="modalMode"
       :group="selectedGroup"
       :category="selectedCategoryDesc"
       :subcategory="selectedSubcategoryDesc"
+      :selected_year_id="state.selected_year_id"
+      :selected_year="state.selected_year"
       @close="showGroupview = false"
     />
 
@@ -391,37 +384,39 @@ function openGroupModal(mode, group, categoryDesc = '', subcategoryDesc = '') {
   console.log('categoryDesc', categoryDesc)
   console.log('subcategoryDesc', subcategoryDesc)
 
-if (mode === 'edit') {
-  modalMode.value = mode
-  selectedGroup.value = group
-  showGroupedit.value = true
-  selectedCategoryDesc.value = categoryDesc
-  selectedSubcategoryDesc.value = subcategoryDesc
+  if (mode === 'edit') {
+    modalMode.value = mode
+    selectedGroup.value = group
+    showGroupedit.value = true
+    selectedCategoryDesc.value = categoryDesc
+    selectedSubcategoryDesc.value = subcategoryDesc
+  }
+
+  if (mode === 'add') {
+
+    modalMode.value = mode
+    selectedGroup.value = group
+    showGroupadd.value = true
+    selectedCategoryDesc.value = categoryDesc
+    selectedSubcategoryDesc.value = subcategoryDesc
+
+  }
+
+  if (mode === 'view') {
+
+    modalMode.value = mode
+    selectedGroup.value = group
+    showGroupview.value = true
+    selectedCategoryDesc.value = categoryDesc
+    selectedSubcategoryDesc.value = subcategoryDesc
+
+   
+  }
+  console.log('Opening modal in', mode, 'mode for group', group)
+
 }
 
-if (mode === 'add') {
  
-  modalMode.value = mode
-  selectedGroup.value = group
-  showGroupadd.value = true
-  selectedCategoryDesc.value = categoryDesc
-  selectedSubcategoryDesc.value = subcategoryDesc
-  
-}
-
-if (mode === 'view') {
- 
-  modalMode.value = mode
-  selectedGroup.value = group
-  showGroupview.value = true
-  selectedCategoryDesc.value = categoryDesc
-  selectedSubcategoryDesc.value = subcategoryDesc
-}
-
-
-  console.log('Opening modal in', mode, 'mode for group', group)    
-}
-
 </script>
 
 <style scoped>
