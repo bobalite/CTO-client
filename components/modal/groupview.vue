@@ -65,7 +65,8 @@
           <button class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300" @click="$emit('close')">
             Close
           </button>
-       
+
+          
         </div>
       </div>
     </div>
@@ -73,9 +74,8 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
-import { reportDetailsService } from '~/components/api/ReportDetailsService'
-import { indicatorService } from '~/components/api/IndicatorCategoryService'
+import { reactive } from 'vue'
+import { reportDetailsService } from '~/components/api/ReportDetailsService';
 
 const props = defineProps({
   show: Boolean,
@@ -85,9 +85,21 @@ const props = defineProps({
   subcategory: String,
   group: Object,
   selected_year: [String, Number],
-  selected_year_id: [String, Number],
+  selected_year_id: [String, Number], // ✅ flexible, but we'll coerce to Number later
 })
 
+onMounted(() => {
+  if (props.show) {
+    get_group_details()
+  }
+})
+
+watch(() => props.show, (newVal) => {
+  if (newVal) get_group_details()
+})
+
+
+// --- Local reactive state ---
 const state = reactive({
   male: {},
   female: {},
@@ -95,10 +107,7 @@ const state = reactive({
   remarks: {},
 })
 
-onMounted(() => {
-  loadGroupDetails()
-})
-
+// Initialize state
 if (props.group?.indicator_group_elements) {
   props.group.indicator_group_elements.forEach(el => {
     state.male[el.indicator_no] = el.male_value ?? 0
@@ -108,16 +117,68 @@ if (props.group?.indicator_group_elements) {
   })
 }
 
-async function loadGroupDetails() {
-  const groupId = props.group?.id
-  if (!groupId) {
-    console.warn('No group ID provided')
-    return
-  }
+async function get_group_details() {
+  try {
+    const group = props.group
 
-  console.log('loadGroupDetails')
-  const res = await indicatorService.getIndicatorCategories({ group_id_detail: groupId })
-  console.log('Loaded group details:', res)
+    const params = {
+      indicator_group_id: group.group_no ?? null, // dynamic group number
+      report_year: Number(props.selected_year),
+    }
+
+    console.log('Fetching with params:', params)
+
+    const response = await reportDetailsService.getReportDetails(params)
+    console.log('Response:', response)
+
+    if (response.data && Array.isArray(response.data)) {
+      response.data.forEach((item) => {
+        const indicatorNo = item.indicator_no
+        if (!indicatorNo) return
+
+        state.male[indicatorNo] = item.male ?? 0
+        state.female[indicatorNo] = item.female ?? 0
+        state.total[indicatorNo] = item.total ?? 0
+        state.remarks[indicatorNo] = item.remarks ?? ''
+      })
+    }
+  } catch (error) {
+    console.error('Error fetching rights entry config:', error)
+  }
 }
+
+// async function get_group_details() {
+//     try {
+
+//         const group = props.group
+
+//         //indicator_group_id
+//         //report_year
+
+       
+//         const group_id_detail = group.group_no ? group.group_no : null      
+//           let params = {
+//             indicator_group_id: 6,
+//             report_year: Number(props.selected_year),
+//         }
+
+//         console.log('group no:', group_id_detail)
+//         console.log('params no:', params)
+//         const response = await reportDetailsService.getReportDetails(params)
+//         console.log('response', response)
+
+//         if (response.data) {
+        
+//         }
+//     } catch (error) {
+//         console.error('Error fetching rights entry config:', error)
+//     }
+// }
+
+
+
+
+
+
 </script>
 

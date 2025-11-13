@@ -37,7 +37,10 @@ name: {
     type: String,
     required: false,
 },
-modelValue: Number,
+modelValue: {
+        type: [String, Number],
+        default: '',
+    },
 disabled: {
     type: Boolean,
     default: false,

@@ -98,7 +98,7 @@
                              
                               <button
                                 class="text-xs bg-blue-700 text-white px-2 py-0.5 rounded hover:bg-blue-500 hover:text-black"
-                                @click.stop="openGroupModal('view', group)">
+                                @click.stop="openGroupModal('view', group, category.description, subcategory.description)">
                                 View Entries
                               </button>
                             </div>

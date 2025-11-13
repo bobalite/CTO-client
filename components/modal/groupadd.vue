@@ -8,24 +8,30 @@
         <div
           class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16 border-solid border-grey border-t pb-4 max-h-[80vh] overflow-y-auto">
           <!-- Header Row -->
-          
+
+
+
           <GridCell
             class="sm:col-span-1 flex bg-yellow-400  justify-center text-xl text-black border-white border-l border-b pb-1"
             :displaytext="props.selected_year" />
-          
-            <GridCell
+
+          <GridCell
             class="sm:col-span-15 flex  bg-green-700 justify-center text-sm text-black border-white border-r pb-1"
             :displaytext="category" />
 
           <GridCell
-            class="sm:col-span-1 flex bg-yellow-400 justify-center text-xl text-black border-white border-l border-r border-b pb-1"
-            :displaytext="group.group_no" />
+            class="sm:col-span-1 flex bg-yellow-400 justify-center text-md text-black border-white border-l border-r border-b pb-1"
+            :displaytext="'No. ' + group.group_no" />
 
           <GridCell
             class="sm:col-span-15 flex justify-center items-left text-md text-white table-header-text border-white border-r border-b pb-1"
             :displaytext="subcategory" />
 
+
           <!-- Column Headers -->
+          <GridCell class="sm:col-span-1 px-2 text-center table-header-4 text-xs border-white ring-1 ring-white pb-1"
+            :displaytext="'TYPE'" />
+
           <GridCell class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
             :displaytext="'INDICATOR'" />
           <GridCell class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
@@ -35,29 +41,42 @@
           <GridCell class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-grey pb-1"
             :displaytext="'TOTAL'" />
           <GridCell
-            class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
+            class="sm:col-span-3 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
             :displaytext="'REMARKS'" />
 
           <!-- Data Rows -->
           <template v-for="el in group.indicator_group_elements" :key="el.indicator_no">
-            <GridCell class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
-              :displaytext="el.indicator_no" />
-            <GridCell class="sm:col-span-5 px-1 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
-              :displaytext="el.description" />
 
-            <GridTextEntry v-model="state.male[el.indicator_no]"
-              class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.male" />
+            <template v-if="el.value_type !== 'excel'">
 
-            <GridTextEntry v-model="state.female[el.indicator_no]"
-              class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.female" />
+              <GridCell class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
+                :displaytext="el.submition_type" />
 
-            <GridTextEntry v-model="state.total[el.indicator_no]"
-              class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.total" />
+              <GridCell class="sm:col-span-6 px-1 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
+                :displaytext="el.indicator_no + ' ' + el.description" />
 
-            <GridTextArea v-model="state.remarks[el.indicator_no]"
-              class="sm:col-span-4 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
-              :entrystatus="el.remarks" :displaytext="''" />
+              <GridTextEntry v-model="state.male[el.indicator_no]"
+                class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.male" />
+
+              <GridTextEntry v-model="state.female[el.indicator_no]"
+                class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.female" />
+
+              <GridTextEntry v-model="state.total[el.indicator_no]"
+                class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.total" />
+
+              <GridTextArea v-model="state.remarks[el.indicator_no]"
+                class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
+                :entrystatus="el.remarks" :displaytext="''" />
+            </template>
+
+            <template v-else>
+              <FormExelUpload :displaytext="el.indicator_no + ' ' + el.description"  v-if="el.value_type === 'excel'"  class="sm:col-span-16 px-1 table-header-4 text-center text-xs border-l border-t-4 border-b border-grey pb-1"/>
+            </template>
+
           </template>
+          <GridCell
+            class="sm:col-span-16 flex  bg-green-700 justify-center text-sm text-black border-white border-r pb-1"
+             />
         </div>
 
         <!-- Action Buttons -->
@@ -78,12 +97,32 @@
       </div>
     </div>
   </transition>
+
+  <transition name="fade">
+    <div v-if="isSaving" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100]">
+      <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center gap-3 text-center">
+        <svg class="animate-spin h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <p class="text-lg font-semibold text-gray-700">Saving data...</p>
+      </div>
+    </div>
+  </transition>
+
+
+
+
+
+
 </template>
 
 <script setup>
 import { reactive } from 'vue'
 import { reportDetailsService } from '~/components/api/ReportDetailsService';
-
+const emit = defineEmits(['close'])
+const isSaving = ref(false)
 
  //state.selected_year_id = state.selected_year_id
  //   state.selected_year 
@@ -106,6 +145,55 @@ const state = reactive({
   total: {},
   remarks: {},
 })
+
+onMounted(() => {
+  if (props.show) {
+    get_group_details()
+  }
+})
+
+watch(() => props.show, (newVal) => {
+  if (newVal) get_group_details()
+})
+
+
+async function get_group_details() {
+  try {
+    const group = props.group
+    console.log('Fetching details for group:', group)
+
+    const params = {
+      indicator_group_id: group.group_no ?? null, // dynamic group number
+      report_year: Number(props.selected_year),
+    }
+
+    const indicator = group.indicator_group_elements.find(el => el.indicator_no === group.group_no);
+    console.log('submition_type',indicator?.submition_type);
+
+    console.log('Fetching with params:', params)
+
+    const response = await reportDetailsService.getReportDetails(params)
+    console.log('Response:', response)
+
+    if (response.data && Array.isArray(response.data)) {
+      response.data.forEach((item) => {
+        const indicatorNo = item.indicator_no
+        if (!indicatorNo) return
+
+        state.male[indicatorNo] = item.male ?? 0
+        state.female[indicatorNo] = item.female ?? 0
+        state.total[indicatorNo] = item.total ?? 0
+        state.remarks[indicatorNo] = item.remarks ?? ''
+      })
+    }
+  } catch (error) {
+    console.error('Error fetching rights entry config:', error)
+  }
+}
+
+
+
+
 
 // Initialize state
 if (props.group?.indicator_group_elements) {
@@ -253,13 +341,13 @@ const computeTotals = () => {
 }
 
 const saveIndicators = async () => {
+  isSaving.value = true; // show the loading modal
   try {
     const reportYearId = Number(props.selected_year_id)
     let successCount = 0
     let errorCount = 0
-    const existingRecords = [] // to collect all existing ones
+    const existingRecords = []
 
-    // Step 1️⃣ Loop through indicators and check existence
     for (const el of props.group.indicator_group_elements) {
       try {
         const params = {
@@ -277,232 +365,47 @@ const saveIndicators = async () => {
 
         const res = await reportDetailsService.createReportDetails(params)
 
-        // Collect existing records for later update
         if (res.exists && res.existing_id) {
           existingRecords.push({ id: res.existing_id, params })
         } else if (res?.data) {
           successCount++
-          console.log('✅ Created new record:', res.data.id)
         } else {
           errorCount++
         }
       } catch (error) {
-        console.error(`❌ Error saving indicator ${el.indicator_no}:`, error)
         errorCount++
       }
     }
 
-    // Step 2️⃣ If there are existing records, ask once
     if (existingRecords.length > 0) {
       const confirmUpdate = confirm(
         `${existingRecords.length} record(s) already exist. Do you want to update all of them?`
       )
-
       if (confirmUpdate) {
-        // Step 3️⃣ Update all existing ones
         for (const item of existingRecords) {
           try {
             await reportDetailsService.updateReportDetails(item.params, item.id)
             successCount++
-            console.log(`🔁 Updated existing record ID: ${item.id}`)
-          } catch (error) {
-            console.error(`❌ Error updating record ID ${item.id}:`, error)
+          } catch {
             errorCount++
           }
         }
-      } else {
-        console.log('⏹️ User cancelled updating existing records.')
       }
     }
 
-    console.log(`✅ Save complete. Success: ${successCount}, Errors: ${errorCount}`)
+    alert(
+      `Process complete: ${successCount} successful insertions , ${errorCount > 0 ? `, ${errorCount} errors` : ''}.`
+    )
+    emit('close')
   } catch (error) {
-    console.error('❌ Error in saveIndicators:', error)
+    alert('Unexpected error while saving data.')
+    console.error(error)
+  } finally {
+    isSaving.value = false // hide modal
   }
 }
 
 
-// const saveIndicators = async () => {
-//   try {
-//     const reportYearId = Number(props.selected_year_id)
-//     let successCount = 0
-//     let errorCount = 0
-
-//     // Loop through each indicator group element
-//     for (const el of props.group.indicator_group_elements) {
-//       try {
-//         const params = {
-//           indicator_no: el.indicator_no,
-//           male: Number(state.male[el.indicator_no]) || 0,
-//           female: Number(state.female[el.indicator_no]) || 0,
-//           total: Number(state.total[el.indicator_no]) || 0,
-//           remarks: state.remarks[el.indicator_no] || '',
-//           indicator_group_element_id: el.id,
-//           indicator_group_id: props.group.id,
-//           report_year_id: reportYearId, // numeric and clean for Laravel
-//           report_year: props.selected_year,
-//           is_active: 1,
-//         }
-
-//         console.log('Saving indicator:', params)
-
-//         const res = await reportDetailsService.createReportDetails(params);
-
-//         if (res.exists) {
-//           const confirmUpdate = confirm(res.message + ' Update existing record?');
-//           if (confirmUpdate) {
-
-//             console.log('res.existing_id', res.existing_id);
-//             console.log('params', params);
-//             await reportDetailsService.updateReportDetails(params, res.existing_id);
-//             console.log('✅ Updated existing record');
-          
-          
-//           } else {
-//             console.log('⏹️ Cancelled');
-//           }
-//         } else {
-//           console.log('✅ Created new record:', res.data.id);
-//         }
-
-
-//         //console.log(`Response for indicator ${el.indicator_no}:`, response)
-
-//         if (res?.data) {
-//           successCount++
-//         } else {
-//           errorCount++
-//         }
-
-//       } catch (error) {
-//         console.error(`Error saving indicator ${el.indicator_no}:`, error)
-//         errorCount++
-//       }
-//     }
-
-//     console.log(`✅ Save complete. Success: ${successCount}, Errors: ${errorCount}`)
-
-//   } catch (error) {
-//     console.error('❌ Error in saveIndicators:', error)
-//   }
-// }
-
-
-
-// const saveIndicators = async () => {
-//   try {
-//     // 🧠 Always ensure report_year_id is a Number
-//     const reportYearId = Number(props.selected_year_id)
-
-//     const payload = props.group.indicator_group_elements.map(el => ({
-//       indicator_no: String(el.indicator_no),
-//       male: Number(state.male[el.indicator_no]) || 0,
-//       female: Number(state.female[el.indicator_no]) || 0,
-//       total: Number(state.total[el.indicator_no]) || 0,
-//       remarks: state.remarks[el.indicator_no] || '',
-//       indicator_group_element_id: el.id,
-//       indicator_group_id: props.group.id,
-//       report_year_id: reportYearId,   // ✅ numeric, clean for Laravel
-//       report_year: props.selected_year,
-//       is_active: 1,
-      
-//     }))
-
-//     console.log('Payload to be saved:', payload)
-
-//     // Example call to backend repo:
-    
-//      const response = await reportDetailsService.createReportDetails(payload);
-
-//   } catch (error) {
-//     console.error('Error saving indicators:', error)
-//   }
-// }
-
-
-
-
-// async function saveReportDetails() {
-
-//     var successcount = 0;
-//     var errorcount = 0;
-
-//     if (state.datasource_id == 0) {
-//         alert("Please select a datasource.")
-//         //openAlertModal(state.group, 'Please select a datasource.', state.group_header, errorcount, successcount)
-
-//         return;
-//     }
-    
-//     for (const el of group.indicator_group_elements) {
-//         console.log(el.id, el.name)
-//       // await someAsyncFunction(el)
-//     }
-
-
-
-//     for (let i = 0; i < state.Selected_Rights_entry_config_group.data.length; i++) {
-//         try {
-//             let true_grand_total = 0
-
-//             if (state.Selected_Rights_entry_config_group.data[i].tier_level == 1) {
-
-//                 true_grand_total = state.grand_total[state.Selected_Rights_entry_config_group.data[i].sequence_header]
-
-//             } else {
-//                 // this should be changed for those entries that are not human count.
-//                 //true_grand_total = 0
-//                 //-----------------------------------------------------------    
-//             }
-//             let params = {
-
-//                 sequence_header: state.Selected_Rights_entry_config_group.data[i].sequence_header,
-//                 male: state.male[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-//                 female: state.female[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-//                 total: state.total[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-//                 grand_total: true_grand_total,
-//                 remarks: state.remarks[state.Selected_Rights_entry_config_group.data[i].sequence_header],
-//                 entry_type: state.selected_entry_type,
-//                 rights_entry_config_id: state.Selected_Rights_entry_config_group.data[i].id,
-//                 report_year_id: state.selected_year_id,
-//                 agency_id: state.datasource_id,
-//                 group_id: state.Selected_Rights_entry_config_group.data[i].group,
-//                 group_agency_datasource_id: state.datasource_id,
-//                 is_active: 1,
-//                 report_schedule: state.report_schedule
-//                 //report_year: state.options.report_years[state.selected_year_id].year,
-//             }
-
-//             //console.log('params', params)
-//             const response = await reportDetailsService.createReportDetails(params);
-//             if (response.data) {
-//                 successcount = successcount + 1;
-//                 //successAlert("Success!", 'Successfully Added to database.')
-//             } else {
-//                 errorcount = errorcount + 1;
-//             }
-
-//         } catch (error) {
-//             //console.log('error', error)
-//             errorcount = errorcount + 1;
-//             alert("Error in saving data. Please check the values you entered.")
-//             state.isAddModalOpen = false
-//         }
-//     }
-
-
-//     if (successcount > 0) {
-//         //successAlert("Success!", 'Successfully Added to database.')
-//         state.successcount = successcount;
-//         state.errorcount = errorcount;
-//         openAlertModal(state.group, 'Successfully Added to the database.', state.group_header, errorcount, successcount)
-//         state.isAddModalOpen = false
-//     }
-
-
-//     //state.buttonsavenew = true;
-
-// }
 
 
 </script>

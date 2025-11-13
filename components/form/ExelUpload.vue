@@ -3,7 +3,7 @@
     <input type="file" accept=".xlsx, .xls, .csv" @change="handleFileUpload" />
 
     <div v-if="excelData.length" class="mt-4">
-      <h2 class="text-lg font-bold mb-2">Parsed Excel Data:</h2>
+      <h2 class="text-lg font-bold mb-2">{{displaytext}}</h2>
 
       <div class="overflow-x-auto"> <!-- makes it scrollable on small screens -->
         <table class="min-w-full w-full divide-y divide-gray-300 border border-gray-300">
@@ -38,6 +38,16 @@ import { ref } from "vue";
 
 const excelData = ref([]);
 const headers = ref([]);
+
+const props = defineProps({
+
+  displaytext: {
+    type: String,
+    required: false,
+  },
+
+})
+
 
 // normalize headers to snake_case
 const normalizeHeader = (header) =>
