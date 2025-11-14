@@ -3,7 +3,7 @@
     <input type="file" accept=".xlsx, .xls, .csv" @change="handleFileUpload" />
 
     <div v-if="excelData.length" class="mt-4">
-      <h2 class="text-lg font-bold mb-2">{{displaytext}}</h2>
+      <!-- <h2 class="text-lg font-bold mb-2">{{displaytext}}</h2> -->
 
       <div class="overflow-x-auto"> <!-- makes it scrollable on small screens -->
         <table class="min-w-full w-full divide-y divide-gray-300 border border-gray-300">
@@ -38,35 +38,18 @@ import { ref } from "vue";
 
 const excelData = ref([]);
 const headers = ref([]);
+const emit = defineEmits(["excel-loaded"]);
+
+emit("excel-loaded", {
+  indicator_no: props.indicatorNo,  // NEW
+  rows: excelData.value,
+});
 
 const props = defineProps({
+  displaytext: String,
+  indicatorNo: [String, Number],  // NEW
+});
 
-  displaytext: {
-    type: String,
-    required: false,
-  },
-
-})
-
-
-// normalize headers to snake_case
-const normalizeHeader = (header) =>
-  String(header)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "_")
-    .replace(/[^\w_]/g, "")
-    .replace(/_+/g, "_");
-
-// alias fixes
-const aliasHeader = (key) => {
-  const m = {
-    no: "id",
-    number: "id",
-    desease_name: "disease_name", // typo fix
-  };
-  return m[key] || key;
-};
 
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
@@ -80,35 +63,26 @@ const handleFileUpload = async (event) => {
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
-    // use raw array so we control header parsing
-    const raw = XLSX.utils.sheet_to_json(worksheet, {
-      header: 1, // get rows as arrays
-      defval: "",
-    });
-
+    const raw = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
     if (!raw.length) return;
 
-    // first row = headers
     const originalHeaders = raw[0];
-    const columns = originalHeaders.map((h) => {
-      const normalized = normalizeHeader(h);
-      return aliasHeader(normalized);
-    });
+    const columns = originalHeaders.map((h) =>
+      String(h).trim().toLowerCase().replace(/\s+/g, "_")
+    );
 
     headers.value = columns;
 
-    // remaining rows = data
     excelData.value = raw.slice(1).map((row) => {
       const obj = {};
-      columns.forEach((col, idx) => {
-        obj[col] = row[idx];
-      });
-
-      // optional number coercion
-      if (obj.id !== undefined && obj.id !== "") obj.id = Number(obj.id);
-      if (obj.count !== undefined && obj.count !== "") obj.count = Number(obj.count);
-
+      columns.forEach((col, idx) => (obj[col] = row[idx]));
       return obj;
+    });
+
+    // ✅ Emit the parsed rows to the parent modal
+    emit("excel-loaded", {
+      indicator_no: props.displaytext, // you pass indicator_no in displaytext
+      rows: excelData.value,
     });
   };
 

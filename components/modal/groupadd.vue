@@ -70,7 +70,25 @@
             </template>
 
             <template v-else>
-              <FormExelUpload :displaytext="el.indicator_no + ' ' + el.description"  v-if="el.value_type === 'excel'"  class="sm:col-span-16 px-1 table-header-4 text-center text-xs border-l border-t-4 border-b border-grey pb-1"/>
+              <GridCell class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
+                :displaytext="el.submition_type" />
+
+              <GridCell class="sm:col-span-6 px-1 text-left table-header-4 text-xl border-white ring-1 ring-white pb-1"
+                :displaytext="el.indicator_no + ' ' + el.description" />
+
+
+              <FormExelUpload 
+                :displaytext="el.indicator_no + ' ' + el.description"
+                :indicatorNo="el.indicator_no"  
+                v-if="el.value_type === 'excel'"
+                @excel-loaded="handleExcelData"  
+                class="sm:col-span-6 px-1 table-header-4 text-center text-xs border-l border-t-4 border-b border-grey pb-1"
+                />
+              
+              <GridTextArea v-model="state.remarks[el.indicator_no]"
+                class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
+                :entrystatus="el.remarks" :displaytext="''" />
+            
             </template>
 
           </template>
@@ -121,6 +139,7 @@
 <script setup>
 import { reactive } from 'vue'
 import { reportDetailsService } from '~/components/api/ReportDetailsService';
+import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
 const emit = defineEmits(['close'])
 const isSaving = ref(false)
 
@@ -145,6 +164,8 @@ const state = reactive({
   total: {},
   remarks: {},
 })
+
+const excelUploads = reactive({});
 
 onMounted(() => {
   if (props.show) {
@@ -189,6 +210,13 @@ async function get_group_details() {
   } catch (error) {
     console.error('Error fetching rights entry config:', error)
   }
+}
+
+
+function handleExcelData(payload) {
+  // payload: { indicator_no, rows }
+  excelUploads[payload.indicator_no] = payload.rows;
+  console.log("Excel stored:", excelUploads);
 }
 
 
@@ -339,6 +367,88 @@ const computeTotals = () => {
 
   })
 }
+
+// const saveIndicators = async () => {
+//   isSaving.value = true;
+
+//   try {
+//     const reportYearId = Number(props.selected_year_id);
+
+//     for (const el of props.group.indicator_group_elements) {
+
+//       // --------------------------------------------
+//       //  CASE 1 — NORMAL FIELDS (male/female/total)
+//       // --------------------------------------------
+//       if (el.value_type !== "excel") {
+//         const params = {
+//           indicator_no: el.indicator_no,
+//           male: Number(state.male[el.indicator_no]) || 0,
+//           female: Number(state.female[el.indicator_no]) || 0,
+//           total: Number(state.total[el.indicator_no]) || 0,
+//           remarks: state.remarks[el.indicator_no] || "",
+//           indicator_group_element_id: el.id,
+//           indicator_group_id: props.group.id,
+//           report_year_id: reportYearId,
+//           report_year: props.selected_year,
+//           is_active: 1,
+//         };
+
+//         await reportDetailsService.createReportDetails(params);
+//       }
+
+//       // --------------------------------------------
+//       //  CASE 2 — EXCEL UPLOAD
+//       // --------------------------------------------
+//       else {
+//         const excelRows = excelUploads[el.indicator_no];
+
+//         if (!excelRows || excelRows.length === 0) continue;
+
+//         // transform each parsed row into the model's expected fields
+//         const payloadRows = excelRows.map((r) => {
+//           // r is an object whose keys are the column "slugs" (e.g. 'name', 'value', 'remarks')
+//           const keys = Object.keys(r);
+
+//           const k1 = keys[0] ?? "";
+//           const k2 = keys[1] ?? "";
+//           const k3 = keys[2] ?? "";
+
+//           return {
+//             report_year_id: reportYearId, // include top-level metadata for convenience (backend can ignore or use)
+//             indicator_no: String(el.indicator_no),
+//             indicator_group_element_id: el.id,
+//             header_name1: k1,
+//             header_value1: r[k1] ?? "",
+//             header_name2: k2,
+//             header_value2: r[k2] ?? "",
+//             header_name3: k3,
+//             header_value3: r[k3] ?? "",
+//             is_active: 1,
+//             report_year: props.selected_year,
+//           };
+//         });
+
+//         // send bulk payload to Excel-specific service endpoint
+//         await reportDetailsExcelService.saveExcelRows({
+//           indicator_group_id: props.group.id,
+//           indicator_group_element_id: el.id,
+//           indicator_no: el.indicator_no,
+//           report_year_id: reportYearId,
+//           report_year: props.selected_year,
+//           rows: payloadRows,
+//         });
+//       }
+//     }
+
+//     alert("Saved!");
+//     emit("close");
+//   } catch (error) {
+//     alert("Error saving data");
+//   } finally {
+//     isSaving.value = false;
+//   }
+// };
+
 
 const saveIndicators = async () => {
   isSaving.value = true; // show the loading modal

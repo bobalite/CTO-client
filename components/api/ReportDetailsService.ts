@@ -30,6 +30,8 @@ class ReportDetailsService extends BaseAPIService {
         return await this.request(`/report_detail/${group_id}`, "GET", params );
     }
 
+  
+
 }
 
 export const reportDetailsService = new ReportDetailsService(); 
