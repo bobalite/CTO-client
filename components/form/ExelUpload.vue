@@ -36,37 +36,38 @@
 import * as XLSX from "xlsx";
 import { ref } from "vue";
 
-const excelData = ref([]);
-const headers = ref([]);
-const emit = defineEmits(["excel-loaded"]);
-
-emit("excel-loaded", {
-  indicator_no: props.indicatorNo,  // NEW
-  rows: excelData.value,
-});
-
+// MUST come first before use
 const props = defineProps({
   displaytext: String,
-  indicatorNo: [String, Number],  // NEW
+  indicatorNo: [String, Number],
 });
 
+const emit = defineEmits(["excel-loaded"]);
+
+const excelData = ref([]);
+const headers = ref([]);
 
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
+
   reader.onload = (e) => {
     const data = new Uint8Array(e.target.result);
     const workbook = XLSX.read(data, { type: "array" });
-
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
-    const raw = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+    const raw = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      defval: "",
+    });
+
     if (!raw.length) return;
 
     const originalHeaders = raw[0];
+
     const columns = originalHeaders.map((h) =>
       String(h).trim().toLowerCase().replace(/\s+/g, "_")
     );
@@ -79,9 +80,9 @@ const handleFileUpload = async (event) => {
       return obj;
     });
 
-    // ✅ Emit the parsed rows to the parent modal
+    // emit AFTER file is processed
     emit("excel-loaded", {
-      indicator_no: props.displaytext, // you pass indicator_no in displaytext
+      indicator_no: props.indicatorNo, // correct usage
       rows: excelData.value,
     });
   };
@@ -89,3 +90,4 @@ const handleFileUpload = async (event) => {
   reader.readAsArrayBuffer(file);
 };
 </script>
+

@@ -1,7 +1,8 @@
+// components/api/ReportDetailsExcelService.ts
 import BaseAPIService from "./BaseAPIService";
 
 class ReportDetailsExcelService extends BaseAPIService {
-    
+
     async getReportExcelDetails(params: object): Promise<any> { 
         return await this.request(`/report_detail`, "GET", params);
     }
@@ -26,13 +27,13 @@ class ReportDetailsExcelService extends BaseAPIService {
         return await this.request(`/report_detail/${id}`, "DELETE");
     }
 
-    async saveExcelRows(params: object, id: any /* { indicator_no, report_year_id, rows: [...] } */) {
-        // I prefer a dedicated route like /report_detail_excel/bulk to avoid collisions
-        return await this.request(`/report_detail_excel/bulk`, "POST", params);
+    /**
+     * Bulk save Excel rows
+     * payload: { rows: [ { indicator_no, header_name1, header_value1, ... } ] }
+     */
+    async saveExcelRows(payload: { rows: object[] }): Promise<any> {
+        return await this.request(`/report_detail_excel/bulk`, "POST", payload);
     }
-    
-    
-
 }
 
-export const reportDetailsExcelService = new ReportDetailsExcelService(); 
+export const reportDetailsExcelService = new ReportDetailsExcelService();

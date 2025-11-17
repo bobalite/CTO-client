@@ -27,8 +27,8 @@
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                        
-<!--                    <h2 class="  text-base font-semibold leading-6 text-gray-900">Status:</h2>
+
+                        <!--                    <h2 class="  text-base font-semibold leading-6 text-gray-900">Status:</h2>
                         <div
                             class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-10  border-solid border-grey border-t pb-4 pt-4">
                             <GraphsGrp02 v-if="true" :key="state.refresh_graphs_toggle"
@@ -69,7 +69,81 @@
 
 
         <div class="sm:flex sm:items-center">
+
             <ModalDisplayform :show="state.isAddModalOpen" :close="state.closeAddModal" :title="'Add New Schedule'">
+                <div class="max-h-[70vh] overflow-y-auto p-6">
+
+                    <!-- 2 column layout -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10">
+
+                        <!-- ===== Year ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Year:</label>
+                            <GridSelect v-model="state.year" :displaytext="state.year" :options="state.year_options"
+                                @click="set_other_fields" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Name ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Name:</label>
+                            <GridSelect v-model="state.name" :displaytext="state.name" :options="state.name_options"
+                                @click="set_other_fields" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Description ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Description:</label>
+                            <GridText2 v-model="state.description" :displaytext="state.description"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Status ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Status:</label>
+                            <GridSelect v-model="state.status" :displaytext="state.status"
+                                :options="state.status_options" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Date Start ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Date Start:</label>
+                            <GridDate v-model="state.date_start" :displaytext="state.date_start"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Date End ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Date End:</label>
+                            <GridDate v-model="state.date_end" :displaytext="state.date_end" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ===== Submission Deadline ===== -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Submission Deadline:</label>
+                            <GridDate v-model="state.submition_deadline" :displaytext="state.submition_deadline"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-4 mt-10">
+                        <button class="rounded-md bg-gray-300 px-4 py-2 font-medium text-black hover:bg-gray-400"
+                            @click="cancelAddModal">
+                            Cancel
+                        </button>
+
+                        <button class="rounded-md bg-green-600 px-6 py-2 font-semibold text-white hover:bg-green-500"
+                            @click="SaveNewSchedule">
+                            Save New Schedule
+                        </button>
+                    </div>
+
+                </div>
+            </ModalDisplayform>
+
+
+            <!-- <ModalDisplayform :show="state.isAddModalOpen" :close="state.closeAddModal" :title="'Add New Schedule'">
                 <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-11">
 
                     <GridCell class="sm:col-span-10  pb-4" :displaytext="''" />
@@ -78,22 +152,18 @@
 
                     <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Year:'" />
                     <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.year"
-                        :displaytext="state.year" :options="state.year_options" @click="set_other_fields"/>
+                        :displaytext="state.year" :options="state.year_options" @click="set_other_fields" />
 
-                    <!-- <GridText2
-                        class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.name" :displaytext="state.name" :function="check_errors" /> -->
+                    
                     <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.year_error" />
 
 
 
                     <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Name:'" />
                     <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.name"
-                        :displaytext="state.name" :options="state.name_options" @click="set_other_fields"/>
+                        :displaytext="state.name" :options="state.name_options" @click="set_other_fields" />
 
-                    <!-- <GridText2
-                        class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.name" :displaytext="state.name" :function="check_errors" /> -->
+                    
                     <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
 
 
@@ -145,13 +215,14 @@
                     <GridCell class="sm:col-span-1 " :displaytext="''" />
                     <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold 
                      text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="SaveNewSchedule"> Save New Schedule
+                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="SaveNewSchedule"> Save
+                        New Schedule
                     </button>
                 </div>
 
-            </ModalDisplayform>
+            </ModalDisplayform> -->
 
-            <ModalDisplayform :show="state.isEditModalOpen" :close="state.closeEditModal"
+            <!-- <ModalDisplayform :show="state.isEditModalOpen" :close="state.closeEditModal"
                 :title="'Edit Selected Schedule'">
                 <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-11">
 
@@ -160,8 +231,7 @@
                     <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
 
                     <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Year:'" />
-                    <!-- <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.year"
-                        :displaytext="state.year" :options="state.year_options" @click="set_other_fields"/> -->
+                   
 
                     <GridText2
                         class="sm:col-span-3 px-1 py-2 bg-white text-left text-md pb-3"
@@ -171,9 +241,7 @@
 
 
                     <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Name:'" />
-                    <!-- <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.name"
-                        :displaytext="state.name" :options="state.name_options" @click="set_other_fields"/> -->
-
+                  
                     <GridText2
                         class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
                         v-model="state.name" :displaytext="state.name" :function="check_errors" :disabled="true"/>
@@ -232,7 +300,82 @@
                     </button>
                 </div>
 
+            </ModalDisplayform> -->
+
+            <ModalDisplayform :show="state.isEditModalOpen" :close="state.closeEditModal"
+                :title="'Edit Selected Schedule'">
+                <div class="max-h-[70vh] overflow-y-auto p-6">
+
+                    <!-- Grid: 2 columns on desktop, 1 on mobile -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10">
+
+                        <!-- ======= Year ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Year:</label>
+                            <GridText2 v-model="state.year" :displaytext="state.year" :function="check_errors"
+                                :disabled="true" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Name ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Name:</label>
+                            <GridText2 v-model="state.name" :displaytext="state.name" :function="check_errors"
+                                :disabled="true" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Description ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Description:</label>
+                            <GridText2 v-model="state.description" :displaytext="state.description"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Status ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Status:</label>
+                            <GridSelect v-model="state.status" :displaytext="state.status"
+                                :options="state.status_options" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Date Start ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Date Start:</label>
+                            <GridDate v-model="state.date_start" :displaytext="state.date_start"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Date End ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Date End:</label>
+                            <GridDate v-model="state.date_end" :displaytext="state.date_end" class="flex-1 bg-white" />
+                        </div>
+
+                        <!-- ======= Submission Deadline ======= -->
+                        <div class="flex items-center">
+                            <label class="w-40 text-md font-medium">Submission Deadline:</label>
+                            <GridDate v-model="state.submition_deadline" :displaytext="state.submition_deadline"
+                                class="flex-1 bg-white" />
+                        </div>
+
+                    </div>
+
+                    <!-- ========== BUTTONS ========== -->
+                    <div class="flex justify-end gap-4 mt-10">
+                        <button class="rounded-md bg-gray-300 px-4 py-2 font-medium text-black hover:bg-gray-400"
+                            @click="closeEditModal">
+                            Cancel
+                        </button>
+
+                        <button class="rounded-md bg-green-600 px-6 py-2 font-semibold text-white hover:bg-green-500"
+                            @click="saveEditModal">
+                            Save Changes
+                        </button>
+                    </div>
+
+                </div>
             </ModalDisplayform>
+
+
 
         </div>
 
@@ -272,7 +415,8 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="reportyears in state.report_years.data"  @click="table_row_getclicked(reportyears)" :key="reportyears.id">
+                                <tr v-for="reportyears in state.report_years.data"
+                                    @click="table_row_getclicked(reportyears)" :key="reportyears.id">
                                     <td
                                         class="whitespace-nowrap py-4 pl-4 pr-3 text-left text-sm font-medium text-gray-900 sm:pl-6">
                                         {{ reportyears.name }}
@@ -282,15 +426,15 @@
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-left text-sm text-gray-500">
-                                        {{reportyears.year }}
+                                        {{ reportyears.year }}
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-left text-sm text-gray-500">
-                                        {{reportyears.date_start }}
+                                        {{ reportyears.date_start }}
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-left text-sm text-gray-500">
-                                        {{reportyears.date_end }}
+                                        {{ reportyears.date_end }}
                                     </td>
 
                                     <td v-if="reportyears.status == 1"
@@ -307,7 +451,7 @@
                                     </td>
 
                                     <td class="whitespace-nowrap px-3 py-4 text-left text-sm text-gray-500">
-                                        {{reportyears.submition_deadline }}
+                                        {{ reportyears.submition_deadline }}
                                     </td>
 
                                     <template v-if="state.logged_user_role.allow_manage_users == 1">
@@ -323,7 +467,7 @@
                                                 </NuxtLink>
                                                 </MenuItem>
 
-                                               
+
 
 
                                             </FormDropdown>
@@ -355,42 +499,42 @@
 
 <script setup>
 import moment from 'moment';
-import {useUserStore} from '~/store/user'
-import {rolesService } from '~/components/api/Roles';
-import {report_yearService } from '~/components/api/ReportYears'; 
-import {MenuItem} from '@headlessui/vue';
+import { useUserStore } from '~/store/user'
+import { rolesService } from '~/components/api/Roles';
+import { report_yearService } from '~/components/api/ReportYears';
+import { MenuItem } from '@headlessui/vue';
 
-const testdate  = new Date('2025-01-01');
+const testdate = new Date('2025-01-01');
 const state = reactive({
     report_year: 2025,
-    report_years:[],
-    current_report_year:[],
-  
+    report_years: [],
+    current_report_year: [],
+
     refresh_graphs_toggle: 0,
-    logged_user_role:{},
+    logged_user_role: {},
     isAddModalOpen: false,
-    
+
 
     isEditModalOpen: false,
     isDisableModalOpen: false,
     isDeleteModalOpen: false,
-    
-    name_error: 2, 
+
+    name_error: 2,
 
     name: '',
     description: 'Annual Childrens Rights Report for DILG',
-    initiated_by: '1' ,
-    year: '' ,
+    initiated_by: '1',
+    year: '',
     date_start: testdate,
     date_end: testdate,
-    status: '' ,
+    status: '',
     submition_deadline: testdate,
 
     status_options: [
         { value: 0, label: 'Encoding Locked' },
         { value: 1, label: 'Open' },
         { value: 2, label: 'Close - In waiting' },
-       
+
     ],
 
     name_options: [
@@ -414,7 +558,7 @@ const state = reactive({
     ],
 
     //OptionsPieDatasource.series.data
-   
+
 
 })
 
@@ -423,42 +567,42 @@ const userStore = useUserStore()
 onMounted(() => {
     fetchreportyear()
     fetch_logged_user_role()
-   
+
 })
 
 
 //moment.format('YYYY-MM-DD HH:mm:ss');
-function set_other_fields(){
+function set_other_fields() {
     console.log("state.name", state.name)
     //state.year =
 
     let year = state.year;
     console.log("state.year", state.year)
     if (state.name == '1st Quarter Report') {
-        state.date_start = moment( new Date(year + '-01-01')).format('YYYY-MM-DD') ;
-        state.date_end =  moment( new Date(year + '-03-31')).format('YYYY-MM-DD') ;
-        state.submition_deadline = moment( new Date(year + '-04-30')).format('YYYY-MM-DD');
+        state.date_start = moment(new Date(year + '-01-01')).format('YYYY-MM-DD');
+        state.date_end = moment(new Date(year + '-03-31')).format('YYYY-MM-DD');
+        state.submition_deadline = moment(new Date(year + '-04-30')).format('YYYY-MM-DD');
     } else if (state.name == '2nd Quarter Report') {
-        state.date_start = moment(new Date(year + '-04-01')).format('YYYY-MM-DD') ;
-        state.date_end = moment(new Date(year + '-06-30')).format('YYYY-MM-DD') ;      
-        state.submition_deadline = moment(new Date(year + '-07-31')).format('YYYY-MM-DD') ;
+        state.date_start = moment(new Date(year + '-04-01')).format('YYYY-MM-DD');
+        state.date_end = moment(new Date(year + '-06-30')).format('YYYY-MM-DD');
+        state.submition_deadline = moment(new Date(year + '-07-31')).format('YYYY-MM-DD');
     } else if (state.name == '3rd Quarter Report') {
-        state.date_start = moment(new Date(year + '-07-01')).format('YYYY-MM-DD') ;
-        state.date_end = moment(new Date(year + '-09-30')).format('YYYY-MM-DD') ;
-        state.submition_deadline = moment(new Date(year + '-10-31')).format('YYYY-MM-DD') ;
-        
+        state.date_start = moment(new Date(year + '-07-01')).format('YYYY-MM-DD');
+        state.date_end = moment(new Date(year + '-09-30')).format('YYYY-MM-DD');
+        state.submition_deadline = moment(new Date(year + '-10-31')).format('YYYY-MM-DD');
+
     } else if (state.name == '4th Quarter Report') {
-        state.date_start = moment(new Date(year + '-10-01')).format('YYYY-MM-DD') ;
-        state.date_end = moment(new Date(year + '-12-31')).format('YYYY-MM-DD') ;
-        state.submition_deadline = moment(new Date(year + '-01-31')).format('YYYY-MM-DD') ;
+        state.date_start = moment(new Date(year + '-10-01')).format('YYYY-MM-DD');
+        state.date_end = moment(new Date(year + '-12-31')).format('YYYY-MM-DD');
+        state.submition_deadline = moment(new Date(year + '-01-31')).format('YYYY-MM-DD');
     } else if (state.name == 'Custumized Date') {
         console.log("state.name", state.name)
     }
 }
 
 
-function openAddScheduleModal(){
-    
+function openAddScheduleModal() {
+
     state.isAddModalOpen = true;
 
 }
@@ -466,7 +610,7 @@ function openAddScheduleModal(){
 function table_row_getclicked(reportyears) {
 
 
-    state.current_report_year =reportyears
+    state.current_report_year = reportyears
     state.name = reportyears.name
     state.description = reportyears.description
     state.initiated_by = reportyears.initiated_by
@@ -485,12 +629,12 @@ function table_row_getclicked(reportyears) {
 // }
 
 
-function SaveNewSchedule(){
-     SaveSchedule();
-     state.isAddModalOpen = false;
+function SaveNewSchedule() {
+    SaveSchedule();
+    state.isAddModalOpen = false;
 }
 
-function saveEditModal(){
+function saveEditModal() {
     SaveEditSchedule();
     state.isEditModalOpen = false;
 }
@@ -561,66 +705,66 @@ async function SaveEditSchedule() {
 }
 
 
-function openEditModal(){
+function openEditModal() {
     state.isEditModalOpen = true
 }
 
-function closeEditModal(){
+function closeEditModal() {
     state.isEditModalOpen = false
 }
 
-function openDisableModal(){
+function openDisableModal() {
     state.isDisableModalOpen = true
 }
 
-function openDeleteModal(){
+function openDeleteModal() {
     state.isDeleteModalOpen = true
 }
 
 
 
-function cancelAddModal(){
+function cancelAddModal() {
     state.isAddModalOpen = false;
 }
 
 async function fetch_logged_user_role() {
     try {
-       
+
         const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
         //console.log(response)
         if (response.data) {
             state.logged_user_role = response.data
-         
+
             //console.log(state.current_user_role)
         }
-    } catch (error) { 
+    } catch (error) {
         console.log(error)
     }
 }
 
 async function fetchreportyear() {
     try {
-           const response = await report_yearService.getReportYears()
+        const response = await report_yearService.getReportYears()
         if (response.data) {
-            
+
             state.report_years.data = response.data
             var data = [];
             var datasources = [];
             var option_datasource = [];
             if (state.report_years.data != null) {
-                
+
                 datasources = state.report_years.data
                 console.log("state.report_years.data", state.report_years.data)
 
-                
+
             }
 
         }
-    } catch (error) { 
+    } catch (error) {
         console.log(error)
     }
 
-    
+
 }
 
 
@@ -628,21 +772,22 @@ async function fetchreportyear() {
 
 const check_errors = computed(() => {
 
-try {
-    if (state.name === '') {
-        state.name_error = 2
-    } else if (state.name.length <= 5) {
-        state.name_error = 1
-    }
-    else if (state.name.length > 5) {
-        state.name_error = 3
-    } else {
-        state.name_error = 0
-    }
+    try {
+        if (state.name === '') {
+            state.name_error = 2
+        } else if (state.name.length <= 5) {
+            state.name_error = 1
+        }
+        else if (state.name.length > 5) {
+            state.name_error = 3
+        } else {
+            state.name_error = 0
+        }
 
-} catch (error) {
-    state.name_error = 2
-}})
+    } catch (error) {
+        state.name_error = 2
+    }
+})
 
 
 
