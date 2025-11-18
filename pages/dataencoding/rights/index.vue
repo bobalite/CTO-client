@@ -174,6 +174,8 @@ import { useUserStore } from '~/store/user'
 import { report_yearService } from '~/components/api/ReportYears';
 import { Childrens_rightsService } from '~/components/api/Rights';
 
+const userStore = useUserStore()
+
 
 
 definePageMeta({
@@ -185,7 +187,7 @@ onMounted(() => {
     fetchreportyear()
     fetchRights()
 
-    //fetchrole()
+    fetchrole()
     fetchRights_entry_config()
 
 })
@@ -313,7 +315,29 @@ async function fetchRights_entry_config() {
 }
 
 
+async function fetchrole() {
+    try {
 
+        console.log('userStore.getUser.userRole.role_id',userStore.getUser.userRole.role_id)
+        
+        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
+        console.log('response in fetchrole',response)
+      
+        state.currentUser = userStore.getUser.userRole.agency_id
+         console.log('user_agency', state.currentUser)
+         console.log(state.currentUser.id)
+         console.log('userRole', userStore.getUser.userRole.name)
+         console.log('user_role_id', state.roles)
+
+        if (response.data) {
+            state.roles = response.data
+
+            console.log(state.roles)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 async function fetchRights() {
