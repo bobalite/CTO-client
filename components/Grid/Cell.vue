@@ -8,7 +8,7 @@
 const props = defineProps({
     class: {
         type: String,
-        required: true,
+        required: false,
         default: 'border-solid',
     },
     displaytext:{

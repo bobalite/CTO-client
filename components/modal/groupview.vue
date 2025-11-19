@@ -63,14 +63,14 @@
           </template>
 
           <!-- Mixed Mode Header -->
-          <template v-else>
+          <!-- <template v-else>
             <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="INDICATOR" />
             <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="VALUE" />
             <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-b border-r border-grey pb-1"
               displaytext="REMARKS" />
-          </template>
+          </template> -->
 
           <!-- ========================================= -->
           <!--            DATA ROWS (UNCHANGED)          -->
@@ -100,20 +100,72 @@
             </template>
 
             <template v-else>
-              <GridCell class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
-                :displaytext="el.indicator_no" />
+              <!-- Indicator + description row -->
+              <GridTextView class="sm:col-span-1 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1"
+                v-model="el.indicator_no" />
 
-              <GridCell class="sm:col-span-5 px-1 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
-                :displaytext="el.description" />
-
-              <GridTextEntry v-model="state.header_name1" class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="2" />
-              <GridTextEntry v-model="state.header_name2" class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="2" />
-              <GridTextEntry v-model="state.header_name3" class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="2" />
-
-              <GridTextArea v-model="state.remarks[el.indicator_no]"
-                class="sm:col-span-4 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
+              <GridTextView :entrystatus="2" class="sm:col-span-11 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1 " 
+                v-model="el.description" />
+              
+                <GridTextArea v-model="state.remarks[el.indicator_no]"
+                class="sm:col-span-4 px-2 text-center table-header-4  text-xs border-white ring-1 ring-white pb-1"
                 :entrystatus="el.remarks" displaytext="" />
+             
+
+              <!-- Excel VALUE headers -->
+           
+
+           
+ 
+
+                 <!-- Excel VALUE headers -->
+              <GridCell
+                  class="sm:col-span-1 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  :displaytext="state.header_name1" />
+
+               
+                <GridCell 
+                  class="sm:col-span-12 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  :displaytext="state.header_name2 || ''" />
+                
+                
+                  <GridCell v-model="state.header_name3"
+                  class="sm:col-span-3 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  :displaytext="state.header_name3 || ''" />
+  
+
+              <!-- Excel rows for this indicator -->
+              <template v-for="row in state.exceldata" :key="el.indicator_no">
+
+           
+
+                <!-- spacer to keep alignment (1 + 5 cols already used above) -->
+
+                <template v-if="row.indicator_no === el.indicator_no">
+                  <!-- No. -->
+                  <GridCell
+                    class="sm:col-span-1 px-1 text-left table-header-4 text-xs bg-green-100  border-white ring-1 ring-white pb-1"
+                    :entrystatus="1" :displaytext="row.header_value1" />
+
+                                <!-- Disease Name -->
+                   <GridCell
+                    class="sm:col-span-12 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                    :entrystatus="1" :displaytext="row.header_value2" />
+
+                  <!-- Count -->
+                 <GridCell
+                    class="sm:col-span-3 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                    :entrystatus="1" :displaytext="row.header_value3" />
+
+           
+
+                </template>
+
+              </template>
             </template>
+
+
+
 
           </template>
         </div>
@@ -153,6 +205,8 @@ const state = reactive({
   header_value1: {},
   header_value2: {},
   header_value3: {},
+
+  exceldata: [],
   header_name1: '',
   header_name2: '',
   header_name3: '',
@@ -167,6 +221,8 @@ const groupMode = computed(() => {
 
   const allExcel = props.group.indicator_group_elements.every(el => el.value_type === 'excel')
   const noneExcel = props.group.indicator_group_elements.every(el => el.value_type !== 'excel')
+
+  console.log('groupMode computation:', { allExcel, noneExcel })
 
   if (allExcel) return 'excel'
   if (noneExcel) return 'normal'
@@ -201,6 +257,7 @@ async function get_group_details() {
     }
 
     const response = await reportDetailsService.getReportDetails(params)
+    console.log('response reportDetailsService', response)
 
     if (response.data && Array.isArray(response.data)) {
       response.data.forEach((item) => {
@@ -219,9 +276,7 @@ async function get_group_details() {
 }
 
 async function getexceldata() {
-
   try {
-
     if (!props.group) return
 
     const params = {
@@ -229,43 +284,65 @@ async function getexceldata() {
       report_year_id: Number(props.selected_year_id),
     }
 
-    console.log('params reportDetailsExcelService', params)
+    //console.log('params reportDetailsExcelService', params)
 
     const response = await reportDetailsExcelService.getReportExcelDetails(params)
 
-    console.log('response reportDetailsExcelService', response)
+    console.log('response reportDetailsExcelService asdasd', response)
 
-    if (response.data && Array.isArray(response.data)) {
-      response.data.forEach((item) => {
-        const key = item.indicator_no
-        if (!key) return
+    state.exceldata = response
+    console.log('state.exceldata', state.exceldata)
 
-        state.header_value1[key] = item.header_value1 ?? state.header_value1[key]
-        state.header_value2[key] = item.header_value2 ?? state.header_value2[key]
-        state.header_value3[key] = item.header_value2 ?? state.header_value2[key]
+    state.header_name1 = state.exceldata[0].header_name1 ?? 'fail'
+    state.header_name2 = state.exceldata[0].header_name2
+    state.header_name3 = state.exceldata[0].header_name3
+    console.log('state.header_name1', state.header_name1)
+    console.log('state.header_name1', state.header_name2)
+    console.log('state.header_name1', state.header_name3)
 
-        state.header_name1 = item.header_name1
-        state.header_name2 = item.header_name2
-        state.header_name3 = item.header_name3
-        
-        console.log('header_name1', state.header_name1)
-        console.log('header_name1', state.header_name1)
-        console.log('header_name1', state.header_name1)
-      })
-    }
+    // if (first) {
+    //      state.header_name1 = response.data{0}.header_name1
+    //      state.header_name2 = response.data[0].header_name2
+    //      state.header_name3 = response.data[0].header_name3
 
-    // console.log('header_name1', state.header_name1)
-    // console.log('header_name2', state.header_name2)
-    // console.log('header_name3', state.header_name3)
-    // console.log('header_value1', state.header_value1)
-    // console.log('header_value2', state.header_value2)
-    // console.log('header_value3', state.header_value3)
+    //    }
+    console.log('state.header_name1', state.header_name1)
 
+
+    // if (response.data) {
+    //   state.exceldata = response.data
+    //    console.log('state.exceldata', state.exceldata)  
+
+    //   const first = response.data[0] ?? null
+    //   console.log('first', first)  
+
+    //   if (first) {
+    //     state.header_name1 = response.data[0].header_name1
+    //     state.header_name2 = response.data[0].header_name2
+    //     state.header_name3 = response.data[0].header_name3
+    //   }
+    //   else {
+    //     state.header_name1 = 'Value 1'
+    //     state.header_name2 = 'Value 2'
+    //     state.header_name3 = 'Value 3'
+    //   }
+
+    //   console.log('state.exceldata', state.exceldata)
+    //   console.log('state.header_name1', state.header_name1)   
+    // }
   } catch (err) {
     console.error('Error fetching report detail excel:', err)
   }
-
+  //console.log('state.exceldata', state.exceldata)
+  //console.log('state.header_name1', state.header_name1)   
 }
+
+
+function getExcelRows(indicatorNo) {
+  // returns only the rows in exceldata that match this indicator
+  return state.exceldata.filter(row => row.indicator_no === indicatorNo)
+}
+
 
 /* ---------------------------------------------
    WATCH
