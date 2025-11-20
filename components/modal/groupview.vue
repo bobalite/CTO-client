@@ -54,10 +54,12 @@
 
           <!-- Excel Mode Header -->
           <template v-else-if="groupMode === 'excel'">
-            <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
+             <GridCell class="sm:col-span-1 text-center table-header-4 border-l border-b border-grey pb-1"
+              displaytext='' />
+            <GridCell class="sm:col-span-5 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="INDICATOR" />
             <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
-              displaytext="VALUE (FROM EXCEL)" />
+              displaytext="DOWNLOADED FROM EXCEL" />
             <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-b border-r border-grey pb-1"
               displaytext="REMARKS" />
           </template>
@@ -106,39 +108,23 @@
 
               <GridTextView :entrystatus="2" class="sm:col-span-11 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1 " 
                 v-model="el.description" />
-              
+             
                 <GridTextArea v-model="state.remarks[el.indicator_no]"
                 class="sm:col-span-4 px-2 text-center table-header-4  text-xs border-white ring-1 ring-white pb-1"
                 :entrystatus="el.remarks" displaytext="" />
-             
-
-              <!-- Excel VALUE headers -->
-           
-
-           
- 
-
                  <!-- Excel VALUE headers -->
               <GridCell
                   class="sm:col-span-1 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
                   :displaytext="state.header_name1" />
-
-               
                 <GridCell 
-                  class="sm:col-span-12 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  class="sm:col-span-11 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
                   :displaytext="state.header_name2 || ''" />
-                
-                
                   <GridCell v-model="state.header_name3"
-                  class="sm:col-span-3 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  class="sm:col-span-4 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
                   :displaytext="state.header_name3 || ''" />
-  
 
               <!-- Excel rows for this indicator -->
               <template v-for="row in state.exceldata" :key="el.indicator_no">
-
-           
-
                 <!-- spacer to keep alignment (1 + 5 cols already used above) -->
 
                 <template v-if="row.indicator_no === el.indicator_no">
@@ -149,24 +135,16 @@
 
                                 <!-- Disease Name -->
                    <GridCell
-                    class="sm:col-span-12 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                    class="sm:col-span-11 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
                     :entrystatus="1" :displaytext="row.header_value2" />
 
                   <!-- Count -->
                  <GridCell
-                    class="sm:col-span-3 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                    class="sm:col-span-4 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
                     :entrystatus="1" :displaytext="row.header_value3" />
-
-           
-
                 </template>
-
               </template>
             </template>
-
-
-
-
           </template>
         </div>
 
@@ -240,7 +218,7 @@ function initializeState() {
     state.male[key] = el.male_value ?? 0
     state.female[key] = el.female_value ?? 0
     state.total[key] = el.total_value ?? 0
-    state.remarks[key] = el.remarks ?? ''
+    state.remarks[key] =  ''
   })
 }
 
@@ -254,6 +232,7 @@ async function get_group_details() {
     const params = {
       indicator_group_id: props.group.group_no ?? null,
       report_year: Number(props.selected_year),
+      report_year_id: Number(props.selected_year_id),
     }
 
     const response = await reportDetailsService.getReportDetails(params)
@@ -283,66 +262,18 @@ async function getexceldata() {
       indicator_group_id: props.group.group_no ?? null,
       report_year_id: Number(props.selected_year_id),
     }
-
-    //console.log('params reportDetailsExcelService', params)
-
     const response = await reportDetailsExcelService.getReportExcelDetails(params)
-
-    console.log('response reportDetailsExcelService asdasd', response)
-
     state.exceldata = response
-    console.log('state.exceldata', state.exceldata)
 
     state.header_name1 = state.exceldata[0].header_name1 ?? 'fail'
     state.header_name2 = state.exceldata[0].header_name2
     state.header_name3 = state.exceldata[0].header_name3
-    console.log('state.header_name1', state.header_name1)
-    console.log('state.header_name1', state.header_name2)
-    console.log('state.header_name1', state.header_name3)
 
-    // if (first) {
-    //      state.header_name1 = response.data{0}.header_name1
-    //      state.header_name2 = response.data[0].header_name2
-    //      state.header_name3 = response.data[0].header_name3
-
-    //    }
-    console.log('state.header_name1', state.header_name1)
-
-
-    // if (response.data) {
-    //   state.exceldata = response.data
-    //    console.log('state.exceldata', state.exceldata)  
-
-    //   const first = response.data[0] ?? null
-    //   console.log('first', first)  
-
-    //   if (first) {
-    //     state.header_name1 = response.data[0].header_name1
-    //     state.header_name2 = response.data[0].header_name2
-    //     state.header_name3 = response.data[0].header_name3
-    //   }
-    //   else {
-    //     state.header_name1 = 'Value 1'
-    //     state.header_name2 = 'Value 2'
-    //     state.header_name3 = 'Value 3'
-    //   }
-
-    //   console.log('state.exceldata', state.exceldata)
-    //   console.log('state.header_name1', state.header_name1)   
-    // }
   } catch (err) {
     console.error('Error fetching report detail excel:', err)
   }
-  //console.log('state.exceldata', state.exceldata)
-  //console.log('state.header_name1', state.header_name1)   
+ 
 }
-
-
-function getExcelRows(indicatorNo) {
-  // returns only the rows in exceldata that match this indicator
-  return state.exceldata.filter(row => row.indicator_no === indicatorNo)
-}
-
 
 /* ---------------------------------------------
    WATCH

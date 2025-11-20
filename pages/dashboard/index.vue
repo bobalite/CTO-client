@@ -29,7 +29,7 @@
     <!-- Left group of tabs -->
     <div class="flex space-x-4">
       <li v-for="tab in tabs" :key="tab.name" class="list-none">
-        <a href="#" @click.prevent="state.activeTab = tab.name"
+        <a href="#" @click.prevent= change_right_id(tab.name) 
           :class="[
                         'flex items-center justify-center p-2 rounded-t-md transition-colors',
                         state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
@@ -468,8 +468,8 @@
 </template>
 
 <script setup>
-//import ApexCharts from 'vue3-apexcharts';
-//import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
+import { reportDetailsService } from '~/components/api/ReportDetailsService'
+import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
 import {useUserStore} from '~/store/user'
 import {userDashboardWidgetsService } from '~/components/api/UserDashboardWidgetsService'; 
 import {report_yearService } from '~/components/api/ReportYears';
@@ -494,6 +494,8 @@ definePageMeta({
 onMounted(() => {
   fetchreportyear()
   fetchData()
+  get_year_details()
+  getexceldata()
  
   //loop_through_user_widgets()
   
@@ -522,7 +524,11 @@ const state = reactive({
     user_dashboard_widgets: userStore.getUser.user_dashboard_widgets,
     user_id: userStore.getUser.id,
 
+    right_id: 1,
+
     passed_data: [],
+    group_details: [],
+    exceldata: [],
 
     isPageLoading: false,
     isSlideModalOpen: false,
@@ -533,6 +539,8 @@ const state = reactive({
 
         ],},
     report_year: 1,
+    report_year_id: 1,
+
 
     report_years: [],
     year: '2025',
@@ -588,7 +596,7 @@ function change_selected_year(opt){
 
   // state.current_user_role = state.roles.data[ state.selected_user_role -1]
   console.log('state.report_year', state.report_year)
-    console.log('state.options.report_years.length', state.options.report_years.length)
+  console.log('state.options.report_years.length', state.options.report_years.length)
 
   if (opt == 1){
 
@@ -618,18 +626,100 @@ function change_selected_year(opt){
   
 }
 
+function change_right_id(tab_name){
+
+
+  state.activeTab =  tab_name
+  //console.log('right_id in change',right_id)
+  
+  if (state.activeTab === 'Survival') {
+    state.right_id = 1
+  } else if (state.activeTab === 'Development') {
+    state.right_id = 2
+  } else if (state.activeTab === 'Protection') {
+    state.right_id = 3
+  } else if (state.activeTab === 'Participation') {
+    state.right_id = 4
+  } else if (state.activeTab === 'Governance') {
+    state.right_id = 5
+  } else if (state.activeTab === 'General Information') {
+    state.right_id = 6
+  
+  }
+  console.log('right_id', state.right_id)
+  refresh_data()
+ 
+}
+
+
+function refresh_data(){
+  fetchData()
+}
+
+
+
 
 
 
 
 async function fetchData() {
   state.isPageLoading = true
-  const response = await reportDetailsGroupsService.getReportDetailsGroups()
+ 
+
+   const params = {
+      //indicator_group_id: props.group.group_no ?? null,
+      report_year: Number(state.year),
+      right_id: Number(state.right_id)
+    }
+
+  console.log('params', params) 
+  
+  //http://127.0.0.1:8000/api/report_details_group?report_year=2025&&right_id=1
+  const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+  
+  
   state.passed_data.data = response.data
-  //console.log('fetchData', state.passed_data)
+  console.log('fetchData', state.passed_data)
   state.loading = false
  
 }   
+
+
+
+async function get_year_details() {
+  try {
+    
+    const params = {
+      //indicator_group_id: props.group.group_no ?? null,
+      report_year: Number(state.year),
+      report_year_id: Number(state.report_year),
+    }
+
+    const response = await reportDetailsService.getReportDetails(params)
+    console.log('response get_year_details', response)
+    state.group_details = response
+   
+  } catch (err) {
+    console.error('Error fetching report detail excel:', err)
+  }
+}
+
+async function getexceldata() {
+  try {
+    
+    const params = {
+     
+      report_year_id: Number(state.report_year),
+    }
+    const response = await reportDetailsExcelService.getReportExcelDetails(params)
+    state.exceldata = response
+    
+  } catch (err) {
+    console.error('Error fetching report detail excel:', err)
+  }
+ 
+}
+
 
 
 async function deleteUserDashboardWidgets(){
@@ -787,8 +877,11 @@ async function fetchreportyear() {
         //console.log(error)
     }
 
-    //console.log(state.options.report_years)
+    console.log(state.options.report_years)
 }
+
+
+
 
 async function fetchUserDashboardWidgets() {
   try {

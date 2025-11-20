@@ -1,27 +1,26 @@
 <template>
 
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">ENCODE DATA INDICATORS</h1>
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">ENCODE DATA INDICATORS</h1>
 
+  </div>
+  <div class="mt-8 flow-root">
+
+    <div class="flex gap2 sm:gap-3 items-center">
+      <div class="flex-1">
+        <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
+          :change-selected-year="changeYear()" />
+
+        <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id" @click="changeData" />
+      </div>
+      <div class="flex-1">
+
+      </div>
     </div>
-    <div class="mt-8 flow-root">
+  </div>
 
-        <div class="flex gap2 sm:gap-3 items-center">
-            <div class="flex-1">
-                <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
-                    :change-selected-year="changeYear()" />
-
-                <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id"
-                    @click="changeData" />
-            </div>
-            <div class="flex-1">
-
-            </div>
-        </div>
-    </div>
-
-    <div class="p-6">
-         <table class="min-w-full border border-gray-300 rounded-xl overflow-hidden">
+  <div class="p-6">
+    <table class="min-w-full border border-gray-300 rounded-xl overflow-hidden">
       <thead class="bg-gray-100 text-gray-700 uppercase text-sm">
         <tr>
           <th class="px-4 py-2 text-left w-3/4">Indicator</th>
@@ -32,14 +31,12 @@
       <tbody>
         <template v-for="category in categories" :key="category.id">
           <!-- CATEGORY LEVEL -->
-          <tr class="border-b hover:bg-gray-50 cursor-pointer transition"
-              @click="toggleCategory(category.id)">
+          <tr class="border-b hover:bg-gray-50 cursor-pointer transition" @click="toggleCategory(category.id)">
             <td class="px-4 py-3 font-medium flex items-center gap-2">
               <svg :class="[
                   'w-4 h-4 transform transition-transform duration-200',
                   expandedCategories.includes(category.id) ? 'rotate-90' : ''
-                ]"
-                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                ]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
               </svg>
               {{ category.description }}
@@ -51,13 +48,12 @@
             <template v-for="subcategory in category.indicator_subcategories" :key="subcategory.id">
               <tr class="bg-gray-50 border-b">
                 <td colspan="2" class="pl-8 py-2 flex items-center justify-between cursor-pointer"
-                    @click="toggleSubcategory(subcategory.id)">
+                  @click="toggleSubcategory(subcategory.id)">
                   <div class="flex items-center gap-2">
                     <svg :class="[
                         'w-4 h-4 transform transition-transform duration-200',
                         expandedSubcategories.includes(subcategory.id) ? 'rotate-90' : ''
-                      ]"
-                      fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      ]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                     {{ subcategory.description }}
@@ -70,21 +66,18 @@
                 <td colspan="2" class="p-0 bg-gray-50 border-b">
                   <transition name="slide-fade">
                     <div v-show="expandedSubcategories.includes(subcategory.id)"
-                        class="pl-16 py-2 text-sm text-gray-700 overflow-hidden">
+                      class="pl-16 py-2 text-sm text-gray-700 overflow-hidden">
                       <template v-for="group in subcategory.indicator_groups" :key="group.id">
                         <div class="py-2 pl-4 border-l border-gray-300 cursor-pointer rounded"
-                            @click.stop="toggleGroup(group.id)">
+                          @click.stop="toggleGroup(group.id)">
                           <!-- GROUP HEADER + ACTIONS -->
                           <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 font-semibold">
                               <svg :class="[
                                   'w-3 h-3 transform transition-transform duration-200',
                                   expandedGroups.includes(group.id) ? 'rotate-90' : ''
-                                ]"
-                                fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M9 5l7 7-7 7" />
+                                ]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
                               Group {{ group.group_no }}
                             </div>
@@ -95,7 +88,7 @@
                                 @click.stop="openGroupModal('add', group, category.description, subcategory.description)">
                                 Add Entry
                               </button>
-                             
+
                               <button
                                 class="text-xs bg-blue-700 text-white px-2 py-0.5 rounded hover:bg-blue-500 hover:text-black"
                                 @click.stop="openGroupModal('view', group, category.description, subcategory.description)">
@@ -106,16 +99,22 @@
 
                           <!-- GROUP ELEMENTS -->
                           <transition name="slide-fade">
-                            <div v-show="expandedGroups.includes(group.id)"
-                                class="pl-8 py-2 text-gray-600 space-y-1">
+                            <div v-show="expandedGroups.includes(group.id)" class="pl-8 py-2 text-gray-600 space-y-1">
                               <ul class="list-disc pl-4">
-                                <li v-for="element in group.indicator_group_elements"
-                                    :key="element.id" class="py-1">
-                                  <span class="font-semibold">{{ element.indicator_no }}</span>
+                                <li v-for="element in group.indicator_group_elements" :key="element.id" class="py-1">
+                                  <span v-if="getAgency(element.agency_id)"
+                                    class="ml-2 text-xs text-white px-2 py-0.5 rounded"
+                                    :class="getAgency(element.agency_id).color">
+                                    {{ getAgency(element.agency_id).label }}
+                                  </span>
+                                  
+                                  <span class="font-semibold pl-3">{{ element.indicator_no }}</span>
                                   {{ element.description }}
                                   <span class="text-xs text-gray-400 ml-2">
                                     ({{ element.value_type }})
                                   </span>
+
+                                  
                                 </li>
                               </ul>
                             </div>
@@ -133,36 +132,20 @@
     </table>
 
     <!-- MODAL COMPONENT -->
-    
 
-    <ModalGroupadd
-      :modalTitle="'Add / Edit Entries'"
-      :show="showGroupadd"
-      :mode="modalMode"
-      :group="selectedGroup"
-      :category="selectedCategoryDesc"
-      :subcategory="selectedSubcategoryDesc"
-      :selected_year_id="state.selected_year_id"
-      :selected_year="state.selected_year"
-      @close="showGroupadd = false"
-    />
 
-    
+    <ModalGroupadd :modalTitle="'Add / Edit Entries'" :show="showGroupadd" :mode="modalMode" :group="selectedGroup"
+      :category="selectedCategoryDesc" :subcategory="selectedSubcategoryDesc" :selected_year_id="state.selected_year_id"
+      :selected_year="state.selected_year" @close="showGroupadd = false" />
 
-    <ModalGroupview
-      :modalTitle="'View Data Entries'"
-      :show="showGroupview"
-      :mode="modalMode"
-      :group="selectedGroup"
-      :category="selectedCategoryDesc"
-      :subcategory="selectedSubcategoryDesc"
-      :selected_year_id="state.selected_year_id"
-      :selected_year="state.selected_year"
-      @close="showGroupview = false"
-    />
 
-    
-    </div>
+
+    <ModalGroupview :modalTitle="'View Data Entries'" :show="showGroupview" :mode="modalMode" :group="selectedGroup"
+      :category="selectedCategoryDesc" :subcategory="selectedSubcategoryDesc" :selected_year_id="state.selected_year_id"
+      :selected_year="state.selected_year" @close="showGroupview = false" />
+
+
+  </div>
 </template>
 
 <script setup>
@@ -176,6 +159,10 @@ import { Childrens_rightsService } from '~/components/api/Rights';
 
 const userStore = useUserStore()
 
+const getAgency = (id) => {
+  return state.options.agencies.find(a => a.value == id) || null
+}
+
 
 
 definePageMeta({
@@ -186,9 +173,9 @@ definePageMeta({
 onMounted(() => {
     fetchreportyear()
     fetchRights()
-
     fetchrole()
     fetchRights_entry_config()
+   
 
 })
 
@@ -308,6 +295,8 @@ async function fetchRights_entry_config() {
 
             console.log('Dynamic Rights_entry_config groups:', grouped)
             console.log('state.Rights_entry_config1', state.Rights_entry_config1)
+            changeYear()
+            changeData()
         }
     } catch (error) {
         console.error('Error fetching rights entry config:', error)

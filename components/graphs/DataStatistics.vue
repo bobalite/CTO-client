@@ -21,11 +21,7 @@ const fakedata = [10,20,30,40,50,60,70,80,90]
 const fakedata2 = [120,110,100,90,80,70,60,50,40]
 
 const props = defineProps({
-    class: {
-        type: String,
-        required: true,
-        default: 'border-solid',
-    },
+  
     displaytext:{
         type: String,
         required: false,
@@ -33,7 +29,7 @@ const props = defineProps({
         type: String,
         required: false,
     },report_year:{
-        type: Number,
+        type: [String, Number],
         required: false,
     },passed_data: {
         type: Object,

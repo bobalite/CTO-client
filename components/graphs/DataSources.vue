@@ -14,11 +14,7 @@ import ApexCharts from 'vue3-apexcharts';
 import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';
 
 const props = defineProps({
-    class: {
-        type: String,
-        required: true,
-        default: 'border-solid',
-    },
+  
     displaytext: {
         type: String,
         required: false,
@@ -26,7 +22,7 @@ const props = defineProps({
         type: String,
         required: false,
     }, report_year: {
-        type: Number,
+        type: [String, Number],
         required: false,
     }, passed_data: {
         type: Object,
