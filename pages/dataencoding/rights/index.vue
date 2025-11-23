@@ -151,7 +151,7 @@
 <script setup>
 import { ref } from 'vue'
 import { indicatorService } from '~/components/api/IndicatorCategoryService';
-import { reportDetailsService } from '~/components/api/ReportDetailsService';
+//import { reportDetailsService } from '~/components/api/ReportDetailsService';
 import { rolesService } from '~/components/api/Roles';
 import { useUserStore } from '~/store/user'
 import { report_yearService } from '~/components/api/ReportYears';
@@ -397,13 +397,7 @@ function openGroupModal(mode, group, categoryDesc = '', subcategoryDesc = '') {
   console.log('categoryDesc', categoryDesc)
   console.log('subcategoryDesc', subcategoryDesc)
 
-  if (mode === 'edit') {
-    modalMode.value = mode
-    selectedGroup.value = group
-    showGroupedit.value = true
-    selectedCategoryDesc.value = categoryDesc
-    selectedSubcategoryDesc.value = subcategoryDesc
-  }
+ 
 
   if (mode === 'add') {
 

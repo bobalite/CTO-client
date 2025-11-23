@@ -146,7 +146,7 @@
               </template>
             </template>
           </template>
-        </div>
+        </div> 
 
         <!-- Action Buttons -->
         <div class="mt-6 flex justify-end gap-2">
@@ -164,7 +164,7 @@
 import { reactive, onMounted, watch, computed } from 'vue'
 import { reportDetailsService } from '~/components/api/ReportDetailsService'
 import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
-
+ 
 const props = defineProps({
   show: Boolean,
   modalTitle: String,
@@ -270,7 +270,7 @@ async function getexceldata() {
     state.header_name3 = state.exceldata[0].header_name3
 
   } catch (err) {
-    console.error('Error fetching report detail excel:', err)
+    //console.error('Error fetching report detail excel:', err)
   }
  
 }
