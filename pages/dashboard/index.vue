@@ -29,7 +29,7 @@
     <!-- Left group of tabs -->
     <div class="flex space-x-4">
       <li v-for="tab in tabs" :key="tab.name" class="list-none">
-        <a href="#" @click.prevent= change_right_id(tab.name) 
+        <a href="#" @click.prevent=change_right_id(tab.name)
           :class="[
                         'flex items-center justify-center p-2 rounded-t-md transition-colors',
                         state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600']">
@@ -68,7 +68,7 @@
   </ul>
 
 
-  
+
 
   <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
     <h2 class="text-lg font-semibold ">{{ state.activeTab }}</h2>
@@ -95,7 +95,7 @@
 
     </div>
 
-    
+
 
 
 
@@ -105,121 +105,137 @@
 
   <!----------------------------------changes ------------------------------------------------------------>
 
-<div class="flex h-screen">
-  <!-- Left: Main Content -->
-  <div class="flex-1 flex flex-col">
+  <div class="flex h-screen">
+    <!-- Left: Main Content -->
+    <div class="flex-1 flex flex-col">
 
-  <!------------------------------------------------------------------------------------------------------->
-<div v-if="state.loading == false"
-      class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4">
+      <!------------------------------------------------------------------------------------------------------->
+      <div v-if="state.loading == false"
+        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4">
 
-      <GraphsGrp01 v-if="state.showGraphsGrp01 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'TEENAGE PREGNANCY'" :report_year="state.report_year" :passed_year_data="state.report_years">
-      </GraphsGrp01>
+        <!-- -------------survival group----------------- -->
 
-      <GraphsGrp02 v-if="state.showGraphsGrp02 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total number of nutritionally-at-risk pregnant women (PW)'" :report_year="state.report_year">
-      </GraphsGrp02>
+        <GraphsSurvivalMaternalServices v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Maternal Deliveries'" :report_year="state.report_year">
+        </GraphsSurvivalMaternalServices>
 
-      <GraphsGrp03 v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-6 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Proportion/percentage of nutritionally-at-risk PW'" :report_year="state.report_year">
-      </GraphsGrp03>
+        <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Mortality Rates'" :report_year="state.report_year">
+        </GraphsSurvivalMortality>
 
-      <GraphsGrp04 v-if="state.showGraphsGrp04 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total number of PW with at least 4 pre-natal check-ups'" :report_year="state.report_year">
-      </GraphsGrp04>
+        <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Mortality Rates'" :report_year="state.report_year">
+        </GraphsSurvivalNutritionalPreSchool>
 
-      <GraphsGrp05 v-if="state.showGraphsGrp05 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Proportion/percentage of PW with at least 4 pre-natal check-ups'"
-        :report_year="state.report_year">
-      </GraphsGrp05>
+        <GraphsSurvivalNutritionalSchoolChildren v-if="state.activeTab === 'Survival'"
+          :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Mortality Rates'" :report_year="state.report_year">
+        </GraphsSurvivalNutritionalSchoolChildren>
 
-      <GraphsGrp06 v-if="state.showGraphsGrp06 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total Number of deliveries attended by skilled health professionals'"
-        :report_year="state.report_year">
-      </GraphsGrp06>
+        <GraphsSurvivalAccess v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Access to Sanitation Facilities and Safe Water Supply'" :report_year="state.report_year">
+        </GraphsSurvivalAccess>
 
-      <GraphsGrp37 v-if="state.showGraphsGrp37 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
-      </GraphsGrp37>
+        <GraphsSurvivalHIV v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :report_year="state.report_year">
+        </GraphsSurvivalHIV>
 
-      <GraphsGrp45 v-if="state.showGraphsGrp45 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Total number of Out- of- school children and youth (OSCY)'" :report_year="state.report_year">
-      </GraphsGrp45>
 
-      <GraphsGrp48 v-if="state.showGraphsGrp48 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total number of violence against children cases, by type of violence'"
-        :report_year="state.report_year">
-      </GraphsGrp48>
 
-      <GraphsGrp49 v-if="state.showGraphsGrp49 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total number of violence against children cases resolved, by type of violence'"
-        :report_year="state.report_year">
-      </GraphsGrp49>
+        <!-- -----------development group---------------- -->
 
-      <GraphsGrp50 v-if="state.showGraphsGrp50 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total number of reported Children In-Need of Special Protection (CNSP) cases'"
-        :report_year="state.report_year">
-      </GraphsGrp50>
+        <GraphsDevelopmentEarlyChildhood v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsDevelopmentEarlyChildhood>
 
-      <GraphsGrp55 v-if="state.showGraphsGrp55 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Total Number of Crimes Committed by Children, by type/category of crime committed:'"
-        :report_year="state.report_year">
-      </GraphsGrp55>
+        <GraphsDevelopmentEnrolment v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsDevelopmentEnrolment>
 
-      <GraphsGrp59 v-if="state.showGraphsGrp59 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
-        :report_year="state.report_year" :passed_year_data="state.report_years">
-      </GraphsGrp59>
 
-      <GraphsGrp65 v-if="state.showGraphsGrp65 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="'Established and updated database on children, with all of the following disaggregated information on children'"
-        :report_year="state.report_year">
-      </GraphsGrp65>
+        <GraphsDevelopmentOSCY v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsDevelopmentOSCY>
 
-      <GraphsGrp68 v-if="state.showGraphsGrp68 == true" :key="state.refresh_graphs_toggle"
-        :passed_data="state.passed_data"
-        class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-        :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
-      </GraphsGrp68>
+        <!-- -----protection group---------------- -->
+
+        <GraphsProtectionChildrenInNeed v-if="state.activeTab === 'Protection'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsProtectionChildrenInNeed>
+
+        <GraphsProtectionChildrenInConflict v-if="state.activeTab === 'Protection'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsProtectionChildrenInConflict>
+
+
+
+
+        <!-- -------participation group---------------- -->
+
+        <GraphsParticipationChildrens v-if="state.activeTab === 'Participation'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
+          :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsParticipationChildrens>
+
+        <!-- -------governance group---------------- -->
+      
+     
+        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Governance'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
+          :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsGovernanceLocalCouncil>
+
+
+        <!-- -------general information group---------------- -->
+
+        <GraphsGeneralInformation v-if="state.activeTab === 'General Information'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
+          :report_year="state.report_year" :passed_year_data="state.report_years">
+        </GraphsGeneralInformation>
+
+
+        <!-- <GraphsGrp68 v-if="state.activeTab === 'General Information'" :key="state.refresh_graphs_toggle"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
+        </GraphsGrp68> -->
 
       </div>
 
 
     </div>
 
-  <!-- Right Aside -->
-<aside class="w-36 bg-green-200 border-l shadow-lg p-4 overflow-y-auto">
-  <h3 class="text-lg font-bold mb-4">Trends</h3>
-  <p class="text-sm text-gray-600"></p>
+    <!-- Right Aside -->
+    <aside class="w-36 bg-green-200 border-l shadow-lg p-4 overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4">Trends</h3>
+      <p class="text-sm text-gray-600"></p>
 
 
       <TrendsPregnancy v-if="state.showGraphsGrp03 == true" :key="state.refresh_graphs_toggle"
@@ -228,11 +244,11 @@
         :displaytext="''" :report_year="state.report_year">
       </TrendsPregnancy>
 
-</aside>
-</div>
+    </aside>
+  </div>
   <!------------------------------------------------------------------------------------------------------->
 
- 
+
 
   <ModalSlide :show="state.isSlideModalOpen" :close="closeSlideModal" :title="'Select Dashboard Widget'"
     :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl mt-[4rem]'"
@@ -474,8 +490,9 @@ import {useUserStore} from '~/store/user'
 import {userDashboardWidgetsService } from '~/components/api/UserDashboardWidgetsService'; 
 import {report_yearService } from '~/components/api/ReportYears';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
-
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
+
+
 
 const userStore = useUserStore()
 

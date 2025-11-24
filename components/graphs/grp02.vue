@@ -1,7 +1,7 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 2. {{props.displaytext}}</h3>
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl "> {{props.displaytext}}</h3>
         <ApexCharts height="200" width="120%" :options="state.OptionsPieDatasource"
           :series="state.graphSeries" />
            
