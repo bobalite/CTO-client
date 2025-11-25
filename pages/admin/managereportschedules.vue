@@ -643,7 +643,7 @@ function saveEditModal() {
 async function SaveSchedule() {
 
     try {
-        state.name = state.name + ' ' + state.year;
+        
         let params = {
             name: state.name,
             description: state.description,

@@ -118,7 +118,7 @@
         <GraphsSurvivalMaternalServices v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Maternal Deliveries'" :report_year="state.report_year">
+          :displaytext="'Maternal Deliveries'" :report_year="state.year" :report_years="state.report_years" >
         </GraphsSurvivalMaternalServices>
 
         <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
@@ -870,6 +870,8 @@ async function fetchreportyear() {
         if (response.data) {
             
             state.report_years.data = response.data
+
+            console.log('fetchreportyear report years', state.report_years.data)
             var data = [];
             var datasources = [];
             if (state.report_years.data != null) {

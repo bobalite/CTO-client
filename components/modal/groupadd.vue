@@ -61,7 +61,7 @@
 
               <GridTextArea v-model="state.remarks[el.indicator_no]"
                 class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
-                :entrystatus="el.remarks" :displaytext="''" />
+                 :displaytext="''" />
             </template>
 
             <template v-else>
@@ -82,7 +82,7 @@
 
               <GridTextArea v-model="state.remarks[el.indicator_no]"
                 class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
-                :entrystatus="el.remarks" :displaytext="''" />
+                :displaytext="''" />
             </template>
           </template>
 
@@ -212,7 +212,7 @@ async function loadExternalIndicators(indicatorNos = []) {
         state.male[id] = Number(item.male ?? state.male[id] ?? 0)
         state.female[id] = Number(item.female ?? state.female[id] ?? 0)
         state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ''
+        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' remarks 1 '
       })
     } else {
       console.warn('No external indicators returned for', indicatorNos)
@@ -242,7 +242,7 @@ function initStateFromGroup(g) {
     state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
     state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
     state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    state.remarks[id] = el.remarks ?? 'remarks'
+    //state.remarks[id] = el.remarks ?? 'remarks 2'
     if (excelUploads[id]) delete excelUploads[id]
   })
 }
@@ -295,7 +295,7 @@ async function get_group_details() {
           state.male[id] = Number(item.male ?? state.male[id] ?? 0)
           state.female[id] = Number(item.female ?? state.female[id] ?? 0)
           state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-          state.remarks[id] = item.remarks ?? state.remarks[id] ?? ''
+          //state.remarks[id] = item.remarks ?? state.remarks[id] ?? 'remarks 3'
         })
       }
     } catch (err) {
@@ -523,7 +523,7 @@ async function saveIndicators() {
         male: Number(state.male[id]) || 0,
         female: Number(state.female[id]) || 0,
         total: Number(state.total[id]) || 0,
-        remarks: state.remarks[id] || '',
+        remarks: state.remarks[id] || 'remarks 4',
         indicator_group_element_id: el.id,
         indicator_group_id: groupLocal.value.id,
         report_year_id: reportYearId,

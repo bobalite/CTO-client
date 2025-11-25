@@ -136,7 +136,7 @@
 
     <ModalGroupadd :modalTitle="'Add / Edit Entries'" :show="showGroupadd" :mode="modalMode" :group="selectedGroup"
       :category="selectedCategoryDesc" :subcategory="selectedSubcategoryDesc" :selected_year_id="state.selected_year_id"
-      :selected_year="state.selected_year" @close="showGroupadd = false" />
+      :selected_year="state.selected_year" @close="showGroupadd = false"  />
 
 
 
