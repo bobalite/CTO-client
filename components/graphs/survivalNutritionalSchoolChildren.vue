@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                SCHOOL-BASED FEEDING PROGRAM (SBFP)
             </h3>
-            <ApexCharts 
+            <ApexChart
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-sm font-bold mb-2">
                NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS
             </h3>
-            <ApexCharts 
+            <ApexChart
                 type="pie"
                 height="200"
                 width="100%"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

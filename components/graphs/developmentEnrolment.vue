@@ -9,7 +9,7 @@
             <h3 class="text-lg font-bold mb-2">
                 STUDENT ENROLMENT
             </h3>
-            <ApexCharts 
+            <ApexChart 
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-lg font-bold mb-2">
                NET ENROLMENT
             </h3>
-            <ApexCharts 
+            <ApexChart 
                 type="pie"
                 height="200"
                 width="100%"
@@ -37,7 +37,7 @@
             <h3 class="text-lg font-bold mb-2">
                 COMPLETION
             </h3>
-            <ApexCharts 
+            <ApexChart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -51,7 +51,7 @@
             <h3 class="text-lg font-bold mb-2">
                  SCHOOL LEAVER (DROP-OUT)
             </h3>
-            <ApexCharts 
+            <ApexChart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -65,7 +65,7 @@
             <h3 class="text-lg font-bold mb-2">
                 SECTORAL ENROLMENT
             </h3>
-            <ApexCharts 
+            <ApexChart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -79,7 +79,7 @@
             <h3 class="text-lg font-bold mb-2">
                 ALTERNATIVE LEARNING SYSTEM
             </h3>
-            <ApexCharts 
+            <ApexChart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

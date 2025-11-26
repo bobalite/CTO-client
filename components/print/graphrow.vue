@@ -1,13 +1,13 @@
 <template>
  <div class="mt-6">
-              <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
+              <ApexChartref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
                 :series="state.graphseries_all"
                 />
             </div>
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 
 const props = defineProps({
   indicator:{

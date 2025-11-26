@@ -43,7 +43,7 @@
         <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
 
             <ModalAlert :show="state.isGraphModalOpen" :close="state.closeGraphModal" :title=state.alertmessage>
-                <ApexCharts :type="state.selected_graph_type" height="400" width="100%"
+                <ApexChart :type="state.selected_graph_type" height="400" width="100%"
                     :options="state.populationHoriOptions" :series="state.graphseries_all" />
                 <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
                 <div
@@ -260,7 +260,7 @@ import {rolesService } from '~/components/api/Roles';
 import {useUserStore} from '~/store/user'
 import {report_yearService } from '~/components/api/ReportYears'; 
 
-import ApexCharts from 'vue3-apexcharts';
+
 
 const userStore = useUserStore()
 const printSection = ref(null)

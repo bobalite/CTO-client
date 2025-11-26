@@ -94,12 +94,6 @@
 
 
     </div>
-
-
-
-
-
-
   </main>
 
 
@@ -233,7 +227,7 @@
     </div>
 
     <!-- Right Aside -->
-    <aside class="w-36 bg-green-200 border-l shadow-lg p-4 overflow-y-auto">
+    <!-- <aside class="w-36 bg-green-200 border-l shadow-lg p-4 overflow-y-auto">
       <h3 class="text-lg font-bold mb-4">Trends</h3>
       <p class="text-sm text-gray-600"></p>
 
@@ -244,7 +238,7 @@
         :displaytext="''" :report_year="state.report_year">
       </TrendsPregnancy>
 
-    </aside>
+    </aside> -->
   </div>
   <!------------------------------------------------------------------------------------------------------->
 

@@ -14,28 +14,24 @@
     "@heroicons/vue": "^2.1.5",
     "@kyvg/vue3-notification": "^3.4.1",
     "@nuxt/image": "^1.8.0",
-    "@pinia/nuxt": "^0.5.1",
+    "@pinia/nuxt": "^0.11.3",
     "@vueform/multiselect": "^2.6.11",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "apexcharts": "^3.52.0",
     "dayjs": "^1.11.13",
-    "nuxt": "^3.11.2",
-    "vue": "3.3.13",
+    "nuxt": "3",
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "vue-moment": "^4.1.0",
-    "vue-router": "^4.3.2",
     "vue3-apexcharts": "^1.5.3",
     "vue3-carousel-nuxt": "^1.1.2",
     "vue3-notify": "^0.1.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
-  },
-  "resolutions": {
-    "vue": "3.3.13"
   }
 }

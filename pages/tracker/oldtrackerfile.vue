@@ -43,7 +43,7 @@
                 <h3 v-else-if="state.selected_rights_id === '6'"  class="text-lg font-bold"> GENERAL INFORMATION</h3>
 
             </div>
-            <ApexCharts type="bar" height="300" width="50%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="300" width="50%" :options="state.populationHoriOptions"
                 :series="state.survivalOptions.series" />
         </div>
 
@@ -52,7 +52,7 @@
 
                 <h3 class="text-lg font-bold"> DEVELOPMENT</h3>
             </div>
-            <ApexCharts type="bar" height="800" width="50%" :options="state.developmentOptions"
+            <ApexCharttype="bar" height="800" width="50%" :options="state.developmentOptions"
                 :series="state.developmentOptions.series" />
         </div>
 
@@ -61,7 +61,7 @@
 
                 <h3 class="text-lg font-bold"> PROTECTION</h3>
             </div>
-            <ApexCharts type="bar" height="300" width="50%" :options="state.ProtectionOptions"
+            <ApexCharttype="bar" height="300" width="50%" :options="state.ProtectionOptions"
                 :series="state.ProtectionOptions.series" />
         </div>
 
@@ -70,7 +70,7 @@
 
                 <h3 class="text-lg font-bold"> PARTICIPATION</h3>
             </div>
-            <ApexCharts type="bar" height="300" width="50%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="300" width="50%" :options="state.populationHoriOptions"
                 :series="state.developmentOptions.series" />
         </div>
 
@@ -79,7 +79,7 @@
 
                 <h3 class="text-lg font-bold"> OTHER AREAS: GOVERNANCE</h3>
             </div>
-            <ApexCharts type="bar" height="300" width="50%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="300" width="50%" :options="state.populationHoriOptions"
                 :series="state.developmentOptions.series" />
         </div>
 
@@ -88,7 +88,7 @@
 
                 <h3 class="text-lg font-bold"> OTHER AREAS: GENERAL INFORMATION</h3>
             </div>
-            <ApexCharts type="bar" height="300" width="50%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="300" width="50%" :options="state.populationHoriOptions"
                 :series="state.developmentOptions.series" />
         </div> -->
 
@@ -98,7 +98,7 @@
             <div class="ml-4 mt-4">
                 <h3 class="text-lg font-bold">Report Data Completion by Percentage</h3>
             </div>
-            <ApexCharts type="bar" height="1000" width="50%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="1000" width="50%" :options="state.populationHoriOptions"
             :series="state.populationOptions.series" />
         </div> -->
 
@@ -106,7 +106,7 @@
             <div class="ml-4 mt-4">
                 <h3 class="text-lg font-bold">Children's Population: District 1</h3>
             </div>
-            <ApexCharts type="area" height="375" width="100%" :options="state.populationAreaOptions"
+            <ApexCharttype="area" height="375" width="100%" :options="state.populationAreaOptions"
             :series="state.populationAreaOptions.series" />
         </div> -->
         <!-- 
@@ -114,7 +114,7 @@
             <div class="ml-4 mt-4">
                 <h3 class="text-lg font-bold">Children's Population: District 1</h3>
             </div>
-            <ApexCharts type="bar" height="1000" width="100%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="1000" width="100%" :options="state.populationHoriOptions"
             :series="state.populationHoriOptions.series" />
         </div> -->
 
@@ -125,7 +125,7 @@
                     <h3 class="text-lg font-bold">Children's Population: District 1</h3>
                 </div>
                 <div class="mt-4">
-                    <ApexCharts type="bar" height="2000" width="25%" :options="state.populationHoriOptions"
+                    <ApexCharttype="bar" height="2000" width="25%" :options="state.populationHoriOptions"
                     :series="state.populationHoriOptions.series" />
                 </div>
             </div>
@@ -136,7 +136,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {Childrens_rightsService } from '~/components/api/Rights'; 
 import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
 import {reportDetailsService } from '~/components/api/ReportDetailsService'; 

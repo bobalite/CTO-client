@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total number of children affected by HIV/AIDS (aged 0-17 years old only)
             </h3>
-            <ApexCharts 
+            <ApexChart
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total number of children (aged 0-17 years old) affected by HIV/AIDS provided with appropriate health services
             </h3>
-            <ApexCharts 
+            <ApexChart
                 type="pie"
                 height="200"
                 width="100%"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

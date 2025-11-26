@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 37. {{props.displaytext}}</h3>
-        <ApexCharts height="200" width="90%" :options="state.populationHoriOptions"
+        <ApexChart height="200" width="90%" :options="state.populationHoriOptions"
           :series="state.graphSeriesAll" />
            
         </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 //import { report_yearService } from '../api/ReportYears';
 const fakedata = [10,20,30]
 const fakedata2 = [120,110,100]

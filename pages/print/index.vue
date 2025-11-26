@@ -34,7 +34,7 @@
 
 
     <div ref="printSection" class="p-6 bg-white">
-      <ApexCharts ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
+      <ApexChartref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
     </div>
 
     <button @click="printChart" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
@@ -49,7 +49,7 @@
 
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import { ref, nextTick } from 'vue'
 
 import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 

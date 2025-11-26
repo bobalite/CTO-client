@@ -85,7 +85,7 @@
     </template>
     <template v-if="state.selected_graph_type != 'type2'">
       <!-- <div class="mt-6">
-        <ApexCharts ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
+        <ApexChartref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
           :series="state.graphseries_all" :title.text="'Actual vs Projected and National Projected Comparisons'" />
       </div> -->
     </template>

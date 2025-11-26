@@ -1,277 +1,243 @@
 <template>
- <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 w-full">
-        MATERNAL CARE AND SERVICES
-    </h3>
-    <div :class="props.class" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 w-full">
+    MATERNAL CARE AND SERVICES
+  </h3>
 
-        <!-- Chart 1 -->
-        <div class="border rounded-xl p-2">
-            <h3 class="text-lg font-bold mb-2">
-                Maternal Adolescent Deliveries
-            </h3>
-            <ApexCharts 
-                type="bar"
-                height="200"
-                width="100%"
-                :options="state.populationHoriOptions"
-                :series="state.graphSeries"
-            />
-        </div>
+  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Chart 1 -->
+    <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        Maternal Adolescent Deliveries
+      </h3>
 
-        <!-- Chart 2 -->
-        <div class="border rounded-xl p-2">
-            <h3 class="text-lg font-bold mb-2">
-               Pregnant Women with at least 8 Antenatal Check-ups
-            </h3>
-            <ApexCharts 
-                type="pie"
-                height="200"
-                width="100%"
-                :options="state.OptionsPieDatasource"
-                :series="state.graphSeries"
-            />
-        </div>
-
-        <!-- Chart 3 -->
-        <div class="border rounded-xl p-2">
-            <h3 class="text-lg font-bold mb-2">
-                 Deliveries with Skilled Health Professionals
-            </h3>
-            <ApexCharts 
-                 type="pie"
-                height="200"
-                width="100%"
-                :options="state.OptionsPieDatasource"
-                :series="state.graphSeries"
-            />
-        </div>
-
-        <!-- Chart 4 -->
-        <div class="border rounded-xl p-2">
-            <h3 class="text-lg font-bold mb-2">
-                 Postpartum Check ups
-            </h3>
-            <ApexCharts 
-                 type="pie"
-                height="200"
-                width="100%"
-                :options="state.OptionsPieDatasource"
-                :series="state.graphSeries"
-            />
-        </div>
-
+      <ClientOnly>
+        <ApexChart
+          type="bar"
+          height="90%"
+          width="100%"
+          :options="state.populationHoriOptions"
+          :series="state.graphSeriesAll"
+        />
+      </ClientOnly>
     </div>
 
-  
+    <!-- Chart 2 -->
+    <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        All Maternal Deliveries
+      </h3>
+
+      <ClientOnly>
+        <ApexChart
+          type="pie"
+          height="200"
+          width="100%"
+          :options="state.OptionsPieDatasource"
+          :series="state.graphSeriesPie"
+        />
+      </ClientOnly>
+    </div>
+
+    <!-- Chart 3 -->
+    <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        Prenatal Care
+      </h3>
+
+      <ClientOnly>
+        <ApexChart
+          type="pie"
+          height="200"
+          width="100%"
+          :options="state.OptionsPieDatasource"
+          :series="state.graphSeriesPie"
+        />
+      </ClientOnly>
+    </div>
+
+    <!-- Chart 4 -->
+    <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        Facility Deliveries
+      </h3>
+
+      <ClientOnly>
+        <ApexChart
+          type="pie"
+          height="200"
+          width="100%"
+          :options="state.OptionsPieDatasource"
+          :series="state.graphSeriesPie"
+        />
+      </ClientOnly>
+    </div>
+
+    <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        Postpartum care
+      </h3>
+
+      <ClientOnly>
+        <ApexChart
+          type="pie"
+          height="200"
+          width="100%"
+          :options="state.OptionsPieDatasource"
+          :series="state.graphSeriesPie"
+        />
+      </ClientOnly>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
-
-const All_deliveries = [10,20,30,40]
-const less_15_deliveries = [10,20,30,40]
-const deliveries_15_19 = [120,110,100,90]
+import { reactive, onMounted } from "vue";
 
 const props = defineProps({
-    class: {
-        type: String,
-        required: true,
-        default: 'border-solid',
-    },
-    displaytext:{
-        type: String,
-        required: false,
-    },group_id:{
-        type: String,
-        required: false,
-    },report_year:{
-        type: Number,
-        required: false,
-    },passed_data: {
-        type: Object,
-        required: true,
-    },report_years: {
-        type: Object,
-        required: true,
-    }
-  
-})
-
-//sm:col-span-4
-
-onMounted(() => {
-   
-    //fillgraphseries()
-    //fetchReports_Details_pie()
-    //fetchReports_Details_Horizontal_graph()
-    intit()
-})
-
-
-function intit(){
-     state.graphSeriesAll = [0, 0, 0, 0]
-     state.graphSeriesless15 = [0, 0, 0, 0]
-     state.graphSeries15to19 = [0, 0, 0, 0]
-}
+  class: {
+    type: String,
+    required: false,
+    default: "border-solid",
+  },
+  displaytext: {
+    type: String,
+    required: false,
+  },
+  group_id: {
+    type: String,
+    required: false,
+  },
+  report_year: {
+    type: Number,
+    required: false,
+  },
+  passed_data: {
+    type: Object,
+    required: true,
+  },
+  report_years: {
+    type: Object,
+    required: true,
+  },
+});
 
 const state = reactive({
-
-graphSeries: [],    
-
-graphSeriesAll: [],
-graphSeriesless15: [],
-graphSeries15to19: [],
-total_value: 0,
-report_details: [],
-prevalence: 0,
-
-graphSeriesAll: [],
-
-populationHoriOptions: {
-        chart: {
-            type: 'bar',
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false
-            }
-        },
-        colors: [
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: true
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        group: {
-            style: {
-              fontSize: '10px',
-              fontWeight: 700
-            },
-          },    
-        series: [
-            {
-            name: 'ALL maternal deliveries',
-            data: All_deliveries
-            },
-            {
-            name: 'Less than 15 years old pregnany deliveries',
-            data: less_15_deliveries
-            }, 
-            {
-            name: '15-19 years old pregnany deliveries',
-            data: deliveries_15_19
-            }
-        ],
-        xaxis: {
-            categories: [
-            'First Quarter',
-            'Second Quarter',
-            'Third Quarter',
-            'Fourth Quarter',
-            ]
-        },
+  // ✅ VALID INITIAL SERIES (bar)
+  graphSeriesAll: [
+    {
+      name: "Less than 15 yrs old",
+      data: [0, 0, 0, 0],
     },
-})
+    {
+      name: "15 - 19 yrs old",
+      data: [0, 0, 0, 0],
+    },
+  ],
 
+  // ✅ VALID INITIAL SERIES (pie)
+  graphSeriesPie: [0, 0, 0],
 
-// async function fetchReports_Details_Horizontal_graph() { // main fetching function for actuals
-//     try {
+  report_details: [],
 
-//         await props.passed_data.data
-//         await props.report_year.data 
+  populationHoriOptions: {
+    chart: {
+      type: "bar",
+      stacked: false,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+      },
+    },
+    colors: ["#00796B", "#388E3C", "#AFB42B", "#F9A825"],
+    dataLabels: {
+      enabled: true,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    xaxis: {
+      categories: ["1Q", "2Q", "3Q", "4Q"],
+    },
+  },
 
+  OptionsPieDatasource: {
+    chart: {
+      type: "pie",
+    },
+    colors: ["#fbbf24", "#facc15", "#a3e635", "#4ade80"],
+    grid: {
+      padding: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ["#333"],
+        fontSize: "12px",
+        fontWeight: "bold",
+      },
+      formatter(val, opts) {
+        const name = opts.w.globals.labels[opts.seriesIndex];
+        return [name, val.toFixed(1) + "%"];
+      },
+    },
+    legend: {
+      show: false,
+    },
+    labels: [
+      "Above 19 yrs old",
+      "less than 15 yrs old",
+      "15 - 19 yrs old",
+    ],
+  },
+});
 
-//         //props.report_years.data.sort((a, b) => b.report_year - a.report_year); // sort descending
+onMounted(() => {
+  fetchReports_Details_Bars();
+  fetchReports_Details_Pie();
+});
 
-//         let years_options = []
-//         console.log('props report years: ', props.report_years)
+async function fetchReports_Details_Bars() {
+  try {
+    const data = props.passed_data?.data ?? [];
 
-//         console.log('props report year: ', props.report_year)
-//         for (const y in props.report_years.data) {
+    // TODO: replace fake values with real aggregation logic
+    const less15 = [10, 20, 15, 22];
+    const from15to19 = [22, 35, 41, 12];
 
-//             if (props.report_years.data[y].report_year == props.report_year) {
-//             years_options.push({ value: props.report_years.data[y].id, text: props.report_years.data[y].report_year })
-//             }
-            
-//         }
+    state.graphSeriesAll = [
+      { name: "Less than 15 yrs old", data: less15 },
+      { name: "15 - 19 yrs old", data: from15to19 },
+    ];
+  } catch (error) {
+    console.error(error);
+    state.graphSeriesAll = [
+      { name: "Less than 15 yrs old", data: [0, 0, 0, 0] },
+      { name: "15 - 19 yrs old", data: [0, 0, 0, 0] },
+    ];
+  }
+}
 
-//         console.log('years options: ', years_options)
+async function fetchReports_Details_Pie() {
+  try {
+    const data = props.passed_data?.data ?? [];
 
-//         state.report_details.data = props.passed_data.data
-        
-//          //let total_value = 0
-//          //let prevalence = 0
-//          //let del_2_1_1 = 0
-//          //let del_2_1_2 = 0
-
-
-//         state.graphSeriesAll = [0, 0, 0, 0]
-//         state.graphSeriesless15 = [0, 0, 0, 0]
-//         state.graphSeries15to19 = [0, 0, 0, 0]
-        
-//         for (const c in state.report_details.data) {
-
-//             //given: the report is quarterly
-
-//             if (state.report_details.data[c].indicator_no == '1.1'  && state.report_details.data[c].report_year == props.report_year) {
-//                 state.graphSeriesAll[0] = parseFloat(state.graphSeriesAll[0]) + parseFloat(state.report_details.data[c].total)
-                
-//             } else if (state.report_details.data[c].sequence_header == '2.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesless15[1] = parseFloat(state.graphSeriesMale[1]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[1] = parseFloat(state.graphSeriesFemale[1]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[2] = parseFloat(state.graphSeriesMale[2]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[2] = parseFloat(state.graphSeriesFemale[2]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[3] = parseFloat(state.graphSeriesMale[3]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[3] = parseFloat(state.graphSeriesFemale[3]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[4] = parseFloat(state.graphSeriesMale[4]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[4] = parseFloat(state.graphSeriesFemale[4]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.6' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[5] = parseFloat(state.graphSeriesMale[5]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[5] = parseFloat(state.graphSeriesFemale[5]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.7' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[6] = parseFloat(state.graphSeriesMale[6]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[6] = parseFloat(state.graphSeriesFemale[6]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.8' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[7] = parseFloat(state.graphSeriesMale[7]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[7] = parseFloat(state.graphSeriesFemale[7]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.9' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[8] = parseFloat(state.graphSeriesMale[8]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[8] = parseFloat(state.graphSeriesFemale[8]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.10' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[9] = parseFloat(state.graphSeriesMale[9]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[9] = parseFloat(state.graphSeriesFemale[9]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.11' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[10] = parseFloat(state.graphSeriesMale[10]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[10] = parseFloat(state.graphSeriesFemale[10]) + parseFloat(state.report_details.data[c].female)
-//             } else if (state.report_details.data[c].sequence_header == '3.1.1.12' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-//                 state.graphSeriesMale[11] = parseFloat(state.graphSeriesMale[11]) + parseFloat(state.report_details.data[c].male)
-//                 state.graphSeriesFemale[11] = parseFloat(state.graphSeriesFemale[11]) + parseFloat(state.report_details.data[c].female)
-//             }
-//         }
-//         state.graphSeriesAll[0] = { name: "Male", data: state.graphSeriesMale };
-//         state.graphSeriesAll[1] = { name: "Female", data: state.graphSeriesFemale };
-//     } catch (error) {
-//         state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-//         state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-//     }
-// }
-
+    // TODO: replace with real logic
+    state.graphSeriesPie = [3000, 2000, 3000];
+  } catch (error) {
+    console.error(error);
+    state.graphSeriesPie = [0, 0, 0];
+  }
+}
 </script>

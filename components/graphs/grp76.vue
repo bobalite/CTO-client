@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 76. {{props.displaytext}}</h3>
-        <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+        <ApexChart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
             :series="state.graphSeriesAll" />
            
         </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

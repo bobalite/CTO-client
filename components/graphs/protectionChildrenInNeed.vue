@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                 CHILDREN AT-RISK
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -20,7 +20,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Victims of Child Abuse (RA 7610)
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -29,7 +29,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Sexually Abused Children
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -38,7 +38,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total number of Children Issued with Permit to Travel by CSWDO
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

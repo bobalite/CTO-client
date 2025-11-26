@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                 GENERAL POPULATION
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexChart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -18,7 +18,7 @@
             <h3 class="text-sm font-bold mb-2">
                  Children Belong to IP/Moro Sector, by Ethnicity
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexChart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -29,7 +29,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Persons With Disabilities (PWDs)
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexChart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -39,7 +39,7 @@
             <h3 class="text-sm font-bold mb-2">
                CIVIL REGISTRATION
             </h3>
-            <ApexCharts type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <ApexChart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import ApexCharts from 'vue3-apexcharts';
+
 import {reportDetailsService } from '~/components/api/ReportDetailsService';
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
 

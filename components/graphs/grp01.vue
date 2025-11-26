@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 1. {{props.displaytext}}</h3>
-        <ApexCharts height="200" width="120%" :options="state.OptionsPieDatasource"
+        <ApexChart height="200" width="120%" :options="state.OptionsPieDatasource"
           :series="state.graphSeries" />
            
         </div>
@@ -26,7 +26,7 @@
 
 <script setup>
 
-import ApexCharts from 'vue3-apexcharts';
+
 
 const props = defineProps({
     class: {

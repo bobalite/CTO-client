@@ -1,12 +1,12 @@
 <template>
-<ApexCharts :type="state.selected_graph_type" height="400" width="100%"
+<ApexChart :type="state.selected_graph_type" height="400" width="100%"
    :options="state.populationHoriOptions" :series="state.graphseries_all" />
 <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
 
 </template>
 <script>
 
-import ApexCharts from 'vue3-apexcharts';
+
 
 const dummyPercentageActualvsLocal =[1.2,3.4,5.1,85.6,75,97]
 const dummyPercentageActualvsNAtional =[88.3,100,96.8,91.4,125,104]

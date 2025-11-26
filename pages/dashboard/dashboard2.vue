@@ -472,7 +472,7 @@
 </template>
 
 <script setup>
-//import ApexCharts from 'vue3-apexcharts';
+//import ApexChartfrom 'vue3-apexcharts';
 //import {Rights_entry_configServices } from '~/components/api/Rights_entry_configService'; 
 import {useUserStore} from '~/store/user'
 import {userDashboardWidgetsService } from '~/components/api/UserDashboardWidgetsService'; 
