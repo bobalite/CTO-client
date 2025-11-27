@@ -686,7 +686,7 @@ async function fetchData() {
   console.log('params', params) 
   
   //http://127.0.0.1:8000/api/report_details_group?report_year=2025&&right_id=1
-  const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+  //const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
   
   
   state.passed_data.data = response.data
@@ -706,9 +706,9 @@ async function get_year_details() {
       report_year_id: Number(state.report_year),
     }
 
-    const response = await reportDetailsService.getReportDetails(params)
-    console.log('response params', params)
-    state.group_details = response
+    //const response = await reportDetailsService.getReportDetails(params)
+    //console.log('response params', params)
+    //state.group_details = response
    
   } catch (err) {
     console.error('Error get_year_details:', err)
@@ -722,8 +722,8 @@ async function getexceldata() {
      
       report_year_id: Number(state.report_year),
     }
-    const response = await reportDetailsExcelService.getReportExcelDetails(params)
-    state.exceldata = response
+    //const response = await reportDetailsExcelService.getReportExcelDetails(params)
+    //state.exceldata = response
     
   } catch (err) {
     console.error('Error getexceldata:', err)
@@ -735,7 +735,7 @@ async function getexceldata() {
 
 async function deleteUserDashboardWidgets(){
   try{
-     await userDashboardWidgetsService.deleteUserDashboardWidgets(state.user_id);
+     //await userDashboardWidgetsService.deleteUserDashboardWidgets(state.user_id);
    
     } catch (error) {
         //console.log(error)
