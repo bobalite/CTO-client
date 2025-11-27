@@ -32,7 +32,7 @@ class ReportDetailsExcelService extends BaseAPIService {
      * payload: { rows: [ { indicator_no, header_name1, header_value1, ... } ] }
      */
     async saveExcelRows(payload: { rows: object[] }): Promise<any> {
-        return await this.request(`/report_detail_excel/bulk`, "POST", payload);
+        return await this.request(`/report-detail-excel/bulk`, "POST", payload);
     }
 }
 

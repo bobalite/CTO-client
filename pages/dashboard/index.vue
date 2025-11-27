@@ -707,11 +707,11 @@ async function get_year_details() {
     }
 
     const response = await reportDetailsService.getReportDetails(params)
-    console.log('response get_year_details', response)
+    console.log('response params', params)
     state.group_details = response
    
   } catch (err) {
-    console.error('Error fetching report detail excel:', err)
+    console.error('Error get_year_details:', err)
   }
 }
 
@@ -726,7 +726,7 @@ async function getexceldata() {
     state.exceldata = response
     
   } catch (err) {
-    console.error('Error fetching report detail excel:', err)
+    console.error('Error getexceldata:', err)
   }
  
 }
