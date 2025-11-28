@@ -211,10 +211,31 @@ onMounted(() => {
 async function fetchReports_Details_Bars() {
   try {
     const data = props.passed_data?.data ?? [];
+    console.log('fetchReports_Details_Bars data:', data);
+
+
+    let less15 = [0, 0, 0, 0];
+    let from15to19 = [0, 0, 0, 0];
 
     // TODO: replace fake values with real aggregation logic
-    const less15 = [10, 20, 15, 22];
-    const from15to19 = [22, 35, 41, 12];
+
+    for (const item of data) {
+      console.log('Data item:', item);
+
+      if (item.indicator_no === "2.11") {
+        less15[0] += item.total ?? 0;
+      
+      }else if (item.indicator_no === "2.12") {
+        from15to19[0] += item.total ?? 0;
+      }
+    }
+
+    console.log('Aggregated less15:', less15);
+    console.log('Aggregated from15to19:', from15to19);  
+
+
+
+   
 
     state.graphSeriesAll = [
       { name: "Less than 15 yrs old", data: less15 },
@@ -232,6 +253,8 @@ async function fetchReports_Details_Bars() {
 async function fetchReports_Details_Pie() {
   try {
     const data = props.passed_data?.data ?? [];
+
+    console.log('fetchReports_Details_Pie data:', data);
 
     // TODO: replace with real logic
     state.graphSeriesPie = [3000, 2000, 3000];

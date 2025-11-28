@@ -1,7 +1,4 @@
-
 <template>
-
-
   <!---------------------------------changes ------------------------------------------->
 
   <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between z-1">
