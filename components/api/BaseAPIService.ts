@@ -115,7 +115,7 @@ class BaseAPIService {
                     case 404:
                     case 401:
                         if (error.response.status === 401) this.revokeAccess();
-                        if (error.response.status === 404) navigateTo("/Login");
+                        if (error.response.status === 404) navigateTo("/login");
                         throw new APIError(error.response._data);
 
                     case 500:
@@ -142,7 +142,7 @@ class BaseAPIService {
 
     revokeAccess() {
         localStorage.removeItem("_token");
-        navigateTo("/Login");
+        navigateTo("/login");
     }
 }
 

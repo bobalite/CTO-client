@@ -239,7 +239,7 @@ async function logout() {
         if (response) {
             userStore.resetUser()
             localStorage.removeItem("_token");
-            navigateTo('/')
+            navigateTo('/login')
         }
     } catch (error) {
         console.log(error)

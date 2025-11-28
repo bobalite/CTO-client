@@ -668,15 +668,9 @@ function refresh_data(){
 }
 
 
-
-
-
-
-
 async function fetchData() {
   state.isPageLoading = true
  
-
    const params = {
       //indicator_group_id: props.group.group_no ?? null,
       report_year: Number(state.year),
@@ -684,10 +678,7 @@ async function fetchData() {
     }
 
   console.log('params', params) 
-  
-  //http://127.0.0.1:8000/api/report_details_group?report_year=2025&&right_id=1
-  //const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
-  
+  const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
   
   state.passed_data.data = response.data
   console.log('fetchData', state.passed_data)
@@ -706,8 +697,8 @@ async function get_year_details() {
       report_year_id: Number(state.report_year),
     }
 
-    //const response = await reportDetailsService.getReportDetails(params)
-    //console.log('response params', params)
+    const response = await reportDetailsService.getReportDetails(params)
+    console.log('response params', params)
     //state.group_details = response
    
   } catch (err) {
@@ -717,13 +708,12 @@ async function get_year_details() {
 
 async function getexceldata() {
   try {
-    
     const params = {
-     
       report_year_id: Number(state.report_year),
     }
-    //const response = await reportDetailsExcelService.getReportExcelDetails(params)
-    //state.exceldata = response
+    const response = await reportDetailsExcelService.getReportExcelDetails(params)
+    state.exceldata = response
+    console.log('getexceldata response', state.exceldata)
     
   } catch (err) {
     console.error('Error getexceldata:', err)
@@ -861,6 +851,8 @@ async function SaveUserDashboardWidgets(group_id){
 async function fetchreportyear() {
     try {
            const response = await report_yearService.getReportYears()
+
+
         if (response.data) {
             
             state.report_years.data = response.data

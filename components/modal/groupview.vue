@@ -54,12 +54,10 @@
 
           <!-- Excel Mode Header -->
           <template v-else-if="groupMode === 'excel'">
-             <GridCell class="sm:col-span-1 text-center table-header-4 border-l border-b border-grey pb-1"
-              displaytext='' />
-            <GridCell class="sm:col-span-5 text-center table-header-4 border-l border-b border-grey pb-1"
+            <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="INDICATOR" />
             <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
-              displaytext="DOWNLOADED FROM EXCEL" />
+              displaytext="VALUE (FROM EXCEL)" />
             <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-b border-r border-grey pb-1"
               displaytext="REMARKS" />
           </template>
@@ -103,50 +101,57 @@
 
             <template v-else>
               <!-- Indicator + description row -->
-              <GridTextView class="sm:col-span-1 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1"
+              <GridTextView
+                class="sm:col-span-1 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1"
                 v-model="el.indicator_no" />
 
-              <GridTextView :entrystatus="2" class="sm:col-span-11 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1 " 
+              <GridTextView :entrystatus="2"
+                class="sm:col-span-11 px-2 text-center table-header-4  text-sm border-white ring-1 ring-white pb-1 "
                 v-model="el.description" />
-             
-                <GridTextArea v-model="state.remarks[el.indicator_no]"
+
+              <GridTextArea v-model="state.remarks[el.indicator_no]"
                 class="sm:col-span-4 px-2 text-center table-header-4  text-xs border-white ring-1 ring-white pb-1"
                 :entrystatus="el.remarks" displaytext="" />
-                 <!-- Excel VALUE headers -->
+
               <GridCell
-                  class="sm:col-span-1 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
-                  :displaytext="state.header_name1" />
-                <GridCell 
-                  class="sm:col-span-11 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
-                  :displaytext="state.header_name2 || ''" />
-                  <GridCell v-model="state.header_name3"
-                  class="sm:col-span-4 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
-                  :displaytext="state.header_name3 || ''" />
+                class="sm:col-span-1 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                :displaytext="state.header_name1" />
+
+
+              <GridCell
+                class="sm:col-span-12 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                :displaytext="state.header_name2 || ''" />
+
+
+              <GridCell v-model="state.header_name3"
+                class="sm:col-span-3 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                :displaytext="state.header_name3 || ''" />
+
 
               <!-- Excel rows for this indicator -->
-              <template v-for="row in state.exceldata" :key="el.indicator_no">
-                <!-- spacer to keep alignment (1 + 5 cols already used above) -->
-
+              <template v-for="(row, rowIndex) in state.exceldata" :key="row.id || `${el.indicator_no}-${rowIndex}`">
                 <template v-if="row.indicator_no === el.indicator_no">
-                  <!-- No. -->
                   <GridCell
-                    class="sm:col-span-1 px-1 text-left table-header-4 text-xs bg-green-100  border-white ring-1 ring-white pb-1"
+                    class="sm:col-span-1 px-1 text-left table-header-4 text-xs bg-green-100 border-white ring-1 ring-white pb-1"
                     :entrystatus="1" :displaytext="row.header_value1" />
 
-                                <!-- Disease Name -->
-                   <GridCell
-                    class="sm:col-span-11 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  <GridCell
+                    class="sm:col-span-12 px-1 text-left table-header-4 text-xs bg-green-100 border-white ring-1 ring-white pb-1"
                     :entrystatus="1" :displaytext="row.header_value2" />
 
-                  <!-- Count -->
-                 <GridCell
-                    class="sm:col-span-4 px-1 text-left table-header-4 text-xs  bg-green-100  border-white ring-1 ring-white pb-1"
+                  <GridCell
+                    class="sm:col-span-3 px-1 text-left table-header-4 text-xs bg-green-100 border-white ring-1 ring-white pb-1"
                     :entrystatus="1" :displaytext="row.header_value3" />
                 </template>
               </template>
+
             </template>
+
+
+
+
           </template>
-        </div> 
+        </div>
 
         <!-- Action Buttons -->
         <div class="mt-6 flex justify-end gap-2">
@@ -164,7 +169,7 @@
 import { reactive, onMounted, watch, computed } from 'vue'
 import { reportDetailsService } from '~/components/api/ReportDetailsService'
 import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
- 
+
 const props = defineProps({
   show: Boolean,
   modalTitle: String,
@@ -218,7 +223,7 @@ function initializeState() {
     state.male[key] = el.male_value ?? 0
     state.female[key] = el.female_value ?? 0
     state.total[key] = el.total_value ?? 0
-    state.remarks[key] =  ''
+    state.remarks[key] = el.remarks ?? ''
   })
 }
 
@@ -232,7 +237,6 @@ async function get_group_details() {
     const params = {
       indicator_group_id: props.group.group_no ?? null,
       report_year: Number(props.selected_year),
-      report_year_id: Number(props.selected_year_id),
     }
 
     const response = await reportDetailsService.getReportDetails(params)
@@ -254,6 +258,7 @@ async function get_group_details() {
   }
 }
 
+
 async function getexceldata() {
   try {
     if (!props.group) return
@@ -262,18 +267,41 @@ async function getexceldata() {
       indicator_group_id: props.group.group_no ?? null,
       report_year_id: Number(props.selected_year_id),
     }
+
     const response = await reportDetailsExcelService.getReportExcelDetails(params)
-    state.exceldata = response
+    console.log('response reportDetailsExcelService', response)
 
-    state.header_name1 = state.exceldata[0].header_name1 ?? 'fail'
-    state.header_name2 = state.exceldata[0].header_name2
-    state.header_name3 = state.exceldata[0].header_name3
+    // Decide shape once
+    const rows = Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : []
 
+    state.exceldata = rows
+    console.log('state.exceldata', state.exceldata)
+
+    const first = rows[0] ?? null
+
+    if (first) {
+      state.header_name1 = first.header_name1 ?? 'Value 1'
+      state.header_name2 = first.header_name2 ?? 'Value 2'
+      state.header_name3 = first.header_name3 ?? 'Value 3'
+    } else {
+      state.header_name1 = 'Value 1'
+      state.header_name2 = 'Value 2'
+      state.header_name3 = 'Value 3'
+    }
+
+    console.log('header names', state.header_name1, state.header_name2, state.header_name3)
   } catch (err) {
-    //console.error('Error fetching report detail excel:', err)
+    console.error('Error fetching report detail excel:', err)
   }
- 
 }
+
+
+
+// function getExcelRows(indicatorNo) {
+//   // returns only the rows in exceldata that match this indicator
+//   return state.exceldata.filter(row => row.indicator_no === indicatorNo)
+// }
+
 
 /* ---------------------------------------------
    WATCH

@@ -813,14 +813,14 @@ async function logout() {
             userStore.resetUser()
             localStorage.removeItem("_token");
             navigateTo('/login')
-            console.log('loggin out')
+            console.log('logged out')
         }
     } catch (error) {
         console.log(error)
     }
 
     console.log('logged out')
-    navigateTo('/')
+    navigateTo('/login')
 }
 
 
