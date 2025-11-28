@@ -583,6 +583,7 @@ async function saveIndicators() {
       const confirmUpdate = confirm(`${existingRecords.length} record(s) already exist. Update them?`)
       if (confirmUpdate) {
         for (const item of existingRecords) {
+          console.log('Updating ID', item.id, 'with params', item.params)
           try { await reportDetailsService.updateReportDetails(item.params, item.id); successCount++ }
           catch (err) { console.error('Error updating existing record', item.id, err); errorCount++ }
         }
