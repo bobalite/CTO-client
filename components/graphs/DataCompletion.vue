@@ -1,6 +1,6 @@
 <template>
    
-        <ApexChart height="90%" width="90%" :options="state.OptionsPieDatasource"
+        <apexchart height="90%" width="90%" :options="state.OptionsPieDatasource"
           :series="state.graphSeries" />
            <h3 class="text-sm z-1 font-bold border-1 border-solid border-blue-900  rounded-xl ">{{props.displaytext}}:  {{props.report_year}}</h3>
    
@@ -8,8 +8,7 @@
 
 <script setup>
 
-//import { report_yearService } from '../api/ReportYears';
-//import {reportDetailsService } from '~/components/api/ReportDetailsService';
+
 import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'; 
 
 const props = defineProps({

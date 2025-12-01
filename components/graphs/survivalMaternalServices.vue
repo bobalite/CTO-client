@@ -11,7 +11,7 @@
       </h3>
 
       <ClientOnly>
-        <ApexChart
+        <apexchart
           type="bar"
           height="90%"
           width="100%"
@@ -28,7 +28,7 @@
       </h3>
 
       <ClientOnly>
-        <ApexChart
+        <apexchart
           type="pie"
           height="200"
           width="100%"
@@ -45,7 +45,7 @@
       </h3>
 
       <ClientOnly>
-        <ApexChart
+        <apexchart
           type="pie"
           height="200"
           width="100%"
@@ -62,7 +62,7 @@
       </h3>
 
       <ClientOnly>
-        <ApexChart
+        <apexchart
           type="pie"
           height="200"
           width="100%"
@@ -78,7 +78,7 @@
       </h3>
 
       <ClientOnly>
-        <ApexChart
+        <apexchart
           type="pie"
           height="200"
           width="100%"
@@ -133,6 +133,10 @@ const state = reactive({
       data: [0, 0, 0, 0],
     },
   ],
+
+  quarterNames: [],
+  quarterIds: [],
+
 
   // ✅ VALID INITIAL SERIES (pie)
   graphSeriesPie: [0, 0, 0],
@@ -206,12 +210,55 @@ const state = reactive({
 onMounted(() => {
   fetchReports_Details_Bars();
   fetchReports_Details_Pie();
+  buildQuarterArrays();
 });
 
+
+
+function buildQuarterArrays() {
+  const raw = props.report_years ?? [];
+
+  // 1) Normalize: prefer raw.data if it exists, otherwise use raw as array
+  let allYears = [];
+
+  if (Array.isArray(raw.data)) {
+    allYears = raw.data;
+  } else if (Array.isArray(raw)) {
+    allYears = raw;
+  }
+
+  const targetYear = Number(props.report_year);
+  console.log('Building quarter arrays for props.report_year:', props.report_year);
+  console.log('Normalized report_years (allYears):', allYears);
+  console.log('Target year (number):', targetYear);
+
+  // 2) Filter only quarters for the selected year
+  const filtered = allYears.filter((q) => Number(q.year) === targetYear);
+
+  console.log('Filtered quarters:', filtered);
+
+  // 3) Save IDs
+  state.quarterIds = filtered.map((q) => q.id);
+
+  // 4) Save names as "Q1 2025", "Q2 2025", etc.
+  state.quarterNames = filtered.map((q, index) => {
+    const qNum = index + 1; // 0→Q1, 1→Q2, ...
+    return `Q${qNum} ${q.year}`;
+  });
+
+  console.log('quarterNames:', state.quarterNames);
+  console.log('quarterIds:', state.quarterIds);
+}
+
+
+
 async function fetchReports_Details_Bars() {
+
+
   try {
     const data = props.passed_data?.data ?? [];
-    console.log('fetchReports_Details_Bars data:', data);
+    const years_data = props.report_years ?? [];
+
 
 
     let less15 = [0, 0, 0, 0];
@@ -232,10 +279,7 @@ async function fetchReports_Details_Bars() {
 
     console.log('Aggregated less15:', less15);
     console.log('Aggregated from15to19:', from15to19);  
-
-
-
-   
+  
 
     state.graphSeriesAll = [
       { name: "Less than 15 yrs old", data: less15 },
@@ -249,6 +293,82 @@ async function fetchReports_Details_Bars() {
     ];
   }
 }
+
+
+// async function fetchReports_Details_Bars() {
+
+
+//   for (const item of props.report_years) {
+//     console.log('Data item report_years:', item);
+//   }
+
+
+
+
+
+//   try {
+//     const data = props.passed_data?.data ?? [];
+//     const yearsRaw = props.report_years ?? [];
+
+//     // Normalize report_years into a plain array
+//     const yearsArray = Array.isArray(yearsRaw)
+//       ? yearsRaw
+//       : Array.isArray(yearsRaw.data)
+//         ? yearsRaw.data
+//         : [];
+
+//     console.log('fetchReports_Details_Bars data:', data);
+//     console.log('fetchReports_years_data (normalized):', yearsArray);
+
+//     // Make 1 slot per quarter (max 4)
+//     const quartersCount = Math.min(4, yearsArray.length || 4);
+//     const less15 = Array(quartersCount).fill(0);
+//     const from15to19 = Array(quartersCount).fill(0);
+
+//     // Loop over each quarter definition
+//     yearsArray.slice(0, quartersCount).forEach((quarter, index) => {
+//       const quarterId = quarter?.id;
+
+//       console.log(`Processing quarter index=${index}, id=${quarterId}, name=${quarter?.name}`);
+
+//       // Loop all items and aggregate into the correct quarter index
+//       for (const item of data) {
+//         if (!item) continue;
+
+//         // If your items have a report_year_id, uncomment this to strictly match quarter:
+//         // if (quarterId != null && item.report_year_id != null && item.report_year_id !== quarterId) {
+//         //   continue;
+//         // }
+
+//         const total = Number(item.total ?? 0) || 0;
+
+//         if (item.indicator_no === "2.11") {
+//           less15[index] += total;
+//         } else if (item.indicator_no === "2.12") {
+//           from15to19[index] += total;
+//         }
+//       }
+//     });
+
+//     console.log('Aggregated less15:', less15);          // [Q1, Q2, Q3, Q4]
+//     console.log('Aggregated from15to19:', from15to19);  // [Q1, Q2, Q3, Q4]
+
+//     state.graphSeriesAll = [
+//       { name: "Less than 15 yrs old", data: less15 },
+//       { name: "15 - 19 yrs old", data: from15to19 },
+//     ];
+//   } catch (error) {
+//     console.error(error);
+
+//     state.graphSeriesAll = [
+//       { name: "Less than 15 yrs old", data: [0, 0, 0, 0] },
+//       { name: "15 - 19 yrs old", data: [0, 0, 0, 0] },
+//     ];
+//   }
+// }
+
+
+
 
 async function fetchReports_Details_Pie() {
   try {

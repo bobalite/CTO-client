@@ -1,6 +1,6 @@
 <template>
  <div class="mt-6">
-              <ApexChartref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
+              <apexchart ref="chart" width="90%" height="350" type="area" :options="state.populationHoriOptions"
                 :series="state.graphseries_all"
                 />
             </div>

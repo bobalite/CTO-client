@@ -1,5 +1,5 @@
 <template>
-<ApexChart :type="state.selected_graph_type" height="400" width="100%"
+<apexchart :type="state.selected_graph_type" height="400" width="100%"
    :options="state.populationHoriOptions" :series="state.graphseries_all" />
 <GridCell v-if="state.is_annual != 1" class="sm:col-span-10 " :displaytext="state.selected_quarter" />
 

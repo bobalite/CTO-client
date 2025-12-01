@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Ratio of maternal deaths (MMR)
             </h3>
-            <ApexChart
+            <apexchart
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-sm font-bold mb-2">
                Infant Mortality Rate
             </h3>
-            <ApexChart
+            <apexchart
                 type="pie"
                 height="200"
                 width="100%"
@@ -37,7 +37,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Top 10 Leading causes of Infant Mortality (0-11 months)
             </h3>
-            <ApexChart
+            <apexchart
                  type="pie"
                 height="200"
                 width="100%"
@@ -51,7 +51,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Top 10 leading causes of Under-Five (U5) Mortality
             </h3>
-            <ApexChart
+            <apexchart
                  type="pie"
                 height="200"
                 width="100%"

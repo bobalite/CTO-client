@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                LOCAL HEALTH CENTERS
             </h3>
-            <ApexChart
+            <apexchart
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-sm font-bold mb-2">
                WATER & SANITATION SERVICES
             </h3>
-            <ApexChart
+            <apexchart
                 type="pie"
                 height="200"
                 width="100%"

@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                ECCD
             </h3>
-            <ApexChart 
+            <apexchart 
                 type="pie"
                 height="200"
                 width="100%"

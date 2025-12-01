@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Group 37. {{props.displaytext}}</h3>
-        <ApexChart height="200" width="90%" :options="state.populationHoriOptions"
+        <apexchart height="200" width="90%" :options="state.populationHoriOptions"
           :series="state.graphSeriesAll" />
            
         </div>

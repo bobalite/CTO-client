@@ -1,6 +1,6 @@
 <template>
 
-    <ApexChart height="90%" width="90%" :options="state.OptionsPieDatasource" :series="state.graphSeries" />
+    <apexchart height="90%" width="90%" :options="state.OptionsPieDatasource" :series="state.graphSeries" />
     <h3 class="text-sm font-bold border-1 border-solid border-blue-900  rounded-xl ">{{ props.displaytext }}
         {{ props.report_year }}</h3>
 

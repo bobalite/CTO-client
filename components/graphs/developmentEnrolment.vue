@@ -9,7 +9,7 @@
             <h3 class="text-lg font-bold mb-2">
                 STUDENT ENROLMENT
             </h3>
-            <ApexChart 
+            <apexchart 
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-lg font-bold mb-2">
                NET ENROLMENT
             </h3>
-            <ApexChart 
+            <apexchart 
                 type="pie"
                 height="200"
                 width="100%"
@@ -37,7 +37,7 @@
             <h3 class="text-lg font-bold mb-2">
                 COMPLETION
             </h3>
-            <ApexChart 
+            <apexchart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -51,7 +51,7 @@
             <h3 class="text-lg font-bold mb-2">
                  SCHOOL LEAVER (DROP-OUT)
             </h3>
-            <ApexChart 
+            <apexchart 
                  type="pie"
                 height="200"
                 width="100%"
@@ -79,7 +79,7 @@
             <h3 class="text-lg font-bold mb-2">
                 ALTERNATIVE LEARNING SYSTEM
             </h3>
-            <ApexChart 
+            <apexchart 
                  type="pie"
                 height="200"
                 width="100%"

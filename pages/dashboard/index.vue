@@ -730,117 +730,117 @@ async function deleteUserDashboardWidgets(){
     }
 }
 
-function loopthroughNewSettings(){
+// function loopthroughNewSettings(){
 
-  //console.log('loop thru start')
+//   //console.log('loop thru start')
 
-  if (state.showGraphsGrp01) {
-    SaveUserDashboardWidgets(1)
-  }
-  if (state.showGraphsGrp02) {
-    SaveUserDashboardWidgets(2)
-  }
-  if (state.showGraphsGrp03) {  
-    SaveUserDashboardWidgets(3)
-  }
-  if (state.showGraphsGrp04) {
-    SaveUserDashboardWidgets(4) 
-  }
-  if (state.showGraphsGrp05) {  
-    SaveUserDashboardWidgets(5) 
-  }
-  if (state.showGraphsGrp06) {  
-    SaveUserDashboardWidgets(6) 
+//   if (state.showGraphsGrp01) {
+//     SaveUserDashboardWidgets(1)
+//   }
+//   if (state.showGraphsGrp02) {
+//     SaveUserDashboardWidgets(2)
+//   }
+//   if (state.showGraphsGrp03) {  
+//     SaveUserDashboardWidgets(3)
+//   }
+//   if (state.showGraphsGrp04) {
+//     SaveUserDashboardWidgets(4) 
+//   }
+//   if (state.showGraphsGrp05) {  
+//     SaveUserDashboardWidgets(5) 
+//   }
+//   if (state.showGraphsGrp06) {  
+//     SaveUserDashboardWidgets(6) 
 
-  }
-  if (state.showGraphsGrp37) {  
-    SaveUserDashboardWidgets(37) 
+//   }
+//   if (state.showGraphsGrp37) {  
+//     SaveUserDashboardWidgets(37) 
 
-  }
-  if (state.showGraphsGrp45) {  
-    SaveUserDashboardWidgets(45) 
+//   }
+//   if (state.showGraphsGrp45) {  
+//     SaveUserDashboardWidgets(45) 
 
-  }
-  if (state.showGraphsGrp48) {  
-    SaveUserDashboardWidgets(48) 
+//   }
+//   if (state.showGraphsGrp48) {  
+//     SaveUserDashboardWidgets(48) 
 
-  }
-  if (state.showGraphsGrp49) {  
-    SaveUserDashboardWidgets(49) 
+//   }
+//   if (state.showGraphsGrp49) {  
+//     SaveUserDashboardWidgets(49) 
 
-  }
-  if (state.showGraphsGrp50) {  
-    SaveUserDashboardWidgets(50) 
+//   }
+//   if (state.showGraphsGrp50) {  
+//     SaveUserDashboardWidgets(50) 
 
-  }
-  if (state.showGraphsGrp55) {  
-    SaveUserDashboardWidgets(55) 
+//   }
+//   if (state.showGraphsGrp55) {  
+//     SaveUserDashboardWidgets(55) 
 
-  }                        
+//   }                        
 
-  if (state.showGraphsGrp59) {  
-    SaveUserDashboardWidgets(59) 
+//   if (state.showGraphsGrp59) {  
+//     SaveUserDashboardWidgets(59) 
 
-  } 
-  if (state.showGraphsGrp65) {  
-    SaveUserDashboardWidgets(65) 
+//   } 
+//   if (state.showGraphsGrp65) {  
+//     SaveUserDashboardWidgets(65) 
 
-  }
-  if (state.showGraphsGrp68) {  
-    SaveUserDashboardWidgets(68) 
+//   }
+//   if (state.showGraphsGrp68) {  
+//     SaveUserDashboardWidgets(68) 
 
-  } 
-  if (state.showGraphsGrp70) {  
-    SaveUserDashboardWidgets(70) 
+//   } 
+//   if (state.showGraphsGrp70) {  
+//     SaveUserDashboardWidgets(70) 
 
-  } 
-  if (state.showGraphsGrp71) {  
-    SaveUserDashboardWidgets(71) 
+//   } 
+//   if (state.showGraphsGrp71) {  
+//     SaveUserDashboardWidgets(71) 
 
-  }
-  if (state.showGraphsGrp72) {  
-    SaveUserDashboardWidgets(72) 
+//   }
+//   if (state.showGraphsGrp72) {  
+//     SaveUserDashboardWidgets(72) 
 
-  }
-  if (state.showGraphsGrp73) {  
-    SaveUserDashboardWidgets(73) 
+//   }
+//   if (state.showGraphsGrp73) {  
+//     SaveUserDashboardWidgets(73) 
 
-  }
-  if (state.showGraphsGrp74) {  
-    SaveUserDashboardWidgets(74) 
+//   }
+//   if (state.showGraphsGrp74) {  
+//     SaveUserDashboardWidgets(74) 
 
-  }
-  if (state.showGraphsGrp75) {  
-    SaveUserDashboardWidgets(75) 
+//   }
+//   if (state.showGraphsGrp75) {  
+//     SaveUserDashboardWidgets(75) 
 
-  }  
+//   }  
 
     
 
-}
+// }
 
 
-async function SaveUserDashboardWidgets(group_id){ 
+// async function SaveUserDashboardWidgets(group_id){ 
 
-  try {
-        let params = {
-            user_id: state.user_id,
-            group_id: group_id,
+//   try {
+//         let params = {
+//             user_id: state.user_id,
+//             group_id: group_id,
 
-        }
-        const response = await userDashboardWidgetsService.createUserDashboardWidget(params);
+//         }
+//         const response = await userDashboardWidgetsService.createUserDashboardWidget(params);
       
 
-    } catch (error) {
-        //console.log(error)
-        state.errorcount = state.errorcount + 1;
-    }finally {
-        //console.log('saved user dashboard widget', group_id)
-    }
+//     } catch (error) {
+//         //console.log(error)
+//         state.errorcount = state.errorcount + 1;
+//     }finally {
+//         //console.log('saved user dashboard widget', group_id)
+//     }
 
    
 
-}
+// }
 
 
 

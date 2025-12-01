@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Pregnancies</h3>
-        <ApexChart type="bar" height="90%" width="90%" :options="state.populationHoriOptions"
+        <apexchart type="bar" height="90%" width="90%" :options="state.populationHoriOptions"
             :series="state.graphSeriesAll" />
            
         </div>

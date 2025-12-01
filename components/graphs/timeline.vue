@@ -2,7 +2,7 @@
     <div :class=props.class >
         <div >
         <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">{{props.displaytext}}</h3>
-        <ApexChartheight="300" width="98%" :options="state.OptionsPieDatasource"
+        <apexchart height="300" width="98%" :options="state.OptionsPieDatasource"
           :series=state.OptionsPieDatasource />
            
         </div>

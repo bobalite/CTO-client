@@ -15,28 +15,28 @@
             <div class="sm:col-span-6 text-xl font-bold  text-center  border-1 border-solid border-blue-900 pb-4">
                 <h2 class="text-lg font-bold">Accomplishments vs Projected</h2>
                
-                <ApexCharttype="bar" height="500" width="80%" :options="state.populationHoriOptions"
+                <apexchart type="bar" height="500" width="80%" :options="state.populationHoriOptions"
                     :series="state.survivalOptions.series" />
             </div>
 
             <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
                 <h2 class="text-lg font-bold">Percentage</h2>
                
-                <ApexCharttype="area" height="500" width="80%" :options="state.survivalOptions"
+                <apexchart type="area" height="500" width="80%" :options="state.survivalOptions"
                     :series="state.survivalOptions.series_percentage" />
             </div>
 
             <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
                 <h2 class="text-lg font-bold">Total Services Given</h2>
                
-                <ApexChart height="400" width="80%" :options="state.survivalOptionsPie"
+                <apexchart height="400" width="80%" :options="state.survivalOptionsPie"
                     :series="state.survivalOptionsPie.series" />
             </div>
 
             <!-- <div class="sm:col-span-6 text-xl font-bold  text-center border-1 border-solid border-blue-900 pb-4">
                 <h2 class="text-lg font-bold">Datasources</h2>
                
-                <ApexChart height="400" width="80%" :options="state.survivalOptionsPieDatasource"
+                <apexchart height="400" width="80%" :options="state.survivalOptionsPieDatasource"
                     :series="state.survivalOptionsPieDatasource.series" />
             </div> -->
 

@@ -9,7 +9,7 @@
             <h3 class="text-lg font-bold mb-2">
                 LCPC FUNCTIONALITY
             </h3>
-            <ApexChart 
+            <apexchart 
                 type="pie"
                 height="200"
                 width="100%"
@@ -23,7 +23,7 @@
             <h3 class="text-lg font-bold mb-2">
                LOCAL INSTITUTIONS
             </h3>
-            <ApexChart 
+            <apexchart 
                 type="pie"
                 height="200"
                 width="100%"

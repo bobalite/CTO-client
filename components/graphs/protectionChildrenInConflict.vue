@@ -9,7 +9,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total Number of Children In-Conflict with the Law
             </h3>
-            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -18,7 +18,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Total Number of Crimes Against Person Committed By Children
             </h3>
-            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -31,7 +31,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Total Number of Crimes Against Property Committed By Children
             </h3>
-            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -40,7 +40,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total Number of Crimes Against Public Order Committed By Children
             </h3>
-            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>
@@ -49,7 +49,7 @@
             <h3 class="text-sm font-bold mb-2">
                Total Number of Crimes Committed By Children Under Special Penal Laws 
             </h3>
-            <ApexCharttype="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.graphSeriesAll" />
 
         </div>

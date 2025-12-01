@@ -34,7 +34,7 @@
 
 
     <div ref="printSection" class="p-6 bg-white">
-      <ApexChartref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
+      <apexchart ref="chart" width="90%" height="350" type="bar" :options="chartOptions" :series="series" />
     </div>
 
     <button @click="printChart" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
