@@ -24,16 +24,16 @@
     <!-- Chart 2 -->
     <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">
-        All Maternal Deliveries
+        Prevalence of Teenage Pregnancy
       </h3>
 
       <ClientOnly>
         <apexchart
-          type="pie"
+          type="bar"
           height="200"
           width="100%"
-          :options="state.OptionsPieDatasource"
-          :series="state.graphSeriesPie"
+          :options="state.populationHoriOptions"
+          :series="state.graphSeriesAllPrevalence"
         />
       </ClientOnly>
     </div>
@@ -46,11 +46,11 @@
 
       <ClientOnly>
         <apexchart
-          type="pie"
+          type="bar"
           height="200"
           width="100%"
-          :options="state.OptionsPieDatasource"
-          :series="state.graphSeriesPie"
+          :options="state.populationHoriOptions"
+          :series="state.graphSeriesPrenatalCare "
         />
       </ClientOnly>
     </div>
@@ -208,9 +208,12 @@ const state = reactive({
 });
 
 onMounted(() => {
+
+  buildQuarterArrays();
+
   fetchReports_Details_Bars();
   fetchReports_Details_Pie();
-  buildQuarterArrays();
+ 
 });
 
 
@@ -218,7 +221,7 @@ onMounted(() => {
 function buildQuarterArrays() {
   const raw = props.report_years ?? [];
 
-  // 1) Normalize: prefer raw.data if it exists, otherwise use raw as array
+  // Normalize report_years into a plain array
   let allYears = [];
 
   if (Array.isArray(raw.data)) {
@@ -232,67 +235,150 @@ function buildQuarterArrays() {
   console.log('Normalized report_years (allYears):', allYears);
   console.log('Target year (number):', targetYear);
 
-  // 2) Filter only quarters for the selected year
+  // Filter only quarters for the selected year
   const filtered = allYears.filter((q) => Number(q.year) === targetYear);
 
   console.log('Filtered quarters:', filtered);
 
-  // 3) Save IDs
-  state.quarterIds = filtered.map((q) => q.id);
+  // IDs and names
+  const quarterIds = filtered.map((q) => Number(q.id));
+  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
 
-  // 4) Save names as "Q1 2025", "Q2 2025", etc.
-  state.quarterNames = filtered.map((q, index) => {
-    const qNum = index + 1; // 0→Q1, 1→Q2, ...
-    return `Q${qNum} ${q.year}`;
-  });
+  state.quarterIds = quarterIds;
+  state.quarterNames = quarterNames;
 
-  console.log('quarterNames:', state.quarterNames);
   console.log('quarterIds:', state.quarterIds);
+  console.log('quarterNames:', state.quarterNames);
+
+  // Optional: sync x-axis categories with quarter names
+  if (quarterNames.length) {
+    state.populationHoriOptions.xaxis = {
+      ...state.populationHoriOptions.xaxis,
+      categories: quarterNames,
+    };
+  }
 }
+
+
 
 
 
 async function fetchReports_Details_Bars() {
-
-
   try {
-    const data = props.passed_data?.data ?? [];
-    const years_data = props.report_years ?? [];
+    // Normalize data from props
+    const rawData = props.passed_data?.data ?? [];
+    const data = Array.isArray(rawData) ? rawData : [...rawData];
 
+    // Normalize quarter IDs from state
+    const rawQuarterIds = state.quarterIds ?? [];
+    const quarterIds = Array.isArray(rawQuarterIds)
+      ? rawQuarterIds.map(Number)
+      : [...rawQuarterIds].map(Number);
 
-
-    let less15 = [0, 0, 0, 0];
-    let from15to19 = [0, 0, 0, 0];
-
-    // TODO: replace fake values with real aggregation logic
-
-    for (const item of data) {
-      console.log('Data item:', item);
-
-      if (item.indicator_no === "2.11") {
-        less15[0] += item.total ?? 0;
-      
-      }else if (item.indicator_no === "2.12") {
-        from15to19[0] += item.total ?? 0;
-      }
+    if (!quarterIds.length) {
+      console.warn('fetchReports_Details_Bars: quarterIds is empty, nothing to aggregate');
+      state.graphSeriesAll = [
+        { name: 'Less than 15 yrs old', data: [] },
+        { name: '15 - 19 yrs old', data: [] },
+      ];
+      return;
     }
 
+    // Initialize arrays
+    const total_pregnant = new Array(quarterIds.length).fill(0);
+    const total_pregnantw8antenatal = new Array(quarterIds.length).fill(0);
+    const total_pregnantAdolescentw8antenatal = new Array(quarterIds.length).fill(0);
+    const prevalence = new Array(quarterIds.length).fill(0);
+    const less15 = new Array(quarterIds.length).fill(0);
+    const from15to19 = new Array(quarterIds.length).fill(0);
+
+    // SINGLE PASS over data
+    for (const row of data) {
+      if (!row) continue;
+
+      const reportYearId = Number(row.report_year_id);
+      const idx = quarterIds.indexOf(reportYearId);
+      if (idx === -1) continue; // not one of the tracked quarters
+
+      const value = row.total != null ? Number(row.total) : 0;
+      if (Number.isNaN(value)) continue;
+
+      if (row.indicator_no === '2.1') {
+        total_pregnant[idx] += value;
+      }else if (row.indicator_no === '2.11') {
+        less15[idx] += value;
+      } else if (row.indicator_no === '2.12') {
+        from15to19[idx] += value;
+      }else if (row.indicator_no === '2.2') {
+        prevalence[idx] += value;
+      }else if (row.indicator_no === '3.1') {
+        total_pregnantw8antenatal[idx] += value;
+      }else if (row.indicator_no === '3.2') {
+        total_pregnantAdolescentw8antenatal[idx] += value;
+      }
+
+
+      // if (row.indicator_no === '2.1') {
+      //   year_total_adolescents += value;
+      // }else if (row.indicator_no === '2.2') {
+      //   prevalence[idx] += value;
+      // }
+    }
+
+    state.less15 = less15;
+    state.from15to19 = from15to19;
+    state.prevalence = prevalence;
+
+    console.log('quarterIds (used):', quarterIds);
     console.log('Aggregated less15:', less15);
-    console.log('Aggregated from15to19:', from15to19);  
-  
+    console.log('Aggregated from15to19:', from15to19);
 
     state.graphSeriesAll = [
-      { name: "Less than 15 yrs old", data: less15 },
-      { name: "15 - 19 yrs old", data: from15to19 },
+      { name: 'Less than 15 yrs old', data: less15 },
+      { name: '15 - 19 yrs old', data: from15to19 },
+    ];
+
+     state.graphSeriesPrenatalCare = [
+      { name: 'All Pregnant', data: total_pregnant },
+      { name: 'All Pregnant with Antenatal', data: total_pregnantw8antenatal },
+      { name: 'All Pregnant adolescents with Antenatal ', data: total_pregnantAdolescentw8antenatal },
+    
+    ];
+
+
+    state.graphSeriesAllPrevalence = [
+      { name: 'Prevalence/percentage of adolescent pregnancies', data: prevalence }
+      
     ];
   } catch (error) {
-    console.error(error);
+    console.error('fetchReports_Details_Bars error:', error);
+
     state.graphSeriesAll = [
-      { name: "Less than 15 yrs old", data: [0, 0, 0, 0] },
-      { name: "15 - 19 yrs old", data: [0, 0, 0, 0] },
+      { name: 'Less than 15 yrs old', data: [0, 0, 0, 0] },
+      { name: '15 - 19 yrs old', data: [0, 0, 0, 0] },
     ];
   }
 }
+
+
+
+
+
+async function fetchReports_Details_Pie() {
+  try {
+    const data = props.passed_data?.data ?? [];
+
+    console.log('fetchReports_Details_Pie data:', data);
+
+    // TODO: replace with real logic
+    state.graphSeriesPie = [3000, 2000, 3000];
+  } catch (error) {
+    console.error(error);
+    state.graphSeriesPie = [0, 0, 0];
+  }
+}
+</script>
+
 
 
 // async function fetchReports_Details_Bars() {
@@ -366,21 +452,3 @@ async function fetchReports_Details_Bars() {
 //     ];
 //   }
 // }
-
-
-
-
-async function fetchReports_Details_Pie() {
-  try {
-    const data = props.passed_data?.data ?? [];
-
-    console.log('fetchReports_Details_Pie data:', data);
-
-    // TODO: replace with real logic
-    state.graphSeriesPie = [3000, 2000, 3000];
-  } catch (error) {
-    console.error(error);
-    state.graphSeriesPie = [0, 0, 0];
-  }
-}
-</script>
