@@ -335,6 +335,9 @@ function handleExcelData(payload) {
 // ---------------------------
 // Compute totals (dependency-aware)
 // ---------------------------
+
+
+
 function computeTotals() {
   const elems = groupLocal.value?.indicator_group_elements || []
   if (!elems.length) return
@@ -501,6 +504,7 @@ function computeTotals() {
 // ---------------------------
 // Save indicators
 // ---------------------------
+
 async function saveIndicators() {
   if (!groupLocal.value) { alert('No group to save.'); return }
   isSaving.value = true

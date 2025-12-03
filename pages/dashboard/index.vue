@@ -112,7 +112,16 @@
           :displaytext="'Maternal Deliveries'" :report_year="state.year" :report_years="state.report_years" >
         </GraphsSurvivalMaternalServices>
 
-        <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+        <GraphsChildCareAndServices v-if="state.activeTab === 'Survival'"   :key="`maternal-${state.report_year_id}`"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :displaytext="'Maternal Deliveries'" :report_year="state.year" :report_years="state.report_years" >
+        </GraphsChildCareAndServices>
+
+
+
+
+        <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="state.report_year_id"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Mortality Rates'" :report_year="state.report_year">

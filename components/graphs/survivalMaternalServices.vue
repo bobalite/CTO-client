@@ -58,32 +58,48 @@
     <!-- Chart 4 -->
     <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">
-        Facility Deliveries
+        Attended by Skilled Health Professionals
       </h3>
 
       <ClientOnly>
         <apexchart
-          type="pie"
+          type="bar"
           height="200"
           width="100%"
-          :options="state.OptionsPieDatasource"
-          :series="state.graphSeriesPie"
+          :options="state.populationHoriOptions"
+          :series="state.attendedskilled "
         />
       </ClientOnly>
     </div>
 
     <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">
-        Postpartum care
+        Facility Based Deliveries 
       </h3>
 
       <ClientOnly>
         <apexchart
-          type="pie"
+          type="bar"
           height="200"
           width="100%"
-          :options="state.OptionsPieDatasource"
-          :series="state.graphSeriesPie"
+          :options="state.populationHoriOptions"
+          :series="state.facilitybased"
+        />
+      </ClientOnly>
+    </div>
+
+     <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">
+        Postpartum Care
+      </h3>
+
+      <ClientOnly>
+        <apexchart
+          type="bar"
+          height="200"
+          width="100%"
+          :options="state.populationHoriOptions"
+          :series="state.postpartum"
         />
       </ClientOnly>
     </div>
@@ -281,16 +297,35 @@ async function fetchReports_Details_Bars() {
         { name: 'Less than 15 yrs old', data: [] },
         { name: '15 - 19 yrs old', data: [] },
       ];
+
+      state.graphSeriesPie = [
+        { name: 'Less than 15 yrs old', data: [] },
+        { name: '15 - 19 yrs old', data: [] },
+      ];
       return;
     }
 
     // Initialize arrays
-    const total_pregnant = new Array(quarterIds.length).fill(0);
+    const total_pregnant_women = new Array(quarterIds.length).fill(0);
+    const total_pregnant_adolescent = new Array(quarterIds.length).fill(0);
     const total_pregnantw8antenatal = new Array(quarterIds.length).fill(0);
     const total_pregnantAdolescentw8antenatal = new Array(quarterIds.length).fill(0);
     const prevalence = new Array(quarterIds.length).fill(0);
     const less15 = new Array(quarterIds.length).fill(0);
     const from15to19 = new Array(quarterIds.length).fill(0);
+
+    const total_atendedless15 = new Array(quarterIds.length).fill(0);
+    const total_atended15to19 = new Array(quarterIds.length).fill(0);
+    const total_atendedmore19 = new Array(quarterIds.length).fill(0);
+
+    const total_facilityless15 = new Array(quarterIds.length).fill(0);
+    const total_facility5to19 = new Array(quarterIds.length).fill(0);
+    const total_facilitymore19 = new Array(quarterIds.length).fill(0);
+
+
+    const allpregnantPostpartum = new Array(quarterIds.length).fill(0);
+    const alladolescentPostpartum = new Array(quarterIds.length).fill(0);
+
 
     // SINGLE PASS over data
     for (const row of data) {
@@ -303,26 +338,48 @@ async function fetchReports_Details_Bars() {
       const value = row.total != null ? Number(row.total) : 0;
       if (Number.isNaN(value)) continue;
 
-      if (row.indicator_no === '2.1') {
-        total_pregnant[idx] += value;
+      if (row.indicator_no === '1.1') {
+        total_pregnant_women[idx] += value;
+      }else if (row.indicator_no === '2.1') {
+        total_pregnant_adolescent[idx] += value;
       }else if (row.indicator_no === '2.11') {
         less15[idx] += value;
       } else if (row.indicator_no === '2.12') {
         from15to19[idx] += value;
       }else if (row.indicator_no === '2.2') {
         prevalence[idx] += value;
+
       }else if (row.indicator_no === '3.1') {
         total_pregnantw8antenatal[idx] += value;
       }else if (row.indicator_no === '3.2') {
         total_pregnantAdolescentw8antenatal[idx] += value;
       }
+      
+      else if (row.indicator_no === '4.1.1') {
+        total_atendedless15[idx] += value;
+      }else if (row.indicator_no === '4.1.2') {
+        total_atended15to19[idx] += value;
+      }else if (row.indicator_no === '4.1.3') {
+        total_atendedmore19[idx] += value;
+      }
+
+      else if (row.indicator_no === '5.1.1') {
+        total_facilityless15[idx] += value;
+      }else if (row.indicator_no === '5.1.2') {
+        total_facility5to19[idx] += value;
+      }else if (row.indicator_no === '5.1.3') {
+        total_facilitymore19[idx] += value;
+      }
 
 
-      // if (row.indicator_no === '2.1') {
-      //   year_total_adolescents += value;
-      // }else if (row.indicator_no === '2.2') {
-      //   prevalence[idx] += value;
-      // }
+      else if (row.indicator_no === '6.1') {
+        allpregnantPostpartum[idx] += value;
+      }else if (row.indicator_no === '6.2') {
+        alladolescentPostpartum[idx] += value;
+      }
+
+
+    
     }
 
     state.less15 = less15;
@@ -339,9 +396,36 @@ async function fetchReports_Details_Bars() {
     ];
 
      state.graphSeriesPrenatalCare = [
-      { name: 'All Pregnant', data: total_pregnant },
-      { name: 'All Pregnant with Antenatal', data: total_pregnantw8antenatal },
-      { name: 'All Pregnant adolescents with Antenatal ', data: total_pregnantAdolescentw8antenatal },
+      { name: '1.1 - ALL maternal deliveries ', data: total_pregnant_women },
+      { name: '3.1 - ALL pregnant women w/ antenatal', data: total_pregnantw8antenatal },
+      { name: '2.1 - adolescent deliveries', data: total_pregnant_adolescent },
+      { name: '3.2 - Pregnant adolescents w/ Antenatal', data: total_pregnantAdolescentw8antenatal },
+    
+    ];
+
+    state.attendedskilled = [
+     
+      { name: '4.1.1 - Total Attended <15 years old deliveries', data: total_atendedless15 },
+      { name: '4.1.2 - Total Attended 15 -19 yrs. old deliveries', data: total_atended15to19 },
+      { name: '4.1.3 - Total Attended >19 years old deliveries', data: total_atendedmore19 },
+  
+    ];
+
+    state.facilitybased = [
+     
+      { name: '5.1.1 - Total Facility Based <15 years old deliveries', data: total_facilityless15 },
+      { name: '5.1.2 - Total Facility Based 15 -19 yrs. old deliveries', data: total_facility5to19 },
+      { name: '5.1.3 - Total Facility Based >19 years old deliveries', data: total_facilitymore19 },
+    
+    
+    ];
+
+    state.postpartum = [
+     
+      { name: '6.1 - Total Pregnant completed at least 4 postpartum check ups', data: total_facilityless15 },
+      { name: '6.2 - Adolescent Pregnant completed at least 4 postpartum check ups', data: total_facility5to19 },
+      
+    
     
     ];
 
@@ -371,84 +455,12 @@ async function fetchReports_Details_Pie() {
     console.log('fetchReports_Details_Pie data:', data);
 
     // TODO: replace with real logic
-    state.graphSeriesPie = [3000, 2000, 3000];
+    //state.graphSeriesPie = [3000, 2000, 3000];
   } catch (error) {
     console.error(error);
-    state.graphSeriesPie = [0, 0, 0];
+    //state.graphSeriesPie = [0, 0, 0];
   }
 }
 </script>
 
 
-
-// async function fetchReports_Details_Bars() {
-
-
-//   for (const item of props.report_years) {
-//     console.log('Data item report_years:', item);
-//   }
-
-
-
-
-
-//   try {
-//     const data = props.passed_data?.data ?? [];
-//     const yearsRaw = props.report_years ?? [];
-
-//     // Normalize report_years into a plain array
-//     const yearsArray = Array.isArray(yearsRaw)
-//       ? yearsRaw
-//       : Array.isArray(yearsRaw.data)
-//         ? yearsRaw.data
-//         : [];
-
-//     console.log('fetchReports_Details_Bars data:', data);
-//     console.log('fetchReports_years_data (normalized):', yearsArray);
-
-//     // Make 1 slot per quarter (max 4)
-//     const quartersCount = Math.min(4, yearsArray.length || 4);
-//     const less15 = Array(quartersCount).fill(0);
-//     const from15to19 = Array(quartersCount).fill(0);
-
-//     // Loop over each quarter definition
-//     yearsArray.slice(0, quartersCount).forEach((quarter, index) => {
-//       const quarterId = quarter?.id;
-
-//       console.log(`Processing quarter index=${index}, id=${quarterId}, name=${quarter?.name}`);
-
-//       // Loop all items and aggregate into the correct quarter index
-//       for (const item of data) {
-//         if (!item) continue;
-
-//         // If your items have a report_year_id, uncomment this to strictly match quarter:
-//         // if (quarterId != null && item.report_year_id != null && item.report_year_id !== quarterId) {
-//         //   continue;
-//         // }
-
-//         const total = Number(item.total ?? 0) || 0;
-
-//         if (item.indicator_no === "2.11") {
-//           less15[index] += total;
-//         } else if (item.indicator_no === "2.12") {
-//           from15to19[index] += total;
-//         }
-//       }
-//     });
-
-//     console.log('Aggregated less15:', less15);          // [Q1, Q2, Q3, Q4]
-//     console.log('Aggregated from15to19:', from15to19);  // [Q1, Q2, Q3, Q4]
-
-//     state.graphSeriesAll = [
-//       { name: "Less than 15 yrs old", data: less15 },
-//       { name: "15 - 19 yrs old", data: from15to19 },
-//     ];
-//   } catch (error) {
-//     console.error(error);
-
-//     state.graphSeriesAll = [
-//       { name: "Less than 15 yrs old", data: [0, 0, 0, 0] },
-//       { name: "15 - 19 yrs old", data: [0, 0, 0, 0] },
-//     ];
-//   }
-// }
