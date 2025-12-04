@@ -302,11 +302,7 @@ async function fetchReports_Details_Bars() {
     
     }
 
-    state.less15 = less15;
-    state.from15to19 = from15to19;
-    state.prevalence = prevalence;
-
-    
+     
 
     state.birth_weight = [
       { name: '7.1 Total number of live births', data: total_live_births },
