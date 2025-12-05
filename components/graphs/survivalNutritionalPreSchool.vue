@@ -10,11 +10,11 @@
                OPERATION TIMBANG (OPT) PLUS
             </h3>
             <apexchart
-                type="pie"
+                type="bar"
                 height="200"
                 width="100%"
-                :options="state.OptionsPieDatasource"
-                :series="state.graphSeries"
+                :options="state.populationHoriOptions"
+                :series="state.operation_timbang"
             />
         </div>
 
@@ -24,11 +24,11 @@
                NUTRITIONAL STATUS OF 0-59 MONTHS OLD CHILDREN
             </h3>
             <apexchart
-                type="pie"
+                type="bar"
                 height="200"
                 width="100%"
-                :options="state.OptionsPieDatasource"
-                :series="state.graphSeries"
+                :options="state.populationHoriOptions"
+                :series="state.nut_status_0to59"
             />
         </div>
 
@@ -39,244 +39,267 @@
 </template>
 
 <script setup>
-
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
-
-const fakedata = [10,20,30,40,50,60,70,80,90,100,110,120]
-const fakedata2 = [120,110,100,90,80,70,60,50,40,30,20,10]
+import { reactive, onMounted } from "vue";
 
 const props = defineProps({
-    class: {
-        type: String,
-        required: true,
-        default: 'border-solid',
-    },
-    displaytext:{
-        type: String,
-        required: false,
-    },group_id:{
-        type: String,
-        required: false,
-    },report_year:{
-        type: Number,
-        required: false,
-    },passed_data: {
-        type: Object,
-        required: true,
-    }
-  
-})
-
-//sm:col-span-4
-
-onMounted(() => {
-   
-    //fillgraphseries()
-    fetchReports_Details_pie()
-    fetchReports_Details_Actuals()
-})
+  class: {
+    type: String,
+    required: false,
+    default: "border-solid",
+  },
+  displaytext: {
+    type: String,
+    required: false,
+  },
+  group_id: {
+    type: String,
+    required: false,
+  },
+  report_year: {
+    type: Number,
+    required: false,
+  },
+  passed_data: {
+    type: Object,
+    required: true,
+  },
+  report_years: {
+    type: Object,
+    required: true,
+  },
+});
 
 const state = reactive({
-
-graphSeries: [],    
-
-graphSeriesMale: [],
-graphSeriesFemale: [],
-report_details: [],
-prevalence: 0,
-
-graphSeriesAll: [],
-
- OptionsPieDatasource: {
-        chart: {
-            height: 100,
-            width: 100,
-            type: 'pie',
-        },
-        colors: [
-            '#fbbf24', // light amber
-            '#facc15', // light yellow
-            '#a3e635', // light lime
-            '#4ade80', // light green
-        ],
-        dataLabels: {
-            enabled: true
-        },
-        plotOptions: {
-            radialBar: {
-                hollow: {
-                    size: '50%',
-                },
-            },
-        },
-        grid: {
-            padding: {
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-            },
-        },
-        dataLabels: {
-            enabled: true,
-            style: {
-                colors: ['#333'], // 👈 change label text color here
-                fontSize: '12px',
-                fontWeight: 'bold',
-            },
-            formatter(val, opts) {
-                const name = opts.w.globals.labels[opts.seriesIndex]
-                return [name, val.toFixed(1) + '%']
-            },
-        },
-        legend: {
-            show: false,
-        },
-        labels: [ // need to retrive labels from database based on group id
-            'CHO',
-            'DepEd',
-            'CSWDO',
-            'SOCC'
-
-        ],
+  // ✅ VALID INITIAL SERIES (bar)
+  graphSeriesAll: [
+    {
+      name: "Less than 15 yrs old",
+      data: [0, 0, 0, 0],
     },
+    {
+      name: "15 - 19 yrs old",
+      data: [0, 0, 0, 0],
+    },
+  ],
+
+   // ✅ VALID INITIAL SERIES (pie)
+  graphSeriesPie: [0, 0, 0],
+
+  report_details: [],
+
+  populationHoriOptions: {
+    chart: {
+      type: "bar",
+      stacked: false,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+      },
+    },
+    colors: ["#00796B", "#388E3C", "#AFB42B", "#F9A825"],
+    dataLabels: {
+      enabled: true,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    xaxis: {
+      categories: ["1Q", "2Q", "3Q", "4Q"],
+    },
+  },
+
+  OptionsPieDatasource: {
+    chart: {
+      type: "pie",
+    },
+    colors: ["#fbbf24", "#facc15", "#a3e635", "#4ade80"],
+    grid: {
+      padding: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ["#333"],
+        fontSize: "12px",
+        fontWeight: "bold",
+      },
+      formatter(val, opts) {
+        const name = opts.w.globals.labels[opts.seriesIndex];
+        return [name, val.toFixed(1) + "%"];
+      },
+    },
+    legend: {
+      show: false,
+    },
+    labels: [
+      " 1 ",
+      " 2 ",
+      " 3 ",
+    ],
+  },
+});
+
+onMounted(() => {
+
+  buildQuarterArrays();
+
+  fetchReports_Details_Bars();
  
+});
 
 
 
-populationHoriOptions: {
-        chart: {
-            type: 'bar',
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false
-            }
-        },
-        colors: [
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: true
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        group: {
-            style: {
-              fontSize: '10px',
-              fontWeight: 700
-            },
-          },    
-        series: [
-            {
-            name: 'Male',
-            data: fakedata
-            }, 
-            {
-            name: 'Female',
-            data: fakedata2
-            }
-        ],
-        xaxis: {
-            categories: [
-            'Abandoned',
-            'Bullying',
-            'Child labor',
-            'Economic abuse',
-            'Neglect',
-            'Physical abuse',
-            'Psychological abuse',
-            'Sexual abuse',
-            'Sexual exploitation',
-            'Victim of OSEAC & CSAEM',
-            'Victim of Dometic violence',
-            'Trafficking in Persons',
-            ],
-        },
-    },
-})
+function buildQuarterArrays() {
+  const raw = props.report_years ?? [];
 
+  // Normalize report_years into a plain array
+  let allYears = [];
 
-async function fetchReports_Details_pie() { // main fetching function for actuals
-    try {
+  if (Array.isArray(raw.data)) {
+    allYears = raw.data;
+  } else if (Array.isArray(raw)) {
+    allYears = raw;
+  }
 
-        await props.passed_data.data
-        state.report_details.data = props.passed_data.data
-        state.graphSeries = [20, 30, 40, 10] // need to retrive actual data from database based on group id
+  const targetYear = Number(props.report_year);
+  console.log('Building quarter arrays for props.report_year:', props.report_year);
+  console.log('Normalized report_years (allYears):', allYears);
+  console.log('Target year (number):', targetYear);
 
+  // Filter only quarters for the selected year
+  const filtered = allYears.filter((q) => Number(q.year) === targetYear);
 
-    } catch (error) {
-        //console.log(error)
-        state.graphSeries = [0]
-    }
+  console.log('Filtered quarters:', filtered);
+
+  // IDs and names
+  const quarterIds = filtered.map((q) => Number(q.id));
+  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
+
+  state.quarterIds = quarterIds;
+  state.quarterNames = quarterNames;
+
+  console.log('quarterIds:', state.quarterIds);
+  console.log('quarterNames:', state.quarterNames);
+
+  // Optional: sync x-axis categories with quarter names
+  if (quarterNames.length) {
+    state.populationHoriOptions.xaxis = {
+      ...state.populationHoriOptions.xaxis,
+      categories: quarterNames,
+    };
+  }
 }
 
 
 
-async function fetchReports_Details_Actuals() { // main fetching function for actuals
-    try {
 
-        await props.passed_data.data
-        state.report_details.data = props.passed_data.data
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        for (const c in state.report_details.data) {
-            if (state.report_details.data[c].sequence_header == '3.1.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[0] = parseFloat(state.graphSeriesMale[0]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[0] = parseFloat(state.graphSeriesFemale[0]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[1] = parseFloat(state.graphSeriesMale[1]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[1] = parseFloat(state.graphSeriesFemale[1]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[2] = parseFloat(state.graphSeriesMale[2]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[2] = parseFloat(state.graphSeriesFemale[2]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[3] = parseFloat(state.graphSeriesMale[3]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[3] = parseFloat(state.graphSeriesFemale[3]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[4] = parseFloat(state.graphSeriesMale[4]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[4] = parseFloat(state.graphSeriesFemale[4]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.6' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[5] = parseFloat(state.graphSeriesMale[5]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[5] = parseFloat(state.graphSeriesFemale[5]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.7' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[6] = parseFloat(state.graphSeriesMale[6]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[6] = parseFloat(state.graphSeriesFemale[6]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.8' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[7] = parseFloat(state.graphSeriesMale[7]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[7] = parseFloat(state.graphSeriesFemale[7]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.9' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[8] = parseFloat(state.graphSeriesMale[8]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[8] = parseFloat(state.graphSeriesFemale[8]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.10' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[9] = parseFloat(state.graphSeriesMale[9]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[9] = parseFloat(state.graphSeriesFemale[9]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.11' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[10] = parseFloat(state.graphSeriesMale[10]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[10] = parseFloat(state.graphSeriesFemale[10]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.12' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[11] = parseFloat(state.graphSeriesMale[11]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[11] = parseFloat(state.graphSeriesFemale[11]) + parseFloat(state.report_details.data[c].female)
-            }
-        }
-        state.graphSeriesAll[0] = { name: "Male", data: state.graphSeriesMale };
-        state.graphSeriesAll[1] = { name: "Female", data: state.graphSeriesFemale };
-    } catch (error) {
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+async function fetchReports_Details_Bars() {
+  try {
+    // Normalize data from props
+    const rawData = props.passed_data?.data ?? [];
+    const data = Array.isArray(rawData) ? rawData : [...rawData];
+
+    // Normalize quarter IDs from state
+    const rawQuarterIds = state.quarterIds ?? [];
+    const quarterIds = Array.isArray(rawQuarterIds)
+      ? rawQuarterIds.map(Number)
+      : [...rawQuarterIds].map(Number);
+
+    if (!quarterIds.length) {
+      console.warn('fetchReports_Details_Bars: quarterIds is empty, nothing to aggregate');
+      state.graphSeriesAll = [
+        { name: 'Less than 15 yrs old', data: [] },
+        { name: '15 - 19 yrs old', data: [] },
+      ];
+
+   
+      return;
     }
+
+    // Initialize arrays
+    const total_maternal_deaths = new Array(quarterIds.length).fill(0);
+    const ratio_maternal_deaths = new Array(quarterIds.length).fill(0);
+
+    const total_neonatal_deaths = new Array(quarterIds.length).fill(0);
+    const rate_neonatal_deaths = new Array(quarterIds.length).fill(0);
+    const infant_deaths_0to11 = new Array(quarterIds.length).fill(0);
+    const rate_infant_deaths = new Array(quarterIds.length).fill(0);
+    const total_u5_deaths = new Array(quarterIds.length).fill(0);
+    const rate_u5_deaths = new Array(quarterIds.length).fill(0);
+  
+   
+    // SINGLE PASS over data
+    for (const row of data) {
+      if (!row) continue;
+
+      const reportYearId = Number(row.report_year_id);
+      const idx = quarterIds.indexOf(reportYearId);
+      if (idx === -1) continue; // not one of the tracked quarters
+
+      const value = row.total != null ? Number(row.total) : 0;
+      if (Number.isNaN(value)) continue;
+
+      if (row.indicator_no === '10.1') {
+        total_maternal_deaths[idx] += value;
+      }else if (row.indicator_no === '10.2') {
+        ratio_maternal_deaths[idx] += value;
+      }
+      
+      else if (row.indicator_no === '11.1') {
+        total_neonatal_deaths[idx] += value;
+      }else if (row.indicator_no === '11.2') {
+        rate_neonatal_deaths[idx] += value;
+      }else if (row.indicator_no === '11.3') {
+        infant_deaths_0to11[idx] += value;
+      }else if (row.indicator_no === '11.4') {
+        rate_infant_deaths[idx] += value;
+      }else if (row.indicator_no === '11.5') {
+        total_u5_deaths[idx] += value;
+      }else if (row.indicator_no === '11.6') {
+        rate_u5_deaths[idx] += value;
+      } 
+    
+    }
+
+     
+
+    state.operation_timbang = [
+      { name: '10.1 Total number of maternal deaths', data: total_maternal_deaths },
+      { name: '10.2 Ratio of maternal deaths (MMR)', data: ratio_maternal_deaths }
+      
+    ];
+
+     state.nut_status_0to59 = [
+      { name: '11.1 - Neonatal deaths (0-28 days)', data: total_neonatal_deaths },
+      { name: '11.2 - Rate of neonatal mortality ', data: rate_neonatal_deaths },
+      { name: '11.3 - Infant deaths (0-11 months)', data: infant_deaths_0to11 },
+      { name: '11.4 - Infant mortality rate', data: rate_infant_deaths },
+      { name: '11.5 - Under-5 deaths', data: total_u5_deaths },
+      { name: '11.6 - Under-5 mortality rate', data: rate_u5_deaths }   
+     
+      
+    
+    ];
+
+ 
+  } catch (error) {
+    console.error('fetchReports_Details_Bars error:', error);
+
+   
+  }
 }
 
 </script>
