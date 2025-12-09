@@ -74,6 +74,25 @@ const props = defineProps({
   },
 });
 
+function recalc() {
+  buildQuarterArrays();
+  fetchReports_Details_Bars();
+}
+
+onMounted(() => {
+  recalc();
+});
+
+watch(
+  () => [props.report_year, props.report_years, props.passed_data],
+  () => {
+    recalc();
+  },
+  { deep: true }
+);
+
+
+
 const state = reactive({
   // ✅ VALID INITIAL SERIES (bar)
   graphSeriesAll: [
@@ -154,14 +173,6 @@ const state = reactive({
       " 3 ",
     ],
   },
-});
-
-onMounted(() => {
-
-  buildQuarterArrays();
-
-  fetchReports_Details_Bars();
- 
 });
 
 

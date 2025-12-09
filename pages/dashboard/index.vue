@@ -72,19 +72,19 @@
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
       <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-1 -z-1">
-        <GraphsDataCompletion :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+        <GraphsDataCompletion :key="graphsKey" :passed_data="state.passed_data"
           :displaytext="'Data Completion'" :report_year="'2025'">
         </GraphsDataCompletion>
       </div>
 
       <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
-        <GraphsDataSources :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+        <GraphsDataSources :key="graphsKey" :passed_data="state.passed_data"
           :displaytext="' Data Sources'" :report_year="'2025'">
         </GraphsDataSources>
 
       </div>
       <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
-        <GraphsDataStatistics :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+        <GraphsDataStatistics :key="graphsKey" :passed_data="state.passed_data"
           :displaytext="' Data Sources'" :report_year="'2025'">
         </GraphsDataStatistics>
       </div>
@@ -106,13 +106,13 @@
 
         <!-- -------------survival group----------------- -->
 
-        <GraphsSurvivalMaternalServices v-if="state.activeTab === 'Survival'"   :key="`maternal-${state.report_year_id}`"
+        <GraphsSurvivalMaternalServices v-if="state.activeTab === 'Survival'"  :key="`mortality-${state.activeTab}-${state.report_year}-${state.refresh_graphs_toggle}`"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Maternal Deliveries'" :report_year="state.year" :report_years="state.report_years" >
         </GraphsSurvivalMaternalServices>
 
-        <GraphsChildCareAndServices v-if="state.activeTab === 'Survival'"   :key="`maternal-${state.report_year_id}`"
+        <GraphsChildCareAndServices v-if="state.activeTab === 'Survival'"    :key="`mortality-${state.activeTab}-${state.report_year}-${state.refresh_graphs_toggle}`"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Maternal Deliveries'" :report_year="state.year" :report_years="state.report_years" >
@@ -121,54 +121,54 @@
 
 
 
-        <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="state.report_year_id"
+        <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="graphsKey"
          :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="''" :report_year="state.year" :report_years="state.report_years" >
         </GraphsSurvivalMortality>
 
-        <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+        <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Mortality Rates'" :report_year="state.report_year">
+          :report_year="state.year" :report_years="state.report_years">
         </GraphsSurvivalNutritionalPreSchool>
 
         <GraphsSurvivalNutritionalSchoolChildren v-if="state.activeTab === 'Survival'"
-          :key="state.refresh_graphs_toggle" :passed_data="state.passed_data"
+          :key="graphsKey" :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Mortality Rates'" :report_year="state.report_year">
+          :report_year="state.year" :report_years="state.report_years">
         </GraphsSurvivalNutritionalSchoolChildren>
 
-        <GraphsSurvivalAccess v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+        <GraphsSurvivalAccess v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Access to Sanitation Facilities and Safe Water Supply'" :report_year="state.report_year">
+           :report_year="state.year" :report_years="state.report_years">
         </GraphsSurvivalAccess>
 
-        <GraphsSurvivalHIV v-if="state.activeTab === 'Survival'" :key="state.refresh_graphs_toggle"
+        <GraphsSurvivalHIV v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="state.report_year">
+           :report_year="state.year" :report_years="state.report_years">
         </GraphsSurvivalHIV>
 
 
 
         <!-- -----------development group---------------- -->
 
-        <GraphsDevelopmentEarlyChildhood v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+        <GraphsDevelopmentEarlyChildhood v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
+          :report_year="state.year" :report_years="state.report_years">
         </GraphsDevelopmentEarlyChildhood>
 
-        <GraphsDevelopmentEnrolment v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+        <GraphsDevelopmentEnrolment v-if="state.activeTab === 'Development'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
         </GraphsDevelopmentEnrolment>
 
 
-        <GraphsDevelopmentOSCY v-if="state.activeTab === 'Development'" :key="state.refresh_graphs_toggle"
+        <GraphsDevelopmentOSCY v-if="state.activeTab === 'Development'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="' Net Enrolment rate:'" :report_year="state.report_year" :passed_year_data="state.report_years">
@@ -176,13 +176,13 @@
 
         <!-- -----protection group---------------- -->
 
-        <GraphsProtectionChildrenInNeed v-if="state.activeTab === 'Protection'" :key="state.refresh_graphs_toggle"
+        <GraphsProtectionChildrenInNeed v-if="state.activeTab === 'Protection'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="state.report_year" :passed_year_data="state.report_years">
         </GraphsProtectionChildrenInNeed>
 
-        <GraphsProtectionChildrenInConflict v-if="state.activeTab === 'Protection'" :key="state.refresh_graphs_toggle"
+        <GraphsProtectionChildrenInConflict v-if="state.activeTab === 'Protection'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="state.report_year" :passed_year_data="state.report_years">
@@ -193,7 +193,7 @@
 
         <!-- -------participation group---------------- -->
 
-        <GraphsParticipationChildrens v-if="state.activeTab === 'Participation'" :key="state.refresh_graphs_toggle"
+        <GraphsParticipationChildrens v-if="state.activeTab === 'Participation'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-4 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
@@ -203,7 +203,7 @@
         <!-- -------governance group---------------- -->
       
      
-        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Governance'" :key="state.refresh_graphs_toggle"
+        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Governance'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
@@ -213,7 +213,7 @@
 
         <!-- -------general information group---------------- -->
 
-        <GraphsGeneralInformation v-if="state.activeTab === 'General Information'" :key="state.refresh_graphs_toggle"
+        <GraphsGeneralInformation v-if="state.activeTab === 'General Information'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
@@ -221,11 +221,6 @@
         </GraphsGeneralInformation>
 
 
-        <!-- <GraphsGrp68 v-if="state.activeTab === 'General Information'" :key="state.refresh_graphs_toggle"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="' Total population of children, by sex, by age group'" :report_year="state.report_year">
-        </GraphsGrp68> -->
 
       </div>
 
@@ -534,6 +529,10 @@ let tabs = [
 // Track which tab is active
 
 
+const graphsKey = computed(() => `${state.activeTab}-${state.report_year}-${state.refresh_graphs_toggle}`);
+
+
+
 const state = reactive({
 
     activeTab: tabs[0].name,
@@ -664,6 +663,7 @@ function change_right_id(tab_name){
   
   }
   console.log('right_id', state.right_id)
+  change_selected_year()
   refresh_data()
  
 }
@@ -680,14 +680,14 @@ async function fetchData() {
    const params = {
       //indicator_group_id: props.group.group_no ?? null,
       report_year: Number(state.year),
-      right_id: Number(state.right_id)
+      //right_id: Number(state.right_id)
     }
 
   console.log('params', params) 
   const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
   
   state.passed_data.data = response.data
-  console.log('fetchData', state.passed_data)
+  console.log('fetchData refresh graph', state.passed_data)
   state.loading = false
  
 }   
@@ -916,7 +916,7 @@ async function fetchUserDashboardWidgets() {
 }
 
 function refresh_graphs(){
-  //console.log('refresh graphs')
+  console.log('refresh graphs')
   destroy_graphs()
   //fetchUserDashboardWidgets()
   //loop_through_user_widgets()

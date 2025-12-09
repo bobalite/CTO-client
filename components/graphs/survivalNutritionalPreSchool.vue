@@ -2,7 +2,7 @@
  <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 mb-0 w-full">
         NUTRITIONAL STATUS OF PRE-SCHOOL CHILDREN
     </h3>
-    <div :class="props.class" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div :class="props.class" class="grid grid-cols-1 md:grid-cols-1 gap-4">
 
         <!-- Chart 1 -->
         <div class="border rounded-xl p-2">
@@ -18,14 +18,14 @@
             />
         </div>
 
-        <!-- Chart 2 -->
+        
         <div class="border rounded-xl p-2">
             <h3 class="text-sm font-bold mb-2">
                NUTRITIONAL STATUS OF 0-59 MONTHS OLD CHILDREN
             </h3>
             <apexchart
                 type="bar"
-                height="200"
+                height="400"
                 width="100%"
                 :options="state.populationHoriOptions"
                 :series="state.nut_status_0to59"
@@ -56,7 +56,7 @@ const props = defineProps({
     required: false,
   },
   report_year: {
-    type: Number,
+    type: [Number,String],
     required: false,
   },
   passed_data: {
@@ -85,6 +85,9 @@ const state = reactive({
    // ✅ VALID INITIAL SERIES (pie)
   graphSeriesPie: [0, 0, 0],
 
+  operation_timbang: [],
+  nut_status_0to59: [],
+
   report_details: [],
 
   populationHoriOptions: {
@@ -103,7 +106,16 @@ const state = reactive({
         horizontal: false,
       },
     },
-    colors: ["#00796B", "#388E3C", "#AFB42B", "#F9A825"],
+    colors: ['#312e81',
+            '#c026d3',
+            '#46C2CB',
+            '#db2777',
+            '#9d174d',
+            '#B12C00',
+            '#DC2525', 
+            '#6D67E4', 
+            '#F4B342', 
+            '#662549'],
     dataLabels: {
       enabled: true,
     },
@@ -119,7 +131,12 @@ const state = reactive({
     chart: {
       type: "pie",
     },
-    colors: ["#fbbf24", "#facc15", "#a3e635", "#4ade80"],
+    colors: [ '#312e81',
+            '#c026d3',
+            '#701a75',
+            '#db2777',
+            '#9d174d',
+            '#00FF9C'],
     grid: {
       padding: {
         top: 0,
@@ -153,51 +170,51 @@ const state = reactive({
 
 onMounted(() => {
 
-  buildQuarterArrays();
-
-  fetchReports_Details_Bars();
+  buildAnnualArrays();
+  fetchReports_Details_Bars_Annual();
  
 });
 
 
 
-function buildQuarterArrays() {
+function buildAnnualArrays() {
   const raw = props.report_years ?? [];
 
-  // Normalize report_years into a plain array
+  // Normalize into plain array
   let allYears = [];
 
   if (Array.isArray(raw.data)) {
     allYears = raw.data;
   } else if (Array.isArray(raw)) {
     allYears = raw;
+  } else if (Array.isArray(raw?.data?.data)) {
+    allYears = raw.data.data;
+  } else {
+    allYears = Object.values(raw);
   }
 
-  const targetYear = Number(props.report_year);
-  console.log('Building quarter arrays for props.report_year:', props.report_year);
-  console.log('Normalized report_years (allYears):', allYears);
-  console.log('Target year (number):', targetYear);
+  console.log("Annual: Normalized allYears:", allYears);
 
-  // Filter only quarters for the selected year
-  const filtered = allYears.filter((q) => Number(q.year) === targetYear);
+  // Extract unique years from the dataset
+  const years = [...new Set(allYears.map((y) => Number(y.year)))].sort();
 
-  console.log('Filtered quarters:', filtered);
+  console.log("Annual: Unique years:", years);
 
-  // IDs and names
-  const quarterIds = filtered.map((q) => Number(q.id));
-  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
+  // Create labels (ex: ['2020', '2021', '2022'])
+  const yearNames = years.map((yr) => `${yr}`);
 
-  state.quarterIds = quarterIds;
-  state.quarterNames = quarterNames;
+  // Store in state
+  state.annualYearIds = years;
+  state.annualYearNames = yearNames;
 
-  console.log('quarterIds:', state.quarterIds);
-  console.log('quarterNames:', state.quarterNames);
+  console.log("Annual Year IDs:", years);
+  console.log("Annual Year Names:", yearNames);
 
-  // Optional: sync x-axis categories with quarter names
-  if (quarterNames.length) {
+  // Update x-axis categories for annual charts
+  if (yearNames.length) {
     state.populationHoriOptions.xaxis = {
       ...state.populationHoriOptions.xaxis,
-      categories: quarterNames,
+      categories: yearNames,
     };
   }
 }
@@ -206,100 +223,144 @@ function buildQuarterArrays() {
 
 
 
-async function fetchReports_Details_Bars() {
+
+async function fetchReports_Details_Bars_Annual() {
   try {
     // Normalize data from props
-    const rawData = props.passed_data?.data ?? [];
-    const data = Array.isArray(rawData) ? rawData : [...rawData];
+    const rawData = props.passed_data?.data ?? props.passed_data ?? [];
+    const data = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
-    // Normalize quarter IDs from state
-    const rawQuarterIds = state.quarterIds ?? [];
-    const quarterIds = Array.isArray(rawQuarterIds)
-      ? rawQuarterIds.map(Number)
-      : [...rawQuarterIds].map(Number);
+    // Normalize YEAR IDs from state (annual, not quarter)
+    const rawYearIds = state.annualYearIds ?? [];
+    const yearIds = Array.isArray(rawYearIds)
+      ? rawYearIds.map(Number)
+      : Object.values(rawYearIds).map(Number);
 
-    if (!quarterIds.length) {
-      console.warn('fetchReports_Details_Bars: quarterIds is empty, nothing to aggregate');
-      state.graphSeriesAll = [
-        { name: 'Less than 15 yrs old', data: [] },
-        { name: '15 - 19 yrs old', data: [] },
-      ];
+    if (!yearIds.length) {
+      console.warn('fetchReports_Details_Bars_Annual: yearIds is empty, nothing to aggregate');
 
-   
+      state.operation_timbang = [];
+      state.nut_status_0to59 = [];
       return;
     }
 
-    // Initialize arrays
-    const total_maternal_deaths = new Array(quarterIds.length).fill(0);
-    const ratio_maternal_deaths = new Array(quarterIds.length).fill(0);
+    // Initialize arrays per YEAR
+    const timbang13_1 = new Array(yearIds.length).fill(0);
+    const timbang13_2 = new Array(yearIds.length).fill(0);
+    const timbang13_3 = new Array(yearIds.length).fill(0);
 
-    const total_neonatal_deaths = new Array(quarterIds.length).fill(0);
-    const rate_neonatal_deaths = new Array(quarterIds.length).fill(0);
-    const infant_deaths_0to11 = new Array(quarterIds.length).fill(0);
-    const rate_infant_deaths = new Array(quarterIds.length).fill(0);
-    const total_u5_deaths = new Array(quarterIds.length).fill(0);
-    const rate_u5_deaths = new Array(quarterIds.length).fill(0);
-  
-   
-    // SINGLE PASS over data
+    const nut_status14_1  = new Array(yearIds.length).fill(0);
+    const nut_status14_2  = new Array(yearIds.length).fill(0);
+    const nut_status14_3  = new Array(yearIds.length).fill(0);
+    const nut_status14_4  = new Array(yearIds.length).fill(0);
+    const nut_status14_5  = new Array(yearIds.length).fill(0);
+    const nut_status14_6  = new Array(yearIds.length).fill(0);
+    const nut_status14_7  = new Array(yearIds.length).fill(0);
+    const nut_status14_8  = new Array(yearIds.length).fill(0);
+    const nut_status14_9  = new Array(yearIds.length).fill(0);
+    const nut_status14_10 = new Array(yearIds.length).fill(0);
+    const nut_status14_11 = new Array(yearIds.length).fill(0);
+    const nut_status14_12 = new Array(yearIds.length).fill(0);
+    const nut_status14_13 = new Array(yearIds.length).fill(0);
+    const nut_status14_14 = new Array(yearIds.length).fill(0);
+    const nut_status14_15 = new Array(yearIds.length).fill(0);
+    const nut_status14_16 = new Array(yearIds.length).fill(0);
+    const nut_status14_17 = new Array(yearIds.length).fill(0);
+
+    // SINGLE PASS over data, now grouping by YEAR not quarter
     for (const row of data) {
       if (!row) continue;
 
-      const reportYearId = Number(row.report_year_id);
-      const idx = quarterIds.indexOf(reportYearId);
-      if (idx === -1) continue; // not one of the tracked quarters
+      // 👇 adjust 'year' / 'report_year' depending on your payload
+      const rowYear = Number(row.year ?? row.report_year);
+      const idx = yearIds.indexOf(rowYear);
+      if (idx === -1) continue; // not one of the tracked years
 
       const value = row.total != null ? Number(row.total) : 0;
       if (Number.isNaN(value)) continue;
 
-      if (row.indicator_no === '10.1') {
-        total_maternal_deaths[idx] += value;
-      }else if (row.indicator_no === '10.2') {
-        ratio_maternal_deaths[idx] += value;
+      if (row.indicator_no === '13.1') {
+        timbang13_1[idx] += value;
+      } else if (row.indicator_no === '13.2') {
+        timbang13_2[idx] += value;
+      } else if (row.indicator_no === '13.3') {
+        timbang13_3[idx] += value;
       }
-      
-      else if (row.indicator_no === '11.1') {
-        total_neonatal_deaths[idx] += value;
-      }else if (row.indicator_no === '11.2') {
-        rate_neonatal_deaths[idx] += value;
-      }else if (row.indicator_no === '11.3') {
-        infant_deaths_0to11[idx] += value;
-      }else if (row.indicator_no === '11.4') {
-        rate_infant_deaths[idx] += value;
-      }else if (row.indicator_no === '11.5') {
-        total_u5_deaths[idx] += value;
-      }else if (row.indicator_no === '11.6') {
-        rate_u5_deaths[idx] += value;
-      } 
-    
+
+      else if (row.indicator_no === '14.1') {
+        nut_status14_1[idx] += value;
+      } else if (row.indicator_no === '14.2') {
+        nut_status14_2[idx] += value;
+      } else if (row.indicator_no === '14.3') {
+        nut_status14_3[idx] += value;
+      } else if (row.indicator_no === '14.4') {
+        nut_status14_4[idx] += value;
+      } else if (row.indicator_no === '14.5') {
+        nut_status14_5[idx] += value;
+      } else if (row.indicator_no === '14.6') {
+        nut_status14_6[idx] += value;
+      } else if (row.indicator_no === '14.7') {
+        nut_status14_7[idx] += value;
+      } else if (row.indicator_no === '14.8') {
+        nut_status14_8[idx] += value;
+      } else if (row.indicator_no === '14.9') {
+        nut_status14_9[idx] += value;
+      } else if (row.indicator_no === '14.10') {
+        nut_status14_10[idx] += value;
+      } else if (row.indicator_no === '14.11') {
+        nut_status14_11[idx] += value;
+      } else if (row.indicator_no === '14.12') {
+        nut_status14_12[idx] += value;
+      } else if (row.indicator_no === '14.13') {
+        nut_status14_13[idx] += value;
+      } else if (row.indicator_no === '14.14') {
+        nut_status14_14[idx] += value;
+      } else if (row.indicator_no === '14.15') {
+        nut_status14_15[idx] += value;
+      } else if (row.indicator_no === '14.16') {
+        nut_status14_16[idx] += value;
+      } else if (row.indicator_no === '14.17') {
+        nut_status14_17[idx] += value;
+      }
     }
 
-     
-
+    // ✅ Series now indexed by YEAR
     state.operation_timbang = [
-      { name: '10.1 Total number of maternal deaths', data: total_maternal_deaths },
-      { name: '10.2 Ratio of maternal deaths (MMR)', data: ratio_maternal_deaths }
-      
+      { name: '13.1 Actual number of 0-59 months weighed', data: timbang13_1 },
+      { name: '13.2 Total target population of 0-59 months old', data: timbang13_2 },
+      { name: '13.3 Operation Timbang Plus Coverage', data: timbang13_3 },
     ];
 
-     state.nut_status_0to59 = [
-      { name: '11.1 - Neonatal deaths (0-28 days)', data: total_neonatal_deaths },
-      { name: '11.2 - Rate of neonatal mortality ', data: rate_neonatal_deaths },
-      { name: '11.3 - Infant deaths (0-11 months)', data: infant_deaths_0to11 },
-      { name: '11.4 - Infant mortality rate', data: rate_infant_deaths },
-      { name: '11.5 - Under-5 deaths', data: total_u5_deaths },
-      { name: '11.6 - Under-5 mortality rate', data: rate_u5_deaths }   
-     
-      
-    
+    state.nut_status_0to59 = [
+      { name: '14.1 Total number of stunted (St) 0-59 months old children', data: nut_status14_1 },
+      { name: '14.3 Total number of severely stunted (Sst) 0-59 months old children', data: nut_status14_3 },
+      { name: '14.5 Total number of tall (T) 0-59 months old children', data: nut_status14_5 },
+      { name: '14.7 Total number of underweight (UW) 0-59 months old children', data: nut_status14_7 },
+      { name: '14.9 Total number of severely underweight (SUW) 0-59 months old children', data: nut_status14_9 },
+      { name: '14.11 Total number of wasted (W) 0-59 months old children', data: nut_status14_11 },
+      { name: '14.13 Total number of severely wasted (SW) 0-59 months old children', data: nut_status14_13 },
+      { name: '14.15 Total number of overweight (OW) 0-59 months old children', data: nut_status14_15 },
+      { name: '14.17 Total number of obese (OB) 0-59 months old children', data: nut_status14_16 },
+
+      { name: '14.2 Prevalence rate of stunted (St) 0-59 months old children', data: nut_status14_2 },
+      { name: '14.4 Prevalence rate of severly stunted (SSt) 0-59 months old children', data: nut_status14_4 },
+      { name: '14.6 Prevalence rate of tall (T) 0-59 months old children', data: nut_status14_6 },
+      { name: '14.8 Prevalence rate of underweight (UW) 0-59 months old children', data: nut_status14_8 },
+      { name: '14.10 Prevalence rate of severely underweight (SUW) 0-59 months old children', data: nut_status14_10 },
+      { name: '14.12 Prevalence rate of wasted (W) 0-59 months old children', data: nut_status14_12 },
+      { name: '14.14 Prevalence rate of severly wasted (SW) 0-59 months old children', data: nut_status14_14 },
+      { name: '14.18 Prevalence rate of obese (OB) 0-59 months old children', data: nut_status14_17 },
     ];
 
- 
+    console.log('ANNUAL state.operation_timbang', state.operation_timbang);
+    console.log('ANNUAL state.nut_status_0to59', state.nut_status_0to59);
+
   } catch (error) {
-    console.error('fetchReports_Details_Bars error:', error);
-
-   
+    console.error('fetchReports_Details_Bars_Annual error:', error);
   }
 }
+
+
+
 
 </script>
