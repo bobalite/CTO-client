@@ -13,19 +13,13 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="90%"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
-          :series="state.hiv"
+          :series="state.early_childhood"
         />
       </ClientOnly>
     </div>
-
-    
-
-    
-
-  
   </div>
 </template>
 
@@ -73,9 +67,8 @@ const state = reactive({
     },
   ],
 
-  quarterNames: [],
-  quarterIds: [],
-  birth_weight: [],
+     
+  early_childhood: [],
  
 
   // ✅ VALID INITIAL SERIES (pie)
@@ -149,51 +142,52 @@ const state = reactive({
 
 onMounted(() => {
 
-  buildQuarterArrays();
+  buildAnnualArrays();
 
-  fetchReports_Details_Bars();
+  fetchReports_Details_Bars_Annual();
  
 });
 
 
 
-function buildQuarterArrays() {
+function buildAnnualArrays() {
   const raw = props.report_years ?? [];
 
-  // Normalize report_years into a plain array
+  // Normalize into plain array
   let allYears = [];
 
   if (Array.isArray(raw.data)) {
     allYears = raw.data;
   } else if (Array.isArray(raw)) {
     allYears = raw;
+  } else if (Array.isArray(raw?.data?.data)) {
+    allYears = raw.data.data;
+  } else {
+    allYears = Object.values(raw);
   }
 
-  const targetYear = Number(props.report_year);
-  console.log('Building quarter arrays for props.report_year:', props.report_year);
-  console.log('Normalized report_years (allYears):', allYears);
-  console.log('Target year (number):', targetYear);
+  console.log("Annual: Normalized allYears:", allYears);
 
-  // Filter only quarters for the selected year
-  const filtered = allYears.filter((q) => Number(q.year) === targetYear);
+  // Extract unique years from the dataset
+  const years = [...new Set(allYears.map((y) => Number(y.year)))].sort();
 
-  console.log('Filtered quarters:', filtered);
+  console.log("Annual: Unique years:", years);
 
-  // IDs and names
-  const quarterIds = filtered.map((q) => Number(q.id));
-  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
+  // Create labels (ex: ['2020', '2021', '2022'])
+  const yearNames = years.map((yr) => `${yr}`);
 
-  state.quarterIds = quarterIds;
-  state.quarterNames = quarterNames;
+  // Store in state
+  state.annualYearIds = years;
+  state.annualYearNames = yearNames;
 
-  console.log('quarterIds:', state.quarterIds);
-  console.log('quarterNames:', state.quarterNames);
+  console.log("Annual Year IDs:", years);
+  console.log("Annual Year Names:", yearNames);
 
-  // Optional: sync x-axis categories with quarter names
-  if (quarterNames.length) {
+  // Update x-axis categories for annual charts
+  if (yearNames.length) {
     state.populationHoriOptions.xaxis = {
       ...state.populationHoriOptions.xaxis,
-      categories: quarterNames,
+      categories: yearNames,
     };
   }
 }
@@ -202,54 +196,70 @@ function buildQuarterArrays() {
 
 
 
-async function fetchReports_Details_Bars() {
+async function fetchReports_Details_Bars_Annual() {
   try {
-    // Normalize data from props
-    const rawData = props.passed_data?.data ?? [];
-    const data = Array.isArray(rawData) ? rawData : [...rawData];
+   // Normalize data from props
+    const rawData = props.passed_data?.data ?? props.passed_data ?? [];
+    const data = Array.isArray(rawData) ? rawData : Object.values(rawData);
+    // Normalize YEAR IDs from state (annual, not quarter)
+    const rawYearIds = state.annualYearIds ?? [];
+    // 1) Coerce to numbers, make them unique, and sort them
+    const yearIds = Array.from(
+      new Set(
+        (Array.isArray(rawYearIds)
+          ? rawYearIds
+          : Object.values(rawYearIds)
+        ).map(Number)
+      )
+    ).sort((a, b) => a - b);
 
-    // Normalize quarter IDs from state
-    const rawQuarterIds = state.quarterIds ?? [];
-    const quarterIds = Array.isArray(rawQuarterIds)
-      ? rawQuarterIds.map(Number)
-      : [...rawQuarterIds].map(Number);
+    if (!yearIds.length) {
+      console.warn('fetchReports_Details_Bars_Annual: yearIds is empty, nothing to aggregate');
 
-    if (!quarterIds.length) {
-      console.warn('fetchReports_Details_Bars: quarterIds is empty, nothing to aggregate');
-      state.graphSeriesAll = [
-        { name: 'Less than 15 yrs old', data: [] },
-        { name: '15 - 19 yrs old', data: [] },
-      ];
-
-   
+      state.early_childhood = [];
+     
       return;
     }
 
+
+     // 2) Build a fast lookup: year -> index
+    const yearIndexMap = new Map();
+    yearIds.forEach((year, index) => {
+      yearIndexMap.set(year, index);
+    });
+    // Optionally store categories for the chart
+    // (make sure xaxis.categories uses this)
+    state.annualYearCategories = yearIds;
+   
+   
     // Initialize arrays
-    const hiv_0_17 = new Array(quarterIds.length).fill(0);
-    const hiv_0_17_provided = new Array(quarterIds.length).fill(0);
-
-
-    const ecd_22_1 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2_1 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2_2 = new Array(quarterIds.length).fill(0);
-    const ecd_22_3 = new Array(quarterIds.length).fill(0);
-    const ecd_22_4 = new Array(quarterIds.length).fill(0);
-    const ecd_22_5 = new Array(quarterIds.length).fill(0);
-    const ecd_22_6 = new Array(quarterIds.length).fill(0);
-    const ecd_22_7 = new Array(quarterIds.length).fill(0); 
+    const ecd_22_1 = new Array(yearIds.length).fill(0);
+    const ecd_22_2 = new Array(yearIds.length).fill(0);
+    const ecd_22_2_1 = new Array(yearIds.length).fill(0);
+    const ecd_22_2_2 = new Array(yearIds.length).fill(0);
+    const ecd_22_3 = new Array(yearIds.length).fill(0);
+    const ecd_22_4 = new Array(yearIds.length).fill(0);
+    const ecd_22_5 = new Array(yearIds.length).fill(0);
+    const ecd_22_6 = new Array(yearIds.length).fill(0);
+    const ecd_22_7 = new Array(yearIds.length).fill(0); 
 
 
     
    
     // SINGLE PASS over data
-    for (const row of data) {
+   for (const row of data) {
       if (!row) continue;
 
-      const reportYearId = Number(row.report_year_id);
-      const idx = quarterIds.indexOf(reportYearId);
-      if (idx === -1) continue; // not one of the tracked quarters
+     //------------------------------------------------------------------------------------------------------
+      // Adjust depending on your payload: year / report_year
+      const rowYear = Number(row.year ?? row.report_year);
+      if (!rowYear || Number.isNaN(rowYear)) continue;
+
+      const idx = yearIndexMap.get(rowYear);
+      if (idx === undefined) continue; // not one of the tracked years
+
+      //------------------------------------------------------------------------------------------------------
+
 
       const value = row.total != null ? Number(row.total) : 0;
       if (Number.isNaN(value)) continue;
@@ -274,9 +284,7 @@ async function fetchReports_Details_Bars() {
         ecd_22_7[idx] += value;
       }
 
-     
-
-        state.hiv = [
+      state.early_childhood = [
       { name: '22.1 Total number of ECCD (Day Care) enrollees', data: ecd_22_1 },
       { name: '22.2 Total number of Child Development Centers/Facilities (CDCs)', data: ecd_22_2 },
       { name: '22.2.1 Total number of Public CDCs', data: ecd_22_2_1 },
@@ -304,56 +312,3 @@ async function fetchReports_Details_Bars() {
 </script>
 
 
-
-
-<!-- 
- // Initialize arrays
-    const ecd_22_1 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2_1 = new Array(quarterIds.length).fill(0);
-    const ecd_22_2_2 = new Array(quarterIds.length).fill(0);
-    const ecd_22_3 = new Array(quarterIds.length).fill(0);
-    const ecd_22_4 = new Array(quarterIds.length).fill(0);
-    const ecd_22_5 = new Array(quarterIds.length).fill(0);
-    const ecd_22_6 = new Array(quarterIds.length).fill(0);
-    const ecd_22_7 = new Array(quarterIds.length).fill(0); -->
-
-
-
-    
-      <!-- if (row.indicator_no === '22.1') {
-         console.log('row.indicator_no', row.indicator_no)
-        ecd_22_1[idx] += value;
-      }else if (row.indicator_no === '22.2') {
-        ecd_22_2[idx] += value;
-      }else if (row.indicator_no === '22.2.1') {
-        ecd_22_2_1[idx] += value;
-      }else if (row.indicator_no === '22.2.2') {
-        ecd_22_2_2[idx] += value;
-      }else if (row.indicator_no === '22.3') {
-        ecd_22_3[idx] += value;
-      }else if (row.indicator_no === '22.4') {
-        ecd_22_4[idx] += value;
-      }else if (row.indicator_no === '22.5') {
-        ecd_22_5[idx] += value;
-      }else if (row.indicator_no === '22.6') {
-        ecd_22_6[idx] += value;
-      }else if (row.indicator_no === '22.7') {
-        ecd_22_7[idx] += value;
-      } -->
-
-
-
-
-     <!-- state.ecd = [
-      { name: '22.1 Total number of ECCD (Day Care) enrollees', data: ecd_22_1 },
-      { name: '22.2 Total number of Child Development Centers/Facilities (CDCs)', data: ecd_22_2 },
-      { name: '22.2.1 Total number of Public CDCs', data: ecd_22_2_1 },
-      { name: '22.2.2 Total number of Private CDCs', data: ecd_22_2_2 },
-      { name: '22.3 Total number of ECCD-recognized centers', data: ecd_22_3 },
-      { name: '22.4 Total number of DSWD accredited centers', data: ecd_22_4 },
-      { name: '22.5 Total number of Centers that have undergone internal assessment (under ECCD Guidelines)', data: ecd_22_5 },
-      { name: '22.6 Total number of Day Care Workers (DCWs)', data: ecd_22_6 },
-      { name: '22.7 Total number of barangays with CDCs', data: ecd_22_7 },
-     
-    ]; -->

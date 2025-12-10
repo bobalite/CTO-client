@@ -2,7 +2,7 @@
  <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 mb-0 w-full">
         ACCESS TO HEALTH SERVICES AND FACILITIES
     </h3>
-    <div :class="props.class" class="grid grid-cols-3 md:grid-cols-3 gap-4">
+    <div :class="props.class" class="grid grid-cols-1 md:grid-cols-1 gap-4">
 
         <!-- Chart 1 -->
         <div class="border rounded-xl p-2 col-span-1">
@@ -10,8 +10,8 @@
              LOCAL HEALTH CENTERS
             </h3>
             <apexchart
-                type="bar"
-                height="400"
+                type="area"
+                height="200"
                 width="100%"
                 :options="state.populationHoriOptions"
                 :series="state.access1"
@@ -25,7 +25,7 @@
             </h3>
             <apexchart
                 type="bar"
-                height="400"
+                height="300"
                 width="100%"
                 :options="state.populationHoriOptions"
                 :series="state.access2"
@@ -230,11 +230,20 @@ async function fetchReports_Details_Bars_Annual() {
     const rawData = props.passed_data?.data ?? props.passed_data ?? [];
     const data = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
+    //---------------------------------------------------------------------------------------------------
     // Normalize YEAR IDs from state (annual, not quarter)
     const rawYearIds = state.annualYearIds ?? [];
-    const yearIds = Array.isArray(rawYearIds)
-      ? rawYearIds.map(Number)
-      : Object.values(rawYearIds).map(Number);
+    // 1) Coerce to numbers, make them unique, and sort them
+    const yearIds = Array.from(
+      new Set(
+        (Array.isArray(rawYearIds)
+          ? rawYearIds
+          : Object.values(rawYearIds)
+        ).map(Number)
+      )
+    ).sort((a, b) => a - b);
+
+    //---------------------------------------------------------------------------------------------------
 
     if (!yearIds.length) {
       console.warn('fetchReports_Details_Bars_Annual: yearIds is empty, nothing to aggregate');
@@ -243,6 +252,19 @@ async function fetchReports_Details_Bars_Annual() {
       state.nut_status_0to59 = [];
       return;
     }
+
+       //---------------------------------------------------------------------------------------------------
+    // 2) Build a fast lookup: year -> index
+    const yearIndexMap = new Map();
+    yearIds.forEach((year, index) => {
+      yearIndexMap.set(year, index);
+    });
+    // Optionally store categories for the chart
+    // (make sure xaxis.categories uses this)
+    state.annualYearCategories = yearIds;
+
+     //---------------------------------------------------------------------------------------------------
+
 
     // Initialize arrays per YEAR
     const access_18_1 = new Array(yearIds.length).fill(0);
@@ -265,10 +287,16 @@ async function fetchReports_Details_Bars_Annual() {
     for (const row of data) {
       if (!row) continue;
 
-      // 👇 adjust 'year' / 'report_year' depending on your payload
+      //------------------------------------------------------------------------------------------------------
+      // Adjust depending on your payload: year / report_year
       const rowYear = Number(row.year ?? row.report_year);
-      const idx = yearIds.indexOf(rowYear);
-      if (idx === -1) continue; // not one of the tracked years
+      if (!rowYear || Number.isNaN(rowYear)) continue;
+
+      const idx = yearIndexMap.get(rowYear);
+      if (idx === undefined) continue; // not one of the tracked years
+
+      //------------------------------------------------------------------------------------------------------
+
 
       const value = row.total != null ? Number(row.total) : 0;
       if (Number.isNaN(value)) continue;
@@ -300,12 +328,6 @@ async function fetchReports_Details_Bars_Annual() {
       }  else if (row.indicator_no === '20.3') {
         access_20_3[idx] += value;
       }  
-
-
-
-
-
-
       
     }
 

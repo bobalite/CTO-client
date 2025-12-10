@@ -9,8 +9,8 @@
             <h3 class="text-sm font-bold mb-2">
                 CHILDREN AT-RISK
             </h3>
-            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
-                :series="state.graphSeriesAll" />
+            <apexchart type="bar" height="600" width="100%" :options="state.populationHoriOptions"
+                :series="state.child_at_risk_1" />
 
         </div>
     </div>
@@ -18,28 +18,28 @@
     <div :class="props.class" class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="border rounded-xl p-2">
             <h3 class="text-sm font-bold mb-2">
-                Victims of Child Abuse (RA 7610)
+                Total number of Children Issued with Permit to Travel by CSWDO
             </h3>
             <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
-                :series="state.graphSeriesAll" />
+                :series="state.child_at_risk_2" />
 
         </div>
 
         <div class="border rounded-xl p-2">
             <h3 class="text-sm font-bold mb-2">
-                Sexually Abused Children
+               Total number of Victims of Child Abuse (RA 7610)
             </h3>
             <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
-                :series="state.graphSeriesAll" />
+                :series="state.child_at_risk_3" />
 
         </div>
 
          <div class="border rounded-xl p-2">
             <h3 class="text-sm font-bold mb-2">
-               Total number of Children Issued with Permit to Travel by CSWDO
+              Total number of Children Sexually Abused
             </h3>
             <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
-                :series="state.graphSeriesAll" />
+                :series="state.child_at_risk_4" />
 
         </div>
     </div>
@@ -52,171 +52,512 @@
 </template>
 
 <script setup>
-
-import {reportDetailsService } from '~/components/api/ReportDetailsService';
-import {reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService';  
-
-const fakedata = [10,20,30,40,50,60,70,80,90,100,110,120]
-const fakedata2 = [120,110,100,90,80,70,60,50,40,30,20,10]
+import { reactive, onMounted } from "vue";
 
 const props = defineProps({
-    class: {
-        type: String,
-        required: true,
-        default: 'border-solid',
-    },
-    displaytext:{
-        type: String,
-        required: false,
-    },group_id:{
-        type: String,
-        required: false,
-    },report_year:{
-        type: Number,
-        required: false,
-    },passed_data: {
-        type: Object,
-        required: true,
-    }
-  
-})
-
-//sm:col-span-4
-
-onMounted(() => {
-   
-    //fillgraphseries()
-    fetchReports_Details_Actuals()
-})
+  class: {
+    type: String,
+    required: false,
+    default: "border-solid",
+  },
+  displaytext: {
+    type: String,
+    required: false,
+  },
+  group_id: {
+    type: String,
+    required: false,
+  },
+  report_year: {
+    type: Number,
+    required: false,
+  },
+  passed_data: {
+    type: Object,
+    required: true,
+  },
+  report_years: {
+    type: Object,
+    required: true,
+  },
+});
 
 const state = reactive({
+  // ✅ VALID INITIAL SERIES (bar)
+  graphSeriesAll: [
+    {
+      name: "Less than 15 yrs old",
+      data: [0, 0, 0, 0],
+    },
+    {
+      name: "15 - 19 yrs old",
+      data: [0, 0, 0, 0],
+    },
+  ],
 
-graphSeriesMale: [],
-graphSeriesFemale: [],
-report_details: [],
-prevalence: 0,
-
-graphSeriesAll: [],
+  quarterNames: [],
+  quarterIds: [],
+  birth_weight: [],
  
 
+  // ✅ VALID INITIAL SERIES (pie)
+  graphSeriesPie: [0, 0, 0],
 
+  report_details: [],
 
-populationHoriOptions: {
-        chart: {
-            type: 'bar',
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false
-            }
-        },
-        colors: [
-            '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d'],
-        dataLabels: {
-            enabled: true
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        group: {
-            style: {
-              fontSize: '10px',
-              fontWeight: 700
-            },
-          },    
-        series: [
-            {
-            name: 'Male',
-            data: fakedata
-            }, 
-            {
-            name: 'Female',
-            data: fakedata2
-            }
-        ],
-        xaxis: {
-            categories: [
-            'Abandoned',
-            'Bullying',
-            'Child labor',
-            'Economic abuse',
-            'Neglect',
-            'Physical abuse',
-            'Psychological abuse',
-            'Sexual abuse',
-            'Sexual exploitation',
-            'Victim of OSEAC & CSAEM',
-            'Victim of Dometic violence',
-            'Trafficking in Persons',
-            ],
-        },
+  populationHoriOptions: {
+    chart: {
+      type: "bar",
+      stacked: false,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
     },
-})
+    plotOptions: {
+      bar: {
+        horizontal: false,
+      },
+    },
+    colors: ['#312e81',
+            '#c026d3',
+            '#46C2CB',
+            '#db2777',
+            '#9d174d',
+            '#B12C00',
+            '#DC2525', 
+            '#6D67E4', 
+            '#F4B342', 
+            '#662549'],
+    dataLabels: {
+      enabled: true,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    xaxis: {
+      categories: ["1Q", "2Q", "3Q", "4Q"],
+    },
+  },
+
+  OptionsPieDatasource: {
+    chart: {
+      type: "pie",
+    },
+    colors: ["#fbbf24", "#facc15", "#a3e635", "#4ade80"],
+    grid: {
+      padding: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ["#333"],
+        fontSize: "12px",
+        fontWeight: "bold",
+      },
+      formatter(val, opts) {
+        const name = opts.w.globals.labels[opts.seriesIndex];
+        return [name, val.toFixed(1) + "%"];
+      },
+    },
+    legend: {
+      show: false,
+    },
+    labels: [
+      "Above 19 yrs old",
+      "less than 15 yrs old",
+      "15 - 19 yrs old",
+    ],
+  },
+});
+
+onMounted(() => {
+
+  buildQuarterArrays();
+
+  fetchReports_Details_Bars();
+ 
+});
 
 
-async function fetchReports_Details_Actuals() { // main fetching function for actuals
-    try {
 
-        await props.passed_data.data
-        state.report_details.data = props.passed_data.data
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        for (const c in state.report_details.data) {
-            if (state.report_details.data[c].sequence_header == '3.1.1.1' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[0] = parseFloat(state.graphSeriesMale[0]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[0] = parseFloat(state.graphSeriesFemale[0]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.2' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[1] = parseFloat(state.graphSeriesMale[1]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[1] = parseFloat(state.graphSeriesFemale[1]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.3' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[2] = parseFloat(state.graphSeriesMale[2]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[2] = parseFloat(state.graphSeriesFemale[2]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.4' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[3] = parseFloat(state.graphSeriesMale[3]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[3] = parseFloat(state.graphSeriesFemale[3]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.5' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[4] = parseFloat(state.graphSeriesMale[4]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[4] = parseFloat(state.graphSeriesFemale[4]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.6' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[5] = parseFloat(state.graphSeriesMale[5]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[5] = parseFloat(state.graphSeriesFemale[5]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.7' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[6] = parseFloat(state.graphSeriesMale[6]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[6] = parseFloat(state.graphSeriesFemale[6]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.8' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[7] = parseFloat(state.graphSeriesMale[7]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[7] = parseFloat(state.graphSeriesFemale[7]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.9' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[8] = parseFloat(state.graphSeriesMale[8]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[8] = parseFloat(state.graphSeriesFemale[8]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.10' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[9] = parseFloat(state.graphSeriesMale[9]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[9] = parseFloat(state.graphSeriesFemale[9]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.11' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[10] = parseFloat(state.graphSeriesMale[10]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[10] = parseFloat(state.graphSeriesFemale[10]) + parseFloat(state.report_details.data[c].female)
-            } else if (state.report_details.data[c].sequence_header == '3.1.1.12' && state.report_details.data[c].entry_type == 'Actual' && state.report_details.data[c].report_year_id == props.report_year) {
-                state.graphSeriesMale[11] = parseFloat(state.graphSeriesMale[11]) + parseFloat(state.report_details.data[c].male)
-                state.graphSeriesFemale[11] = parseFloat(state.graphSeriesFemale[11]) + parseFloat(state.report_details.data[c].female)
-            }
-        }
-        state.graphSeriesAll[0] = { name: "Male", data: state.graphSeriesMale };
-        state.graphSeriesAll[1] = { name: "Female", data: state.graphSeriesFemale };
-    } catch (error) {
-        state.graphSeriesMale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        state.graphSeriesFemale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    }
+function buildQuarterArrays() {
+  const raw = props.report_years ?? [];
+
+  // Normalize report_years into a plain array
+  let allYears = [];
+
+  if (Array.isArray(raw.data)) {
+    allYears = raw.data;
+  } else if (Array.isArray(raw)) {
+    allYears = raw;
+  }
+
+  const targetYear = Number(props.report_year);
+  console.log('Building quarter arrays for props.report_year:', props.report_year);
+  console.log('Normalized report_years (allYears):', allYears);
+  console.log('Target year (number):', targetYear);
+
+  // Filter only quarters for the selected year
+  const filtered = allYears.filter((q) => Number(q.year) === targetYear);
+
+  console.log('Filtered quarters:', filtered);
+
+  // IDs and names
+  const quarterIds = filtered.map((q) => Number(q.id));
+  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
+
+  state.quarterIds = quarterIds;
+  state.quarterNames = quarterNames;
+
+  console.log('quarterIds:', state.quarterIds);
+  console.log('quarterNames:', state.quarterNames);
+
+  // Optional: sync x-axis categories with quarter names
+  if (quarterNames.length) {
+    state.populationHoriOptions.xaxis = {
+      ...state.populationHoriOptions.xaxis,
+      categories: quarterNames,
+    };
+  }
 }
 
+
+
+
+
+async function fetchReports_Details_Bars() {  // this is for quarterly data
+  try {
+    // Normalize data from props
+    const rawData = props.passed_data?.data ?? [];
+    const data = Array.isArray(rawData) ? rawData : [...rawData];
+
+    // Normalize quarter IDs from state
+    const rawQuarterIds = state.quarterIds ?? [];
+    const quarterIds = Array.isArray(rawQuarterIds)
+      ? rawQuarterIds.map(Number)
+      : [...rawQuarterIds].map(Number);
+
+    if (!quarterIds.length) {
+      console.warn('fetchReports_Details_Bars: quarterIds is empty, nothing to aggregate');
+      state.graphSeriesAll = [
+        { name: 'Less than 15 yrs old', data: [] },
+        { name: '15 - 19 yrs old', data: [] },
+      ];
+
+   
+      return;
+    }
+
+    // Initialize arrays
+    const sp_33_1 = new Array(quarterIds.length).fill(0);
+    const sp_33_2 = new Array(quarterIds.length).fill(0);
+    const sp_33_3 = new Array(quarterIds.length).fill(0);
+    const sp_33_4 = new Array(quarterIds.length).fill(0);
+    const sp_33_5 = new Array(quarterIds.length).fill(0);
+    const sp_33_6 = new Array(quarterIds.length).fill(0);
+    const sp_33_7 = new Array(quarterIds.length).fill(0);
+    const sp_33_8 = new Array(quarterIds.length).fill(0);
+    const sp_33_9 = new Array(quarterIds.length).fill(0);
+    const sp_33_10 = new Array(quarterIds.length).fill(0);
+    const sp_33_11 = new Array(quarterIds.length).fill(0);
+    const sp_33_12 = new Array(quarterIds.length).fill(0);
+    const sp_33_13 = new Array(quarterIds.length).fill(0);
+    const sp_33_14 = new Array(quarterIds.length).fill(0);
+    const sp_33_15 = new Array(quarterIds.length).fill(0);
+    const sp_33_16 = new Array(quarterIds.length).fill(0);
+    const sp_33_17 = new Array(quarterIds.length).fill(0);
+    const sp_33_18 = new Array(quarterIds.length).fill(0);
+    const sp_33_19 = new Array(quarterIds.length).fill(0);
+    const sp_33_20 = new Array(quarterIds.length).fill(0);
+    const sp_33_21 = new Array(quarterIds.length).fill(0);
+    const sp_33_22 = new Array(quarterIds.length).fill(0);
+    const sp_33_23 = new Array(quarterIds.length).fill(0);
+    const sp_33_24 = new Array(quarterIds.length).fill(0);
+    const sp_33_25 = new Array(quarterIds.length).fill(0);
+    const sp_33_26 = new Array(quarterIds.length).fill(0);
+    const sp_33_27 = new Array(quarterIds.length).fill(0);
+
+    const sp_34_1 = new Array(quarterIds.length).fill(0);
+    const sp_34_1_1 = new Array(quarterIds.length).fill(0);
+    const sp_34_1_2 = new Array(quarterIds.length).fill(0);
+
+
+    const sp_35_1 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_1 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_2 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_3 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_4 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_5 = new Array(quarterIds.length).fill(0);
+    const sp_35_1_6 = new Array(quarterIds.length).fill(0);
+
+    const sp_36_1 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_1 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_2 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_3 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_4 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_5 = new Array(quarterIds.length).fill(0);
+    const sp_36_1_6 = new Array(quarterIds.length).fill(0);
+
+    // const sp_37_1 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_1 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_2 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_3 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_4 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_5 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_6 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_7 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_8 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_9 = new Array(quarterIds.length).fill(0);
+    // const sp_37_1_10 = new Array(quarterIds.length).fill(0);
+
+
+
+    // SINGLE PASS over data
+    for (const row of data) {
+      if (!row) continue;
+
+      const reportYearId = Number(row.report_year_id);
+      const idx = quarterIds.indexOf(reportYearId);
+      if (idx === -1) continue; // not one of the tracked quarters
+
+      const value = row.total != null ? Number(row.total) : 0;
+      if (Number.isNaN(value)) continue;
+
+     switch (row.indicator_no) {
+        case '33.1':
+          sp_33_1[idx] += value;
+          break;
+        case '33.2':
+          sp_33_2[idx] += value;
+          break;
+        case '33.3':
+          sp_33_3[idx] += value;
+          break;
+        case '33.4':
+          sp_33_4[idx] += value;
+          break;
+        case '33.5':
+          sp_33_5[idx] += value;
+          break;
+        case '33.6':
+          sp_33_6[idx] += value;
+          break;
+        case '33.7':
+          sp_33_7[idx] += value;
+          break;
+        case '33.8':
+          sp_33_8[idx] += value;
+          break;
+        
+        case '33.9':
+          sp_33_9[idx] += value;
+          break;
+         case '33.10':
+          sp_33_10[idx] += value;
+          break;
+           case '33.11':
+          sp_33_11[idx] += value;
+          break;
+           case '33.12':
+          sp_33_12[idx] += value;
+          break;
+           case '33.13':
+          sp_33_13[idx] += value;
+          break;
+           case '33.14':
+          sp_33_14[idx] += value;
+          break;
+           case '33.15':
+          sp_33_15[idx] += value;
+          break;
+           case '33.16':
+          sp_33_16[idx] += value;
+          break;
+           case '33.17':
+          sp_33_17[idx] += value;
+          break;
+          case '33.18':
+          sp_33_18[idx] += value;
+          break;
+
+           case '33.19':
+          sp_33_19[idx] += value;
+          break;
+           case '33.20':
+          sp_33_20[idx] += value;
+          break;
+           case '33.21':
+          sp_33_21[idx] += value;
+          break;
+           case '33.22':
+          sp_33_22[idx] += value;
+          break;
+           case '33.23':
+          sp_33_23[idx] += value;
+          break;
+           case '33.24':
+          sp_33_24[idx] += value;
+          break;
+
+           case '33.25':
+          sp_33_25[idx] += value;
+          break;
+           case '33.26':
+          sp_33_26[idx] += value;
+          break;
+           case '33.27':
+          sp_33_27[idx] += value;
+          break;
+
+        case '34.1':
+          sp_34_1[idx] += value;
+          break;
+        case '34.1.1':
+          sp_34_1_1[idx] += value;
+          break;
+        case '34.1.2':
+          sp_34_1_2[idx] += value;
+          break;
+
+        case '35.1':
+          sp_35_1[idx] += value;
+          break;
+        case '35.1.1':
+          sp_35_1_1[idx] += value;
+          break;
+        case '35.1.2':
+          sp_35_1_2[idx] += value;
+          break;
+        case '35.1.3':
+          sp_35_1_3[idx] += value;
+          break;    
+        case '35.1.4':
+          sp_35_1_4[idx] += value;
+          break;    
+        case '35.1.5':
+          sp_35_1_5[idx] += value;
+          break;  
+        case '35.1.6':
+          sp_35_1_6[idx] += value;
+          break;
+          
+          
+        case '36.1':
+          sp_36_1[idx] += value;
+          break;
+        case '36.1.1':
+          sp_36_1_1[idx] += value;
+          break;
+        case '36.1.2':
+          sp_36_1_2[idx] += value;
+          break;
+        case '36.1.3':
+          sp_36_1_3[idx] += value;
+          break;    
+        case '36.1.4':
+          sp_36_1_4[idx] += value;
+          break;    
+        case '36.1.5':
+          sp_36_1_5[idx] += value;
+          break;  
+        case '36.1.6':
+          sp_36_1_6[idx] += value;
+          break;   
+        default:
+          // ignore other indicators
+          break;
+      }
+      
+    
+    }
+
+    state.child_at_risk_1 = [
+
+      { name: 'Total number of Children of broken home/dysfunctional family', data: sp_33_1 },
+      { name: 'Total number of Out of School Children and Youth (OSCY) served by CSWDO', data: sp_33_2 },
+      { name: 'Total number of Children In-Street Situations (CISS)', data: sp_33_3 },
+      { name: 'Total number of Children member of gangs', data: sp_33_4 },
+      { name: 'Total number of Children In Situation Of Armed Conflict (RA 11182)', data: sp_33_5 },
+      { name: 'Total number of Children of Persons Who Used Drugs (PWUD)', data: sp_33_6 },
+      { name: 'Total number of Children of Recovering Persons Who Used Drugs (RPWUD)', data: sp_33_7 },
+      { name: 'Total number of Children Who Used Drugs (CWUD)', data: sp_33_8 },
+      { name: 'Total number of Recovering Children Who Used Drugs (RCWUD)', data: sp_33_9 },
+      { name: 'Total number of Children of People in Prostitution (PIP)', data: sp_33_10 },
+      { name: 'Total number of Children of Parents in Correctional Facilities', data: sp_33_11 },
+      { name: 'Total number of Left Behind Children of OFW', data: sp_33_12 },
+      { name: 'Total number of Children of Solo Parents', data: sp_33_13 },
+      { name: 'Total number of Curfew on Minors Violators (Ord. No. 444484-71)', data: sp_33_14 },
+      { name: 'Total number of Children Victim of Trafficking In Persons (TIP)', data: sp_33_15 },
+      { name: 'Total number of Children Victim of OSAEC/CSAEM (RA 11930)', data: sp_33_16 },
+      { name: 'Total number of Children Victim of Child Marriage (RA 11596)', data: sp_33_17 },
+      { name: 'Total number of Children Sniffing of Rugby and other Volatile Substance Use (RA 1619)', data: sp_33_18 },
+      { name: 'Total number of Children Victim of Domestic Violence (RA 9262)', data: sp_33_19 },
+      { name: 'Total number of Children Violators of Anti Smoking Ordinance (Ord. No. 0367-12)', data: sp_33_20 },
+      { name: 'Total number of Children Found With Illegal Possession of Deadly Weapon (RA10591)', data: sp_33_21 },
+      { name: 'Total number of Children Violators of Fire Cracker Ban (Ord. No. 060-02)', data: sp_33_22 },
+      { name: 'Total number of Children in Crisis Situations', data: sp_33_23 },
+      { name: 'Total number of Truant Children (Truancy)', data: sp_33_24 },
+      { name: 'Total number of Mendicant Children (Mendicancy)', data: sp_33_25 },
+      { name: 'Total number of Children Affected by Emergencies/Disasters Served', data: sp_33_26 },
+      { name: 'Total number of Children With Special Needs (CWSN) / Children With Disabilities (CWD) Served', data: sp_33_27 },
+
+    ];
+
+
+    state.child_at_risk_2 = [
+     
+      { name: 'Total number of Children Issued with Permit to Travel by CSWDO', data: sp_34_1 },
+      { name: 'Unaccompanied Minors', data: sp_34_1_1 },
+      { name: 'Accompanied Minors', data: sp_34_1_2 },
+  
+    ];
+
+     state.child_at_risk_3 = [
+     
+      { name: 'Total number of Victims of Child Abuse (RA 7610)', data: sp_35_1 },  
+      { name: 'Sexual Abuse (RA 7610)', data: sp_35_1_1 },
+      { name: 'Physical Abuse (RA 7610)', data: sp_35_1_2 },
+      { name: 'Psychological/Mental Abuse (RA 7610)', data: sp_35_1_3 },
+      { name: 'Abandonment (RA 7610)', data: sp_35_1_4 },
+      { name: 'Neglect (RA 7610)', data: sp_35_1_5 },
+      { name: 'Child Labor (RA 7610)', data: sp_35_1_6 },
+  
+    ];
+
+     state.child_at_risk_4 = [
+     
+      { name: 'Total number of Children Sexually Abused:', data: sp_36_1 },  
+      { name: 'Rape', data: sp_36_1_1 },
+      { name: 'Incestuous Rape', data: sp_36_1_2 },
+      { name: 'Attempted Rape', data: sp_36_1_3 },
+      { name: 'Acts of Lasciviousness', data: sp_36_1_4 },
+      { name: 'Sexual Harassment', data: sp_36_1_5 },
+      { name: 'Seduction', data: sp_36_1_6 },
+  
+    ];
+
+  } catch (error) {
+    console.error('fetchReports_Details_Bars error:', error);
+
+    state.graphSeriesAll = [
+      { name: 'Less than 15 yrs old', data: [0, 0, 0, 0] },
+      { name: '15 - 19 yrs old', data: [0, 0, 0, 0] },
+    ];
+  }
+}
+
+
+
+
+
 </script>
+
+
