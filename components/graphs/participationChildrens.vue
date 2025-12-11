@@ -16,7 +16,7 @@
             <h3 class="text-sm font-bold mb-2">
                 Total Number of BCPCs conducted Barangay Children's Congress
             </h3>
-            <apexchart type="bar" height="400" width="100%" :options="state.populationHoriOptions"
+            <apexchart type="line" height="400" width="100%" :options="state.populationHoriOptions"
                 :series="state.repre_2" />
 
         </div>
@@ -233,15 +233,12 @@ async function fetchReports_Details_Bars_Annual() {
      //---------------------------------------------------------------------------------------------------
 
     // 3) Initialize arrays with correct length
-    const osc_31_1   = new Array(yearIds.length).fill(0);
-    const osc_31_1_1 = new Array(yearIds.length).fill(0);
-    const osc_31_1_2 = new Array(yearIds.length).fill(0);
-    const osc_31_1_3 = new Array(yearIds.length).fill(0);
-    const osc_32_1 = new Array(yearIds.length).fill(0);
-    const osc_32_2 = new Array(yearIds.length).fill(0);
-    const osc_32_3 = new Array(yearIds.length).fill(0);
-    const osc_32_4 = new Array(yearIds.length).fill(0);
-
+    const part_43_1   = new Array(yearIds.length).fill(0);
+    const part_43_1_1 = new Array(yearIds.length).fill(0);
+    const part_43_1_2 = new Array(yearIds.length).fill(0);
+    
+    const part_43_2 = new Array(yearIds.length).fill(0);
+    
     // 4) SINGLE PASS over data
     for (const row of data) {
       if (!row) continue;
@@ -260,30 +257,19 @@ async function fetchReports_Details_Bars_Annual() {
       if (Number.isNaN(value)) continue;
 
       switch (row.indicator_no) {
-        case '31.1':
-          osc_31_1[idx] += value;
+        case '43.1':
+          part_43_1[idx] += value;
           break;
-        case '31.1.1':
-          osc_31_1_1[idx] += value;
+        case '43.1.1':
+          part_43_1_1[idx] += value;
           break;
-        case '31.1.2':
-          osc_31_1_2[idx] += value;
+        case '43.1.2':
+          part_43_1_2[idx] += value;
           break;
-        case '31.1.3':
-          osc_31_1_3[idx] += value;
+        case '43.2':
+          part_43_2[idx] += value;
           break;
-        case '32.1':
-          osc_32_1[idx] += value;
-          break;
-        case '32.2':
-          osc_32_2[idx] += value;
-          break;
-        case '32.3':
-          osc_32_3[idx] += value;
-          break;
-        case '32.4':
-          osc_32_4[idx] += value;
-          break;
+        
         default:
           // ignore other indicators
           break;
@@ -293,40 +279,24 @@ async function fetchReports_Details_Bars_Annual() {
     // 5) Only set state ONCE, after aggregation
     state.repre_1 = [
       {
-        name: '31.1 Total number of Out of School Children (OSC) (aged 17 years old and below)',
-        data: osc_31_1,
+        name: 'Total Number of BCPCs with Child Representatives',
+        data: part_43_1,
       },
       {
-        name: '31.1.1 Total number of Out of School Children (OSC) (aged 6-11 years old)',
-        data: osc_31_1_1,
+        name: 'Elected Child Representatives',
+        data: part_43_1_1,
       },
       {
-        name: '31.1.2 Total number of Out of School Children and Youth (OSCY) (aged 12-15 years old)',
-        data: osc_31_1_2,
-      },
-      {
-        name: '31.1.3 Total number of Out of School Children and Youth (OSCY)  (aged 16-17 years old)',
-        data: osc_31_1_3,
-      },
+        name: 'Appointed Child Representatives',
+        data: part_43_1_1,
+      }
     ];
 
     state.repre_2 = [
       {
-        name: '32.1 Total number of OSC enrolled in Alternative Learning System (ALS) (aged 17 years old and below only)',
-        data: osc_32_1,
-      },
-      {
-        name: '32.2 Total number of learners under Alternative Delivery Mode (ADM) (aged 17 years old and below only)',
-        data: osc_32_2,
-      },
-      {
-        name: '32.3 Total number of OSCY assisted for enrolment (aged 17 years old and below only)',
-        data: osc_32_3,
-      },
-      {
-        name: '32.4 Total number of school dropouts reintegrated in formal school (balik-aral learners) (aged 17 years old and below only)',
-        data: osc_32_4,
-      },
+        name: 'Total Number of BCPCs conducted Barangay Children\'s Congress',
+        data: part_43_2,
+      }
     ];
   } catch (error) {
     console.error('fetchReports_Details_Bars_Annual error:', error);

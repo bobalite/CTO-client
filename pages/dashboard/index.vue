@@ -203,7 +203,7 @@
         <!-- -------governance group---------------- -->
       
      
-        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Governance'" :key="graphsKey"
+        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
