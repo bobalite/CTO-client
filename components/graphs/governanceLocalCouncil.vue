@@ -10,10 +10,10 @@
                 LCPC FUNCTIONALITY
             </h3>
             <apexchart 
-                type="pie"
+                type="bar"
                 height="200"
                 width="100%"
-                :options="state.OptionsPieDatasource"
+                :options="state.populationHoriOptions"
                 :series="state.lcpc"
             />
         </div>
@@ -24,10 +24,10 @@
                LOCAL INSTITUTIONS
             </h3>
             <apexchart 
-                type="pie"
+                type="bar"
                 height="200"
                 width="100%"
-                :options="state.OptionsPieDatasource"
+                :options="state.populationHoriOptions"
                 :series="state.local"
             />
         </div>
@@ -148,9 +148,8 @@ const state = reactive({
       show: false,
     },
     labels: [
-      "Above 19 yrs old",
-      "less than 15 yrs old",
-      "15 - 19 yrs old",
+      "default",
+      
     ],
   },
 });
@@ -253,7 +252,6 @@ async function fetchReports_Details_Bars_Annual() {
     const lcpc_44_4   = new Array(yearIds.length).fill(0);
     const lcpc_44_5   = new Array(yearIds.length).fill(0);
     const lcpc_44_6   = new Array(yearIds.length).fill(0);
-
     const local_45_1   = new Array(yearIds.length).fill(0);
     const local_45_2   = new Array(yearIds.length).fill(0);
     
