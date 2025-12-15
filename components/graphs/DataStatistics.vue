@@ -1,7 +1,7 @@
 <template>
     <div :class=props.class >
         <div >
-        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Pregnancies</h3>
+        <h3 class="text-lg font-bold border-1 border-solid border-blue-900  rounded-xl ">Data Completion</h3>
         <apexchart type="bar" height="90%" width="90%" :options="state.populationHoriOptions"
             :series="state.graphSeriesAll" />
            
@@ -131,6 +131,9 @@ async function fetchReports_Details_Actuals() { // main fetching function for ac
         state.report_details.data = props.passed_data.data
         state.graphSeriesAll = []
         //state.graphSeriesAllpreg = [5000,4500,6000,5412]
+
+
+        
         state.graphSeriesless15 = [10,20,15,22]
         state.graphSeries15to19 = [22,35,41,12]
         

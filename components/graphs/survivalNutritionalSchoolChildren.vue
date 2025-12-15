@@ -1,342 +1,208 @@
 <template>
- <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 mb-0 w-full">
-        NUTRITIONAL STATUS OF SCHOOL CHILDREN
-    </h3>
-    <div :class="props.class" class="grid grid-cols-1 md:grid-cols-1 gap-4">
+  <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 mb-0 w-full">
+    NUTRITIONAL STATUS OF SCHOOL CHILDREN
+  </h3>
 
-    <!-- Chart 1 (1 column) -->
+  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-1 gap-4">
+    <!-- Chart 1 -->
     <div class="border rounded-xl p-2 col-span-1">
-        <h3 class="text-sm font-bold mb-2">
-            SCHOOL-BASED FEEDING PROGRAM (SBFP)
-        </h3>
+      <h3 class="text-sm font-bold mb-2">
+        SCHOOL-BASED FEEDING PROGRAM (SBFP)
+      </h3>
+
+      <ClientOnly>
         <apexchart
-            type="bar"
-            height="200"
-            width="100%"
-            :options="state.populationHoriOptions"
-            :series="state.nutritional"
+          type="bar"
+          height="200"
+          width="100%"
+          :options="state.annualBarOptions"
+          :series="state.nutritional"
         />
+      </ClientOnly>
     </div>
 
-    <!-- Chart 2 (2 columns) -->
+    <!-- Chart 2 -->
     <div class="border rounded-xl p-2 col-span-2">
-        <h3 class="text-sm font-bold mb-2">
-            NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS
-        </h3>
-        <apexchart
-            type="bar"
-            height="200"
-            width="100%"
-            :options="state.populationHoriOptions"
-            :series="state.nutritional2"
-        />
-    </div>
+      <h3 class="text-sm font-bold mb-2">
+        NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS
+      </h3>
 
-</div>
-  
+      <ClientOnly>
+        <apexchart
+          type="bar"
+          height="200"
+          width="100%"
+          :options="state.annualBarOptions"
+          :series="state.nutritional2"
+        />
+      </ClientOnly>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, watch } from "vue";
 
 const props = defineProps({
-  class: {
-    type: String,
-    required: false,
-    default: "border-solid",
-  },
-  displaytext: {
-    type: String,
-    required: false,
-  },
-  group_id: {
-    type: String,
-    required: false,
-  },
-  report_year: {
-    type: [Number,String],
-    required: false,
-  },
-  passed_data: {
-    type: Object,
-    required: true,
-  },
-  report_years: {
-    type: Object,
-    required: true,
-  },
+  class: { type: String, required: false, default: "border-solid" },
+  displaytext: { type: String, required: false },
+  group_id: { type: String, required: false },
+
+  // selected year from parent (NOT used to filter; only triggers recompute)
+  report_year: { type: [Number, String], required: false },
+
+  // annual dataset rows
+  passed_data: { type: [Array, Object], required: true },
+
+  // mapping table for fallback: report_year_id -> year
+  report_years: { type: [Array, Object], required: true },
 });
 
 const state = reactive({
-  // ✅ VALID INITIAL SERIES (bar)
-  graphSeriesAll: [
-    {
-      name: "Less than 15 yrs old",
-      data: [0, 0, 0, 0],
-    },
-    {
-      name: "15 - 19 yrs old",
-      data: [0, 0, 0, 0],
-    },
-  ],
+  annualYearIds: [],
+  annualYearNames: [],
 
-   // ✅ VALID INITIAL SERIES (pie)
-  graphSeriesPie: [0, 0, 0],
+  nutritional: [],
+  nutritional2: [],
 
-  operation_timbang: [],
-  nut_status_0to59: [],
-
-  report_details: [],
-
-  populationHoriOptions: {
-    chart: {
-      type: "bar",
-      stacked: false,
-      toolbar: {
-        show: false,
-      },
-      zoom: {
-        enabled: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-      },
-    },
-    colors: ['#312e81',
-            '#c026d3',
-            '#46C2CB',
-            '#db2777',
-            '#9d174d',
-            '#B12C00',
-            '#DC2525', 
-            '#6D67E4', 
-            '#F4B342', 
-            '#662549'],
-    dataLabels: {
-      enabled: true,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      categories: ["1Q", "2Q", "3Q", "4Q"],
-    },
-  },
-
-  OptionsPieDatasource: {
-    chart: {
-      type: "pie",
-    },
-    colors: [ '#312e81',
-            '#c026d3',
-            '#701a75',
-            '#db2777',
-            '#9d174d',
-            '#00FF9C'],
-    grid: {
-      padding: {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        colors: ["#333"],
-        fontSize: "12px",
-        fontWeight: "bold",
-      },
-      formatter(val, opts) {
-        const name = opts.w.globals.labels[opts.seriesIndex];
-        return [name, val.toFixed(1) + "%"];
-      },
-    },
-    legend: {
-      show: false,
-    },
-    labels: [
-      " 1 ",
-      " 2 ",
-      " 3 ",
+  annualBarOptions: {
+    chart: { type: "bar", stacked: false, toolbar: { show: false }, zoom: { enabled: false } },
+    plotOptions: { bar: { horizontal: false } },
+    dataLabels: { enabled: true },
+    stroke: { curve: "smooth" },
+    xaxis: { categories: [] },
+    colors: [
+      "#312e81", "#c026d3", "#46C2CB", "#db2777", "#9d174d",
+      "#B12C00", "#DC2525", "#6D67E4", "#F4B342", "#662549"
     ],
   },
 });
 
-onMounted(() => {
+onMounted(() => recalc());
 
-  buildAnnualArrays();
-  fetchReports_Details_Bars_Annual();
- 
-});
+// Recompute when data or mapping changes (or selected year changes and parent refetches annual data)
+watch(() => props.passed_data, () => recalc(), { deep: true });
+watch(() => props.report_years, () => recalc(), { deep: true });
+watch(() => props.report_year, () => recalc());
 
+function normalizePassedData() {
+  const raw = props.passed_data;
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.data)) return raw.data;
+  return [];
+}
 
+function normalizeReportYears() {
+  const raw = props.report_years;
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.data)) return raw.data;
+  return [];
+}
 
-function buildAnnualArrays() {
-  const raw = props.report_years ?? [];
-
-  // Normalize into plain array
-  let allYears = [];
-
-  if (Array.isArray(raw.data)) {
-    allYears = raw.data;
-  } else if (Array.isArray(raw)) {
-    allYears = raw;
-  } else if (Array.isArray(raw?.data?.data)) {
-    allYears = raw.data.data;
-  } else {
-    allYears = Object.values(raw);
+function getRowYear(row) {
+  // prefer explicit year fields
+  const y = row?.year ?? row?.report_year;
+  if (y != null && y !== "") {
+    const yn = Number(y);
+    return Number.isFinite(yn) ? yn : NaN;
   }
 
-  console.log("Annual: Normalized allYears:", allYears);
+  // fallback: map report_year_id -> year
+  const ryId = Number(row?.report_year_id);
+  if (!Number.isFinite(ryId)) return NaN;
 
-  // Extract unique years from the dataset
-  const years = [...new Set(allYears.map((y) => Number(y.year)))].sort();
+  const reportYears = normalizeReportYears();
+  const match = reportYears.find(r => Number(r?.id) === ryId);
 
-  console.log("Annual: Unique years:", years);
+  const my = Number(match?.year);
+  return Number.isFinite(my) ? my : NaN;
+}
 
-  // Create labels (ex: ['2020', '2021', '2022'])
-  const yearNames = years.map((yr) => `${yr}`);
+function recalc() {
+  buildAnnualAxisFromAnnualData();
+  buildAnnualSeriesFromAnnualData();
+}
 
-  // Store in state
+function buildAnnualAxisFromAnnualData() {
+  const data = normalizePassedData();
+
+  // derive years from annual rows (most reliable)
+  const years = Array.from(
+    new Set(data.map(r => getRowYear(r)).filter(y => Number.isFinite(y)))
+  ).sort((a, b) => a - b);
+
   state.annualYearIds = years;
-  state.annualYearNames = yearNames;
+  state.annualYearNames = years.map(String);
 
-  console.log("Annual Year IDs:", years);
-  console.log("Annual Year Names:", yearNames);
-
-  // Update x-axis categories for annual charts
-  if (yearNames.length) {
-    state.populationHoriOptions.xaxis = {
-      ...state.populationHoriOptions.xaxis,
-      categories: yearNames,
-    };
-  }
+  state.annualBarOptions.xaxis = {
+    ...state.annualBarOptions.xaxis,
+    categories: state.annualYearNames,
+  };
 }
 
+function buildAnnualSeriesFromAnnualData() {
+  const data = normalizePassedData();
+  const yearIds = state.annualYearIds;
 
-
-
-
-
-async function fetchReports_Details_Bars_Annual() {
-  try {
-    // Normalize data from props
-    const rawData = props.passed_data?.data ?? props.passed_data ?? [];
-    const data = Array.isArray(rawData) ? rawData : Object.values(rawData);
-
-   //---------------------------------------------------------------------------------------------------
-    // Normalize YEAR IDs from state (annual, not quarter)
-    const rawYearIds = state.annualYearIds ?? [];
-    // 1) Coerce to numbers, make them unique, and sort them
-    const yearIds = Array.from(
-      new Set(
-        (Array.isArray(rawYearIds)
-          ? rawYearIds
-          : Object.values(rawYearIds)
-        ).map(Number)
-      )
-    ).sort((a, b) => a - b);
-
-    //---------------------------------------------------------------------------------------------------
-
-    if (!yearIds.length) {
-      console.warn('fetchReports_Details_Bars_Annual: yearIds is empty, nothing to aggregate');
-
-      state.operation_timbang = [];
-      state.nut_status_0to59 = [];
-      return;
-    }
-
-
-    //---------------------------------------------------------------------------------------------------
-    // 2) Build a fast lookup: year -> index
-    const yearIndexMap = new Map();
-    yearIds.forEach((year, index) => {
-      yearIndexMap.set(year, index);
-    });
-    // Optionally store categories for the chart
-    // (make sure xaxis.categories uses this)
-    state.annualYearCategories = yearIds;
-
-     //---------------------------------------------------------------------------------------------------
-
-    // Initialize arrays per YEAR
-    const nutritional_15_1 = new Array(yearIds.length).fill(0);
-    const nutritional_16_1 = new Array(yearIds.length).fill(0);
-    const nutritional_16_2 = new Array(yearIds.length).fill(0); 
-    const nutritional_16_3 = new Array(yearIds.length).fill(0);
-
-    const nutritional_17_1 = new Array(yearIds.length).fill(0);
-    const nutritional_17_2 = new Array(yearIds.length).fill(0); 
-    const nutritional_17_3 = new Array(yearIds.length).fill(0);
-
-    
-
-    // SINGLE PASS over data, now grouping by YEAR not quarter
-    for (const row of data) {
-      if (!row) continue;
-
-    //------------------------------------------------------------------------------------------------------
-      // Adjust depending on your payload: year / report_year
-      const rowYear = Number(row.year ?? row.report_year);
-      if (!rowYear || Number.isNaN(rowYear)) continue;
-
-      const idx = yearIndexMap.get(rowYear);
-      if (idx === undefined) continue; // not one of the tracked years
-
-      //------------------------------------------------------------------------------------------------------
-
-      const value = row.total != null ? Number(row.total) : 0;
-      if (Number.isNaN(value)) continue;
-
-      if (row.indicator_no === '15.1') {
-        nutritional_15_1[idx] += value;
-      } else if (row.indicator_no === '16.1') {
-        nutritional_16_1[idx] += value;
-      } else if (row.indicator_no === '16.2') {
-        nutritional_16_2[idx] += value;
-      }else if (row.indicator_no === '16.3') {
-        nutritional_16_3[idx] += value;
-      }
-
-      else if (row.indicator_no === '17.1') {
-        nutritional_17_1[idx] += value;
-      } else if (row.indicator_no === '17.2') {
-        nutritional_17_2[idx] += value;
-      } else if (row.indicator_no === '17.3') {
-        nutritional_17_3[idx] += value;
-      } 
-    }
-
-    // ✅ Series now indexed by YEAR
-    state.nutritional = [
-      { name: 'Total number of learners enrolled in School-Based Feeding Program (SBFP)', data: nutritional_15_1 },
-    
-    ];
-
-    state.nutritional2 = [
-      { name: '16.1 Total number of stunted Kinder to Grade 6 learners ', data: nutritional_16_1 },
-      { name: '16.2 Total number of wasted Kinder to Grade 6 learners ', data: nutritional_16_2 },
-      { name: '16.3 Total number of overweight/obese Kinder to Grade 6 learners ', data: nutritional_16_3 },
-
-      { name: '17.1 Total number of Schools', data: nutritional_17_1 },
-      { name: '17.2 Total number of Schools fully-implementing the WinS', data: nutritional_17_2 },
-      { name: '17.3 Proportion/percentage of schools fully implementing the WinS ', data: nutritional_17_3 },
-      
-    ];
-
-   
-
-  } catch (error) {
-    console.error('fetchReports_Details_Bars_Annual error:', error);
+  if (!yearIds.length) {
+    state.nutritional = [];
+    state.nutritional2 = [];
+    return;
   }
+
+  const yearIndexMap = new Map();
+  yearIds.forEach((year, idx) => yearIndexMap.set(year, idx));
+
+  // per-year arrays
+  const a15_1 = new Array(yearIds.length).fill(0);
+
+  const a16_1 = new Array(yearIds.length).fill(0);
+  const a16_2 = new Array(yearIds.length).fill(0);
+  const a16_3 = new Array(yearIds.length).fill(0);
+
+  const a17_1 = new Array(yearIds.length).fill(0);
+  const a17_2 = new Array(yearIds.length).fill(0);
+  const a17_3 = new Array(yearIds.length).fill(0);
+
+  for (const row of data) {
+    if (!row) continue;
+
+    const rowYear = getRowYear(row);
+    if (!Number.isFinite(rowYear)) continue;
+
+    const idx = yearIndexMap.get(rowYear);
+    if (idx === undefined) continue;
+
+    const value = row.total != null ? Number(row.total) : 0;
+    if (!Number.isFinite(value)) continue;
+
+    switch (row.indicator_no) {
+      case "15.1": a15_1[idx] += value; break;
+
+      case "16.1": a16_1[idx] += value; break;
+      case "16.2": a16_2[idx] += value; break;
+      case "16.3": a16_3[idx] += value; break;
+
+      case "17.1": a17_1[idx] += value; break;
+      case "17.2": a17_2[idx] += value; break;
+      case "17.3": a17_3[idx] += value; break;
+
+      default: break;
+    }
+  }
+
+  state.nutritional = [
+    { name: "15.1 Total learners enrolled in SBFP", data: a15_1 },
+  ];
+
+  state.nutritional2 = [
+    { name: "16.1 Stunted Kinder to Grade 6 learners", data: a16_1 },
+    { name: "16.2 Wasted Kinder to Grade 6 learners", data: a16_2 },
+    { name: "16.3 Overweight/obese Kinder to Grade 6 learners", data: a16_3 },
+
+    { name: "17.1 Total number of Schools", data: a17_1 },
+    { name: "17.2 Schools fully-implementing the WinS", data: a17_2 },
+    { name: "17.3 % schools fully implementing WinS", data: a17_3 },
+  ];
 }
-
-
-
-
 </script>
