@@ -13,9 +13,7 @@
 
         <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id" @click="changeData" />
       </div>
-      <div class="flex-1">
-
-      </div>
+      
     </div>
   </div>
 
