@@ -38,55 +38,28 @@
     <div class="mt-0 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-20">
 
 
-      <GridCell class="sm:col-span-4 text-center table-header-4 border-grey-200 border-l border-b border-grey pb-6"
-        :displaytext="''" />
-      <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-grey-200 border-b border-grey pb-6"
-        :displaytext="'ACTUAL DATA'" />
-      <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-grey-200 border-b border-grey pb-6"
-        :displaytext="'PROJECTED TARGETS '" />
-      <GridCell class="sm:col-span-4 text-center table-header-4 border-grey-200  border-l border-b border-grey pb-6"
-        :displaytext="'NATIONAL PROJECTED TARGETS'" />
+     
      
       <GridCell
-        class="sm:col-span-4 text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
-        :displaytext="''" />
+        class="sm:col-span-1 text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
+        :displaytext="'Group'" />
       <GridCell
-        class="sm:col-span-4 text-sm text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
-        :displaytext="'INDICATOR / DATA NEEDED'" />
+        class="sm:col-span-8 text-sm text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
+        :displaytext="'INDICATOR DESCRIPTION'" />
 
       <GridCell
-        class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey                                                                                                                                                                     pb-6"
+        class="sm:col-span-2 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey                                                                                                                                                                     pb-6"
         :displaytext="'MALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
+      <GridCell class="sm:col-span-2 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
         :displaytext="'FEMALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
+      <GridCell class="sm:col-span-2 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
         :displaytext="' TOTAL'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey pb-6"
-        :displaytext="'GRAND TOTAL'" />
-
-      <GridCell
-        class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey                                                                                                                                                                     pb-6"
-        :displaytext="'MALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
-        :displaytext="'FEMALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
-        :displaytext="' TOTAL'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey pb-6"
-        :displaytext="'GRAND TOTAL'" />
-      <GridCell
-        class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey                                                                                                                                                                     pb-6"
-        :displaytext="'MALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
-        :displaytext="'FEMALE'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey  pb-6"
-        :displaytext="' TOTAL'" />
-      <GridCell class="sm:col-span-1 text-sm text-center table-header-4 border-grey-200 border-l border-b border-grey pb-6"
-        :displaytext="'GRAND TOTAL'" />
+      
 
       <GridCell class="sm:col-span-2 text-sm text-center table-header-4 border-grey-200  border-l border-b border-grey pb-6"
-        :displaytext="'DATASOURCES'" />
+        :displaytext="'Agency'" />
       <GridCell
-        class="sm:col-span-2 text-sm text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
+        class="sm:col-span-3 text-sm text-center table-header-4 border-grey-200 border-l  ring-1 ring-white border-b border-grey pb-6"
         :displaytext="'REMARKS'" />
 
 

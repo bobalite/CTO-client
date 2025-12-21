@@ -21,52 +21,7 @@
            {{ props.actual_total }}
         </div>
 
-          <div class="sm:col-span-1 text-right  border-r-2 border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.grand_total)?.color">
-           {{ props.actual_grand_total }}
-        </div>
-
-
-         <div class="sm:col-span-1 text-right  border-l-2  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.male)?.color">
-           {{ props.projected_male }}
-        </div>
-
-         <div class="sm:col-span-1 text-right  border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.female)?.color">
-           {{ props.projected_female }}
-        </div>
-
-         <div class="sm:col-span-1 text-right  border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.total)?.color">
-           {{ props.projected_total }}
-        </div>
-
-          <div class="sm:col-span-1 text-right  border-r-2 border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.grand_total)?.color">
-           {{ props.projected_grand_total }}
-        </div>
-
-
-        <div class="sm:col-span-1 text-right  border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.male)?.color">
-           {{ props.national_proj_male }}
-        </div>
-
-         <div class="sm:col-span-1 text-right  border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.female)?.color">
-           {{ props.national_proj_female }}
-        </div>
-
-         <div class="sm:col-span-1 text-right  border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.total)?.color">
-           {{ props.national_proj_total }}
-        </div>
-
-          <div class="sm:col-span-1 text-right  border-r-2 border-l  border-b pb-6"  
-            :class="state.options.cell_color.find(cell => cell.value === props.grand_total)?.color">
-           {{ props.national_proj_grand_total }}
-        </div>
+         
    
         <GridCell class="sm:col-span-2 text-center  border-white  border-r border-l border-b pb-6" :displaytext="props.datasource" />
         <GridCell class="sm:col-span-2 text-center border-white border-l border-r border-b pb-6" :displaytext="props.remarks" />
@@ -100,66 +55,6 @@ const props = defineProps({
         type: [String, Number],
         required: false,
         default: ''
-    },actual_grand_total:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    }, projected_male:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    }, projected_female:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    },projected_total:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    },projected_grand_total:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    }, national_proj_male:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    }, national_proj_female:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    },national_proj_total:{
-        type: [String, Number],
-        required: false,
-        default: ''
-    },national_proj_grand_total:{
-       type: [String, Number],
-        required: false,
-        default: ''
-    },remarks:{
-        type: String,
-        required: false,
-        default: ''
-    },datasource:{
-        type: String,
-        required: false,
-        default: ''
-    },male : {
-        type: [String, Number],
-        required: false,
-        default: ''
-    },female : {
-        type: [String, Number],
-        required: false,
-        default: ''
-    },total : {
-        type: [String, Number],
-        required: false,
-        default: ''
-    },grand_total : {
-        type: [String, Number], 
-        required: false,
-        default: ''  
     }
 })
 
