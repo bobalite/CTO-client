@@ -5,13 +5,10 @@
       <div class="mt-8 flow-root">
         <div class="flex gap-3 items-center">
           <div class="flex-1">
-            <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
-            :change-selected-year="changeYear" />
+            <FormYearSelector v-model="state.report_year" :options="state.options.years"
+              :change-selected-year="change_selected_year" />
 
-            <FormRightSelector
-              v-model="state.selected_rights_id"
-              :options="state.options.rights"
-            />
+            <FormRightSelector v-model="state.selected_rights_id" :options="state.options.rights" />
           </div>
         </div>
       </div>
@@ -27,31 +24,21 @@
       <PrintRowcategory :description="category.description" />
 
       <!-- SUBCATEGORY -->
-      <template
-        v-for="subcategory in (category.indicator_subcategories || [])"
-        :key="subcategory.id"
-      >
+      <template v-for="subcategory in (category.indicator_subcategories || [])" :key="subcategory.id">
         <!-- ⬇⬇⬇ FIXED GRID (SMALLER LEFT COLUMN) -->
-        <div
-          class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start
-                 overflow-visible h-auto print:gap-1 print:py-1"
-        >
+        <div class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start
+                 overflow-visible h-auto print:gap-1 print:py-1">
           <!-- LEFT: SUBCATEGORY LABEL -->
           <div class="flex items-start px-2 print:px-1">
-            <div
-              class="subcategory-label w-full text-xs leading-tight
-                     print:text-[10px] print:leading-tight"
-            >
+            <div class="subcategory-label w-full text-xs leading-tight
+                     print:text-[10px] print:leading-tight">
               {{ subcategory.description }}
             </div>
           </div>
 
           <!-- RIGHT: GROUPS -->
           <div class="space-y-3">
-            <template
-              v-for="group in (subcategory.indicator_groups || [])"
-              :key="group.id"
-            >
+            <template v-for="group in (subcategory.indicator_groups || [])" :key="group.id">
               <div class="border border-gray-300 rounded p-2 print-avoid-break">
                 <!-- GROUP HEADER -->
                 <div class="font-semibold text-sm print:text-xs mb-1">
@@ -59,36 +46,34 @@
                 </div>
 
                 <!-- GROUP GRID (NO SCROLL, FULL HEIGHT) -->
-                <div
-                  class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3
-                         overflow-visible h-auto"
-                >
-                  
-                  <GridCell
-                    class="sm:col-span-15 text-center text-xs border-r border-b"
-                    displaytext=""
-                  />
+                <div class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3
+                         overflow-visible h-auto">
+
+                  <GridCell class="sm:col-span-15 text-center text-xs border-r border-b" displaytext="" />
 
                   <GridCell class="sm:col-span-6 text-center text-xs border-l border-b" displaytext="INDICATOR" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="MALE" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="FEMALE" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="TOTAL" />
-                  <GridCell class="sm:col-span-4 text-center text-xs border-l border-b border-r" displaytext="REMARKS" />
+                  <GridCell class="sm:col-span-4 text-center text-xs border-l border-b border-r"
+                    displaytext="REMARKS" />
 
                   <template v-for="el in group.indicator_group_elements" :key="el.id">
-                    <GridCell
-                      class="sm:col-span-1 px-1 text-xs border-l border-b break-words"
-                      :displaytext="el.indicator_no"
-                    />
-                    <GridCell
-                      class="sm:col-span-5 px-1 text-xs border-b break-words"
-                      :displaytext="el.description"
-                    />
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.male"/>
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.female"/>
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.female"/>
-                    <GridTextPrintArea class="sm:col-span-4 px-1 text-xs border-l border-b border-r break-words" :entrystatus="el.remarks"
-                    />
+                    <GridCell class="sm:col-span-1 px-1 text-xs border-l border-b break-words"
+                      :displaytext="el.indicator_no" />
+                    <GridCell class="sm:col-span-5 px-1 text-xs border-b break-words" :displaytext="el.description" />
+                    
+                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.male"
+                      :modelValue="state.male[String(el.indicator_no).trim()] ?? ''" />
+                    
+                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.female"
+                      :modelValue="state.female[String(el.indicator_no).trim()] ?? ''" />
+                    
+                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.total"
+                     :modelValue="state.total[String(el.indicator_no).trim()] ?? ''" />
+
+                    <GridTextPrintArea class="sm:col-span-4 px-1 text-xs border-l border-b border-r break-words"
+                      :entrystatus="el.remarks" :modelValue="state.remarks[String(el.indicator_no).trim()] ?? ''" />
                   </template>
                 </div>
               </div>
@@ -100,52 +85,43 @@
 
     <PrintFooter />
 
-    <button
-      @click="printChart"
-      class="print:hidden mt-4 bg-blue-600 text-white px-4 py-2 rounded"
-    >
+    <button @click="printChart" class="print:hidden mt-4 bg-blue-600 text-white px-4 py-2 rounded">
       Print Report
     </button>
   </div>
 </template>
 
+
 <script setup>
 import { reactive, computed, onMounted, nextTick, watch } from 'vue'
+
 import { indicatorService } from '~/components/api/IndicatorCategoryService'
 import { Childrens_rightsService } from '~/components/api/Rights'
-import { report_yearService } from '~/components/api/ReportYears';
+import { report_yearService } from '~/components/api/ReportYears'
+
+// ✅ YOU WERE MISSING THIS IMPORT (adjust path to your actual service file)
+import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'
 
 definePageMeta({ layout: 'main' })
 
 const state = reactive({
+  allCategories: [],
+  selected_rights_id: null,
 
-  // Data
+  report_year: null,
 
+  // fetched detail rows/groups for the selected year
+  passed_data: [],
+  loading: true,
+
+  // maps keyed by indicator_no
   male: {},
   female: {},
   total: {},
   remarks: {},
-  header_value1: {},
-  header_value2: {},
-  header_value3: {},
 
-  exceldata: [],
-  header_name1: '',
-  header_name2: '',
-  header_name3: '',
-
- report_years: { data: [] },
-
-
-  allCategories: [],
-  selected_year_id: null,
-  selected_year: '',
-  selected_rights_id: null,
   options: {
-    years: [
-      { },
-      
-    ],
+    years: [],
     rights: [],
   },
 })
@@ -160,160 +136,24 @@ const printChart = async () => {
   window.print()
 }
 
-// function changeYear() {
-//   const y = state.options.years.find(v => v.value === state.selected_year_id)
-//   state.selected_year = y?.year || ''
-// }
+function change_selected_year(opt) {
+  const opts = state.options.years.filter(Boolean)
+  if (!opts.length) return
 
-function changeYear() {
-    state.selected_year_id = state.selected_year_id
-    state.selected_year = state.options.years.find(year => year.value === state.selected_year_id)?.year || '';
-    console.log('selected_year_id = ', state.selected_year_id)
+  const currentIndex = opts.findIndex(o => o.value === state.report_year)
+  const idx = currentIndex === -1 ? 0 : currentIndex
+
+  if (opt === 1 && idx < opts.length - 1) {
+    state.report_year = opts[idx + 1].value
+  } else if (opt === 2 && idx > 0) {
+    state.report_year = opts[idx - 1].value
+  }
 }
-
-
-watch(() => state.selected_year_id, changeYear)
 
 async function fetchIndicatorCategories() {
   const res = await indicatorService.getIndicatorCategories()
   state.allCategories = res?.data || []
 }
-
-//details ------------------------------------------------------------------
-
-const groupMode = computed(() => {
-  if (!props.group || !props.group.indicator_group_elements) return 'normal'
-
-  const allExcel = props.group.indicator_group_elements.every(el => el.value_type === 'excel')
-  const noneExcel = props.group.indicator_group_elements.every(el => el.value_type !== 'excel')
-
-  console.log('groupMode computation:', { allExcel, noneExcel })
-
-  if (allExcel) return 'excel'
-  if (noneExcel) return 'normal'
-  return 'mixed'
-})
-
-
-/* ---------------------------------------------
-   INIT STATE
----------------------------------------------- */
-function initializeState() {
-  if (!props.group) return
-
-  props.group.indicator_group_elements.forEach(el => {
-    const key = el.indicator_no
-    state.male[key] = el.male_value ?? 0
-    state.female[key] = el.female_value ?? 0
-    state.total[key] = el.total_value ?? 0
-    state.remarks[key] = el.remarks ?? ''
-  })
-}
-
-/* ---------------------------------------------
-   LOAD DB VALUES
----------------------------------------------- */
-async function get_group_details() {
-  try {
-    if (!props.group) return
-
-    const params = {
-      indicator_group_id: props.group.group_no ?? null,
-      report_year: Number(props.selected_year),
-      report_year_id: Number(props.selected_year_id),
-    }
-
-    const response = await reportDetailsService.getReportDetails(params)
-    console.log('response reportDetailsService', response)
-
-    if (response.data && Array.isArray(response.data)) {
-      response.data.forEach((item) => {
-        const key = item.indicator_no
-        if (!key) return
-
-        state.male[key] = item.male ?? state.male[key]
-        state.female[key] = item.female ?? state.female[key]
-        state.total[key] = item.total ?? state.total[key]
-        state.remarks[key] = item.remarks ?? state.remarks[key]
-      })
-    }
-  } catch (err) {
-    console.error('Error fetching report detail excel:', err)
-  }
-}
-
-
-async function getexceldata() {
-  try {
-    if (!props.group) return
-
-    const params = {
-      indicator_group_id: props.group.group_no ?? null,
-      report_year_id: Number(props.selected_year_id),
-      
-    }
-
-    const response = await reportDetailsExcelService.getReportExcelDetails(params)
-    console.log('response reportDetailsExcelService', response)
-
-    // Decide shape once
-    const rows = Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : []
-
-    state.exceldata = rows
-    console.log('state.exceldata', state.exceldata)
-
-    const first = rows[0] ?? null
-
-    if (first) {
-      state.header_name1 = first.header_name1 ?? 'Value 1'
-      state.header_name2 = first.header_name2 ?? 'Value 2'
-      state.header_name3 = first.header_name3 ?? 'Value 3'
-    } else {
-      state.header_name1 = 'Value 1'
-      state.header_name2 = 'Value 2'
-      state.header_name3 = 'Value 3'
-    }
-
-    console.log('header names', state.header_name1, state.header_name2, state.header_name3)
-  } catch (err) {
-    console.error('Error fetching report detail excel:', err)
-  }
-}
-
-
-async function fetchreportyear() {
-  try {
-    const response = await report_yearService.getReportYears()
-    const rows = Array.isArray(response?.data) ? response.data : []
-
-    // Keep only active years (status == 1), map to selector options
-    const options = rows
-      .filter(r => Number(r.status) === 1)
-      .map(r => ({
-        value: r.id,          // use number IDs consistently
-        label: r.name,
-        year: String(r.year),
-      }))
-
-    state.options.years = options
-
-    // If nothing selected yet, pick first valid option
-    if (!state.selected_year_id && state.options.years.length) {
-      state.selected_year_id = state.options.years[0].value
-      changeYear()
-    }
-  } catch (error) {
-    console.error('fetchreportyear error', error)
-    state.options.years = []
-  }
-}
-
-
-
-
-
-//details ------------------------------------------------------------------
-
 
 async function fetchRights() {
   const res = await Childrens_rightsService.getRights()
@@ -321,43 +161,182 @@ async function fetchRights() {
     value: r.id,
     label: r.description,
   }))
+
   if (!state.selected_rights_id && state.options.rights.length) {
     state.selected_rights_id = state.options.rights[0].value
   }
 }
 
-// onMounted(async () => {
-  
-//   fetchreportyear()
-//   await fetchIndicatorCategories()
-//   await fetchRights()
-//   if (!state.selected_year_id) {
-//     state.selected_year_id = state.options.years[0].value
-//     changeYear()
-//   }
-   
-//    initializeState()
-//    get_group_details()
-//    getexceldata()
-// })
+async function fetchreportyear() {
+  try {
+    const response = await report_yearService.getReportYears()
+    const rows = Array.isArray(response?.data) ? response.data : []
+
+    const years = rows
+      .filter(r => Number(r.status) === 1 && r.year != null)
+      .map(r => Number(r.year))
+      .filter(y => Number.isFinite(y))
+
+    const uniqueYears = [...new Set(years)].sort((a, b) => b - a)
+
+    state.options.years = uniqueYears.map(y => ({
+      value: y,
+      label: String(y),
+      year: y,
+    }))
+
+    if (!state.options.years.length) {
+      state.report_year = null
+      return
+    }
+
+    const currentYear = new Date().getFullYear()
+    state.report_year = uniqueYears.includes(currentYear) ? currentYear : uniqueYears[0]
+  } catch (error) {
+    console.error('fetchreportyear error', error)
+    state.options.years = []
+    state.report_year = null
+  }
+}
+
+/**
+ * Robust mapper: handles two common API shapes:
+ * A) response.data is flat rows: [{indicator_no, male, female, total, remarks}]
+ * B) response.data is groups: [{indicator_group_elements:[{indicator_no, ...}]}]
+ * 
+ * 
+ */
+
+
+ function toNumberOrNull(v) {
+  if (v === null || v === undefined) return null
+  if (typeof v === 'number' && Number.isFinite(v)) return v
+
+  // allow "1,234" / " 12 " etc.
+  const s = String(v).trim().replace(/,/g, '')
+  if (s === '') return null
+  const n = Number(s)
+  return Number.isFinite(n) ? n : null
+}
+
+function addNumeric(map, key, value) {
+  const n = toNumberOrNull(value)
+  if (n === null) return
+
+  const existing = toNumberOrNull(map[key])
+  map[key] = (existing ?? 0) + n
+}
+
+function addRemark(map, key, value) {
+  const s = String(value ?? '').trim()
+  if (!s) return
+
+  const existing = String(map[key] ?? '').trim()
+  if (!existing) {
+    map[key] = s
+    return
+  }
+
+  // avoid duplicate remark chunks
+  const parts = new Set(existing.split(' | ').map(x => x.trim()).filter(Boolean))
+  parts.add(s)
+  map[key] = Array.from(parts).join(' | ')
+}
+
+/**
+ * Groups by indicator_no and ADDS values across quarters (no overwrite).
+ * Works with:
+ *  - grouped shape: [{ indicator_group_elements: [...] }, ...]
+ *  - flat rows:     [{ indicator_no, male, female, total, remarks, quarter }, ...]
+ */
+
+
+function mapValues(detailsOrGroups) {
+  state.male = {}
+  state.female = {}
+  state.total = {}
+  state.remarks = {}
+
+  if (!Array.isArray(detailsOrGroups) || !detailsOrGroups.length) return
+
+  const first = detailsOrGroups[0]
+  const isGrouped = first && Array.isArray(first.indicator_group_elements)
+
+  if (isGrouped) {
+    for (const g of detailsOrGroups) {
+      for (const el of (g.indicator_group_elements || [])) {
+        const key = String(el.indicator_no ?? '').trim()
+        if (!key) continue
+
+        // pick the real value fields your API returns
+        const maleVal = el.male_value ?? el.male_data ?? el.male
+        const femaleVal = el.female_value ?? el.female_data ?? el.female
+        const totalVal = el.total_value ?? el.total_data ?? el.total
+        const remarksVal = el.remarks_value ?? el.remarks_data ?? el.remarks
+
+        addNumeric(state.male, key, maleVal)
+        addNumeric(state.female, key, femaleVal)
+        addNumeric(state.total, key, totalVal)
+        addRemark(state.remarks, key, remarksVal)
+      }
+    }
+    return
+  }
+
+  // flat rows (most common when you truly have quarter rows)
+  for (const row of detailsOrGroups) {
+    const key = String(row.indicator_no ?? '').trim()
+    if (!key) continue
+
+    addNumeric(state.male, key, row.male ?? row.male_value)
+    addNumeric(state.female, key, row.female ?? row.female_value)
+    addNumeric(state.total, key, row.total ?? row.total_value)
+    addRemark(state.remarks, key, row.remarks ?? row.remarks_value)
+  }
+}
+
+async function fetchData() {
+  if (!state.report_year) return
+
+  state.loading = true
+  try {
+    const params = { report_year: Number(state.report_year) }
+    const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
+
+    state.passed_data = response?.data || []
+
+    // ✅ accumulate quarter values instead of overwriting
+    mapValues(state.passed_data)
+  } catch (e) {
+    console.error('fetchData error', e)
+    state.passed_data = []
+    mapValues([])
+  } finally {
+    state.loading = false
+  }
+}
 
 onMounted(async () => {
   await fetchreportyear()
   await fetchIndicatorCategories()
   await fetchRights()
 
-  // No need for this block anymore; fetchreportyear handles default select:
-  // if (!state.selected_year_id) { ... }
-
-  changeYear()
-
-  // WARNING: The code below references props, but this file has no props.
-  // If this is truly reports/index.vue, these calls are wrong here.
-  // initializeState()
-  // get_group_details()
-  // getexceldata()
+  // fetch once initial year is set
+  await fetchData()
 })
+
+// ✅ refetch when year changes
+watch(
+  () => state.report_year,
+  async (val, oldVal) => {
+    if (!val || val === oldVal) return
+    await fetchData()
+  }
+)
 </script>
+
+
+
 
 <style scoped>
 .subcategory-label {

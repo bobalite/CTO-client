@@ -212,7 +212,7 @@ async function loadExternalIndicators(indicatorNos = []) {
         state.male[id] = Number(item.male ?? state.male[id] ?? 0)
         state.female[id] = Number(item.female ?? state.female[id] ?? 0)
         state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' remarks 1 '
+        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
       })
     } else {
       console.warn('No external indicators returned for', indicatorNos)
@@ -242,7 +242,7 @@ function initStateFromGroup(g) {
     state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
     state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
     state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    //state.remarks[id] = el.remarks ?? 'remarks 2'
+    //state.remarks[id] = el.remarks ?? ' -- '
     if (excelUploads[id]) delete excelUploads[id]
   })
 }
@@ -295,7 +295,7 @@ async function get_group_details() {
           state.male[id] = Number(item.male ?? state.male[id] ?? 0)
           state.female[id] = Number(item.female ?? state.female[id] ?? 0)
           state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-          //state.remarks[id] = item.remarks ?? state.remarks[id] ?? 'remarks 3'
+          //state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
         })
       }
     } catch (err) {
@@ -517,9 +517,7 @@ async function saveIndicators() {
     for (const el of groupLocal.value.indicator_group_elements) {
       if (!el || !el.indicator_no || el.value_type === 'excel') continue
       const id = el.indicator_no
-
-      
-
+ 
 
 
       const params = {
@@ -527,7 +525,7 @@ async function saveIndicators() {
         male: Number(state.male[id]) || 0,
         female: Number(state.female[id]) || 0,
         total: Number(state.total[id]) || 0,
-        remarks: state.remarks[id] || 'remarks 4',
+        remarks: state.remarks[id] || ' --',
         indicator_group_element_id: el.id,
         indicator_group_id: groupLocal.value.id,
         report_year_id: reportYearId,
@@ -609,277 +607,6 @@ async function saveIndicators() {
 // ---------------------------
 function emitClose() { emit('close') }
 
-// Expose handlers for template usage
-// (If you need to use these from template, they are available in scope of <script setup>)
+
 </script>
 
-
-
-<!-- <script setup>
-/* eslint-disable no-console */
-import { reactive, ref, onMounted, watch, toRaw } from 'vue'
-import { reportDetailsService } from '~/components/api/ReportDetailsService';
-import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
-
-// --- emits & props ---
-const emit = defineEmits(['close'])
-const props = defineProps({
-  show: Boolean,
-  mode: String,
-  modalTitle: String,
-  category: String,
-  subcategory: String,
-  group: Object,
-  selected_year: [String, Number],
-  selected_year_id: [String, Number],
-})
-
-// --- reactive state ---
-const isSaving = ref(false)
-const groupLocal = ref(null) // local copy/reference
-const excelUploads = reactive({}) // keyed by indicator_no
-
-const state = reactive({
-  male: {},
-  female: {},
-  total: {},
-  remarks: {},
-})
-
-// ---------- Initialize state from group ----------
-function initStateFromGroup(g) {
-  groupLocal.value = g || null
-  state.male = {}
-  state.female = {}
-  state.total = {}
-  state.remarks = {}
-
-  if (!g || !Array.isArray(g.indicator_group_elements)) return
-
-  g.indicator_group_elements.forEach(el => {
-    const id = el.indicator_no
-    if (!id) return
-    state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
-    state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
-    state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    state.remarks[id] = el.remarks ?? ''
-    if (excelUploads[id]) delete excelUploads[id]
-  })
-}
-
-// ---------- Lifecycle ----------
-onMounted(() => {
-  if (props.group) initStateFromGroup(props.group)
-  if (props.show) get_group_details()
-})
-
-watch(() => props.show, (newVal) => { if (newVal) get_group_details() })
-watch(() => props.group, (newGroup) => initStateFromGroup(newGroup))
-
-// ---------- Fetch group details ----------
-async function get_group_details() {
-  try {
-    const g = props.group
-    if (!g) return
-    initStateFromGroup(g)
-
-    const params = {
-      //indicator_group_id: g.group_no ?? g.id ?? null,
-      report_year: Number(props.selected_year),
-      report_year_id: Number(props.selected_year_id),
-    }
-
-    const response = await reportDetailsService.getReportDetails(params)
-    if (response?.data && Array.isArray(response.data)) {
-      response.data.forEach(item => {
-        const id = item.indicator_no
-        if (!id) return
-        state.male[id] = Number(item.male ?? state.male[id] ?? 0)
-        state.female[id] = Number(item.female ?? state.female[id] ?? 0)
-        state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ''
-      })
-    }
-  } catch (err) {
-    console.error('Error fetching group details:', err)
-  }
-}
-
-// ---------- Handle Excel upload ----------
-function handleExcelData(payload) {
-  if (!payload || !payload.indicator_no) return
-  excelUploads[payload.indicator_no] = payload.rows || []
-  console.log('Excel uploaded for', payload.indicator_no, payload.rows)
-}
-
-// ---------- Compute totals ----------
-function computeTotals() {
-  const elems = groupLocal.value?.indicator_group_elements || []
-  if (!elems.length) return
-
-  // --- PASS 1: Initial totals ---
-  elems.forEach(el => {
-    const id = el.indicator_no
-    if (!id) return
-
-    const totalStatus = Number(el.total ?? el.total_status ?? 0)
-    const maleStatus = Number(el.male ?? 0)
-    const femaleStatus = Number(el.female ?? 0)
-
-    if (el.value_type !== 'excel' && el.summed_from === 'na' && totalStatus === 2) {
-      if (maleStatus === 0 && femaleStatus === 0) {
-        state.total[id] = 0
-      } else {
-        state.total[id] = (Number(state.male[id]) || 0) + (Number(state.female[id]) || 0)
-      }
-    }
-  })
-
-  // snapshot BEFORE sum pass
-  let maleMap = { ...toRaw(state.male) }
-  let femaleMap = { ...toRaw(state.female) }
-  let totalMap = { ...toRaw(state.total) }
-
-  // --- PASS 2: Sums ---
-  elems.forEach(el => {
-    const id = el.indicator_no
-    if (!id || !el.summed_from || el.summed_from === 'na') return
-
-    const refs = el.summed_from.split(';').map(r => r.trim()).filter(Boolean)
-    if (!refs.length) return
-
-    if (el.value_type === 'sum') {
-      state.male[id] = refs.reduce((a, r) => a + (Number(maleMap[r]) || 0), 0)
-      state.female[id] = refs.reduce((a, r) => a + (Number(femaleMap[r]) || 0), 0)
-      state.total[id] = refs.reduce((a, r) => a + (Number(totalMap[r]) || 0), 0)
-    }
-  })
-
-  // snapshot BEFORE percentage pass
-  maleMap = { ...toRaw(state.male) }
-  femaleMap = { ...toRaw(state.female) }
-  totalMap = { ...toRaw(state.total) }
-
-  // --- PASS 3: Percentages ---
-  elems.forEach(el => {
-    const id = el.indicator_no
-    if (!id || !el.summed_from || el.summed_from === 'na') return
-
-    const refs = el.summed_from.split(';').map(r => r.trim()).filter(Boolean)
-    if (!refs.length) return
-
-    if (['percentage', 'ratio', 'rate'].includes(el.value_type)) {
-      const ref1 = refs[0]
-      const ref2 = refs[1] ?? refs[0]  // may need rules adjustment
-      const divisor = Number(el.divisor) || 1
-
-      const maleDen = Number(maleMap[ref2]) || 0
-      const femaleDen = Number(femaleMap[ref2]) || 0
-      const totalDen = Number(totalMap[ref2]) || 0
-
-      state.male[id] = maleDen ? Number((((Number(maleMap[ref1]) || 0) / maleDen) * divisor).toFixed(2)) : 0
-      state.female[id] = femaleDen ? Number((((Number(femaleMap[ref1]) || 0) / femaleDen) * divisor).toFixed(2)) : 0
-      state.total[id] = totalDen ? Number((((Number(totalMap[ref1]) || 0) / totalDen) * divisor).toFixed(2)) : 0
-    }
-  })
-}
-
-
-
-// ---------- Save indicators ----------
-async function saveIndicators() {
-  if (!groupLocal.value) { alert('No group to save.'); return }
-  isSaving.value = true
-  const reportYearId = Number(props.selected_year_id)
-  let successCount = 0, errorCount = 0
-  const existingRecords = []
-
-  try {
-    // 1️⃣ Save normal indicators
-    for (const el of groupLocal.value.indicator_group_elements) {
-      if (!el || !el.indicator_no || el.value_type === 'excel') continue
-      const id = el.indicator_no
-      const params = {
-        indicator_no: id,
-        male: Number(state.male[id]) || 0,
-        female: Number(state.female[id]) || 0,
-        total: Number(state.total[id]) || 0,
-        remarks: state.remarks[id] || '',
-        indicator_group_element_id: el.id,
-        indicator_group_id: groupLocal.value.id,
-        report_year_id: reportYearId,
-        report_year: props.selected_year,
-        report_schedule: el.submition_type,
-        is_active: 1,
-      }
-
-      console.log('params in saving', params)
-
-      try {
-        const res = await reportDetailsService.createReportDetails(params)
-        if (res?.exists && res?.existing_id) existingRecords.push({ id: res.existing_id, params })
-        else successCount++
-      } catch (err) { console.error('Error saving row', id, err); errorCount++ }
-    }
-
-    // 2️⃣ Bulk save Excel rows
-    const bulkRows = []
-    for (const el of groupLocal.value.indicator_group_elements) {
-      if (!el || !el.indicator_no || el.value_type !== 'excel') continue
-      const id = el.indicator_no
-      const rows = excelUploads[id] || []
-      if (!rows.length) continue
-
-      rows.forEach(r => {
-        const keys = Object.keys(r)
-        bulkRows.push({
-          report_year_id: reportYearId,
-          indicator_no: String(id),
-          indicator_group_element_id: el.id,
-          indicator_group_id: groupLocal.value.id,
-          header_name1: keys[0] ?? '',
-          header_value1: Number(r[keys[0]]) || 0,
-          header_name2: keys[1] ?? '',
-          header_value2: String(r[keys[1]]) || '',
-          header_name3: keys[2] ?? '',
-          header_value3: Number(r[keys[2]]) || 0,
-          is_active: 1,
-          report_year: props.selected_year,
-        })
-      })
-    }
-
-    if (bulkRows.length) {
-      try {
-        await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
-        successCount += bulkRows.length
-      } catch (err) {
-        console.error('Error saving Excel rows in bulk', err)
-        errorCount += bulkRows.length
-      }
-    }
-
-    // 3️⃣ Update existing normal rows if needed
-    if (existingRecords.length > 0) {
-      const confirmUpdate = confirm(`${existingRecords.length} record(s) already exist. Update them?`)
-      if (confirmUpdate) {
-        for (const item of existingRecords) {
-          try { await reportDetailsService.updateReportDetails(item.params, item.id); successCount++ }
-          catch (err) { console.error('Error updating existing record', item.id, err); errorCount++ }
-        }
-      }
-    }
-
-    alert(`Done: ${successCount} saved, ${errorCount} errors.`)
-    emit('close')
-  } catch (err) {
-    console.error('Unexpected save error', err)
-    alert('Unexpected error while saving.')
-  } finally {
-    isSaving.value = false
-  }
-}
-
-// ---------- Emit close ----------
-function emitClose() { emit('close') }
-</script> -->

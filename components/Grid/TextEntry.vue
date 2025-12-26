@@ -6,15 +6,15 @@
 
     <input v-else-if="props.entrystatus == 2" type="text" inputmode="numeric" pattern="[0-9]*" :name="props.name"
         :value="props.modelValue" @input="updateValue" @keydown="allowOnlyDigits"
-        class="block w-full bg-green-600 border-white px-3 py-1 text-gray-900 placeholder:text-gray-300 focus:outline-none text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        class="block w-full bg-green-600 border-white px-3 py-1 text-gray-900 placeholder:text-gray-300 focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         readonly />
 
     <input v-else-if="props.entrystatus == 0" type="text" :name="props.name" :value="props.modelValue" disabled readonly
-        class="block w-full bg-black border-white px-3 py-1 text-black focus:outline-none text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+        class="block w-full bg-black border-white px-3 py-1 text-black focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
 
     <input v-else-if="props.entrystatus == 3" type="text" :name="props.name" :value="props.modelValue"
         @input="updateValue"
-        class="block w-full bg-green-300 border-white px-1 py-1 text-black focus:outline-none text-md " />
+        class="block w-full bg-green-300 border-white px-1 py-1 text-black focus:outline-none text-sm " />
 
 
 
