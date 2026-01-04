@@ -406,12 +406,12 @@ function closeSlideModal() {
 
 const navigation = [
     { name: 'Dashboard', link: '/dashboard', icon: HomeIcon, current: false },
-    { name: 'Tracker', link: '/tracker', icon: MagnifyingGlassIcon, current: false },
+    // { name: 'Tracker', link: '/tracker', icon: MagnifyingGlassIcon, current: false },
     { name: 'Calendar', link: '/calendar', icon: CalendarIcon, current: false },
-    { name: 'Accomplishments', link: '/accomplishments', icon: TrophyIcon, current: false },
+    // { name: 'Accomplishments', link: '/accomplishments', icon: TrophyIcon, current: false },
     { name: 'Reports', link: '/reports', icon: PrinterIcon, current: false },
     { name: 'Encoding', link: '/dataencoding/rights', icon: PencilSquareIcon, current: false },
-    { name: 'Configurations', link: '/admin', icon: Cog6ToothIcon, current: false },
+    // { name: 'Configurations', link: '/admin', icon: Cog6ToothIcon, current: false },
     { name: 'Users', link: '/admin/usermanagement', icon: UsersIcon, current: false },
     { name: 'Schedules ', link: '/admin/managereportschedules', icon: CalendarDaysIcon, current: false },
 ]

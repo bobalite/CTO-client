@@ -39,26 +39,26 @@
 
           <!-- Normal Mode Header -->
           <template v-if="groupMode === 'normal'">
-            <GridCell class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-6 text-center table-header-4 border-white border-l border-b border-grey pb-1"
               displaytext="INDICATOR" />
-            <GridCell class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
               displaytext="MALE" />
-            <GridCell class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-2 text-center table-header-4 border-l border-white border-b border-grey pb-1"
               displaytext="FEMALE" />
-            <GridCell class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-2 text-center table-header-4 border-white border-l border-b border-grey pb-1"
               displaytext="TOTAL" />
-            <GridCell
+            <GridCellView
               class="sm:col-span-4 text-center table-header-4 border-white border-l border-b border-r border-grey pb-1"
               displaytext="REMARKS" />
           </template>
 
           <!-- Excel Mode Header -->
           <template v-else-if="groupMode === 'excel'">
-            <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="INDICATOR" />
-            <GridCell class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
+            <GridCellView class="sm:col-span-6 text-center table-header-4 border-l border-b border-grey pb-1"
               displaytext="VALUE (FROM EXCEL)" />
-            <GridCell class="sm:col-span-4 text-center table-header-4 border-l border-b border-r border-grey pb-1"
+            <GridCellView class="sm:col-span-4 text-center table-header-4 border-l border-b border-r border-grey pb-1"
               displaytext="REMARKS" />
           </template>
 
@@ -85,13 +85,13 @@
               <GridCell class="sm:col-span-5 px-1 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
                 :displaytext="el.description" />
 
-              <GridTextEntry v-model="state.male[el.indicator_no]"
+              <GridTextView v-model="state.male[el.indicator_no]"
                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.male" />
 
-              <GridTextEntry v-model="state.female[el.indicator_no]"
+              <GridTextView v-model="state.female[el.indicator_no]"
                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.female" />
 
-              <GridTextEntry v-model="state.total[el.indicator_no]"
+              <GridTextView v-model="state.total[el.indicator_no]"
                 class="sm:col-span-2 text-right border-l border-b border-grey pb-1" :entrystatus="el.total" />
 
               <GridTextArea v-model="state.remarks[el.indicator_no]"

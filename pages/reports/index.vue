@@ -61,6 +61,7 @@
                   <template v-for="el in group.indicator_group_elements" :key="el.id">
                     <GridCell class="sm:col-span-1 px-1 text-xs border-l border-b break-words"
                       :displaytext="el.indicator_no" />
+                  
                     <GridCell class="sm:col-span-5 px-1 text-xs border-b break-words" :displaytext="el.description" />
                     
                     <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.male"
@@ -72,9 +73,11 @@
                     <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.total"
                      :modelValue="state.total[String(el.indicator_no).trim()] ?? ''" />
 
-                    <GridTextPrintArea class="sm:col-span-4 px-1 text-xs border-l border-b border-r break-words"
+                    <GridTextPrintAreaViewReadonly class="sm:col-span-4 px-1 text-xs border-l border-b border-r break-words"
                       :entrystatus="el.remarks" :modelValue="state.remarks[String(el.indicator_no).trim()] ?? ''" />
                   </template>
+
+
                 </div>
               </div>
             </template>
@@ -293,6 +296,8 @@ function mapValues(detailsOrGroups) {
     addNumeric(state.total, key, row.total ?? row.total_value)
     addRemark(state.remarks, key, row.remarks ?? row.remarks_value)
   }
+
+  console.log('state.male', state.male)
 }
 
 async function fetchData() {
