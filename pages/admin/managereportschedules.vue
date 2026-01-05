@@ -1,10 +1,7 @@
 <template>
     <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold">CREATE AND CONFIGURE REPORT SCHEDULES</h1>
-        <div class="flex items-center space-x-4">
-            <button class="btn btn-primary">Export</button>
-            <button class="btn btn-primary">Print</button>
-        </div>
+        
     </div>
 
     <div class="px-4 sm:px-6 lg:px-8">
@@ -67,240 +64,108 @@
             </div>
         </div>
 
-
         <div class="sm:flex sm:items-center">
 
             <ModalDisplayform :show="state.isAddModalOpen" :close="state.closeAddModal" :title="'Add New Schedule'">
-                <div class="max-h-[70vh] overflow-y-auto p-6">
-
-                    <!-- 2 column layout -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10">
-
-                        <!-- ===== Year ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Year:</label>
-                            <GridSelect v-model="state.year" :displaytext="state.year" :options="state.year_options"
-                                @click="set_other_fields" class="flex-1 bg-white" />
+                <div class="p-6 sm:p-8">
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <!-- Header -->
+                        <div class="border-b border-slate-200 px-6 py-4">
+                            <p class="text-sm font-medium text-slate-500">Schedule Information</p>
+                            <p class="mt-1 text-base font-semibold text-slate-900">
+                                Define the schedule details below
+                            </p>
                         </div>
 
-                        <!-- ===== Name ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Name:</label>
-                            <GridSelect v-model="state.name" :displaytext="state.name" :options="state.name_options"
-                                @click="set_other_fields" class="flex-1 bg-white" />
+                        <!-- Body -->
+                        <div class="max-h-[65vh] overflow-y-auto px-6 py-6">
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                <!-- Year -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Year
+                                    </label>
+                                    <GridSelect v-model="state.year" :displaytext="state.year"
+                                        :options="state.year_options" @click="set_other_fields"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Name -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Name
+                                    </label>
+                                    <GridSelect v-model="state.name" :displaytext="state.name"
+                                        :options="state.name_options" @click="set_other_fields"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Description -->
+                                <div class="sm:col-span-2">
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Description
+                                    </label>
+                                    <GridText2 v-model="state.description" :displaytext="state.description"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Status -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Status
+                                    </label>
+                                    <GridSelect v-model="state.status" :displaytext="state.status"
+                                        :options="state.status_options" class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Date Start -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Date Start
+                                    </label>
+                                    <GridDate v-model="state.date_start" :displaytext="state.date_start"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Date End -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Date End
+                                    </label>
+                                    <GridDate v-model="state.date_end" :displaytext="state.date_end"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+
+                                <!-- Submission Deadline -->
+                                <div>
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Submission Deadline
+                                    </label>
+                                    <GridDate v-model="state.submition_deadline" :displaytext="state.submition_deadline"
+                                        class="mt-1 w-full rounded-lg bg-white" />
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- ===== Description ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Description:</label>
-                            <GridText2 v-model="state.description" :displaytext="state.description"
-                                class="flex-1 bg-white" />
-                        </div>
+                        <!-- Footer -->
+                        <div
+                            class="flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end">
+                            <button type="button"
+                                class="inline-flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+                                @click="cancelAddModal">
+                                Cancel
+                            </button>
 
-                        <!-- ===== Status ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Status:</label>
-                            <GridSelect v-model="state.status" :displaytext="state.status"
-                                :options="state.status_options" class="flex-1 bg-white" />
+                            <button type="button"
+                                class="inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:w-auto"
+                                @click="SaveNewSchedule">
+                                Save Schedule
+                            </button>
                         </div>
-
-                        <!-- ===== Date Start ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Date Start:</label>
-                            <GridDate v-model="state.date_start" :displaytext="state.date_start"
-                                class="flex-1 bg-white" />
-                        </div>
-
-                        <!-- ===== Date End ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Date End:</label>
-                            <GridDate v-model="state.date_end" :displaytext="state.date_end" class="flex-1 bg-white" />
-                        </div>
-
-                        <!-- ===== Submission Deadline ===== -->
-                        <div class="flex items-center">
-                            <label class="w-40 text-md font-medium">Submission Deadline:</label>
-                            <GridDate v-model="state.submition_deadline" :displaytext="state.submition_deadline"
-                                class="flex-1 bg-white" />
-                        </div>
-
                     </div>
-
-                    <!-- Buttons -->
-                    <div class="flex justify-end gap-4 mt-10">
-                        <button class="rounded-md bg-gray-300 px-4 py-2 font-medium text-black hover:bg-gray-400"
-                            @click="cancelAddModal">
-                            Cancel
-                        </button>
-
-                        <button class="rounded-md bg-green-600 px-6 py-2 font-semibold text-white hover:bg-green-500"
-                            @click="SaveNewSchedule">
-                            Save New Schedule
-                        </button>
-                    </div>
-
                 </div>
             </ModalDisplayform>
 
-
-            <!-- <ModalDisplayform :show="state.isAddModalOpen" :close="state.closeAddModal" :title="'Add New Schedule'">
-                <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-11">
-
-                    <GridCell class="sm:col-span-10  pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-10  pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-                    <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Year:'" />
-                    <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.year"
-                        :displaytext="state.year" :options="state.year_options" @click="set_other_fields" />
-
-                    
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.year_error" />
-
-
-
-                    <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Name:'" />
-                    <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.name"
-                        :displaytext="state.name" :options="state.name_options" @click="set_other_fields" />
-
-                    
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-
-                    <GridCell class="sm:col-span-1  px-0 py-2  text-left text-md pb-3" :displaytext="'Description:'" />
-                    <GridText2 class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.description" :displaytext="state.description" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-left text-md pb-3" :displaytext="'Date Start:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.date_start"
-                        :displaytext="state.date_start" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-                    <GridCell class="sm:col-span-1  px-0 py-2  text-left text-md " :displaytext="'Date End:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.date_end"
-                        :displaytext="state.date_end" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-left text-md pb-3"
-                        :displaytext="'Submition Deadline:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.submition_deadline"
-                        :displaytext="state.submition_deadline" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-                    <GridCell class="sm:col-span-1  pb-3" :displaytext="''" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-center text-md pb-3" :displaytext="'Status:'" />
-                    <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.status"
-                        :displaytext="state.status" :options="state.status_options" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2 " :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-11 pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-11 pb-4 " :displaytext="''" />
-
-                    <GridCell class="sm:col-span-6 " :displaytext="''" />
-
-                    <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold 
-                     text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="cancelAddModal"> Cancel
-                    </button>
-                    <GridCell class="sm:col-span-1 " :displaytext="''" />
-                    <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold 
-                     text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="SaveNewSchedule"> Save
-                        New Schedule
-                    </button>
-                </div>
-
-            </ModalDisplayform> -->
-
-            <!-- <ModalDisplayform :show="state.isEditModalOpen" :close="state.closeEditModal"
-                :title="'Edit Selected Schedule'">
-                <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-11">
-
-                    <GridCell class="sm:col-span-10  pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-10  pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-                    <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Year:'" />
-                   
-
-                    <GridText2
-                        class="sm:col-span-3 px-1 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.year" :displaytext="state.year" :function="check_errors" :disabled="true" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.year_error" />
-
-
-
-                    <GridCell class="sm:col-span-1 px-1 py-2  text-left text-md pb-3" :displaytext="'Name:'" />
-                  
-                    <GridText2
-                        class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.name" :displaytext="state.name" :function="check_errors" :disabled="true"/>
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-
-                    <GridCell class="sm:col-span-1  px-0 py-2  text-left text-md pb-3" :displaytext="'Description:'" />
-                    <GridText2 class="sm:col-span-3 px-3 py-2 bg-white text-left text-md pb-3"
-                        v-model="state.description" :displaytext="state.description" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-left text-md pb-3" :displaytext="'Date Start:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.date_start"
-                        :displaytext="state.date_start" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-                    <GridCell class="sm:col-span-1  pb-4" :displaytext="''" />
-
-                    <GridCell class="sm:col-span-1  px-0 py-2  text-left text-md " :displaytext="'Date End:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.date_end"
-                        :displaytext="state.date_end" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-left text-md pb-3"
-                        :displaytext="'Submition Deadline:'" />
-                    <GridDate class="sm:col-span-3  bg-white text-left text-md pb-3" v-model="state.submition_deadline"
-                        :displaytext="state.submition_deadline" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2" :error="state.name_error" />
-                    <GridCell class="sm:col-span-1  pb-3" :displaytext="''" />
-
-
-                    <GridCell class="sm:col-span-1  px-1 py-2  text-center text-md pb-3" :displaytext="'Status:'" />
-                    <GridSelect class="sm:col-span-3  bg-white text-center text-md " v-model="state.status"
-                        :displaytext="state.status" :options="state.status_options" />
-                    <GridErrorIcon class="sm:col-span-1 px-1 py-2 " :error="state.name_error" />
-
-
-                    <GridCell class="sm:col-span-11 pb-4" :displaytext="''" />
-                    <GridCell class="sm:col-span-11 pb-4 " :displaytext="''" />
-
-                    <GridCell class="sm:col-span-6 " :displaytext="''" />
-
-                    <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold 
-                     text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="closeEditModal"> Cancel
-                    </button>
-                    <GridCell class="sm:col-span-1 " :displaytext="''" />
-                    <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold 
-                     text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 
-                     focus-visible:outline-offset-2 focus-visible:outline-greeen-600" @click="saveEditModal"> Save Changes
-                    </button>
-                </div>
-
-            </ModalDisplayform> -->
 
             <ModalDisplayform :show="state.isEditModalOpen" :close="state.closeEditModal"
                 :title="'Edit Selected Schedule'">

@@ -1,10 +1,7 @@
 <template>
   <div class="flex justify-between items-center">
     <h1 class="text-2xl font-bold">MANAGE USERS</h1>
-    <div class="flex items-center space-x-4">
-      <button class="btn btn-primary">Export</button>
-      <button class="btn btn-primary">Print</button>
-    </div>
+    
   </div>
 
   <div class="px-4 sm:px-6 lg:px-8">
@@ -32,273 +29,560 @@
     </div>
 
     <!-- VIEW MODAL -->
-    <ModalDisplayform :show="state.isViewModalOpen" :close="closeViewModal" :title="'View User Access'">
-      <div class="mt-1 grid grid-cols-1 bg-green-400 gap-x-0 gap-y-0 sm:grid-cols-12">
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
+    <ModalDisplayform :show="state.isViewModalOpen" :close="closeViewModal" title="View User Access">
+      <div class="p-6 sm:p-8">
+        <!-- Card -->
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+          <!-- Header -->
+          <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
+            <div>
+              <p class="text-sm font-medium text-slate-500">User Details</p>
+              <p class="mt-1 text-base font-semibold text-slate-900">
+                {{ state.current_user?.fname ?? '—' }} {{ state.current_user?.lname ?? '' }}
+              </p>
+            </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-t border-b border-r border-green-600 pb-4" :displaytext="'First Name:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-t border-b border-r border-green-600 pb-4" :displaytext="state.current_user?.fname" />
+            <button
+              class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+              @click="closeViewModal">
+              Close
+            </button>
+          </div>
 
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+          <!-- Body -->
+          <div class="px-6 py-6">
+            <!-- Info Grid -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-12">
+              <!-- First Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">First Name</p>
+                <p class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                  {{ state.current_user?.fname ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Username:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-t border-b border-r border-green-600 pb-4" :displaytext="state.current_user?.username" />
+              <!-- Username -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Username</p>
+                <p class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                  {{ state.current_user?.username ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Middle Name:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" :displaytext="state.current_user?.mname" />
+              <!-- Middle Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Middle Name</p>
+                <p class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                  {{ state.current_user?.mname ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+              <!-- Email -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Email Address</p>
+                <p
+                  class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 break-all">
+                  {{ state.current_user?.email ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Email Address:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" :displaytext="state.current_user?.email" />
+              <!-- Last Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Last Name</p>
+                <p class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                  {{ state.current_user?.lname ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Last Name:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" :displaytext="state.current_user?.lname" />
+              <!-- Agency -->
+              <div class="sm:col-span-6">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Agency</p>
+                <p class="mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900">
+                  {{ state.current_user_agency?.long_name ?? '—' }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+              <!-- Access Level -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Access Level</p>
+                <p
+                  class="mt-1 inline-flex w-full items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">
+                  {{ state.current_user_role?.name ?? '—' }}
+                </p>
+              </div>
+            </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Agency:'" />
-        <GridCell class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" :displaytext="state.current_user_agency?.long_name ?? '—'" />
+            <!-- Divider -->
+            <div class="my-6 border-t border-slate-200"></div>
 
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
+            <!-- Permissions -->
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Permissions</p>
+              <p class="mt-1 text-sm text-slate-500">Read-only access flags for this user.</p>
 
-        <GridCell class="sm:col-span-2 font-bold text-center text-md pb-4" :displaytext="'Access Level:'" />
-        <GridCell class="sm:col-span-3 font-bold text-center text-md pb-4" :displaytext="state.current_user_role?.name ?? '—'" />
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <!-- Permission row helper style: label left, checkbox right -->
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow View Entries</p>
+                    <p class="text-xs text-slate-500">Can view own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_view" :value="state.allow_view" />
+                </div>
 
-        <GridCell class="sm:col-span-7" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow View Other Entries</p>
+                    <p class="text-xs text-slate-500">Can view other users’ entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_view_other_entries" :value="state.allow_view_other_entries" />
+                </div>
 
-        <!-- Permissions (read-only display) -->
-        <GridCell class="sm:col-span-2 text-center text-sm border-t border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow View Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_view" :value="state.allow_view" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Manage Users</p>
+                    <p class="text-xs text-slate-500">Can manage user accounts</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_manage_users" :value="state.allow_manage_users" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Allow View Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_view_other_entries" :value="state.allow_view_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Add Entry</p>
+                    <p class="text-xs text-slate-500">Can add own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_add" :value="state.allow_add" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Allow Manage Users:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_manage_users" :value="state.allow_manage_users" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Add Other Entries</p>
+                    <p class="text-xs text-slate-500">Can add entries for others</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_add_other_entries" :value="state.allow_add_other_entries" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Add Entry:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_add" :value="state.allow_add" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Manage Roles</p>
+                    <p class="text-xs text-slate-500">Can manage roles & permissions</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_manage_roles" :value="state.allow_manage_roles" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Add Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_add_other_entries" :value="state.allow_add_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Edit Entries</p>
+                    <p class="text-xs text-slate-500">Can edit own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_edit" :value="state.allow_edit" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Manage Roles:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_manage_roles" :value="state.allow_manage_roles" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Edit Other Entries</p>
+                    <p class="text-xs text-slate-500">Can edit other users’ entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_edit_other_entries" :value="state.allow_edit_other_entries" />
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Edit Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_edit" :value="state.allow_edit" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Edit Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_edit_other_entries" :value="state.allow_edit_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
-        <GridCell class="sm:col-span-10" :displaytext="''" />
-        <button
-          class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500"
-          @click="closeViewModal"
-        >
-          Close
-        </button>
+          <!-- Footer -->
+          <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <button
+              class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500"
+              @click="closeViewModal">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </ModalDisplayform>
 
-    <!-- EDIT MODAL -->
-    <ModalDisplayform :show="state.isEditModalOpen" :close="closeEditModal" :title="'Edit User Access'">
-      <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12">
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-t border-b border-r border-green-600 pb-4" :displaytext="'First Name:'" />
-        <GridText2 class="sm:col-span-3 bg-white text-center text-md border-t border-b border-r border-green-600 pb-4" v-model="state.current_user.fname" />
+   <!-- EDIT MODAL -->
+    <ModalDisplayform :show="state.isEditModalOpen" :close="closeEditModal" title="Edit User Access">
+      <div class="p-6 sm:p-8">
+        <!-- Card -->
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+          <!-- Header -->
+          <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
+            <div>
+              <p class="text-sm font-medium text-slate-500">User Details</p>
+              <p class="mt-1 text-base font-semibold text-slate-900">
+                {{ state.current_user?.fname ?? '—' }} {{ state.current_user?.lname ?? '' }}
+              </p>
+            </div>
 
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+            <button
+              class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+              @click="closeEditModal">
+              Cancel
+            </button>
+          </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Username:'" />
-        <GridText2 class="sm:col-span-3 bg-white text-center text-md border-t border-b border-r border-green-600 pb-4" v-model="state.current_user.username" />
+          <!-- Body -->
+          <div class="px-6 py-6">
+            <!-- Form Grid -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-12">
+              <!-- First Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">First Name</p>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user.fname" />
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Middle Name:'" />
-        <GridText2 class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" v-model="state.current_user.mname" />
+              <!-- Username -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Username</p>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user.username" />
+              </div>
 
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+              <!-- Middle Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Middle Name</p>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user.mname" />
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Email Address:'" />
-        <GridText2 class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" v-model="state.current_user.email" />
+              <!-- Email -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Email Address</p>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user.email" />
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Last Name:'" />
-        <GridText2 class="sm:col-span-3 bg-white text-center text-md border-b border-r border-green-600 pb-4" v-model="state.current_user.lname" />
+              <!-- Last Name -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Last Name</p>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user.lname" />
+              </div>
 
-        <GridCell class="sm:col-span-6" :displaytext="''" />
+              <!-- Agency -->
+              <div class="sm:col-span-6">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Agency</p>
+                <GridSelect
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.current_user_agency.id"
+                  :placeholder="state.current_user_agency.long_name ?? 'Select agency'"
+                  :options="state.options.agencies" />
+              </div>
 
-        <GridCell class="sm:col-span-2 text-center text-md border-l border-b border-r border-green-600 pb-4" :displaytext="'Agency:'" />
-        <GridSelect
-          class="sm:col-span-8 h-1 bg-white text-center text-md border-b border-r border-green-600 pb-4"
-          v-model="state.current_user_agency.id"
-          :placeholder="state.current_user_agency.long_name ?? 'Select agency'"
-          :options="state.options.agencies"
-        />
+              <!-- Access Level -->
+              <div class="sm:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Access Level</p>
+                <GridSelect
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.selected_user_role" :placeholder="state.current_user_role?.name ?? 'Select role'"
+                  :options="state.options.roles" @click="change_selected_role()" />
+              </div>
+            </div>
 
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
+            <!-- Divider -->
+            <div class="my-6 border-t border-slate-200"></div>
 
-        <GridCell class="sm:col-span-2 font-bold text-center text-md pb-4" :displaytext="'Access Level:'" />
-        <GridSelect
-          class="sm:col-span-5 h-1 text-center text-sm pb-4"
-          v-model="state.selected_user_role"
-          :placeholder="state.current_user_role?.name ?? 'Select role'"
-          :options="state.options.roles"
-          @click="change_selected_role()"
-        />
+            <!-- Permissions -->
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Permissions</p>
+              <p class="mt-1 text-sm text-slate-500">Toggle access flags for the selected role.</p>
 
-        <GridCell class="sm:col-span-5" :displaytext="''" />
-        <GridCell class="sm:col-span-12" :displaytext="''" />
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow View Entries</p>
+                    <p class="text-xs text-slate-500">Can view own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_view" :value="state.allow_view" />
+                </div>
 
-        <!-- toggles reflect selected role -->
-        <GridCell class="sm:col-span-2 text-center text-sm border-t border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow View Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_view" :value="state.allow_view" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow View Other Entries</p>
+                    <p class="text-xs text-slate-500">Can view other users’ entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_view_other_entries" :value="state.allow_view_other_entries" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Allow View Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_view_other_entries" :value="state.allow_view_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Manage Users</p>
+                    <p class="text-xs text-slate-500">Can manage user accounts</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_manage_users" :value="state.allow_manage_users" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-t border-r border-green-600 pb-4" :displaytext="'Allow Manage Users:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_manage_users" :value="state.allow_manage_users" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Add Entry</p>
+                    <p class="text-xs text-slate-500">Can add own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_add" :value="state.allow_add" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Add Entry:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_add" :value="state.allow_add" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Add Other Entries</p>
+                    <p class="text-xs text-slate-500">Can add entries for others</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_add_other_entries" :value="state.allow_add_other_entries" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Add Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_add_other_entries" :value="state.allow_add_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Manage Roles</p>
+                    <p class="text-xs text-slate-500">Can manage roles & permissions</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_manage_roles" :value="state.allow_manage_roles" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Manage Roles:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_manage_roles" :value="state.allow_manage_roles" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Edit Entries</p>
+                    <p class="text-xs text-slate-500">Can edit own entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_edit" :value="state.allow_edit" />
+                </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Edit Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_edit" :value="state.allow_edit" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Allow Edit Other Entries</p>
+                    <p class="text-xs text-slate-500">Can edit other users’ entries</p>
+                  </div>
+                  <GridCheckbox :model="state.allow_edit_other_entries" :value="state.allow_edit_other_entries" />
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <GridCell class="sm:col-span-2 text-center text-sm border-l border-b border-r border-green-600 pb-4" :displaytext="'Allow Edit Other Entries:'" />
-        <GridCheckbox class="sm:col-span-1 bg-white text-center text-md border-b border-r border-green-600 pb-4" :model="state.allow_edit_other_entries" :value="state.allow_edit_other_entries" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
+          <!-- Footer -->
+          <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <button
+              class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+              @click="closeEditModal">
+              Cancel
+            </button>
 
-        <GridCell class="sm:col-span-12 pb-4" :displaytext="''" />
-        <GridCell class="sm:col-span-7" :displaytext="''" />
-
-        <button class="sm:col-span-2 block rounded-md bg-gray-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-gray-500" @click="closeEditModal">
-          Cancel
-        </button>
-
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-
-        <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500" @click="SaveEditModal">
-          Save Changes
-        </button>
+            <button
+              class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500"
+              @click="SaveEditModal">
+              Save Changes
+            </button>
+          </div>
+        </div>
       </div>
     </ModalDisplayform>
 
-    <!-- DISABLE MODAL -->
-    <ModalAlertformsmall :show="state.isDisableModalOpen" :close="closeDisableModal" :title="'Are you sure you want to disable/enable this user ?'">
-      <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-6">
-        <GridCell class="sm:col-span-2" :displaytext="'Username: '" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-        <GridCell class="sm:col-span-3" :displaytext="state.current_user?.username" />
+  <!-- DISABLE MODAL -->
+    <ModalAlertformsmall :show="state.isDisableModalOpen" :close="closeDisableModal" :title="'Enable/Disable User'">
+      <div class="p-5 sm:p-6">
+        <!-- Intro -->
+        <p class="text-sm text-slate-600">
+          You are about to change this user’s status. Please review the details below and select the new status.
+        </p>
 
-        <GridCell class="sm:col-span-2" :displaytext="'Email: '" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-        <GridCell class="sm:col-span-3" :displaytext="state.current_user?.email" />
+        <!-- Details Card -->
+        <div class="mt-4 rounded-xl border border-slate-200 bg-white">
+          <dl class="divide-y divide-slate-200">
+            <div class="grid grid-cols-12 gap-3 px-4 py-3">
+              <dt class="col-span-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Username</dt>
+              <dd class="col-span-8 text-sm text-slate-900">
+                {{ state.current_user?.username ?? '—' }}
+              </dd>
+            </div>
 
-        <GridCell class="sm:col-span-2" :displaytext="'Last Name: '" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-        <GridCell class="sm:col-span-3" :displaytext="state.current_user?.lname" />
+            <div class="grid grid-cols-12 gap-3 px-4 py-3">
+              <dt class="col-span-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Email</dt>
+              <dd class="col-span-8 text-sm text-slate-900 break-all">
+                {{ state.current_user?.email ?? '—' }}
+              </dd>
+            </div>
 
-        <GridCell class="sm:col-span-2" :displaytext="'First Name: '" />
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-        <GridCell class="sm:col-span-3" :displaytext="state.current_user?.fname" />
+            <div class="grid grid-cols-12 gap-3 px-4 py-3">
+              <dt class="col-span-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Last Name</dt>
+              <dd class="col-span-8 text-sm text-slate-900">
+                {{ state.current_user?.lname ?? '—' }}
+              </dd>
+            </div>
 
-        <GridCell class="sm:col-span-3" :displaytext="'New Status:'" />
-        <GridSelect class="sm:col-span-3" v-model="state.disable_is_active" :placeholder="'Select status'" :options="state.options.user_enable" />
+            <div class="grid grid-cols-12 gap-3 px-4 py-3">
+              <dt class="col-span-4 text-xs font-semibold uppercase tracking-wide text-slate-500">First Name</dt>
+              <dd class="col-span-8 text-sm text-slate-900">
+                {{ state.current_user?.fname ?? '—' }}
+              </dd>
+            </div>
 
-        <GridCell class="sm:col-span-6 pb-2" :displaytext="''" />
+            <div class="grid grid-cols-12 gap-3 px-4 py-4">
+              <dt class="col-span-4 text-xs font-semibold uppercase tracking-wide text-slate-500">New Status</dt>
+              <dd class="col-span-8">
+                <GridSelect class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.disable_is_active" :placeholder="'Select status'"
+                  :options="state.options.user_enable" />
+              </dd>
+            </div>
+          </dl>
+        </div>
 
-        <button class="sm:col-span-3 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500" @click="saveDisableModal">
-          Yes
-        </button>
+        <!-- Actions -->
+        <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button type="button"
+            class="inline-flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+            @click="closeDisableModal">
+            Cancel
+          </button>
 
-        <button class="sm:col-span-3 block rounded-md bg-gray-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-gray-500" @click="closeDisableModal">
-          Cancel
-        </button>
+          <button type="button"
+            class="inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:w-auto"
+            @click="saveDisableModal">
+            Confirm Change
+          </button>
+        </div>
       </div>
     </ModalAlertformsmall>
 
-    <!-- ADD MODAL (COMPLETE + WIRED TO SaveNewUser) -->
+  <!-- ADD MODAL (COMPLETE + WIRED TO SaveNewUser) -->
     <ModalDisplayform :show="state.isAddModalOpen" :close="closeAddModal" :title="'Add New User'">
-      <div class="mt-1 grid grid-cols-1 gap-x-0 gap-y-2 sm:grid-cols-12">
-        <GridCell class="sm:col-span-12 pb-2" :displaytext="''" />
+      <div class="p-6 sm:p-8">
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+          <!-- Header -->
+          <div class="border-b border-slate-200 px-6 py-4">
+            <p class="text-sm font-medium text-slate-500">User Information</p>
+            <p class="mt-1 text-base font-semibold text-slate-900">Create a new user account</p>
+          </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Username'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.username" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.username" />
+          <!-- Body -->
+          <div class="px-6 py-6">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-12">
+              <!-- Username -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Username</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.username" />
+                <p v-if="state.new_user_errors.username" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.username }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'First Name'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.fname" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.fname" />
+              <!-- Email -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.email" />
+                <p v-if="state.new_user_errors.email" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.email }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Middle Name'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.mname" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.mname" />
+              <!-- First Name -->
+              <div class="sm:col-span-4">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">First Name</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.fname" />
+                <p v-if="state.new_user_errors.fname" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.fname }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Last Name'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.lname" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.lname" />
+              <!-- Middle Name -->
+              <div class="sm:col-span-4">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Middle Name</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.mname" />
+                <p v-if="state.new_user_errors.mname" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.mname }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Email'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.email" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.email" />
+              <!-- Last Name -->
+              <div class="sm:col-span-4">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Last Name</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.lname" />
+                <p v-if="state.new_user_errors.lname" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.lname }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Password'" />
-        <!-- If GridText2 can't do password type, replace this with your password input component -->
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.password" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.password" />
+              <!-- Password -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Password</label>
+                <!-- If GridText2 supports a type prop, use it. If not, replace with a native input/password component. -->
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.password" />
+                <p v-if="state.new_user_errors.password" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.password }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Confirm Password'" />
-        <GridText2 class="sm:col-span-4" v-model="state.new_user.confirm_password" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.confirm_password" />
+              <!-- Confirm Password -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Confirm Password</label>
+                <GridText2
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user.confirm_password" />
+                <p v-if="state.new_user_errors.confirm_password" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.confirm_password }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Role'" />
-        <GridSelect class="sm:col-span-4" v-model="state.new_user_selected_role_id" :placeholder="'Select role'" :options="state.options.roles" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.role_id" />
+              <!-- Role -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Role</label>
+                <GridSelect
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user_selected_role_id" :placeholder="'Select role'"
+                  :options="state.options.roles" />
+                <p v-if="state.new_user_errors.role_id" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.role_id }}
+                </p>
+              </div>
 
-        <GridCell class="sm:col-span-2 text-sm" :displaytext="'Agency'" />
-        <GridSelect class="sm:col-span-4" v-model="state.new_user_selected_agency_id" :placeholder="'Select agency'" :options="state.options.agencies" />
-        <GridCell class="sm:col-span-6 text-xs text-red-600" :displaytext="state.new_user_errors.agency_id" />
+              <!-- Agency -->
+              <div class="sm:col-span-6">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Agency</label>
+                <GridSelect
+                  class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  v-model="state.new_user_selected_agency_id" :placeholder="'Select agency'"
+                  :options="state.options.agencies" />
+                <p v-if="state.new_user_errors.agency_id" class="mt-1 text-xs text-red-600">
+                  {{ state.new_user_errors.agency_id }}
+                </p>
+              </div>
+            </div>
+          </div>
 
-        <GridCell class="sm:col-span-12 pb-2" :displaytext="''" />
-        <GridCell class="sm:col-span-7" :displaytext="''" />
+          <!-- Footer -->
+          <div class="flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end">
+            <button type="button"
+              class="inline-flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              @click="closeAddModal">
+              Cancel
+            </button>
 
-        <button class="sm:col-span-2 block rounded-md bg-gray-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-gray-500" @click="closeAddModal">
-          Cancel
-        </button>
-
-        <GridCell class="sm:col-span-1" :displaytext="''" />
-
-        <button class="sm:col-span-2 block rounded-md bg-green-600 px-3 py-2 text-center text-md font-semibold text-white shadow-sm hover:bg-green-500" @click="SaveNewUser">
-          Save
-        </button>
+            <button type="button"
+              class="inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:w-auto"
+              @click="SaveNewUser">
+              Save User
+            </button>
+          </div>
+        </div>
       </div>
     </ModalDisplayform>
+
 
     <!-- ALERT MODAL -->
     <ModalAlert :show="state.isAlertModalOpen" :close="closeAlertModal" :title="state.alertmessage">
@@ -698,33 +982,46 @@ async function fetchUsers() {
 }
 
 async function SaveEditModal() {
-  const ur = getUserRole(state.current_user)
+  const user = state.current_user
+  if (!user?.id) {
+    openAlertModal('No user selected.')
+    return
+  }
+
+  const ur = getUserRole(user)
+
+  console.log('Saving edit for user:', ur)
   if (!ur) {
     openAlertModal('Selected user has no role assigned.')
     return
   }
 
   if (Number(ur.role_id) === 1) {
-    alert("You are not allowed to edit an Administrator's access.")
+    openAlertModal("You are not allowed to edit an Administrator's access.")
     return
   }
 
+  const params = {
+    username: (user.username ?? '').trim(),
+    fname: (user.fname ?? '').trim(),
+    lname: (user.lname ?? '').trim(),
+    mname: (user.mname ?? '').trim() || 'N/A',
+    email: (user.email ?? '').trim(),
+    role_id: state.selected_user_role ?? null,
+    agency_id: state.current_user_agency?.id ?? null,
+    is_active: state.disable_is_active ?? null,
+  }
+
+  console.log('Update params:', params)
+
   try {
-    const params = {
-      username: state.current_user.username,
-      fname: state.current_user.fname,
-      lname: state.current_user.lname,
-      mname: state.current_user.mname,
-      email: state.current_user.email,
+    const response = await userService.updateUser(user.id, params)
 
-      role_id: state.selected_user_role,
-      agency_id: state.current_user_agency?.id,
-      is_active: state.disable_is_active,
-    }
+    // Be strict about what "success" means. Your current check is weak.
 
-    const response = await userService.updateUser(state.current_user.id, params)
-    if (response?.data) {
-      openAlertModal('Successfully edited the user.')
+    console.log('Update response:', response)
+    if (response) {
+      openAlertModal('Successfully edited the user. ')
     } else {
       openAlertModal('Errors were encountered.')
     }
