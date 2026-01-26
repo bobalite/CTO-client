@@ -31,7 +31,22 @@
         />
       </ClientOnly>
     </div>
+
+
+   
+
+
   </div>
+
+   <div class="border rounded-xl p-2">
+      <h3 class="text-lg font-bold mb-2">CHILD MORTALITY</h3>
+
+      <ClientOnly>
+        TOP 10 Child Mortality Causes     
+      </ClientOnly>
+    </div>
+
+    
 </template>
 
 <script setup>

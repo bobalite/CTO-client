@@ -112,6 +112,14 @@
           :report_years="state.report_years" >
         </GraphsSurvivalMortality>
 
+
+        <ExcelUploads v-if="state.activeTab === 'Survival'" :key="graphsKey"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
+          :report_year="String(state.report_year || '')" 
+          :report_years="state.report_years">
+        </ExcelUploads>
+
          <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
@@ -250,6 +258,7 @@ const userStore = useUserStore();
 definePageMeta({ layout: "main" });
 
 import { watch } from "vue";
+import ExcelUploads from "~/components/graphs/excelUploads.vue";
 
 
 
