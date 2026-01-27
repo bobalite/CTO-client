@@ -113,12 +113,13 @@
         </GraphsSurvivalMortality>
 
 
-        <ExcelUploads v-if="state.activeTab === 'Survival'" :key="graphsKey"
+        <!-- <ExcelUploads v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
-        </ExcelUploads>
+          :selected_year ="state.report_year"
+          :selected_year_id ="1"
+          >
+        </ExcelUploads> -->
 
          <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
