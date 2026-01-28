@@ -1,16 +1,17 @@
 <template>
-  <h3 class="sm:col-span-12 text-lg text-center font-bold borderp-2 mt-3 w-full">
+  <h3 class="sm:col-span-12 text-base text-center font-bold mt-3 w-full">
     MORTALITY
   </h3>
 
-  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <!-- MATERNAL MORTALITY (BAR CHART) -->
     <div class="border rounded-xl p-2">
-      <h3 class="text-lg font-bold mb-2">MATERNAL MORTALITY</h3>
+      <h3 class="text-base font-bold mb-2">MATERNAL MORTALITY</h3>
 
       <ClientOnly>
         <apexchart
           type="bar"
-          height="90%"
+          height="260"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.maternal_mortality"
@@ -18,13 +19,14 @@
       </ClientOnly>
     </div>
 
+    <!-- CHILD MORTALITY (BAR CHART) -->
     <div class="border rounded-xl p-2">
-      <h3 class="text-lg font-bold mb-2">CHILD MORTALITY</h3>
+      <h3 class="text-base font-bold mb-2">CHILD MORTALITY</h3>
 
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="260"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.child_mortality"
@@ -32,69 +34,145 @@
       </ClientOnly>
     </div>
 
-
-   
-
-
-  </div>
-
-  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-1 gap-4">
-    <!-- Chart 1 -->
-    <div class="border rounded-xl p-2">
-      <h3 class="text-sm font-bold mb-2">
+    <!-- INFANT MORTALITY (LIST LEFT + PIE RIGHT PER QUARTER) -->
+    <div class="border rounded-xl p-2 md:col-span-2">
+      <h3 class="text-base font-bold mb-2">
         Top 10 Leading causes of Infant Mortality (0-11 months)
       </h3>
 
-      <ClientOnly>
-        <apexchart
-          type="pie"
-          height="400"
-          width="100%"
-          :options="{
-            ...state.pieOptionsBase,
-            labels: state.infantPieByQuarter?.[qid]?.labels ?? []
-          }"
-          :series="state.infantPieByQuarter?.[qid]?.series ?? []"
-        />
-      </ClientOnly>
+      <!-- 2 quarters per row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div
+          v-for="(qid, idx) in state.quarterIds"
+          :key="'infant-quarter-' + qid"
+          class="border rounded-xl p-3"
+        >
+          <div class="text-sm font-semibold mb-2 text-center">
+            {{ state.quarterNames?.[idx] ?? `Q${idx + 1}` }}
+          </div>
+
+          <div
+            v-if="(state.infantListByQuarter?.[qid]?.length ?? 0) === 0"
+            class="text-xs opacity-70 text-center py-6"
+          >
+            No data.
+          </div>
+
+          <div v-else class="grid grid-cols-12 gap-3 items-start">
+            <!-- LEFT: List -->
+            <div class="col-span-12 md:col-span-7">
+              <ul class="space-y-1 text-xs">
+                <li
+                  v-for="item in state.infantListByQuarter[qid]"
+                  :key="'infant-' + qid + '-' + item.rank"
+                  class="flex items-start gap-2 leading-tight"
+                  :title="item.disease"
+                >
+                  <div class="w-6 shrink-0 text-right font-semibold">
+                    {{ item.rank }}.
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="font-medium truncate">
+                      {{ item.disease }}
+                    </div>
+                    <div class="text-[10px] opacity-70">
+                      {{ item.count }} · {{ item.pct }}%
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- RIGHT: Pie -->
+            <div class="col-span-12 md:col-span-5">
+              <ClientOnly>
+                <apexchart
+                  type="pie"
+                  height="260"
+                  width="100%"
+                  :options="infantPieOptions(qid)"
+                  :series="state.infantPieByQuarter[qid].series"
+                />
+              </ClientOnly>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Chart 2 -->
-    <div class="border rounded-xl p-2">
-      <h3 class="text-sm font-bold mb-2">
+    <!-- UNDER-FIVE MORTALITY (LIST LEFT + PIE RIGHT PER QUARTER) -->
+    <div class="border rounded-xl p-2 md:col-span-2">
+      <h3 class="text-base font-bold mb-2">
         Top 10 leading causes of Under-Five (U5) Mortality
       </h3>
 
-      <ClientOnly>
-        <apexchart
-          type="pie"
-          height="400"
-          width="100%"
-         :options="{
-            ...state.pieOptionsBase,
-            labels: state.u5PieByQuarter?.[qid]?.labels ?? []
-          }"
-          :series="state.u5PieByQuarter?.[qid]?.series ?? []"
-        />
-      </ClientOnly>
+      <!-- 2 quarters per row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div
+          v-for="(qid, idx) in state.quarterIds"
+          :key="'u5-quarter-' + qid"
+          class="border rounded-xl p-3"
+        >
+          <div class="text-sm font-semibold mb-2 text-center">
+            {{ state.quarterNames?.[idx] ?? `Q${idx + 1}` }}
+          </div>
+
+          <div
+            v-if="(state.u5ListByQuarter?.[qid]?.length ?? 0) === 0"
+            class="text-xs opacity-70 text-center py-6"
+          >
+            No data.
+          </div>
+
+          <div v-else class="grid grid-cols-12 gap-3 items-start">
+            <!-- LEFT: List -->
+            <div class="col-span-12 md:col-span-7">
+              <ul class="space-y-1 text-xs">
+                <li
+                  v-for="item in state.u5ListByQuarter[qid]"
+                  :key="'u5-' + qid + '-' + item.rank"
+                  class="flex items-start gap-2 leading-tight"
+                  :title="item.disease"
+                >
+                  <div class="w-6 shrink-0 text-right font-semibold">
+                    {{ item.rank }}.
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="font-medium truncate">
+                      {{ item.disease }}
+                    </div>
+                    <div class="text-[10px] opacity-70">
+                      {{ item.count }} · {{ item.pct }}%
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- RIGHT: Pie -->
+            <div class="col-span-12 md:col-span-5">
+              <ClientOnly>
+                <apexchart
+                  type="pie"
+                  height="260"
+                  width="100%"
+                  :options="u5PieOptions(qid)"
+                  :series="state.u5PieByQuarter[qid].series"
+                />
+              </ClientOnly>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-
-   <!-- <div class="border rounded-xl p-2">
-      <h3 class="text-lg font-bold mb-2">CHILD MORTALITY</h3>
-
-      <ClientOnly>
-        TOP 10 Child Mortality Causes     
-      </ClientOnly>
-    </div> -->
-
-    
 </template>
 
 <script setup>
 import { reactive, onMounted, watch } from "vue";
-import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService';
+import { reportDetailsExcelService } from "~/components/api/ReportDetailsExcelService";
 
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
@@ -113,26 +191,15 @@ const state = reactive({
   maternal_mortality: [],
   child_mortality: [],
 
-
   exceldata: [],
 
-   // chart-ready for the two “Top 10” charts
-  infantMortalityTop10: [],   // Apex series
-  infantMortalityCats: [],    // xaxis categories
+  // LIST (ranked)
+  infantListByQuarter: {}, // { [qid]: [{rank,disease,count,pct}] }
+  u5ListByQuarter: {},
 
-  u5MortalityTop10: [],
-  u5MortalityCats: [],
-
-  header_name1: 'Value 1',
-  header_name2: 'Value 2',
-  header_name3: 'Value 3',
-
-  top10_infant_series: [],
-  top10_u5_series: [],
-  top10_categories: [], // disease names (shared)
-
-  // ...existing options
-
+  // PIE (percentages)
+  infantPieByQuarter: {}, // { [qid]: { labels: string[], series: number[], total: number } }
+  u5PieByQuarter: {},
 
   populationHoriOptions: {
     chart: { type: "bar", stacked: false, toolbar: { show: false }, zoom: { enabled: false } },
@@ -143,27 +210,18 @@ const state = reactive({
     xaxis: { categories: ["1Q", "2Q", "3Q", "4Q"] },
   },
 
-
-
-    // ...existing
-  infantPieByQuarter: {}, // {1:{labels,series},2:{...}}
-  u5PieByQuarter: {},
-
   pieOptionsBase: {
     chart: { type: "pie", toolbar: { show: false } },
-    legend: { show: true, position: "bottom" },
+     legend: { show: false },
     dataLabels: {
       enabled: true,
+      style: { fontSize: "10px" },
       formatter: (val) => `${Number(val).toFixed(1)}%`,
     },
     tooltip: {
-      y: {
-        formatter: (val) => `${Number(val).toFixed(1)}%`,
-      },
+      y: { formatter: (val) => `${Number(val).toFixed(1)}%` },
     },
   },
-
-
 });
 
 function normalizeReportYears() {
@@ -190,31 +248,24 @@ onMounted(() => {
   recalc();
 });
 
-// Recalc when year/quarters/data changes
 watch(() => props.report_year, () => recalc());
 watch(() => props.report_years, () => recalc(), { deep: true });
 watch(() => props.passed_data, () => fetchReports_Details_Bars(), { deep: true });
-
-
 
 function buildQuarterArrays() {
   const allYears = normalizeReportYears();
   const targetYear = Number(props.report_year);
 
   const filtered = allYears
-    .filter(q => Number(q.year) === targetYear)
-    // stable ordering (use quarter field if present, otherwise id)
+    .filter((q) => Number(q.year) === targetYear)
     .sort((a, b) => Number(a.quarter ?? a.id) - Number(b.quarter ?? b.id));
 
-  const quarterIds = filtered.map(q => Number(q.id));
-  const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
-
-  state.quarterIds = quarterIds;
-  state.quarterNames = quarterNames;
+  state.quarterIds = filtered.map((q) => Number(q.id));
+  state.quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
 
   state.populationHoriOptions.xaxis = {
     ...state.populationHoriOptions.xaxis,
-    categories: quarterNames.length ? quarterNames : ["1Q", "2Q", "3Q", "4Q"],
+    categories: state.quarterNames.length ? state.quarterNames : ["1Q", "2Q", "3Q", "4Q"],
   };
 }
 
@@ -250,34 +301,15 @@ function fetchReports_Details_Bars() {
       if (Number.isNaN(value)) continue;
 
       switch (row.indicator_no) {
-        case "10.1":
-          total_maternal_deaths[idx] += value;
-          break;
-        case "10.2":
-          ratio_maternal_deaths[idx] += value;
-          break;
-
-        case "11.1":
-          total_neonatal_deaths[idx] += value;
-          break;
-        case "11.2":
-          rate_neonatal_deaths[idx] += value;
-          break;
-        case "11.3":
-          infant_deaths_0to11[idx] += value;
-          break;
-        case "11.4":
-          rate_infant_deaths[idx] += value;
-          break;
-        case "11.5":
-          total_u5_deaths[idx] += value;
-          break;
-        case "11.6":
-          rate_u5_deaths[idx] += value;
-          break;
-
-        default:
-          break;
+        case "10.1": total_maternal_deaths[idx] += value; break;
+        case "10.2": ratio_maternal_deaths[idx] += value; break;
+        case "11.1": total_neonatal_deaths[idx] += value; break;
+        case "11.2": rate_neonatal_deaths[idx] += value; break;
+        case "11.3": infant_deaths_0to11[idx] += value; break;
+        case "11.4": rate_infant_deaths[idx] += value; break;
+        case "11.5": total_u5_deaths[idx] += value; break;
+        case "11.6": rate_u5_deaths[idx] += value; break;
+        default: break;
       }
     }
 
@@ -301,119 +333,100 @@ function fetchReports_Details_Bars() {
   }
 }
 
-//--------------------------------------excel data fetch function----------------------------
-
-// async function getexceldata() {
-
-
-
-//   try {
-//     //if (!props.group) return
-
-//     const params = {
-//       //indicator_group_id: props.group.group_no ?? null,
-//       //report_year_id: Number(props.selected_year_id),
-      
-//     }
-
-//     //const response = await reportDetailsExcelService.getReportExcelDetails(params)
-//     const response = await reportDetailsExcelService.getReportExcelDetails()
-//     console.log('response reportDetailsExcelService', response)
-
-//     // Decide shape once
-//     const rows = Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : []
-
-//     state.exceldata = rows
-//     console.log('state.exceldata', state.exceldata)
-
-//     const first = rows[0] ?? null
-
-//     if (first) {
-//       state.header_name1 = first.header_name1 ?? 'Value 1'
-//       state.header_name2 = first.header_name2 ?? 'Value 2'
-//       state.header_name3 = first.header_name3 ?? 'Value 3'
-//     } else {
-//       state.header_name1 = 'Value 1'
-//       state.header_name2 = 'Value 2'
-//       state.header_name3 = 'Value 3'
-//     }
-
-//     console.log('header names', state.header_name1, state.header_name2, state.header_name3)
-//   } catch (err) {
-//     console.error('Error fetching report detail excel:', err)
-//   }
-// }
-
 async function getexceldata() {
   try {
-    const response = await reportDetailsExcelService.getReportExcelDetails()
+    const response = await reportDetailsExcelService.getReportExcelDetails();
 
     const rows = Array.isArray(response?.data)
       ? response.data
       : Array.isArray(response)
         ? response
-        : []
+        : [];
 
-    state.exceldata = rows
+    state.exceldata = rows;
 
-    const quarterIds = (state.quarterIds ?? []).map(Number)
+    const quarterIds = (state.quarterIds ?? []).map(Number);
     if (!quarterIds.length) {
-      state.infantPieByQuarter = {}
-      state.u5PieByQuarter = {}
-      return
+      state.infantListByQuarter = {};
+      state.u5ListByQuarter = {};
+      state.infantPieByQuarter = {};
+      state.u5PieByQuarter = {};
+      return;
     }
 
     const toNum = (v) => {
-      const n = Number(v)
-      return Number.isFinite(n) ? n : 0
-    }
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
 
-    const buildPieByQuarter = (indicatorNo) => {
-      const out = {}
+    const buildListAndPieByQuarter = (indicatorNo) => {
+      const listOut = {};
+      const pieOut = {};
 
       for (const qid of quarterIds) {
         const list = rows
-          .filter(r =>
-            r &&
-            String(r.indicator_no) === String(indicatorNo) &&
-            Number(r.report_year_id) === qid
+          .filter(
+            (r) =>
+              r &&
+              String(r.indicator_no) === String(indicatorNo) &&
+              Number(r.report_year_id) === qid
           )
-          .map(r => ({
-            rank: toNum(r.header_value1),           // 1..10
-            label: String(r.header_value2 ?? ''),  // disease_name
-            value: toNum(r.header_value3),         // count
+          .map((r) => ({
+            rank: toNum(r.header_value1),
+            disease: String(r.header_value2 ?? ""),
+            count: toNum(r.header_value3),
           }))
-          .filter(x => x.label)
+          .filter((x) => x.disease)
           .sort((a, b) => a.rank - b.rank)
-          .slice(0, 10)
+          .slice(0, 10);
 
-        const total = list.reduce((sum, x) => sum + x.value, 0)
-        const labels = list.map(x => x.label)
+        const total = list.reduce((sum, x) => sum + x.count, 0);
 
-        // PIE NEEDS numbers; we want percentages
-        const series = total > 0
-          ? list.map(x => Number(((x.value / total) * 100).toFixed(2)))
-          : list.map(() => 0)
+        // list with pct
+        listOut[qid] = list.map((x) => ({
+          ...x,
+          pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+        }));
 
-        out[qid] = { labels, series }
+        // pie uses same pct values
+        pieOut[qid] = {
+          labels: listOut[qid].map((x) => x.disease),
+          series: listOut[qid].map((x) => Number(x.pct.toFixed(2))),
+          total,
+        };
       }
 
-      return out
-    }
+      return { listOut, pieOut };
+    };
 
-    state.infantPieByQuarter = buildPieByQuarter("12.1")
-    state.u5PieByQuarter = buildPieByQuarter("12.2")
+    const infant = buildListAndPieByQuarter("12.1");
+    state.infantListByQuarter = infant.listOut;
+    state.infantPieByQuarter = infant.pieOut;
 
-    // hard debug (remove later)
-    console.log("infantPieByQuarter", JSON.parse(JSON.stringify(state.infantPieByQuarter)))
-    console.log("u5PieByQuarter", JSON.parse(JSON.stringify(state.u5PieByQuarter)))
+    const u5 = buildListAndPieByQuarter("12.2");
+    state.u5ListByQuarter = u5.listOut;
+    state.u5PieByQuarter = u5.pieOut;
   } catch (err) {
-    console.error("Error fetching report detail excel:", err)
-    state.infantPieByQuarter = {}
-    state.u5PieByQuarter = {}
+    console.error("Error fetching report detail excel:", err);
+    state.exceldata = [];
+    state.infantListByQuarter = {};
+    state.u5ListByQuarter = {};
+    state.infantPieByQuarter = {};
+    state.u5PieByQuarter = {};
   }
 }
 
+function infantPieOptions(qid) {
+  return {
+    ...state.pieOptionsBase,
+    labels: state.infantPieByQuarter?.[qid]?.labels ?? [],
+  };
+}
 
-
+function u5PieOptions(qid) {
+  return {
+    ...state.pieOptionsBase,
+    labels: state.u5PieByQuarter?.[qid]?.labels ?? [],
+  };
+}
 </script>
