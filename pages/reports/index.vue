@@ -39,7 +39,7 @@
           <!-- RIGHT: GROUPS -->
           <div class="space-y-3">
             <template v-for="group in (subcategory.indicator_groups || [])" :key="group.id">
-              <div class="border border-gray-300 rounded p-2 print-avoid-break">
+              <div v-if = "group.encoding_type !=='ExcellUpload'" class="border border-gray-300 rounded p-2 print-avoid-break">
                 <!-- GROUP HEADER -->
                 <div class="font-semibold text-sm print:text-xs mb-1">
                   Group {{ group.group_no }}
@@ -79,7 +79,63 @@
 
 
                 </div>
+             </div>
+              <div v-else-if="group.encoding_type === 'ExcellUpload'"
+                class="border border-gray-300 rounded p-2 print-avoid-break">
+                <!-- GROUP HEADER FOR EXCEL UPLOAD-->
+                <div class="font-semibold text-sm print:text-xs mb-1">
+                  Group {{ group.group_no }} (Data uploaded via Excel)
+
+                  <div class="border rounded-xl p-2 md:col-span-2">
+                    <h3 class="text-base font-bold mb-2">
+                      {{group.description}}
+                    </h3>
+
+                    <!-- 2 quarters per row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div v-for="(qid, idx) in state.quarterIds" :key="'infant-quarter-' + qid"
+                        class="border rounded-xl p-3">
+                        <div class="text-sm font-semibold mb-2 text-center">
+                          {{ state.quarterNames?.[idx] ?? `Q${idx + 1}` }}
+                        </div>
+
+                        <div v-if="(state.infantListByQuarter?.[qid]?.length ?? 0) === 0"
+                          class="text-xs opacity-70 text-center py-6">
+                          No data.
+                        </div>
+
+                        <div v-else class="grid grid-cols-12 gap-3 items-start">
+                          <!-- LEFT: List -->
+                          <div class="col-span-12 md:col-span-7">
+                            <ul class="space-y-1 text-xs">
+                              <li v-for="item in state.infantListByQuarter[qid]"
+                                :key="'infant-' + qid + '-' + item.rank" class="flex items-start gap-2 leading-tight"
+                                :title="item.disease">
+                                <div class="w-6 shrink-0 text-right font-semibold">
+                                  {{ item.rank }}.
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                  <div class="font-medium truncate">
+                                    {{ item.disease }}
+                                  </div>
+                                  <div class="text-[10px] opacity-70">
+                                    {{ item.count }} · {{ item.pct }}%
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
             </template>
           </div>
         </div>
@@ -104,6 +160,7 @@ import { report_yearService } from '~/components/api/ReportYears'
 
 // ✅ YOU WERE MISSING THIS IMPORT (adjust path to your actual service file)
 import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'
+import { reportDetailsExcelService } from "~/components/api/ReportDetailsExcelService";
 
 definePageMeta({ layout: 'main' })
 
@@ -322,12 +379,15 @@ async function fetchData() {
 }
 
 onMounted(async () => {
+  
   await fetchreportyear()
   await fetchIndicatorCategories()
   await fetchRights()
+  buildQuarterArrays()
 
   // fetch once initial year is set
   await fetchData()
+  await getexceldata()
 })
 
 // ✅ refetch when year changes
@@ -336,8 +396,113 @@ watch(
   async (val, oldVal) => {
     if (!val || val === oldVal) return
     await fetchData()
+    await getexceldata()
   }
 )
+
+function normalizeReportYears() {
+  const raw = state.report_year;
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.data)) return raw.data;
+  return [];
+}
+
+function buildQuarterArrays() {
+  const allYears = normalizeReportYears();
+  const targetYear = Number(state.report_year);
+
+  const filtered = allYears
+    .filter((q) => Number(q.year) === targetYear)
+    .sort((a, b) => Number(a.quarter ?? a.id) - Number(b.quarter ?? b.id));
+
+  state.quarterIds = filtered.map((q) => Number(q.id));
+  state.quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
+
+ 
+}
+
+
+async function getexceldata() {
+  try {
+    const response = await reportDetailsExcelService.getReportExcelDetails();
+
+    const rows = Array.isArray(response?.data)
+      ? response.data
+      : Array.isArray(response)
+        ? response
+        : [];
+
+    state.exceldata = rows;
+
+    const quarterIds = (state.quarterIds ?? []).map(Number);
+    if (!quarterIds.length) {
+      state.infantListByQuarter = {};
+      state.u5ListByQuarter = {};
+      state.infantPieByQuarter = {};
+      state.u5PieByQuarter = {};
+      return;
+    }
+
+    const toNum = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const buildListAndPieByQuarter = (indicatorNo) => {
+      const listOut = {};
+      const pieOut = {};
+
+      for (const qid of quarterIds) {
+        const list = rows
+          .filter(
+            (r) =>
+              r &&
+              String(r.indicator_no) === String(indicatorNo) &&
+              Number(r.report_year_id) === qid
+          )
+          .map((r) => ({
+            rank: toNum(r.header_value1),
+            disease: String(r.header_value2 ?? ""),
+            count: toNum(r.header_value3),
+          }))
+          .filter((x) => x.disease)
+          .sort((a, b) => a.rank - b.rank)
+          .slice(0, 10);
+
+        const total = list.reduce((sum, x) => sum + x.count, 0);
+
+        // list with pct
+        listOut[qid] = list.map((x) => ({
+          ...x,
+          pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+        }));
+
+        // pie uses same pct values
+        pieOut[qid] = {
+          labels: listOut[qid].map((x) => x.disease),
+          series: listOut[qid].map((x) => Number(x.pct.toFixed(2))),
+          total,
+        };
+      }
+
+      return { listOut, pieOut };
+    };
+
+    const infant = buildListAndPieByQuarter("12.1");
+    state.infantListByQuarter = infant.listOut;
+    
+    const u5 = buildListAndPieByQuarter("12.2");
+    state.u5ListByQuarter = u5.listOut;
+    
+  } catch (err) {
+    console.error("Error fetching report detail excel:", err);
+    state.exceldata = [];
+    state.infantListByQuarter = {};
+    state.u5ListByQuarter = {}; 
+    
+  }
+}
+
 </script>
 
 
