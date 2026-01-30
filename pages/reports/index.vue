@@ -5,10 +5,15 @@
       <div class="mt-8 flow-root">
         <div class="flex gap-3 items-center">
           <div class="flex-1">
-            <FormYearSelector v-model="state.report_year" :options="state.options.years"
-              :change-selected-year="change_selected_year" />
-
-            <FormRightSelector v-model="state.selected_rights_id" :options="state.options.rights" />
+            <FormYearSelector
+              v-model="state.report_year"
+              :options="state.options.years"
+              :change-selected-year="change_selected_year"
+            />
+            <FormRightSelector
+              v-model="state.selected_rights_id"
+              :options="state.options.rights"
+            />
           </div>
         </div>
       </div>
@@ -25,13 +30,13 @@
 
       <!-- SUBCATEGORY -->
       <template v-for="subcategory in (category.indicator_subcategories || [])" :key="subcategory.id">
-        <!-- ⬇⬇⬇ FIXED GRID (SMALLER LEFT COLUMN) -->
-        <div class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start
-                 overflow-visible h-auto print:gap-1 print:py-1">
+        <div
+          class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start
+                 overflow-visible h-auto print:gap-1 print:py-1"
+        >
           <!-- LEFT: SUBCATEGORY LABEL -->
           <div class="flex items-start px-2 print:px-1">
-            <div class="subcategory-label w-full text-xs leading-tight
-                     print:text-[10px] print:leading-tight">
+            <div class="subcategory-label w-full text-xs leading-tight print:text-[10px] print:leading-tight">
               {{ subcategory.description }}
             </div>
           </div>
@@ -39,78 +44,122 @@
           <!-- RIGHT: GROUPS -->
           <div class="space-y-3">
             <template v-for="group in (subcategory.indicator_groups || [])" :key="group.id">
-              <div v-if = "group.encoding_type !=='ExcellUpload'" class="border border-gray-300 rounded p-2 print-avoid-break">
-                <!-- GROUP HEADER -->
-                <div class="font-semibold text-sm print:text-xs mb-1">
+              <div class="border border-gray-300 rounded p-2 print-avoid-break">
+                <div class="font-semibold text-sm print:text-xs mb-2">
                   Group {{ group.group_no }}
                 </div>
 
-                <!-- GROUP GRID (NO SCROLL, FULL HEIGHT) -->
-                <div class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3
-                         overflow-visible h-auto">
-
+                <!-- ✅ NORMAL TABLE: ALWAYS SHOW ALL ELEMENTS (including excel ones) -->
+                <div
+                  v-if="(group.indicator_group_elements || []).length"
+                  class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3 overflow-visible h-auto"
+                >
                   <GridCell class="sm:col-span-15 text-center text-xs border-r border-b" displaytext="" />
 
+                  <!-- ✅ HEADER: INDICATOR / MALE / FEMALE / TOTAL / REMARKS / AGENCY (one line) -->
                   <GridCell class="sm:col-span-6 text-center text-xs border-l border-b" displaytext="INDICATOR" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="MALE" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="FEMALE" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="TOTAL" />
-                  <GridCell class="sm:col-span-4 text-center text-xs border-l border-b border-r"
-                    displaytext="REMARKS" />
+                  <GridCell class="sm:col-span-3 text-center text-xs border-l border-b" displaytext="REMARKS" />
+                  <GridCell
+                    class="sm:col-span-1 text-center text-xs border-l border-b border-r"
+                    displaytext="AGENCY"
+                  />
 
-                  <template v-for="el in group.indicator_group_elements" :key="el.id">
-                    <GridCell class="sm:col-span-1 px-1 text-xs border-l border-b break-words"
-                      :displaytext="el.indicator_no" />
-                  
-                    <GridCell class="sm:col-span-5 px-1 text-xs border-b break-words" :displaytext="el.description" />
-                    
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.male"
-                      :modelValue="state.male[String(el.indicator_no).trim()] ?? ''" />
-                    
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.female"
-                      :modelValue="state.female[String(el.indicator_no).trim()] ?? ''" />
-                    
-                    <GridTextPrintView class="sm:col-span-2 border-l border-b" :entrystatus="el.total"
-                     :modelValue="state.total[String(el.indicator_no).trim()] ?? ''" />
+                  <template v-for="el in (group.indicator_group_elements || [])" :key="el.id">
+                    <GridCell
+                      class="sm:col-span-1 px-1 text-xs border-l border-b break-words"
+                      :displaytext="el.indicator_no"
+                    />
 
-                    <GridTextPrintAreaViewReadonly class="sm:col-span-4 px-1 text-xs border-l border-b border-r break-words"
-                      :entrystatus="el.remarks" :modelValue="state.remarks[String(el.indicator_no).trim()] ?? ''" />
+                    <!-- ✅ INDICATOR description reduced by 1 col to make space for AGENCY -->
+                    <GridCell
+                      class="sm:col-span-5 px-1 text-xs border-b break-words"
+                      :displaytext="el.description"
+                    />
+
+                    <GridTextPrintView
+                      class="sm:col-span-2 border-l border-b"
+                      :entrystatus="el.male"
+                      :modelValue="state.male[String(el.indicator_no).trim()] ?? ''"
+                    />
+
+                    <GridTextPrintView
+                      class="sm:col-span-2 border-l border-b"
+                      :entrystatus="el.female"
+                      :modelValue="state.female[String(el.indicator_no).trim()] ?? ''"
+                    />
+
+                    <GridTextPrintView
+                      class="sm:col-span-2 border-l border-b"
+                      :entrystatus="el.total"
+                      :modelValue="state.total[String(el.indicator_no).trim()] ?? ''"
+                    />
+
+                    <!-- ✅ REMARKS reduced to 3 cols -->
+                    <GridTextPrintAreaViewReadonly
+                      class="sm:col-span-3 px-1 text-xs border-l border-b break-words"
+                      :entrystatus="el.remarks"
+                      :modelValue="state.remarks[String(el.indicator_no).trim()] ?? ''"
+                    />
+
+                    <!-- ✅ AGENCY (same row) -->
+                    <div class="sm:col-span-1 border-l border-b border-r px-1 flex items-center justify-center">
+                      <span
+                        v-if="agencyMeta(el.agency_id).label"
+                        class="inline-flex items-center px-2 py-[2px] rounded-full border text-[10px] font-semibold leading-none"
+                        :class="agencyMeta(el.agency_id).color"
+                      >
+                        {{ agencyMeta(el.agency_id).label }}
+                      </span>
+                      <span v-else class="text-gray-400 text-[10px]">—</span>
+                    </div>
                   </template>
-
-
                 </div>
-             </div>
-              <div v-else-if="group.encoding_type === 'ExcellUpload'"
-                class="border border-gray-300 rounded p-2 print-avoid-break">
-                <!-- GROUP HEADER FOR EXCEL UPLOAD-->
-                <div class="font-semibold text-sm print:text-xs mb-1">
-                  Group {{ group.group_no }} (Data uploaded via Excel)
 
-                  <div class="border rounded-xl p-2 md:col-span-2">
-                    <h3 class="text-base font-bold mb-2">
-                      {{group.description}}
-                    </h3>
+                <div v-else class="text-xs opacity-70">
+                  No elements.
+                </div>
+
+                <!-- ✅ EXCEL LISTS: SHOW ONLY FOR EXCEL ELEMENTS -->
+                <div v-if="excelElements(group).length" class="space-y-4 mt-4">
+                  <div
+                    v-for="el in excelElements(group)"
+                    :key="'excel-' + el.id"
+                    class="border rounded-xl p-2"
+                  >
+                    <div class="font-semibold text-sm print:text-xs mb-2">
+                      {{ el.indicator_no }} {{ el.description }} (Excel)
+                    </div>
 
                     <!-- 2 quarters per row -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div v-for="(qid, idx) in state.quarterIds" :key="'infant-quarter-' + qid"
-                        class="border rounded-xl p-3">
+                      <div
+                        v-for="(qid, idx) in state.quarterIds"
+                        :key="String(el.indicator_no) + '-q-' + qid"
+                        class="border rounded-xl p-3"
+                      >
                         <div class="text-sm font-semibold mb-2 text-center">
                           {{ state.quarterNames?.[idx] ?? `Q${idx + 1}` }}
                         </div>
 
-                        <div v-if="(state.infantListByQuarter?.[qid]?.length ?? 0) === 0"
-                          class="text-xs opacity-70 text-center py-6">
+                        <div
+                          v-if="getExcelList(el.indicator_no, qid).length === 0"
+                          class="text-xs opacity-70 text-center py-6"
+                        >
                           No data.
                         </div>
 
                         <div v-else class="grid grid-cols-12 gap-3 items-start">
-                          <!-- LEFT: List -->
-                          <div class="col-span-12 md:col-span-7">
+                          <div class="col-span-12">
                             <ul class="space-y-1 text-xs">
-                              <li v-for="item in state.infantListByQuarter[qid]"
-                                :key="'infant-' + qid + '-' + item.rank" class="flex items-start gap-2 leading-tight"
-                                :title="item.disease">
+                              <li
+                                v-for="item in getExcelList(el.indicator_no, qid)"
+                                :key="String(el.indicator_no) + '-' + qid + '-' + item.rank"
+                                class="flex items-start gap-2 leading-tight"
+                                :title="item.disease"
+                              >
                                 <div class="w-6 shrink-0 text-right font-semibold">
                                   {{ item.rank }}.
                                 </div>
@@ -126,16 +175,14 @@
                               </li>
                             </ul>
                           </div>
-
-
                         </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
+                <!-- /excel lists -->
               </div>
-
-
             </template>
           </div>
         </div>
@@ -150,17 +197,14 @@
   </div>
 </template>
 
-
 <script setup>
 import { reactive, computed, onMounted, nextTick, watch } from 'vue'
 
 import { indicatorService } from '~/components/api/IndicatorCategoryService'
 import { Childrens_rightsService } from '~/components/api/Rights'
 import { report_yearService } from '~/components/api/ReportYears'
-
-// ✅ YOU WERE MISSING THIS IMPORT (adjust path to your actual service file)
 import { reportDetailsGroupsService } from '~/components/api/ReportDetailsGroupsService'
-import { reportDetailsExcelService } from "~/components/api/ReportDetailsExcelService";
+import { reportDetailsExcelService } from '~/components/api/ReportDetailsExcelService'
 
 definePageMeta({ layout: 'main' })
 
@@ -170,15 +214,38 @@ const state = reactive({
 
   report_year: null,
 
-  // fetched detail rows/groups for the selected year
+  reportYearRows: [],
+  quarterIds: [],
+  quarterNames: [],
+
   passed_data: [],
   loading: true,
 
-  // maps keyed by indicator_no
   male: {},
   female: {},
   total: {},
   remarks: {},
+
+  exceldata: [],
+  excelListByIndicatorQuarter: {},
+
+  agencies: [
+    { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
+    { value: 2, label: 'CHO', color: 'bg-blue-500 border-blue-400' },
+    { value: 3, label: 'DepEd', color: 'bg-green-500 border-green-400' },
+    { value: 4, label: 'CSWDO', color: 'bg-yellow-500 border-yellow-400' },
+    { value: 5, label: 'CHED', color: 'bg-purple-500 border-purple-400' },
+    { value: 6, label: 'DCPO', color: 'bg-pink-500 border-pink-400' },
+    { value: 7, label: 'DILG', color: 'bg-indigo-500 border-indigo-400' },
+    { value: 8, label: 'IGDD', color: 'bg-teal-500 border-teal-400' },
+    { value: 9, label: 'CBO', color: 'bg-orange-500 border-orange-400' },
+    { value: 10, label: 'CPDO', color: 'bg-gray-500 border-gray-400' },
+    { value: 11, label: 'CCRO', color: 'bg-lime-500 border-lime-400' },
+    { value: 12, label: 'CDRRMO', color: 'bg-rose-500 border-rose-400' },
+    { value: 13, label: 'FCCDI', color: 'bg-cyan-500 border-cyan-400' },
+    { value: 14, label: 'PSA', color: 'bg-emerald-500 border-emerald-400' },
+    { value: 15, label: 'NCIP', color: 'bg-fuchsia-500 border-fuchsia-400' },
+  ],
 
   options: {
     years: [],
@@ -210,6 +277,16 @@ function change_selected_year(opt) {
   }
 }
 
+/* ----------------------- AGENCY BADGE ----------------------- */
+function agencyMeta(agencyId) {
+  const id = Number(agencyId)
+  const a = state.agencies.find(x => Number(x.value) === id)
+  if (!a) return { label: '', color: 'bg-gray-200 border-gray-300 text-gray-800' }
+  return { label: a.label, color: `${a.color} text-white` }
+}
+
+/* ----------------------- FETCH OPTIONS ----------------------- */
+
 async function fetchIndicatorCategories() {
   const res = await indicatorService.getIndicatorCategories()
   state.allCategories = res?.data || []
@@ -232,6 +309,8 @@ async function fetchreportyear() {
     const response = await report_yearService.getReportYears()
     const rows = Array.isArray(response?.data) ? response.data : []
 
+    state.reportYearRows = rows
+
     const years = rows
       .filter(r => Number(r.status) === 1 && r.year != null)
       .map(r => Number(r.year))
@@ -247,6 +326,8 @@ async function fetchreportyear() {
 
     if (!state.options.years.length) {
       state.report_year = null
+      state.quarterIds = []
+      state.quarterNames = []
       return
     }
 
@@ -256,23 +337,43 @@ async function fetchreportyear() {
     console.error('fetchreportyear error', error)
     state.options.years = []
     state.report_year = null
+    state.reportYearRows = []
+    state.quarterIds = []
+    state.quarterNames = []
   }
 }
 
-/**
- * Robust mapper: handles two common API shapes:
- * A) response.data is flat rows: [{indicator_no, male, female, total, remarks}]
- * B) response.data is groups: [{indicator_group_elements:[{indicator_no, ...}]}]
- * 
- * 
- */
+function buildQuarterArrays() {
+  const rows = Array.isArray(state.reportYearRows) ? state.reportYearRows : []
+  const targetYear = Number(state.report_year)
 
+  const filtered = rows
+    .filter(r => Number(r.status) === 1 && Number(r.year) === targetYear)
+    .sort((a, b) => Number(a.quarter ?? a.quarter_no ?? a.id) - Number(b.quarter ?? b.quarter_no ?? b.id))
 
- function toNumberOrNull(v) {
+  state.quarterIds = filtered.map(r => Number(r.id))
+
+  state.quarterNames = filtered.map((r, idx) => {
+    const qnum = Number(r.quarter ?? r.quarter_no)
+    return `Q${Number.isFinite(qnum) ? qnum : (idx + 1)} ${r.year}`
+  })
+}
+
+/* ----------------------- EXCEL ELEMENT HELPERS ----------------------- */
+
+function isExcelElement(el) {
+  return String(el?.value_type ?? '').toLowerCase() === 'excel'
+}
+
+function excelElements(group) {
+  return (group?.indicator_group_elements || []).filter(isExcelElement)
+}
+
+/* ----------------------- NORMAL DATA MAPPING ----------------------- */
+
+function toNumberOrNull(v) {
   if (v === null || v === undefined) return null
   if (typeof v === 'number' && Number.isFinite(v)) return v
-
-  // allow "1,234" / " 12 " etc.
   const s = String(v).trim().replace(/,/g, '')
   if (s === '') return null
   const n = Number(s)
@@ -282,7 +383,6 @@ async function fetchreportyear() {
 function addNumeric(map, key, value) {
   const n = toNumberOrNull(value)
   if (n === null) return
-
   const existing = toNumberOrNull(map[key])
   map[key] = (existing ?? 0) + n
 }
@@ -290,26 +390,15 @@ function addNumeric(map, key, value) {
 function addRemark(map, key, value) {
   const s = String(value ?? '').trim()
   if (!s) return
-
   const existing = String(map[key] ?? '').trim()
   if (!existing) {
     map[key] = s
     return
   }
-
-  // avoid duplicate remark chunks
   const parts = new Set(existing.split(' | ').map(x => x.trim()).filter(Boolean))
   parts.add(s)
   map[key] = Array.from(parts).join(' | ')
 }
-
-/**
- * Groups by indicator_no and ADDS values across quarters (no overwrite).
- * Works with:
- *  - grouped shape: [{ indicator_group_elements: [...] }, ...]
- *  - flat rows:     [{ indicator_no, male, female, total, remarks, quarter }, ...]
- */
-
 
 function mapValues(detailsOrGroups) {
   state.male = {}
@@ -328,7 +417,6 @@ function mapValues(detailsOrGroups) {
         const key = String(el.indicator_no ?? '').trim()
         if (!key) continue
 
-        // pick the real value fields your API returns
         const maleVal = el.male_value ?? el.male_data ?? el.male
         const femaleVal = el.female_value ?? el.female_data ?? el.female
         const totalVal = el.total_value ?? el.total_data ?? el.total
@@ -343,18 +431,14 @@ function mapValues(detailsOrGroups) {
     return
   }
 
-  // flat rows (most common when you truly have quarter rows)
   for (const row of detailsOrGroups) {
     const key = String(row.indicator_no ?? '').trim()
     if (!key) continue
-
     addNumeric(state.male, key, row.male ?? row.male_value)
     addNumeric(state.female, key, row.female ?? row.female_value)
     addNumeric(state.total, key, row.total ?? row.total_value)
     addRemark(state.remarks, key, row.remarks ?? row.remarks_value)
   }
-
-  console.log('state.male', state.male)
 }
 
 async function fetchData() {
@@ -364,10 +448,7 @@ async function fetchData() {
   try {
     const params = { report_year: Number(state.report_year) }
     const response = await reportDetailsGroupsService.getReportDetailsGroups(params)
-
     state.passed_data = response?.data || []
-
-    // ✅ accumulate quarter values instead of overwriting
     mapValues(state.passed_data)
   } catch (e) {
     console.error('fetchData error', e)
@@ -378,135 +459,106 @@ async function fetchData() {
   }
 }
 
-onMounted(async () => {
-  
-  await fetchreportyear()
-  await fetchIndicatorCategories()
-  await fetchRights()
-  buildQuarterArrays()
+/* ----------------------- EXCEL DATA (PER INDICATOR + QUARTER) ----------------------- */
 
-  // fetch once initial year is set
-  await fetchData()
-  await getexceldata()
-})
+function toNum(v) {
+  const n = Number(String(v ?? '').trim())
+  return Number.isFinite(n) ? n : 0
+}
 
-// ✅ refetch when year changes
-watch(
-  () => state.report_year,
-  async (val, oldVal) => {
-    if (!val || val === oldVal) return
-    await fetchData()
-    await getexceldata()
+function buildExcelListsByIndicatorQuarter(rows) {
+  const quarterIds = (state.quarterIds ?? []).map(Number)
+  const out = {}
+  if (!quarterIds.length) return out
+
+  const targetYear = Number(state.report_year)
+  const scopedRows = rows.filter(r => {
+    const y = Number(r?.year ?? r?.report_year ?? r?.report_year_value)
+    return !Number.isFinite(y) || y === targetYear
+  })
+
+  const indicatorNos = Array.from(
+    new Set(scopedRows.map(r => String(r?.indicator_no ?? '').trim()).filter(Boolean))
+  )
+
+  for (const indicatorNo of indicatorNos) {
+    out[indicatorNo] = {}
+
+    for (const qid of quarterIds) {
+      const list = scopedRows
+        .filter(r => {
+          if (!r) return false
+          if (String(r.indicator_no ?? '').trim() !== indicatorNo) return false
+          return Number(r.report_year_id) === qid
+        })
+        .map(r => ({
+          rank: toNum(r.header_value1),
+          disease: String(r.header_value2 ?? '').trim(),
+          count: toNum(r.header_value3),
+        }))
+        .filter(x => x.disease)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, 10)
+
+      const total = list.reduce((sum, x) => sum + x.count, 0)
+
+      out[indicatorNo][qid] = list.map(x => ({
+        ...x,
+        pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+      }))
+    }
   }
-)
 
-function normalizeReportYears() {
-  const raw = state.report_year;
-  if (Array.isArray(raw)) return raw;
-  if (raw && Array.isArray(raw.data)) return raw.data;
-  return [];
+  return out
 }
-
-function buildQuarterArrays() {
-  const allYears = normalizeReportYears();
-  const targetYear = Number(state.report_year);
-
-  const filtered = allYears
-    .filter((q) => Number(q.year) === targetYear)
-    .sort((a, b) => Number(a.quarter ?? a.id) - Number(b.quarter ?? b.id));
-
-  state.quarterIds = filtered.map((q) => Number(q.id));
-  state.quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
-
- 
-}
-
 
 async function getexceldata() {
   try {
-    const response = await reportDetailsExcelService.getReportExcelDetails();
-
+    const response = await reportDetailsExcelService.getReportExcelDetails()
     const rows = Array.isArray(response?.data)
       ? response.data
       : Array.isArray(response)
         ? response
-        : [];
+        : []
 
-    state.exceldata = rows;
-
-    const quarterIds = (state.quarterIds ?? []).map(Number);
-    if (!quarterIds.length) {
-      state.infantListByQuarter = {};
-      state.u5ListByQuarter = {};
-      state.infantPieByQuarter = {};
-      state.u5PieByQuarter = {};
-      return;
-    }
-
-    const toNum = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : 0;
-    };
-
-    const buildListAndPieByQuarter = (indicatorNo) => {
-      const listOut = {};
-      const pieOut = {};
-
-      for (const qid of quarterIds) {
-        const list = rows
-          .filter(
-            (r) =>
-              r &&
-              String(r.indicator_no) === String(indicatorNo) &&
-              Number(r.report_year_id) === qid
-          )
-          .map((r) => ({
-            rank: toNum(r.header_value1),
-            disease: String(r.header_value2 ?? ""),
-            count: toNum(r.header_value3),
-          }))
-          .filter((x) => x.disease)
-          .sort((a, b) => a.rank - b.rank)
-          .slice(0, 10);
-
-        const total = list.reduce((sum, x) => sum + x.count, 0);
-
-        // list with pct
-        listOut[qid] = list.map((x) => ({
-          ...x,
-          pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
-        }));
-
-        // pie uses same pct values
-        pieOut[qid] = {
-          labels: listOut[qid].map((x) => x.disease),
-          series: listOut[qid].map((x) => Number(x.pct.toFixed(2))),
-          total,
-        };
-      }
-
-      return { listOut, pieOut };
-    };
-
-    const infant = buildListAndPieByQuarter("12.1");
-    state.infantListByQuarter = infant.listOut;
-    
-    const u5 = buildListAndPieByQuarter("12.2");
-    state.u5ListByQuarter = u5.listOut;
-    
+    state.exceldata = rows
+    state.excelListByIndicatorQuarter = buildExcelListsByIndicatorQuarter(rows)
   } catch (err) {
-    console.error("Error fetching report detail excel:", err);
-    state.exceldata = [];
-    state.infantListByQuarter = {};
-    state.u5ListByQuarter = {}; 
-    
+    console.error("Error fetching report detail excel:", err)
+    state.exceldata = []
+    state.excelListByIndicatorQuarter = {}
   }
 }
 
+function getExcelList(indicatorNo, quarterId) {
+  const key = String(indicatorNo ?? '').trim()
+  const qid = Number(quarterId)
+  return state.excelListByIndicatorQuarter?.[key]?.[qid] ?? []
+}
+
+/* ----------------------- LIFECYCLE ----------------------- */
+
+onMounted(async () => {
+  await fetchreportyear()
+  await fetchIndicatorCategories()
+  await fetchRights()
+
+  buildQuarterArrays()
+
+  await fetchData()
+  await getexceldata()
+})
+
+watch(
+  () => state.report_year,
+  async (val, oldVal) => {
+    if (!val || val === oldVal) return
+    buildQuarterArrays()
+    await fetchData()
+    await getexceldata()
+  }
+)
 </script>
-
-
-
 
 <style scoped>
 .subcategory-label {
