@@ -42,25 +42,78 @@ import { computed } from "vue";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/solid";
 
 const props = defineProps({
-  options: { type: Array, required: true }, // [{value,label}]
-  modelValue: { type: [Number, String], required: true }, // YEAR like 2025
+  options: { type: Array, required: true }, // can be [{value,label}] or richer objects with year/quarter
+  modelValue: { type: [Number, String], required: true }, // year or id
   changeSelectedYear: { type: Function, required: false }
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
+/**
+ * Formats an option label:
+ * - If label already contains a 4-digit year, keep it.
+ * - Else if it has quarter + year => "Q{quarter} {year}"
+ * - Else if it has year => "{label or 'Year'} {year}"
+ * - Else fallback to label/value.
+ */
+function formatOptionLabel(opt) {
+  if (!opt) return "Select";
+
+  const rawLabel = String(opt.label ?? "").trim();
+  const year = opt.year != null ? String(opt.year).trim() : "";
+  const quarter = opt.quarter != null ? String(opt.quarter).trim() : "";
+
+  // If label already includes a year like 2025, trust it
+  if (/\b(19|20)\d{2}\b/.test(rawLabel)) return rawLabel;
+
+  // Quarter + year case
+  if (quarter && year) return `Q${quarter} ${year}`;
+
+  // Year present
+  if (year) {
+    // If label exists (e.g., "Annual"), show "Annual 2025", else "Year 2025"
+    return `${rawLabel || "Year"} ${year}`;
+  }
+
+  // If label exists, use it
+  if (rawLabel) return rawLabel;
+
+  // Final fallback: show value
+  return String(opt.value ?? "Select");
+}
+
+// Normalize options for display (does NOT mutate props)
+const displayOptions = computed(() =>
+  (props.options ?? []).map((o) => ({
+    ...o,
+    _displayLabel: formatOptionLabel(o),
+  }))
+);
+
 const currentIndex = computed(() => {
-  const idx = props.options.findIndex(o => String(o.value) === String(props.modelValue));
+  const idx = displayOptions.value.findIndex(
+    (o) => String(o.value) === String(props.modelValue)
+  );
   return idx; // -1 if not found
 });
 
 const currentLabel = computed(() => {
-  const item = props.options.find(o => String(o.value) === String(props.modelValue));
-  return item?.label ?? "Select Year";
+  const item = displayOptions.value.find(
+    (o) => String(o.value) === String(props.modelValue)
+  );
+  return item?._displayLabel ?? "Select";
 });
 
-const isPrevDisabled = computed(() => props.options.length === 0 || currentIndex.value <= 0);
-const isNextDisabled = computed(() => props.options.length === 0 || currentIndex.value === -1 || currentIndex.value >= props.options.length - 1);
+const isPrevDisabled = computed(
+  () => displayOptions.value.length === 0 || currentIndex.value <= 0
+);
+
+const isNextDisabled = computed(
+  () =>
+    displayOptions.value.length === 0 ||
+    currentIndex.value === -1 ||
+    currentIndex.value >= displayOptions.value.length - 1
+);
 
 function handleClick(opt) {
   // Prefer parent handler if provided
@@ -73,10 +126,10 @@ function handleClick(opt) {
   const idx = currentIndex.value;
   if (idx === -1) return;
 
-  if (opt === 1 && idx < props.options.length - 1) {
-    emit("update:modelValue", props.options[idx + 1].value);
+  if (opt === 1 && idx < displayOptions.value.length - 1) {
+    emit("update:modelValue", displayOptions.value[idx + 1].value);
   } else if (opt === 2 && idx > 0) {
-    emit("update:modelValue", props.options[idx - 1].value);
+    emit("update:modelValue", displayOptions.value[idx - 1].value);
   }
 }
 </script>

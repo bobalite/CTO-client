@@ -9,7 +9,8 @@
     <div class="flex gap2 sm:gap-3 items-center">
       <div class="flex-1">
         <FormYearSelector v-model="state.selected_year_id" :options="state.options.years"
-          :change-selected-year="changeYear()" />
+          
+          />
 
         <FormRightSelector :options="state.options.rights" v-model="state.selected_rights_id" @click="changeData" />
       </div>
@@ -181,9 +182,14 @@ const categories = computed(() => state.Selected_Rights_entry_config.data || [])
 
 const state = reactive({
 
-    Rights: [],
+    //Rights: [],
+    //report_years: [],
+    //Selected_Rights_entry_config: [],
+
+    Rights: { data: [] },
     Rights_entry_config: [],
-    report_years: [],
+    report_years: { data: [] },
+    
     selected_year: '',
     selected_year_id: 1,
     selected_rights_id: 1,
@@ -196,7 +202,9 @@ const state = reactive({
     Rights_entry_config4: [],
     Rights_entry_config5: [],
     Rights_entry_config6: [],
-    Selected_Rights_entry_config: [],
+
+    
+     Selected_Rights_entry_config: { data: [] },
 
     
 
@@ -229,42 +237,46 @@ const state = reactive({
 
 
 async function fetchreportyear() {
-    try {
-        const response = await report_yearService.getReportYears()
-        //console.log(response)
-        if (response.data) {
+  try {
+    const response = await report_yearService.getReportYears()
+    const src = Array.isArray(response?.data) ? response.data : []
 
-            state.report_years.data = response.data
-            var data = [];
-            var datasources = [];
-            if (state.report_years.data != null) {
+    state.report_years.data = src
 
-                datasources = state.report_years.data
+    // ✅ Only include ACTIVE and NOT LOCKED
+    // Adjust field names if yours differ (encoding_locked / is_locked)
+    const years = src
+      .filter(item => Number(item?.status) === 1) // active
+      .filter(item => Number(item?.encoding_locked ?? item?.is_locked ?? 0) === 0) // not locked
+      .map(item => ({
+        value: Number(item.id),
+        label: item.name,
+        year: String(item.year ?? ''),
+      }))
 
-                for (const i in datasources) {
-                    const value = datasources[i].id;
-                    if (!datasources.includes(value)) {
+    state.options.years = years
 
-                        if (datasources[i].status == 1) {
-                            data[i] = { "value": datasources[i].id, "label": datasources[i].name, "year": datasources[i].year };
-                        }
-                    }
-                }
-                state.options.years = data;
-                //console.log(state.options.report_years)
-            }
-
-        }
-    } catch (error) {
-        //console.log(error)
+    // ✅ fix selected if current is no longer in the filtered list
+    if (!years.some(y => Number(y.value) === Number(state.selected_year_id))) {
+      state.selected_year_id = years[0]?.value ?? 1
     }
+
+    changeYear()
+    changeData()
+  } catch (error) {
+    console.error("fetchreportyear error", error)
+  }
 }
 
 function changeYear() {
-    state.selected_year_id = state.selected_year_id
-    state.selected_year = state.options.years.find(year => year.value === state.selected_year_id)?.year || '';
-    console.log('selected_year_id = ', state.selected_year_id)
+  const found = (state.options.years || []).find(
+    y => Number(y?.value) === Number(state.selected_year_id)
+  )
+
+  state.selected_year = found?.year ?? ''
+  console.log('selected_year_id = ', state.selected_year_id, 'selected_year =', state.selected_year)
 }
+
 
 
 
@@ -420,6 +432,12 @@ function openGroupModal(mode, group, categoryDesc = '', subcategoryDesc = '') {
   console.log('Opening modal in', mode, 'mode for group', group)
 
 }
+
+watch(() => state.selected_year_id, () => {
+  changeYear()
+  changeData()
+})
+
 
  
 </script>
