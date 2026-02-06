@@ -491,7 +491,16 @@ function computeTotals() {
       state.male[id] = maleDen ? Number(((maleNum / maleDen) * divisor).toFixed(2)) : 0
       state.female[id] = femaleDen ? Number(((femaleNum / femaleDen) * divisor).toFixed(2)) : 0
       state.total[id] = totalDen ? Number(((totalNum / totalDen) * divisor).toFixed(2)) : 0
+
+      console.log('ref1',ref1)
+      console.log('ref2',ref2)
+      console.log('totalNum',totalNum)
+      console.log('totalDen',totalDen)
+       console.log('divisor',divisor)
+      
     }
+
+
   })
 
   // done

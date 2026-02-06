@@ -13,7 +13,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="90%"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.graphSeriesAll"
@@ -30,7 +30,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.graphSeriesAllPrevalence"
@@ -47,7 +47,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.graphSeriesPrenatalCare "
@@ -64,7 +64,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.attendedskilled "
@@ -80,7 +80,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.facilitybased"
@@ -96,7 +96,7 @@
       <ClientOnly>
         <apexchart
           type="bar"
-          height="200"
+          height="300"
           width="100%"
           :options="state.populationHoriOptions"
           :series="state.postpartum"
@@ -274,22 +274,32 @@ async function fetchReports_Details_Bars() {
 
     const total_pregnant_women = new Array(quarterIds.length).fill(0);
     const total_pregnant_adolescent = new Array(quarterIds.length).fill(0);
+
+
+    //3.1  - 3.2.2 are prenatal care indicators; we need to keep them separate from total pregnant
     const total_pregnantw8antenatal = new Array(quarterIds.length).fill(0);
     const total_pregnantAdolescentw8antenatal = new Array(quarterIds.length).fill(0);
+    const total_pregnantAdolescentw8antenatalLess15 = new Array(quarterIds.length).fill(0);
+    const total_pregnantAdolescentw8antenatalmore15 = new Array(quarterIds.length).fill(0);
+    
     const prevalence = new Array(quarterIds.length).fill(0);
     const less15 = new Array(quarterIds.length).fill(0);
     const from15to19 = new Array(quarterIds.length).fill(0);
 
+    const total_atended = new Array(quarterIds.length).fill(0);
     const total_atendedless15 = new Array(quarterIds.length).fill(0);
     const total_atended15to19 = new Array(quarterIds.length).fill(0);
     const total_atendedmore19 = new Array(quarterIds.length).fill(0);
 
+    const total_facility = new Array(quarterIds.length).fill(0);
     const total_facilityless15 = new Array(quarterIds.length).fill(0);
     const total_facility5to19 = new Array(quarterIds.length).fill(0);
     const total_facilitymore19 = new Array(quarterIds.length).fill(0);
 
     const allpregnantPostpartum = new Array(quarterIds.length).fill(0);
     const alladolescentPostpartum = new Array(quarterIds.length).fill(0);
+    const alladolescentPostpartumless15 = new Array(quarterIds.length).fill(0);
+    const alladolescentPostpartummore15 = new Array(quarterIds.length).fill(0);
 
    for (const row of data) {
   if (!row) continue;
@@ -330,6 +340,19 @@ async function fetchReports_Details_Bars() {
       total_pregnantAdolescentw8antenatal[idx] += value;
       break;
 
+    case "3.2.1":
+      total_pregnantAdolescentw8antenatalLess15[idx] += value;
+      break;
+     case "3.2.2":
+      total_pregnantAdolescentw8antenatalmore15[idx] += value;
+      break;
+
+
+    
+    case "4.1":
+      total_atended[idx] += value;
+      break;
+
     case "4.1.1":
       total_atendedless15[idx] += value;
       break;
@@ -340,6 +363,10 @@ async function fetchReports_Details_Bars() {
 
     case "4.1.3":
       total_atendedmore19[idx] += value;
+      break;
+
+    case "5.1":
+      total_facility[idx] += value;
       break;
 
     case "5.1.1":
@@ -362,6 +389,14 @@ async function fetchReports_Details_Bars() {
       alladolescentPostpartum[idx] += value;
       break;
 
+      case "6.2.1":
+      alladolescentPostpartumless15[idx] += value;
+      break;
+
+      case "6.2.2":
+      alladolescentPostpartummore15[idx] += value;
+      break;
+
     default:
       // ignore unknown indicator_no
       break;
@@ -369,24 +404,33 @@ async function fetchReports_Details_Bars() {
 }
 
     state.graphSeriesAll = [
-      { name: "Less than 15 yrs old", data: less15 },
-      { name: "15 - 19 yrs old", data: from15to19 },
+      { name: "1.1 - Total Pregnant Women", data: total_pregnant_women },
+      { name: "2.1 - Total Pregnant Adolescents", data: total_pregnant_adolescent },
+      { name: "2.1.1 - Less than 15 yrs old", data: less15 },
+      { name: "2.1.2 - 15 - 19 yrs old", data: from15to19 },
+    ];
+
+     state.graphSeriesAllPrevalence = [
+      { name: "2.2 - Prevalence/percentage of adolescent pregnancies", data: prevalence },
     ];
 
     state.graphSeriesPrenatalCare = [
-      { name: "1.1 - ALL maternal deliveries", data: total_pregnant_women },
-      { name: "3.1 - ALL pregnant women w/ antenatal", data: total_pregnantw8antenatal },
-      { name: "2.1 - adolescent deliveries", data: total_pregnant_adolescent },
-      { name: "3.2 - Pregnant adolescents w/ Antenatal", data: total_pregnantAdolescentw8antenatal },
+      { name: "3.1 - ALL pregnant women with at least 8 antenatal check-ups ", data: total_pregnantw8antenatal },
+      { name: "3.2 - ALL pregnant adolescents with at least 8 antenatal check-ups", data: total_pregnantAdolescentw8antenatal },
+      { name: "3.2.1 - Total number of <15 years old pregnant adolescents", data: total_pregnantAdolescentw8antenatalLess15 },
+      { name: "3.2.2 - Total number of 15-19 years old pregnant adolescents", data: total_pregnantAdolescentw8antenatalmore15 },
     ];
 
     state.attendedskilled = [
+      { name: "4.1 - Total Attended deliveries", data: total_atended },
       { name: "4.1.1 - Total Attended <15 years old deliveries", data: total_atendedless15 },
       { name: "4.1.2 - Total Attended 15 -19 yrs. old deliveries", data: total_atended15to19 },
       { name: "4.1.3 - Total Attended >19 years old deliveries", data: total_atendedmore19 },
     ];
 
     state.facilitybased = [
+      
+      { name: "5.1 - Total Facility Based deliveries", data: total_facility },
       { name: "5.1.1 - Total Facility Based <15 years old deliveries", data: total_facilityless15 },
       { name: "5.1.2 - Total Facility Based 15 -19 yrs. old deliveries", data: total_facility5to19 },
       { name: "5.1.3 - Total Facility Based >19 years old deliveries", data: total_facilitymore19 },
@@ -396,11 +440,11 @@ async function fetchReports_Details_Bars() {
     state.postpartum = [
       { name: "6.1 - Total Pregnant completed at least 4 postpartum check ups", data: allpregnantPostpartum },
       { name: "6.2 - Adolescent Pregnant completed at least 4 postpartum check ups", data: alladolescentPostpartum },
+      { name: "6.2.1 - Adolescent Pregnant <15 years old completed at least 4 postpartum check ups", data: alladolescentPostpartumless15 },
+      { name: "6.2.2 - Adolescent Pregnant 15-19 years old completed at least 4 postpartum check ups", data: alladolescentPostpartummore15 },
     ];
 
-    state.graphSeriesAllPrevalence = [
-      { name: "Prevalence/percentage of adolescent pregnancies", data: prevalence },
-    ];
+   
   } catch (error) {
     console.error("fetchReports_Details_Bars error:", error);
   }

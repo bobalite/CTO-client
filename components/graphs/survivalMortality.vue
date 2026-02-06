@@ -303,6 +303,7 @@ function fetchReports_Details_Bars() {
       switch (row.indicator_no) {
         case "10.1": total_maternal_deaths[idx] += value; break;
         case "10.2": ratio_maternal_deaths[idx] += value; break;
+        
         case "11.1": total_neonatal_deaths[idx] += value; break;
         case "11.2": rate_neonatal_deaths[idx] += value; break;
         case "11.3": infant_deaths_0to11[idx] += value; break;
