@@ -51,11 +51,16 @@
                 <div class="inline-block min-w-full py-2 align-middle sm:px-1 lg:px-1">
                     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
 
-                        <template v-if="state.logged_user_role.allow_manage_users == 1">
+                        <template v-if="state.logged_user_role?.allow_manage_users == 1">
                             <button type="button"
                                 class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 @click="openAddScheduleModal">Add
-                                New Schedule</button>
+                               New Schedule</button>
+                        </template>
+                        <template v-else>
+                            <p class="text-sm text-gray-500 italic">
+                                You do not have sufficient rights to create or manage report schedules.
+                            </p>
                         </template>
 
                     </div>
@@ -593,18 +598,19 @@ function cancelAddModal() {
 }
 
 async function fetch_logged_user_role() {
-    try {
+  try {
+    const roleId =
+      Number(userStore?.getUser?.userRole?.role_id) ||
+      Number(userStore?.getUser?.user_role?.role_id) ||
+      0
 
-        const response = await rolesService.getRole(userStore.getUser.userRole.role_id)
-        //console.log(response)
-        if (response.data) {
-            state.logged_user_role = response.data
+    if (!roleId) return
 
-            //console.log(state.current_user_role)
-        }
-    } catch (error) {
-        console.log(error)
-    }
+    const response = await rolesService.getRole(roleId)
+    if (response?.data) state.logged_user_role = response.data
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function fetchreportyear() {
@@ -658,7 +664,8 @@ const check_errors = computed(() => {
 
 
 definePageMeta({
-    layout: 'main'
+    layout: 'main',
+  middleware: ['admin-only'],
 })
 
 </script>

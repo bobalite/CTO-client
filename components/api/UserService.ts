@@ -1,6 +1,13 @@
 import BaseAPIService from "./BaseAPIService";
 
 class UserService extends BaseAPIService {
+
+    async me(): Promise<any> {
+        // backend route will be GET /api/me
+        return await this.request(`/me`, "GET");
+    }
+
+
     async getUsers(params: object): Promise<any> { 
         //return await this.request(`/users`, "GET", params);
         return await this.request(`/users`, "GET");

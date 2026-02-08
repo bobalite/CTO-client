@@ -691,7 +691,9 @@ import { agenciesService } from '~/components/api/Agencies'
 import { authService } from '~/components/api/AuthService' // adjust if your path differs
 import { useUserStore } from '~/store/user'
 
-definePageMeta({ layout: 'main' })
+definePageMeta({ layout: 'main',
+     middleware: ['admin-only'],
+ })
 
 const userStore = useUserStore()
 
@@ -907,20 +909,34 @@ function closeAddModal() {
   state.isAddModalOpen = false
 }
 
+// async function logout() {
+//   try {
+//     const response = await authService.logout()
+//     if (response) {
+//       userStore.resetUser()
+//       localStorage.removeItem('_token')
+//       navigateTo('/login')
+//       return
+//     }
+//   } catch (e) {
+//     console.log(e)
+//   }
+//   navigateTo('/login')
+// }
+
 async function logout() {
+  userStore.resetUser()
+  if (import.meta.client) localStorage.removeItem('_token')
+
   try {
-    const response = await authService.logout()
-    if (response) {
-      userStore.resetUser()
-      localStorage.removeItem('_token')
-      navigateTo('/login')
-      return
-    }
+    await authService.logout()
   } catch (e) {
     console.log(e)
   }
-  navigateTo('/login')
+
+  return navigateTo('/login')
 }
+
 
 async function fetch_logged_user_role() {
   try {
@@ -966,11 +982,7 @@ async function fetchagencies() {
 
 async function fetchUsers() {
   // Admin-only guard, but do NOT crash if userRole is null
-  const roleId = userStore?.getUser?.userRole?.role_id
-  if (Number(roleId) !== 1) {
-    await logout()
-    return
-  }
+  
 
   try {
     // your service signature has params but doesn't use it; just call
@@ -1036,11 +1048,11 @@ async function SaveEditModal() {
 
 async function SaveNewUser() {
   // Admin-only guard
-  const roleId = userStore?.getUser?.userRole?.role_id
-  if (Number(roleId) !== 1) {
-    await logout()
-    return
-  }
+  // const roleId = userStore?.getUser?.userRole?.role_id
+  // if (Number(roleId) !== 1) {
+  //   await logout()
+  //   return
+  // }
 
   if (!validateNewUser()) {
     openAlertModal('Please fix the highlighted errors.')
