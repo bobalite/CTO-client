@@ -51,6 +51,8 @@
 <script setup>
 import { reactive, onMounted, watch } from "vue";
 
+const emit = defineEmits(["completeness"]);
+
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
   displaytext: { type: String, required: false },
@@ -61,11 +63,16 @@ const props = defineProps({
   report_years: { type: [Array, Object], required: true },
 });
 
+const SUBCATEGORY_KEY = "child-care-and-services";
+const SUBCATEGORY_LABEL = "CHILD CARE AND SERVICES";
+
+// ✅ indicators covered by this component
+const INDICATORS = ["7.1", "7.2", "7.3", "8.1", "8.2", "9.1", "9.2", "9.3"];
+
 const state = reactive({
   quarterNames: [],
   quarterIds: [],
 
-  // series used by charts
   birth_weight: [],
   graphSeriesPrenatalCare: [],
   attendedskilled: [],
@@ -84,16 +91,22 @@ onMounted(() => {
   rebuildAll();
 });
 
-// Rebuild on year/quarters list change
 watch(() => props.report_year, () => rebuildAll());
 watch(() => props.report_years, () => rebuildAll(), { deep: true });
 
-// Recompute series on data change (deep because parent sometimes mutates nested .data)
-watch(() => props.passed_data, () => fetchReports_Details_Bars(), { deep: true });
+watch(
+  () => props.passed_data,
+  () => {
+    fetchReports_Details_Bars();
+    emitCompleteness();
+  },
+  { deep: true }
+);
 
 function rebuildAll() {
   buildQuarterArrays();
   fetchReports_Details_Bars();
+  emitCompleteness();
 }
 
 function normalizeReportYears() {
@@ -115,11 +128,10 @@ function buildQuarterArrays() {
   const targetYear = Number(props.report_year);
 
   const filtered = allYears
-    .filter(q => Number(q.year) === targetYear)
-    // ensure stable order if you have quarter field, otherwise fallback to id
+    .filter((q) => Number(q.year) === targetYear)
     .sort((a, b) => Number(a.quarter ?? a.id) - Number(b.quarter ?? b.id));
 
-  const quarterIds = filtered.map(q => Number(q.id));
+  const quarterIds = filtered.map((q) => Number(q.id));
   const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
 
   state.quarterIds = quarterIds;
@@ -137,14 +149,12 @@ async function fetchReports_Details_Bars() {
     const quarterIds = (state.quarterIds ?? []).map(Number);
 
     if (!quarterIds.length) {
-      // no quarters for selected year -> reset
       state.birth_weight = [];
       state.graphSeriesPrenatalCare = [];
       state.attendedskilled = [];
       return;
     }
 
-    // Initialize arrays
     const total_live_births = new Array(quarterIds.length).fill(0);
     const total_low_birth_weight = new Array(quarterIds.length).fill(0);
     const percentage_low_birth_weight = new Array(quarterIds.length).fill(0);
@@ -156,7 +166,6 @@ async function fetchReports_Details_Bars() {
     const total_population_0_12_old = new Array(quarterIds.length).fill(0);
     const percentage_FIC = new Array(quarterIds.length).fill(0);
 
-    // Single pass
     for (const row of data) {
       if (!row) continue;
 
@@ -168,35 +177,18 @@ async function fetchReports_Details_Bars() {
       if (Number.isNaN(value)) continue;
 
       switch (row.indicator_no) {
-        case "7.1":
-          total_live_births[idx] += value;
-          break;
-        case "7.2":
-          total_low_birth_weight[idx] += value;
-          break;
-        case "7.3":
-          percentage_low_birth_weight[idx] += value;
-          break;
+        case "7.1": total_live_births[idx] += value; break;
+        case "7.2": total_low_birth_weight[idx] += value; break;
+        case "7.3": percentage_low_birth_weight[idx] += value; break;
 
-        case "8.1":
-          total_newborns_breastfeeding[idx] += value;
-          break;
-        case "8.2":
-          percentage_newborns_breastfeeding[idx] += value;
-          break;
+        case "8.1": total_newborns_breastfeeding[idx] += value; break;
+        case "8.2": percentage_newborns_breastfeeding[idx] += value; break;
 
-        case "9.1":
-          total_FIC[idx] += value;
-          break;
-        case "9.2":
-          total_population_0_12_old[idx] += value;
-          break;
-        case "9.3":
-          percentage_FIC[idx] += value;
-          break;
+        case "9.1": total_FIC[idx] += value; break;
+        case "9.2": total_population_0_12_old[idx] += value; break;
+        case "9.3": percentage_FIC[idx] += value; break;
 
-        default:
-          break;
+        default: break;
       }
     }
 
@@ -222,5 +214,60 @@ async function fetchReports_Details_Bars() {
     state.graphSeriesPrenatalCare = [];
     state.attendedskilled = [];
   }
+}
+
+/**
+ * ✅ Completeness emit (row existence, not >0 totals)
+ * Expected = indicators × quarters
+ * Actual   = unique (indicator_no, report_year_id) pairs that exist
+ */
+function emitCompleteness() {
+  const quarterIds = (state.quarterIds ?? []).map(Number);
+
+  if (!quarterIds.length) {
+    emit("completeness", {
+      tab_name: "Survival",
+      subcategory_key: SUBCATEGORY_KEY,
+      subcategory_label: SUBCATEGORY_LABEL,
+      report_year: props.report_year,
+      expected: 0,
+      actual: 0,
+      percentage: 0,
+    });
+    return;
+  }
+
+  const data = normalizePassedData();
+  const indicatorSet = new Set(INDICATORS);
+
+  const expected = INDICATORS.length * quarterIds.length;
+
+  const pairs = new Set(); // `${indicator}:${quarterId}`
+
+  for (const row of data) {
+    if (!row) continue;
+
+    const ind = String(row.indicator_no ?? "").trim();
+    if (!indicatorSet.has(ind)) continue;
+
+    const ry = Number(row.report_year_id);
+    if (!quarterIds.includes(ry)) continue;
+
+    // ✅ existence = encoded (even if total is 0)
+    pairs.add(`${ind}:${ry}`);
+  }
+
+  const actual = pairs.size;
+  const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
+
+  emit("completeness", {
+    tab_name: "Survival",
+    subcategory_key: SUBCATEGORY_KEY,
+    subcategory_label: SUBCATEGORY_LABEL,
+    report_year: props.report_year,
+    expected,
+    actual,
+    percentage,
+  });
 }
 </script>

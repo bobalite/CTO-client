@@ -1,283 +1,210 @@
 <template>
-  <div class="flex justify-between items-center">
-    <h1 class="text-2xl font-bold">ENCODE DATA INDICATORS</h1>
-  </div>
-
-  <!-- ✅ DATA STATISTICS (ONE BAR = % COMPLETION PER SUBCATEGORY) -->
-  <div class="border rounded-xl p-3 mt-6">
-    <div class="flex items-center justify-between mb-2">
+  <div class="border rounded-xl p-4">
+    <div class="flex items-end justify-between gap-4">
       <div>
-        <div class="text-lg font-bold">Data Statistics (Completion % by Subcategory)</div>
+        <div class="text-lg font-bold">{{ title }}</div>
         <div class="text-xs opacity-70">
-          Each bar = one Subcategory. % = Actual Encoded / Expected Indicators × 100.
+          Overall: {{ overall.actual }} / {{ overall.expected }} ({{ overall.percentage }}%)
+        </div>
+        <div class="text-xs opacity-70" v-if="activeTabName">
+          Tab: <span class="font-semibold">{{ activeTabName }}</span>
         </div>
       </div>
 
-      <div class="text-xs opacity-70">
-        Year:
-        <span class="font-semibold">{{ state.selected_year_label }}</span>
-        · Right ID:
-        <span class="font-semibold">{{ state.selected_rights_id }}</span>
+      <div class="text-2xl font-semibold">
+        {{ overall.percentage }}%
       </div>
     </div>
 
-    <div v-if="state.stats.loading" class="text-sm opacity-70 py-6 text-center">
-      Loading statistics...
+    <!-- Stacked bar (overall) -->
+    <div class="mt-3 h-5 w-full rounded-full overflow-hidden bg-gray-200 flex">
+      <div
+        v-for="seg in segments"
+        :key="seg.key"
+        class="h-full relative"
+        :style="{ width: seg.widthPct + '%' }"
+        :title="`${seg.label}\n${seg.actual}/${seg.expected} (${seg.pct}%)`"
+      >
+        <div class="absolute inset-0 bg-gray-300 opacity-40"></div>
+        <div
+          class="absolute inset-y-0 left-0 bg-green-600"
+          :style="{ width: seg.fillPct + '%' }"
+        ></div>
+        <div class="absolute right-0 top-0 h-full w-[1px] bg-white/70"></div>
+      </div>
     </div>
 
-    <div v-else-if="state.stats.categories.length === 0" class="text-sm opacity-70 py-6 text-center">
-      No subcategories found for selected right/year.
+    <!-- Apex vertical bar chart -->
+    <div class="mt-4">
+      <div v-if="filteredValues.length === 0" class="text-sm opacity-70 py-6 text-center">
+        No completeness data for this tab yet.
+      </div>
+
+      <div v-else>
+        <ClientOnly>
+          <apexchart
+            type="bar"
+            height="220"
+            width="100%"
+            :options="chartOptions"
+            :series="chartSeries"
+          />
+        </ClientOnly>
+      </div>
     </div>
 
-    <div v-else>
-      <ClientOnly>
-        <apexchart
-          type="bar"
-          height="420"
-          width="100%"
-          :options="state.stats.options"
-          :series="state.stats.series"
-        />
-      </ClientOnly>
+    <div v-if="allValues.length === 0" class="text-sm opacity-70 py-6 text-center">
+      No completeness data yet.
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, computed, onMounted, watch } from "vue";
-import { reportDetailsService } from "~/components/api/ReportDetailsService";
-
-definePageMeta({ layout: "main" });
+import { computed } from "vue";
 
 const props = defineProps({
-  report_year: { type: [Number, String], required: false }, // from parent (treat as report_year_id)
-  report_years: { type: [Array, Object], required: true },  // for label lookup
-  passed_data: { type: [Array, Object], required: true },   // indicator categories tree
-  right: { type: [Number, String], required: false },       // right id from parent
+  title: { type: String, default: "Completeness (All Subcategories)" },
+
+  selected_tab: { type: [Object, String], required: false, default: "" },
+
+  data: { type: [Array, Object], required: true },
 });
 
-const state = reactive({
-  // selected from props
-  selected_year_id: 1,
-  selected_year_label: "",
-  selected_rights_id: 1,
-
-  // config tree derived from props.passed_data
-  Rights_entry_config: [],
-  Selected_Rights_entry_config: { data: [] },
-
-  // actual encodes
-  report_details: [],
-
-  // chart
-  stats: {
-    loading: false,
-    categories: [],
-    series: [],
-    options: {
-      chart: { type: "bar", toolbar: { show: false }, zoom: { enabled: false } },
-      plotOptions: { bar: { horizontal: false, columnWidth: "55%" } },
-      dataLabels: {
-        enabled: true,
-        formatter: (val) => `${Number(val).toFixed(0)}%`,
-      },
-      tooltip: { shared: false, intersect: true },
-      legend: { show: false },
-      xaxis: { categories: [] },
-      yaxis: {
-        min: 0,
-        max: 100,
-        tickAmount: 5,
-        title: { text: "Completion (%)" },
-        labels: { formatter: (v) => `${Number(v).toFixed(0)}%` },
-      },
-    },
-  },
-});
-
-const categories = computed(() => state.Selected_Rights_entry_config.data || []);
-
-function normalizeArrayLike(raw) {
+function normalizeData(raw) {
   if (Array.isArray(raw)) return raw;
-  if (raw && Array.isArray(raw.data)) return raw.data;
-  if (raw && Array.isArray(raw?.data?.data)) return raw.data.data;
+  if (raw && typeof raw === "object") return Object.values(raw);
   return [];
 }
 
-function syncSelectionsFromProps() {
-  // year id from parent (fallback to 1)
-  const yid = Number(props.report_year);
-  state.selected_year_id = Number.isFinite(yid) && yid > 0 ? yid : 1;
+const allValues = computed(() => normalizeData(props.data));
 
-  // right id from parent (fallback to 1)
-  const rid = Number(props.right);
-  state.selected_rights_id = Number.isFinite(rid) && rid > 0 ? rid : 1;
-
-  // compute label from report_years
-  const years = normalizeArrayLike(props.report_years);
-  const match = years.find((r) => Number(r?.id) === Number(state.selected_year_id));
-  state.selected_year_label = String(match?.name ?? match?.year ?? state.selected_year_id);
-}
-
-/**
- * ✅ Uses props.passed_data instead of fetching
- * Builds grouped configs by right_id and sets Selected_Rights_entry_config
- */
-function fetchRights_entry_config() {
-  const src = normalizeArrayLike(props.passed_data);
-
-  state.Rights_entry_config = src;
-
-  // group by right_id (same logic as before but from props)
-  const grouped = {};
-  for (const item of src) {
-    const id = Number(item?.right_id ?? 0);
-    if (!grouped[id]) grouped[id] = [];
-    grouped[id].push(item);
-  }
-
-  // store grouped into state so the old selection logic still works
-  for (const [id, items] of Object.entries(grouped)) {
-    state[`Rights_entry_config${id}`] = { data: items };
-  }
-
-  changeData();
-}
-
-function changeData() {
-  const id = Number(state.selected_rights_id) || 1;
-  const key = `Rights_entry_config${id}`;
-
-  // If right_id not found, fallback to ALL data
-  state.Selected_Rights_entry_config = state[key] || { data: state.Rights_entry_config };
-
-  rebuildStats();
-}
-
-/**
- * Fetch report_details for selected report_year_id + right_id
- * If your API expects different keys, change only params below.
- */
-async function fetchReportDetails() {
-  const params = {
-    report_year_id: Number(state.selected_year_id),
-    right_id: Number(state.selected_rights_id),
-  };
-
-  const response = await reportDetailsService.getReportDetails(params);
-  return Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : [];
-}
-
-/**
- * ✅ One bar per SUBCATEGORY = % completion
- * expected = total indicator_group_elements under that subcategory (across all groups)
- * actual = total count of report_details whose indicator_no is under that subcategory
- */
-async function rebuildStats() {
-  try {
-    state.stats.loading = true;
-
-    const cfg = categories.value || [];
-
-    // Fetch actual details once
-    const details = await fetchReportDetails();
-    state.report_details = details;
-
-    // indicator_no -> count
-    const countByIndicator = new Map();
-    for (const d of details) {
-      const ind = String(d?.indicator_no ?? d?.indicator ?? "").trim();
-      if (!ind) continue;
-      countByIndicator.set(ind, (countByIndicator.get(ind) ?? 0) + 1);
-    }
-
-    // Build per-subcategory aggregates
-    const subAgg = new Map(); // key -> { label, expected, actual }
-    for (const cat of cfg) {
-      const subs = Array.isArray(cat?.indicator_subcategories) ? cat.indicator_subcategories : [];
-      for (const sub of subs) {
-        const key = `${cat?.id ?? "cat"}:${sub?.id ?? "sub"}`;
-        const label = String(sub?.description ?? "Subcategory").trim() || "Subcategory";
-
-        let expected = 0;
-        let actual = 0;
-
-        const groups = Array.isArray(sub?.indicator_groups) ? sub.indicator_groups : [];
-        for (const g of groups) {
-          const elements = Array.isArray(g?.indicator_group_elements) ? g.indicator_group_elements : [];
-          expected += elements.length;
-
-          for (const e of elements) {
-            const indNo = String(e?.indicator_no ?? "").trim();
-            if (!indNo) continue;
-            actual += countByIndicator.get(indNo) ?? 0;
-          }
-        }
-
-        subAgg.set(key, { label, expected, actual });
-      }
-    }
-
-    const categoriesAxis = [];
-    const percentData = [];
-    const meta = [];
-
-    for (const [, v] of subAgg.entries()) {
-      const pctRaw = v.expected > 0 ? (v.actual / v.expected) * 100 : 0;
-      const pctShown = Number(Math.min(pctRaw, 100).toFixed(1)); // clamp 100
-
-      categoriesAxis.push(v.label);
-      percentData.push(pctShown);
-      meta.push({ expected: v.expected, actual: v.actual, pctRaw });
-    }
-
-    state.stats.categories = categoriesAxis;
-    state.stats.series = [{ name: "Completion (%)", data: percentData }];
-
-    state.stats.options = {
-      ...state.stats.options,
-      xaxis: {
-        categories: categoriesAxis,
-        labels: { rotate: -25, trim: true, style: { fontSize: "11px" } },
-      },
-      tooltip: {
-        y: {
-          formatter: (val, opts) => {
-            const i = opts.dataPointIndex;
-            const m = meta[i] || { actual: 0, expected: 0, pctRaw: 0 };
-            const shownPct = Number(val).toFixed(1);
-            const rawPct = Number(m.pctRaw).toFixed(1);
-            return `${shownPct}% (Actual ${m.actual} / Expected ${m.expected})${
-              m.pctRaw > 100 ? ` · Raw ${rawPct}%` : ""
-            }`;
-          },
-        },
-      },
-      yaxis: { ...state.stats.options.yaxis, min: 0, max: 100 },
-      dataLabels: { enabled: true, formatter: (v) => `${Number(v).toFixed(0)}%` },
-      legend: { show: false },
-    };
-  } catch (e) {
-    console.error("rebuildStats error:", e);
-    state.stats.categories = [];
-    state.stats.series = [];
-  } finally {
-    state.stats.loading = false;
-  }
-}
-
-onMounted(() => {
-  syncSelectionsFromProps();
-  fetchRights_entry_config();
+const activeTabName = computed(() => {
+  if (!props.selected_tab) return "";
+  if (typeof props.selected_tab === "string") return props.selected_tab;
+  return String(props.selected_tab?.name ?? "").trim();
 });
 
-// Recompute when parent changes year/right/config
-watch(
-  () => [props.report_year, props.right, props.passed_data, props.report_years],
-  () => {
-    syncSelectionsFromProps();
-    fetchRights_entry_config();
-  },
-  { deep: true }
-);
+const filteredValues = computed(() => {
+  const values = allValues.value;
+  const tab = activeTabName.value;
+
+  if (!tab) return values;
+
+  return values.filter((v) => {
+    const tn = String(v?.tab_name ?? "").trim();
+    if (!tn) return true; // fallback for legacy payload
+    return tn === tab;
+  });
+});
+
+const overall = computed(() => {
+  const values = filteredValues.value;
+
+  let expected = 0;
+  let actual = 0;
+
+  for (const v of values) {
+    expected += Number(v?.expected) || 0;
+    actual += Number(v?.actual) || 0;
+  }
+
+  const percentage =
+    expected > 0
+      ? Number(((actual / expected) * 100).toFixed(1))
+      : 0;
+
+  return { expected, actual, percentage };
+});
+
+const segments = computed(() => {
+  const values = filteredValues.value.filter(
+    (v) => (Number(v?.expected) || 0) > 0
+  );
+
+  const totalExpected = overall.value.expected || 0;
+
+  return values.map((v) => {
+    const expected = Number(v.expected) || 0;
+    const actual = Number(v.actual) || 0;
+
+    const widthPct =
+      totalExpected > 0 ? (expected / totalExpected) * 100 : 0;
+
+    const fillPct =
+      expected > 0 ? (actual / expected) * 100 : 0;
+
+    return {
+      key: String(v.subcategory_key ?? v.subcategory_label ?? Math.random()),
+      label: String(v.subcategory_label ?? v.subcategory_key ?? "Subcategory"),
+      expected,
+      actual,
+      pct: Number(Math.min(fillPct, 100).toFixed(1)),
+      widthPct: Number(widthPct.toFixed(3)),
+      fillPct: Number(Math.min(fillPct, 100).toFixed(3)),
+    };
+  });
+});
+
+const chartSeries = computed(() => {
+  const values = filteredValues.value;
+
+  const data = values.map((v) => {
+    const expected = Number(v?.expected) || 0;
+    const actual = Number(v?.actual) || 0;
+    const pct = expected > 0 ? (actual / expected) * 100 : 0;
+    return Number(Math.min(pct, 100).toFixed(1));
+  });
+
+  return [{ name: "Completion (%)", data }];
+});
+
+const chartOptions = computed(() => {
+  const values = filteredValues.value;
+
+  const categories = values.map((v) =>
+    String(v?.subcategory_label ?? v?.subcategory_key ?? "Subcategory")
+  );
+
+  const meta = values.map((v) => ({
+    expected: Number(v?.expected) || 0,
+    actual: Number(v?.actual) || 0,
+  }));
+
+  return {
+    chart: { type: "bar", toolbar: { show: false }, zoom: { enabled: false } },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "55%",
+        dataLabels: { position: "top" },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: (val) => `${Number(val).toFixed(0)}%`,
+      offsetY: -6,
+    },
+    xaxis: {
+      categories,
+      labels: { rotate: -25, trim: true, style: { fontSize: "11px" } },
+    },
+    yaxis: {
+      min: 0,
+      max: 100,
+      tickAmount: 5,
+      title: { text: "Completion (%)" },
+      labels: { formatter: (v) => `${Number(v).toFixed(0)}%` },
+    },
+    tooltip: {
+      y: {
+        formatter: (val, opts) => {
+          const i = opts.dataPointIndex;
+          const m = meta[i] || { actual: 0, expected: 0 };
+          return `${Number(val).toFixed(1)}% (Actual ${m.actual} / Expected ${m.expected})`;
+        },
+      },
+    },
+    legend: { show: false },
+  };
+});
 </script>

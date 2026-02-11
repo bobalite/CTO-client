@@ -49,30 +49,28 @@
     <h2 class="text-lg font-semibold">{{ state.activeTab }}</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-1 -z-1">
+      <!-- <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-2 -z-1">
         <GraphsDataCompletion
           :key="graphsKey"
           :passed_data="state.passed_data"
           :displaytext="'Data Completion'"
           :report_year="String(state.report_year || '')"
         />
-      </div>
+      </div> -->
 
-      <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
+      <!-- <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
         <GraphsDataSources
           :key="graphsKey"
           :passed_data="state.passed_data"
           :displaytext="' Data Sources'"
           :report_year="String(state.report_year || '')"
         />
-      </div>
+      </div> -->
 
-      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
+      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-4">
         <GraphsDataStatistics
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          :displaytext="' Data Sources'"
-          :report_year="String(state.report_year || '')"
+          :data="state.completenessByKey"
+          :selected_tab ="state.activeTab"
         />
       </div>
     </div>
@@ -92,6 +90,7 @@
           :displaytext="'Maternal Deliveries'"
           :report_year="String(state.report_year || '')"
           :report_years="state.report_years"
+           @completeness="handleCompleteness"
         />
 
 
@@ -101,6 +100,7 @@
           :displaytext="'Maternal Deliveries'" 
           :report_year="String(state.report_year || '')"
           :report_years="state.report_years" 
+           @completeness="handleCompleteness"
          />
 
 
@@ -109,65 +109,66 @@
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :displaytext="''" 
           :report_year="String(state.report_year || '')"
-          :report_years="state.report_years" >
-        </GraphsSurvivalMortality>
-
-
-        <!-- <ExcelUploads v-if="state.activeTab === 'Survival'" :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :selected_year ="state.report_year"
-          :selected_year_id ="1"
-          >
-        </ExcelUploads> -->
+          :report_years="state.report_years" 
+          @completeness="handleCompleteness"
+        />
 
          <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
            :report_year="String(state.report_year || '')" 
-           :report_years="state.report_years">
+           :report_years="state.report_years"
+           @completeness="handleCompleteness"
+           >
         </GraphsSurvivalNutritionalPreSchool>
 
          <GraphsSurvivalNutritionalSchoolChildren v-if="state.activeTab === 'Survival'"
           :key="graphsKey" :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
+          :report_years="state.report_years"
+          @completeness="handleCompleteness">
         </GraphsSurvivalNutritionalSchoolChildren>
 
         <GraphsSurvivalAccess v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
            :report_year="String(state.report_year || '')" 
-           :report_years="state.report_years">
+           :report_years="state.report_years"
+           @completeness="handleCompleteness">
         </GraphsSurvivalAccess>
 
          <GraphsSurvivalHIV v-if="state.activeTab === 'Survival'" :key="graphsKey"
           :passed_data="state.passed_data"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
+          :report_years="state.report_years"  
+           @completeness="handleCompleteness"
+          >
         </GraphsSurvivalHIV>
 
          <GraphsDevelopmentEarlyChildhood v-if="state.activeTab === 'Development'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
+          :report_years="state.report_years"
+          @completeness="handleCompleteness">
         </GraphsDevelopmentEarlyChildhood>
 
         <GraphsDevelopmentEnrolment v-if="state.activeTab === 'Development'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           ::report_year="String(state.report_year || '')" 
-           :report_years="state.report_years">
+           :report_years="state.report_years"
+           @completeness="handleCompleteness">
         </GraphsDevelopmentEnrolment>
 
         <GraphsDevelopmentOSCY v-if="state.activeTab === 'Development'" :key="graphsKey"
           :passed_data="state.passed_data_annual"
           class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
           :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
+          :report_years="state.report_years"
+          @completeness="handleCompleteness">
         </GraphsDevelopmentOSCY>
 
         <GraphsProtectionChildrenInNeed v-if="state.activeTab === 'Protection'" :key="graphsKey"
@@ -279,6 +280,8 @@ const state = reactive({
   activeTab: tabs[0].name,
   loading: true,
 
+   completenessByKey: {}, // { [subcategory_key]: payload }
+
   user_dashboard_widgets: userStore.getUser.user_dashboard_widgets,
   user_id: userStore.getUser.id,
 
@@ -344,6 +347,7 @@ onMounted(async () => {
   await fetchreportyear(); // must run first to set default year
   await fetchData();
   await getexceldata();
+  
 });
 
 
@@ -416,6 +420,11 @@ function change_right_id(tab_name) {
 
 function refresh_data() {
   fetchData();
+}
+
+function handleCompleteness(payload) {
+  if (!payload?.subcategory_key) return;
+  state.completenessByKey[payload.subcategory_key] = payload;
 }
 
 async function fetchData() {

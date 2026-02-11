@@ -40,7 +40,6 @@
         Top 10 Leading causes of Infant Mortality (0-11 months)
       </h3>
 
-      <!-- 2 quarters per row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div
           v-for="(qid, idx) in state.quarterIds"
@@ -59,7 +58,6 @@
           </div>
 
           <div v-else class="grid grid-cols-12 gap-3 items-start">
-            <!-- LEFT: List -->
             <div class="col-span-12 md:col-span-7">
               <ul class="space-y-1 text-xs">
                 <li
@@ -84,7 +82,6 @@
               </ul>
             </div>
 
-            <!-- RIGHT: Pie -->
             <div class="col-span-12 md:col-span-5">
               <ClientOnly>
                 <apexchart
@@ -92,7 +89,7 @@
                   height="260"
                   width="100%"
                   :options="infantPieOptions(qid)"
-                  :series="state.infantPieByQuarter[qid].series"
+                  :series="state.infantPieByQuarter[qid]?.series ?? []"
                 />
               </ClientOnly>
             </div>
@@ -107,7 +104,6 @@
         Top 10 leading causes of Under-Five (U5) Mortality
       </h3>
 
-      <!-- 2 quarters per row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div
           v-for="(qid, idx) in state.quarterIds"
@@ -126,7 +122,6 @@
           </div>
 
           <div v-else class="grid grid-cols-12 gap-3 items-start">
-            <!-- LEFT: List -->
             <div class="col-span-12 md:col-span-7">
               <ul class="space-y-1 text-xs">
                 <li
@@ -151,7 +146,6 @@
               </ul>
             </div>
 
-            <!-- RIGHT: Pie -->
             <div class="col-span-12 md:col-span-5">
               <ClientOnly>
                 <apexchart
@@ -159,7 +153,7 @@
                   height="260"
                   width="100%"
                   :options="u5PieOptions(qid)"
-                  :series="state.u5PieByQuarter[qid].series"
+                  :series="state.u5PieByQuarter[qid]?.series ?? []"
                 />
               </ClientOnly>
             </div>
@@ -174,6 +168,8 @@
 import { reactive, onMounted, watch } from "vue";
 import { reportDetailsExcelService } from "~/components/api/ReportDetailsExcelService";
 
+const emit = defineEmits(["completeness"]);
+
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
   displaytext: { type: String, required: false },
@@ -184,6 +180,15 @@ const props = defineProps({
   report_years: { type: [Array, Object], required: true },
 });
 
+const SUBCATEGORY_KEY = "mortality";
+const SUBCATEGORY_LABEL = "MORTALITY";
+
+// indicators from passed_data (bar charts)
+const INDICATORS_PASSED = ["10.1", "10.2", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6"];
+
+// indicators from excel (lists/pies)
+const INDICATORS_EXCEL = ["12.1", "12.2"];
+
 const state = reactive({
   quarterNames: [],
   quarterIds: [],
@@ -193,12 +198,10 @@ const state = reactive({
 
   exceldata: [],
 
-  // LIST (ranked)
-  infantListByQuarter: {}, // { [qid]: [{rank,disease,count,pct}] }
+  infantListByQuarter: {},
   u5ListByQuarter: {},
 
-  // PIE (percentages)
-  infantPieByQuarter: {}, // { [qid]: { labels: string[], series: number[], total: number } }
+  infantPieByQuarter: {},
   u5PieByQuarter: {},
 
   populationHoriOptions: {
@@ -212,7 +215,7 @@ const state = reactive({
 
   pieOptionsBase: {
     chart: { type: "pie", toolbar: { show: false } },
-     legend: { show: false },
+    legend: { show: false },
     dataLabels: {
       enabled: true,
       style: { fontSize: "10px" },
@@ -241,7 +244,8 @@ function normalizePassedData() {
 function recalc() {
   buildQuarterArrays();
   fetchReports_Details_Bars();
-  getexceldata();
+  getexceldata(); // this will emit completeness when done
+  emitCompletenessFromPassed(); // emit partial completeness for passed_data right away
 }
 
 onMounted(() => {
@@ -250,7 +254,14 @@ onMounted(() => {
 
 watch(() => props.report_year, () => recalc());
 watch(() => props.report_years, () => recalc(), { deep: true });
-watch(() => props.passed_data, () => fetchReports_Details_Bars(), { deep: true });
+watch(
+  () => props.passed_data,
+  () => {
+    fetchReports_Details_Bars();
+    emitCompletenessFromPassed();
+  },
+  { deep: true }
+);
 
 function buildQuarterArrays() {
   const allYears = normalizeReportYears();
@@ -303,7 +314,7 @@ function fetchReports_Details_Bars() {
       switch (row.indicator_no) {
         case "10.1": total_maternal_deaths[idx] += value; break;
         case "10.2": ratio_maternal_deaths[idx] += value; break;
-        
+
         case "11.1": total_neonatal_deaths[idx] += value; break;
         case "11.2": rate_neonatal_deaths[idx] += value; break;
         case "11.3": infant_deaths_0to11[idx] += value; break;
@@ -334,6 +345,40 @@ function fetchReports_Details_Bars() {
   }
 }
 
+/**
+ * ✅ Completeness (passed_data part): row existence counts
+ */
+function emitCompletenessFromPassed() {
+  const data = normalizePassedData();
+  const quarterIds = (state.quarterIds ?? []).map(Number);
+
+  if (!quarterIds.length) {
+    // don’t emit final here; excel may still add expected/actual later
+    return;
+  }
+
+  const indicatorSet = new Set(INDICATORS_PASSED);
+  const pairs = new Set();
+
+  for (const row of data) {
+    if (!row) continue;
+
+    const ind = String(row.indicator_no ?? "").trim();
+    if (!indicatorSet.has(ind)) continue;
+
+    const ry = Number(row.report_year_id);
+    if (!quarterIds.includes(ry)) continue;
+
+    pairs.add(`${ind}:${ry}`);
+  }
+
+  // store partial into state for final merge after excel loads
+  state.__passed_expected = INDICATORS_PASSED.length * quarterIds.length;
+  state.__passed_actual = pairs.size;
+
+  emitCombinedCompleteness();
+}
+
 async function getexceldata() {
   try {
     const response = await reportDetailsExcelService.getReportExcelDetails();
@@ -352,6 +397,10 @@ async function getexceldata() {
       state.u5ListByQuarter = {};
       state.infantPieByQuarter = {};
       state.u5PieByQuarter = {};
+      // still emit combined completeness with 0 excel
+      state.__excel_expected = 0;
+      state.__excel_actual = 0;
+      emitCombinedCompleteness();
       return;
     }
 
@@ -363,6 +412,7 @@ async function getexceldata() {
     const buildListAndPieByQuarter = (indicatorNo) => {
       const listOut = {};
       const pieOut = {};
+      const existsPairs = new Set(); // for completeness: indicatorNo + qid
 
       for (const qid of quarterIds) {
         const list = rows
@@ -379,17 +429,19 @@ async function getexceldata() {
           }))
           .filter((x) => x.disease)
           .sort((a, b) => a.rank - b.rank)
-          .slice(0, 10);
+          .slice(0, 10); // Top 10 is intentional
+
+        // completeness for this indicator+quarter: row existence in excel for that quarter
+        // If you want "exists" only when list has items, this is correct:
+        if (list.length > 0) existsPairs.add(`${indicatorNo}:${qid}`);
 
         const total = list.reduce((sum, x) => sum + x.count, 0);
 
-        // list with pct
         listOut[qid] = list.map((x) => ({
           ...x,
           pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
         }));
 
-        // pie uses same pct values
         pieOut[qid] = {
           labels: listOut[qid].map((x) => x.disease),
           series: listOut[qid].map((x) => Number(x.pct.toFixed(2))),
@@ -397,7 +449,7 @@ async function getexceldata() {
         };
       }
 
-      return { listOut, pieOut };
+      return { listOut, pieOut, existsPairs };
     };
 
     const infant = buildListAndPieByQuarter("12.1");
@@ -407,6 +459,17 @@ async function getexceldata() {
     const u5 = buildListAndPieByQuarter("12.2");
     state.u5ListByQuarter = u5.listOut;
     state.u5PieByQuarter = u5.pieOut;
+
+    // ✅ completeness for excel indicators:
+    // expected = 2 indicators × quarters
+    // actual = how many indicator+quarter combos have any excel rows (top10 list length > 0)
+    const excelExpected = INDICATORS_EXCEL.length * quarterIds.length;
+    const excelActual = new Set([...infant.existsPairs, ...u5.existsPairs]).size;
+
+    state.__excel_expected = excelExpected;
+    state.__excel_actual = excelActual;
+
+    emitCombinedCompleteness();
   } catch (err) {
     console.error("Error fetching report detail excel:", err);
     state.exceldata = [];
@@ -414,7 +477,51 @@ async function getexceldata() {
     state.u5ListByQuarter = {};
     state.infantPieByQuarter = {};
     state.u5PieByQuarter = {};
+
+    state.__excel_expected = 0;
+    state.__excel_actual = 0;
+    emitCombinedCompleteness();
   }
+}
+
+/**
+ * ✅ Final combined completeness emitted for the whole Mortality subcategory
+ * Uses both passed_data indicators and excel indicators.
+ */
+function emitCombinedCompleteness() {
+  const quarterIds = (state.quarterIds ?? []).map(Number);
+  if (!quarterIds.length) {
+    emit("completeness", {
+      tab_name: "Survival",
+      subcategory_key: SUBCATEGORY_KEY,
+      subcategory_label: SUBCATEGORY_LABEL,
+      report_year: props.report_year,
+      expected: 0,
+      actual: 0,
+      percentage: 0,
+    });
+    return;
+  }
+
+  const expected =
+    (Number(state.__passed_expected) || 0) +
+    (Number(state.__excel_expected) || 0);
+
+  const actual =
+    (Number(state.__passed_actual) || 0) +
+    (Number(state.__excel_actual) || 0);
+
+  const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
+
+  emit("completeness", {
+    tab_name: "Survival",
+    subcategory_key: SUBCATEGORY_KEY,
+    subcategory_label: SUBCATEGORY_LABEL,
+    report_year: props.report_year,
+    expected,
+    actual,
+    percentage,
+  });
 }
 
 function infantPieOptions(qid) {

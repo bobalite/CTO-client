@@ -43,12 +43,14 @@
 <script setup>
 import { reactive, onMounted, watch } from "vue";
 
+const emit = defineEmits(["completeness"]);
+
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
   displaytext: { type: String, required: false },
   group_id: { type: String, required: false },
 
-  // selected year from parent (NOT used to filter; only triggers recompute)
+  // selected year from parent
   report_year: { type: [Number, String], required: false },
 
   // annual dataset rows
@@ -57,6 +59,10 @@ const props = defineProps({
   // mapping table for fallback: report_year_id -> year
   report_years: { type: [Array, Object], required: true },
 });
+
+const SUBCATEGORY_KEY = "nutritional-status-school-children";
+const SUBCATEGORY_LABEL = "NUTRITIONAL STATUS OF SCHOOL CHILDREN";
+const INDICATORS = ["15.1", "16.1", "16.2", "16.3", "17.1", "17.2", "17.3"];
 
 const state = reactive({
   annualYearIds: [],
@@ -80,7 +86,6 @@ const state = reactive({
 
 onMounted(() => recalc());
 
-// Recompute when data or mapping changes (or selected year changes and parent refetches annual data)
 watch(() => props.passed_data, () => recalc(), { deep: true });
 watch(() => props.report_years, () => recalc(), { deep: true });
 watch(() => props.report_year, () => recalc());
@@ -100,14 +105,12 @@ function normalizeReportYears() {
 }
 
 function getRowYear(row) {
-  // prefer explicit year fields
   const y = row?.year ?? row?.report_year;
   if (y != null && y !== "") {
     const yn = Number(y);
     return Number.isFinite(yn) ? yn : NaN;
   }
 
-  // fallback: map report_year_id -> year
   const ryId = Number(row?.report_year_id);
   if (!Number.isFinite(ryId)) return NaN;
 
@@ -121,12 +124,12 @@ function getRowYear(row) {
 function recalc() {
   buildAnnualAxisFromAnnualData();
   buildAnnualSeriesFromAnnualData();
+  emitCompletenessForSelectedYear();
 }
 
 function buildAnnualAxisFromAnnualData() {
   const data = normalizePassedData();
 
-  // derive years from annual rows (most reliable)
   const years = Array.from(
     new Set(data.map(r => getRowYear(r)).filter(y => Number.isFinite(y)))
   ).sort((a, b) => a - b);
@@ -153,7 +156,6 @@ function buildAnnualSeriesFromAnnualData() {
   const yearIndexMap = new Map();
   yearIds.forEach((year, idx) => yearIndexMap.set(year, idx));
 
-  // per-year arrays
   const a15_1 = new Array(yearIds.length).fill(0);
 
   const a16_1 = new Array(yearIds.length).fill(0);
@@ -176,7 +178,7 @@ function buildAnnualSeriesFromAnnualData() {
     const value = row.total != null ? Number(row.total) : 0;
     if (!Number.isFinite(value)) continue;
 
-    switch (row.indicator_no) {
+    switch (String(row.indicator_no)) {
       case "15.1": a15_1[idx] += value; break;
 
       case "16.1": a16_1[idx] += value; break;
@@ -204,5 +206,58 @@ function buildAnnualSeriesFromAnnualData() {
     { name: "17.2 Schools fully-implementing the WinS", data: a17_2 },
     { name: "17.3 % schools fully implementing WinS", data: a17_3 },
   ];
+}
+
+/**
+ * ✅ Annual completeness:
+ * Expected = number of indicators (single set per year)
+ * Actual   = count of indicators that have at least one row for selected year
+ */
+function emitCompletenessForSelectedYear() {
+  const selectedYear = Number(props.report_year);
+
+  if (!Number.isFinite(selectedYear)) {
+    emit("completeness", {
+      tab_name: "Survival",
+      subcategory_key: SUBCATEGORY_KEY,
+      subcategory_label: SUBCATEGORY_LABEL,
+      report_year: props.report_year,
+      expected: INDICATORS.length,
+      actual: 0,
+      percentage: 0,
+    });
+    return;
+  }
+
+  const data = normalizePassedData();
+  const indicatorSet = new Set(INDICATORS);
+  const presentIndicators = new Set();
+
+  for (const row of data) {
+    if (!row) continue;
+
+    const rowYear = getRowYear(row);
+    if (!Number.isFinite(rowYear) || rowYear !== selectedYear) continue;
+
+    const ind = String(row.indicator_no ?? "").trim();
+    if (!indicatorSet.has(ind)) continue;
+
+    // ✅ existence counts (even if total is 0)
+    presentIndicators.add(ind);
+  }
+
+  const expected = INDICATORS.length;
+  const actual = presentIndicators.size;
+  const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
+
+  emit("completeness", {
+    tab_name: "Survival",
+    subcategory_key: SUBCATEGORY_KEY,
+    subcategory_label: SUBCATEGORY_LABEL,
+    report_year: props.report_year,
+    expected,
+    actual,
+    percentage,
+  });
 }
 </script>

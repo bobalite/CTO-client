@@ -50,7 +50,7 @@
           height="300"
           width="100%"
           :options="state.populationHoriOptions"
-          :series="state.graphSeriesPrenatalCare "
+          :series="state.graphSeriesPrenatalCare"
         />
       </ClientOnly>
     </div>
@@ -67,14 +67,14 @@
           height="300"
           width="100%"
           :options="state.populationHoriOptions"
-          :series="state.attendedskilled "
+          :series="state.attendedskilled"
         />
       </ClientOnly>
     </div>
 
     <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">
-        Facility Based Deliveries 
+        Facility Based Deliveries
       </h3>
 
       <ClientOnly>
@@ -88,7 +88,7 @@
       </ClientOnly>
     </div>
 
-     <div class="border rounded-xl p-2">
+    <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">
         Postpartum Care
       </h3>
@@ -109,6 +109,8 @@
 <script setup>
 import { reactive, onMounted, watch } from "vue";
 
+const emit = defineEmits(["completeness"]);
+
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
   displaytext: { type: String, required: false },
@@ -119,13 +121,44 @@ const props = defineProps({
   report_years: { type: [Array, Object], required: true },
 });
 
+const SUBCATEGORY_KEY = "maternal-care-and-services";
+const SUBCATEGORY_LABEL = "MATERNAL CARE AND SERVICES";
+
+// ✅ indicators under this subcategory (the ones you chart here)
+const INDICATORS = [
+  "1.1",
+  "2.1",
+  "2.11",
+  "2.12",
+  "2.2",
+  "3.1",
+  "3.2",
+  "3.2.1",
+  "3.2.2",
+  "4.1",
+  "4.1.1",
+  "4.1.2",
+  "4.1.3",
+  "5.1",
+  "5.1.1",
+  "5.1.2",
+  "5.1.3",
+  "6.1",
+  "6.2",
+  "6.2.1",
+  "6.2.2",
+];
+
 const state = reactive({
   graphSeriesAll: [
     { name: "Less than 15 yrs old", data: [0, 0, 0, 0] },
     { name: "15 - 19 yrs old", data: [0, 0, 0, 0] },
   ],
 
-  graphSeriesAllPrevalence: [{ name: "Prevalence/percentage of adolescent pregnancies", data: [0, 0, 0, 0] }],
+  graphSeriesAllPrevalence: [
+    { name: "Prevalence/percentage of adolescent pregnancies", data: [0, 0, 0, 0] },
+  ],
+
   graphSeriesPrenatalCare: [],
   attendedskilled: [],
   facilitybased: [],
@@ -142,93 +175,49 @@ const state = reactive({
     stroke: { curve: "smooth" },
     xaxis: { categories: ["1Q", "2Q", "3Q", "4Q"] },
   },
-
-  OptionsPieDatasource: {
-    chart: { type: "pie" },
-    colors: ["#fbbf24", "#facc15", "#a3e635", "#4ade80"],
-    grid: { padding: { top: 0, bottom: 0, left: 0, right: 0 } },
-    dataLabels: {
-      enabled: true,
-      style: { colors: ["#333"], fontSize: "12px", fontWeight: "bold" },
-      formatter(val, opts) {
-        const name = opts.w.globals.labels[opts.seriesIndex];
-        return [name, val.toFixed(1) + "%"];
-      },
-    },
-    legend: { show: false },
-    labels: ["Above 19 yrs old", "less than 15 yrs old", "15 - 19 yrs old"],
-  },
 });
 
 onMounted(() => {
   rebuildAll();
 });
 
-/**
- * Rebuild order matters:
- * 1) quarterIds must be correct for the year
- * 2) then compute series using quarterIds
- */
 function rebuildAll() {
   buildQuarterArrays();
   fetchReports_Details_Bars();
-  fetchReports_Details_Pie();
+  emitCompleteness(); // ✅ emit after (uses same quarterIds + passed_data)
 }
 
-/**
- * Watch year changes -> rebuild quarters and series
- */
 watch(
   () => props.report_year,
-  () => {
-    rebuildAll();
-  }
+  () => rebuildAll()
 );
 
-/**
- * Watch report_years changes (quarters list changes) -> rebuild quarters and series
- */
 watch(
   () => props.report_years,
-  () => {
-    rebuildAll();
-  },
+  () => rebuildAll(),
   { deep: true }
 );
 
-/**
- * Watch passed_data changes -> recompute series (quarters already computed)
- * Use deep: true because your parent mutates nested .data sometimes.
- */
 watch(
   () => props.passed_data,
   () => {
-    // only recompute series; quarterIds might still be valid
     fetchReports_Details_Bars();
-    fetchReports_Details_Pie();
+    emitCompleteness();
   },
   { deep: true }
 );
 
 function normalizeReportYears() {
   const raw = props.report_years;
-
   if (Array.isArray(raw)) return raw;
-
   if (raw && Array.isArray(raw.data)) return raw.data;
-
   return [];
 }
 
 function normalizePassedData() {
   const raw = props.passed_data;
-
-  // if parent passes array
   if (Array.isArray(raw)) return raw;
-
-  // if parent passes {data: [...]}
   if (raw && Array.isArray(raw.data)) return raw.data;
-
   return [];
 }
 
@@ -237,11 +226,10 @@ function buildQuarterArrays() {
   const targetYear = Number(props.report_year);
 
   const filtered = allYears
-    .filter(q => Number(q.year) === targetYear)
-    // IMPORTANT: ensure consistent quarter order (if you have quarter field or date)
+    .filter((q) => Number(q.year) === targetYear)
     .sort((a, b) => Number(a.quarter ?? a.id) - Number(b.quarter ?? b.id));
 
-  const quarterIds = filtered.map(q => Number(q.id));
+  const quarterIds = filtered.map((q) => Number(q.id));
   const quarterNames = filtered.map((q, index) => `Q${index + 1} ${q.year}`);
 
   state.quarterIds = quarterIds;
@@ -259,12 +247,13 @@ async function fetchReports_Details_Bars() {
     const quarterIds = (state.quarterIds ?? []).map(Number);
 
     if (!quarterIds.length) {
-      // year has no quarters; reset to empty
       state.graphSeriesAll = [
-        { name: "Less than 15 yrs old", data: [] },
-        { name: "15 - 19 yrs old", data: [] },
+        { name: "1.1 - Total Pregnant Women", data: [] },
+        { name: "2.1 - Total Pregnant Adolescents", data: [] },
+        { name: "2.1.1 - Less than 15 yrs old", data: [] },
+        { name: "2.1.2 - 15 - 19 yrs old", data: [] },
       ];
-      state.graphSeriesAllPrevalence = [{ name: "Prevalence/percentage of adolescent pregnancies", data: [] }];
+      state.graphSeriesAllPrevalence = [{ name: "2.2 - Prevalence/percentage of adolescent pregnancies", data: [] }];
       state.graphSeriesPrenatalCare = [];
       state.attendedskilled = [];
       state.facilitybased = [];
@@ -275,13 +264,11 @@ async function fetchReports_Details_Bars() {
     const total_pregnant_women = new Array(quarterIds.length).fill(0);
     const total_pregnant_adolescent = new Array(quarterIds.length).fill(0);
 
-
-    //3.1  - 3.2.2 are prenatal care indicators; we need to keep them separate from total pregnant
     const total_pregnantw8antenatal = new Array(quarterIds.length).fill(0);
     const total_pregnantAdolescentw8antenatal = new Array(quarterIds.length).fill(0);
     const total_pregnantAdolescentw8antenatalLess15 = new Array(quarterIds.length).fill(0);
     const total_pregnantAdolescentw8antenatalmore15 = new Array(quarterIds.length).fill(0);
-    
+
     const prevalence = new Array(quarterIds.length).fill(0);
     const less15 = new Array(quarterIds.length).fill(0);
     const from15to19 = new Array(quarterIds.length).fill(0);
@@ -301,107 +288,46 @@ async function fetchReports_Details_Bars() {
     const alladolescentPostpartumless15 = new Array(quarterIds.length).fill(0);
     const alladolescentPostpartummore15 = new Array(quarterIds.length).fill(0);
 
-   for (const row of data) {
-  if (!row) continue;
+    for (const row of data) {
+      if (!row) continue;
 
-  const reportYearId = Number(row.report_year_id);
-  const idx = quarterIds.indexOf(reportYearId);
-  if (idx === -1) continue;
+      const reportYearId = Number(row.report_year_id);
+      const idx = quarterIds.indexOf(reportYearId);
+      if (idx === -1) continue;
 
-  const value = row.total != null ? Number(row.total) : 0;
-  if (Number.isNaN(value)) continue;
+      const value = row.total != null ? Number(row.total) : 0;
+      if (Number.isNaN(value)) continue;
 
-  switch (row.indicator_no) {
-    case "1.1":
-      total_pregnant_women[idx] += value;
-      break;
+      switch (row.indicator_no) {
+        case "1.1": total_pregnant_women[idx] += value; break;
+        case "2.1": total_pregnant_adolescent[idx] += value; break;
+        case "2.11": less15[idx] += value; break;
+        case "2.12": from15to19[idx] += value; break;
+        case "2.2": prevalence[idx] += value; break;
 
-    case "2.1":
-      total_pregnant_adolescent[idx] += value;
-      break;
+        case "3.1": total_pregnantw8antenatal[idx] += value; break;
+        case "3.2": total_pregnantAdolescentw8antenatal[idx] += value; break;
+        case "3.2.1": total_pregnantAdolescentw8antenatalLess15[idx] += value; break;
+        case "3.2.2": total_pregnantAdolescentw8antenatalmore15[idx] += value; break;
 
-    case "2.11":
-      less15[idx] += value;
-      break;
+        case "4.1": total_atended[idx] += value; break;
+        case "4.1.1": total_atendedless15[idx] += value; break;
+        case "4.1.2": total_atended15to19[idx] += value; break;
+        case "4.1.3": total_atendedmore19[idx] += value; break;
 
-    case "2.12":
-      from15to19[idx] += value;
-      break;
+        case "5.1": total_facility[idx] += value; break;
+        case "5.1.1": total_facilityless15[idx] += value; break;
+        case "5.1.2": total_facility5to19[idx] += value; break;
+        case "5.1.3": total_facilitymore19[idx] += value; break;
 
-    case "2.2":
-      prevalence[idx] += value;
-      break;
+        case "6.1": allpregnantPostpartum[idx] += value; break;
+        case "6.2": alladolescentPostpartum[idx] += value; break;
+        case "6.2.1": alladolescentPostpartumless15[idx] += value; break;
+        case "6.2.2": alladolescentPostpartummore15[idx] += value; break;
 
-    case "3.1":
-      total_pregnantw8antenatal[idx] += value;
-      break;
-
-    case "3.2":
-      total_pregnantAdolescentw8antenatal[idx] += value;
-      break;
-
-    case "3.2.1":
-      total_pregnantAdolescentw8antenatalLess15[idx] += value;
-      break;
-     case "3.2.2":
-      total_pregnantAdolescentw8antenatalmore15[idx] += value;
-      break;
-
-
-    
-    case "4.1":
-      total_atended[idx] += value;
-      break;
-
-    case "4.1.1":
-      total_atendedless15[idx] += value;
-      break;
-
-    case "4.1.2":
-      total_atended15to19[idx] += value;
-      break;
-
-    case "4.1.3":
-      total_atendedmore19[idx] += value;
-      break;
-
-    case "5.1":
-      total_facility[idx] += value;
-      break;
-
-    case "5.1.1":
-      total_facilityless15[idx] += value;
-      break;
-
-    case "5.1.2":
-      total_facility5to19[idx] += value;
-      break;
-
-    case "5.1.3":
-      total_facilitymore19[idx] += value;
-      break;
-
-    case "6.1":
-      allpregnantPostpartum[idx] += value;
-      break;
-
-    case "6.2":
-      alladolescentPostpartum[idx] += value;
-      break;
-
-      case "6.2.1":
-      alladolescentPostpartumless15[idx] += value;
-      break;
-
-      case "6.2.2":
-      alladolescentPostpartummore15[idx] += value;
-      break;
-
-    default:
-      // ignore unknown indicator_no
-      break;
-  }
-}
+        default: break;
+      }
+    }
 
     state.graphSeriesAll = [
       { name: "1.1 - Total Pregnant Women", data: total_pregnant_women },
@@ -410,12 +336,12 @@ async function fetchReports_Details_Bars() {
       { name: "2.1.2 - 15 - 19 yrs old", data: from15to19 },
     ];
 
-     state.graphSeriesAllPrevalence = [
+    state.graphSeriesAllPrevalence = [
       { name: "2.2 - Prevalence/percentage of adolescent pregnancies", data: prevalence },
     ];
 
     state.graphSeriesPrenatalCare = [
-      { name: "3.1 - ALL pregnant women with at least 8 antenatal check-ups ", data: total_pregnantw8antenatal },
+      { name: "3.1 - ALL pregnant women with at least 8 antenatal check-ups", data: total_pregnantw8antenatal },
       { name: "3.2 - ALL pregnant adolescents with at least 8 antenatal check-ups", data: total_pregnantAdolescentw8antenatal },
       { name: "3.2.1 - Total number of <15 years old pregnant adolescents", data: total_pregnantAdolescentw8antenatalLess15 },
       { name: "3.2.2 - Total number of 15-19 years old pregnant adolescents", data: total_pregnantAdolescentw8antenatalmore15 },
@@ -429,33 +355,76 @@ async function fetchReports_Details_Bars() {
     ];
 
     state.facilitybased = [
-      
       { name: "5.1 - Total Facility Based deliveries", data: total_facility },
       { name: "5.1.1 - Total Facility Based <15 years old deliveries", data: total_facilityless15 },
       { name: "5.1.2 - Total Facility Based 15 -19 yrs. old deliveries", data: total_facility5to19 },
       { name: "5.1.3 - Total Facility Based >19 years old deliveries", data: total_facilitymore19 },
     ];
 
-    // BUG FIX: your postpartum series was using facility arrays (wrong)
     state.postpartum = [
       { name: "6.1 - Total Pregnant completed at least 4 postpartum check ups", data: allpregnantPostpartum },
       { name: "6.2 - Adolescent Pregnant completed at least 4 postpartum check ups", data: alladolescentPostpartum },
       { name: "6.2.1 - Adolescent Pregnant <15 years old completed at least 4 postpartum check ups", data: alladolescentPostpartumless15 },
       { name: "6.2.2 - Adolescent Pregnant 15-19 years old completed at least 4 postpartum check ups", data: alladolescentPostpartummore15 },
     ];
-
-   
   } catch (error) {
     console.error("fetchReports_Details_Bars error:", error);
   }
 }
 
-async function fetchReports_Details_Pie() {
-  try {
-    const data = normalizePassedData();
-    // compute pie here if needed
-  } catch (error) {
-    console.error(error);
+/**
+ * ✅ Completeness for this subcategory:
+ * Expected = (# indicators in this subcategory) × (# quarters in selected year)
+ * Actual   = count of indicator-quarter cells where a row EXISTS (even if total = 0)
+ */
+function emitCompleteness() {
+  const data = normalizePassedData();
+  const quarterIds = (state.quarterIds ?? []).map(Number);
+
+  if (!quarterIds.length) {
+    emit("completeness", {
+      tab_name: "Survival",
+      subcategory_key: SUBCATEGORY_KEY,
+      subcategory_label: SUBCATEGORY_LABEL,
+      report_year: props.report_year,
+      expected: 0,
+      actual: 0,
+      percentage: 0,
+    });
+    return;
   }
+
+  const indicatorSet = new Set(INDICATORS);
+
+  const expected = INDICATORS.length * quarterIds.length;
+
+  // ✅ row existence counts (not value > 0)
+  const actualPairs = new Set(); // `${indicator_no}:${report_year_id}`
+
+  for (const row of data) {
+    if (!row) continue;
+
+    const ind = String(row.indicator_no ?? "").trim();
+    if (!indicatorSet.has(ind)) continue;
+
+    const ry = Number(row.report_year_id);
+    if (!quarterIds.includes(ry)) continue;
+
+    // ✅ no value check; existence is enough
+    actualPairs.add(`${ind}:${ry}`);
+  }
+
+  const actual = actualPairs.size;
+  const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
+
+  emit("completeness", {
+    tab_name: "Survival",
+    subcategory_key: SUBCATEGORY_KEY,
+    subcategory_label: SUBCATEGORY_LABEL,
+    report_year: props.report_year,
+    expected,
+    actual,
+    percentage,
+  });
 }
 </script>
