@@ -70,6 +70,8 @@
                         <div class="py-2 pl-4 border-l border-gray-300 cursor-pointer rounded"
                           @click.stop="toggleGroup(group.id)">
                           <!-- GROUP HEADER + ACTIONS -->
+
+                          
                           <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 font-semibold">
                               <svg :class="[

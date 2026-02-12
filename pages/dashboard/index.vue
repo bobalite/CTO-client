@@ -10,9 +10,10 @@
       />
     </div>
 
-    <div class="flex items-center space-x-4"></div>
-
-    <button @click="toggleSidebar" class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">
+    <button
+      class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300"
+      @click="toggleSidebar?.()"
+    >
       ☰
     </button>
   </header>
@@ -25,7 +26,9 @@
           @click.prevent="change_right_id(tab.name)"
           :class="[
             'flex items-center justify-center p-2 rounded-t-md transition-colors',
-            state.activeTab === tab.name ? 'bg-green-200 text-green-900 shadow-inner' : 'hover:bg-gray-200 text-gray-600'
+            state.activeTab === tab.name
+              ? 'bg-green-200 text-green-900 shadow-inner'
+              : 'hover:bg-gray-200 text-gray-600'
           ]"
         >
           <span v-if="tab.name == 'Survival'"><IconMaterialSurvival /></span>
@@ -37,40 +40,30 @@
         </a>
       </li>
     </div>
-
-    <!-- <li class="list-none">
-      <a href="#" class="flex items-center justify-center p-2 rounded-t-md hover:bg-gray-200" @click.prevent="openSlideModal(1)">
-        <span><IconMaterialSettings /></span>
-      </a>
-    </li> -->
   </ul>
 
   <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
     <h2 class="text-lg font-semibold">{{ state.activeTab }}</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <!-- <div class="bg-green-300 text-gray-800 p-1 rounded-lg shadow sm:col-span-2 -z-1">
-        <GraphsDataCompletion
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          :displaytext="'Data Completion'"
-          :report_year="String(state.report_year || '')"
-        />
-      </div> -->
-
-      <!-- <div class="bg-green-300 text-gray-800 p-4 rounded-lg shadow sm:col-span-1">
+      <!-- ✅ Data Sources (Expected Ownership from config) -->
+      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
         <GraphsDataSources
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          :displaytext="' Data Sources'"
+          :title=" state.activeTab + ' Data Sources '"
           :report_year="String(state.report_year || '')"
+          :labels="datasourcePie.labels"
+          :series="datasourcePie.series"
+          :section="state.activeTab"
         />
-      </div> -->
+      </div>
 
-      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-4">
+      <!-- ✅ Completeness (computed parent-side, child only renders) -->
+      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
         <GraphsDataStatistics
           :data="state.completenessByKey"
-          :selected_tab ="state.activeTab"
+          :selected_tab="state.activeTab"
+          :indicator_config="state.rights_config_by_right[state.right_id] || []"
+          :agencies="state.options.agencies"
         />
       </div>
     </div>
@@ -79,282 +72,231 @@
   <div class="flex h-screen">
     <div class="flex-1 flex flex-col">
       <div
-        v-if="state.loading == false"
+        v-if="!state.loading"
         class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4"
       >
+        <!-- Survival -->
         <GraphsSurvivalMaternalServices
-           v-if="state.activeTab === 'Survival'" 
+          v-if="state.activeTab === 'Survival'"
           :key="graphsKey"
           :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid border-blue-black bg-green-100 rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Maternal Deliveries'"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
           :report_year="String(state.report_year || '')"
           :report_years="state.report_years"
-           @completeness="handleCompleteness"
         />
 
-
-         <GraphsChildCareAndServices v-if="state.activeTab === 'Survival'"    :key="graphsKey"
+        <GraphsChildCareAndServices
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
           :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Maternal Deliveries'" 
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
           :report_year="String(state.report_year || '')"
-          :report_years="state.report_years" 
-           @completeness="handleCompleteness"
-         />
-
-
-         <GraphsSurvivalMortality v-if="state.activeTab === 'Survival'" :key="graphsKey"
-         :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="''" 
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years" 
-          @completeness="handleCompleteness"
+          :report_years="state.report_years"
         />
 
-         <GraphsSurvivalNutritionalPreSchool v-if="state.activeTab === 'Survival'" :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-           :report_year="String(state.report_year || '')" 
-           :report_years="state.report_years"
-           @completeness="handleCompleteness"
-           >
-        </GraphsSurvivalNutritionalPreSchool>
-
-         <GraphsSurvivalNutritionalSchoolChildren v-if="state.activeTab === 'Survival'"
-          :key="graphsKey" :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
+        <GraphsSurvivalMortality
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
           :report_years="state.report_years"
-          @completeness="handleCompleteness">
-        </GraphsSurvivalNutritionalSchoolChildren>
+        />
 
-        <GraphsSurvivalAccess v-if="state.activeTab === 'Survival'" :key="graphsKey"
+        <GraphsSurvivalNutritionalPreSchool
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
           :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-           :report_year="String(state.report_year || '')" 
-           :report_years="state.report_years"
-           @completeness="handleCompleteness">
-        </GraphsSurvivalAccess>
-
-         <GraphsSurvivalHIV v-if="state.activeTab === 'Survival'" :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years"  
-           @completeness="handleCompleteness"
-          >
-        </GraphsSurvivalHIV>
-
-         <GraphsDevelopmentEarlyChildhood v-if="state.activeTab === 'Development'" :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
           :report_years="state.report_years"
-          @completeness="handleCompleteness">
-        </GraphsDevelopmentEarlyChildhood>
+        />
 
-        <GraphsDevelopmentEnrolment v-if="state.activeTab === 'Development'" :key="graphsKey"
+        <GraphsSurvivalNutritionalSchoolChildren
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
           :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          ::report_year="String(state.report_year || '')" 
-           :report_years="state.report_years"
-           @completeness="handleCompleteness">
-        </GraphsDevelopmentEnrolment>
-
-        <GraphsDevelopmentOSCY v-if="state.activeTab === 'Development'" :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-yellow-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
           :report_years="state.report_years"
-          @completeness="handleCompleteness">
-        </GraphsDevelopmentOSCY>
+        />
 
-        <GraphsProtectionChildrenInNeed v-if="state.activeTab === 'Protection'" :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-blue-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
-        </GraphsProtectionChildrenInNeed>
-
-        <GraphsProtectionChildrenInConflict v-if="state.activeTab === 'Protection'" :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-blue-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
-        </GraphsProtectionChildrenInConflict>
-
-         <GraphsParticipationChildrens v-if="state.activeTab === 'Participation'" :key="graphsKey"
+        <GraphsSurvivalAccess
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
           :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-blue-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
-        </GraphsParticipationChildrens>
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
 
-        <GraphsGovernanceLocalCouncil v-if="state.activeTab === 'Governance'" :key="graphsKey"
+        <GraphsSurvivalHIV
+          v-if="state.activeTab === 'Survival'"
+          :key="graphsKey"
           :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-red-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
-           :report_year="String(state.report_year || '')" 
-            :report_years="state.report_years">
-        </GraphsGovernanceLocalCouncil>
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
 
-        <GraphsGeneralInformation v-if="state.activeTab === 'General Information'" :key="graphsKey"
+        <!-- Development -->
+        <GraphsDevelopmentEarlyChildhood
+          v-if="state.activeTab === 'Development'"
+          :key="graphsKey"
+          :passed_data="state.passed_data_annual"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
+
+        <GraphsDevelopmentEnrolment
+          v-if="state.activeTab === 'Development'"
+          :key="graphsKey"
+          :passed_data="state.passed_data_annual"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
+
+        <GraphsDevelopmentOSCY
+          v-if="state.activeTab === 'Development'"
+          :key="graphsKey"
+          :passed_data="state.passed_data_annual"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
+
+        <!-- Protection -->
+        <GraphsProtectionChildrenInNeed
+          v-if="state.activeTab === 'Protection'"
+          :key="graphsKey"
           :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold  text-left m-1  pl-2 border-1 border-solid border-blue-black bg-green-100  rounded-xl border-blue-900 border-t border-b border-l border-r"
-          :displaytext="'Total Number of BCPC with child representatives, by type of selection process:'"
-          :report_year="String(state.report_year || '')" 
-          :report_years="state.report_years">
-        </GraphsGeneralInformation>
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
 
+        <GraphsProtectionChildrenInConflict
+          v-if="state.activeTab === 'Protection'"
+          :key="graphsKey"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
 
+        <!-- Participation -->
+        <GraphsParticipationChildrens
+          v-if="state.activeTab === 'Participation'"
+          :key="graphsKey"
+          :passed_data="state.passed_data_annual"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
+
+        <!-- Governance -->
+        <GraphsGovernanceLocalCouncil
+          v-if="state.activeTab === 'Governance'"
+          :key="graphsKey"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-red-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
+
+        <!-- General Info -->
+        <GraphsGeneralInformation
+          v-if="state.activeTab === 'General Information'"
+          :key="graphsKey"
+          :passed_data="state.passed_data"
+          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+          :report_year="String(state.report_year || '')"
+          :report_years="state.report_years"
+        />
       </div>
     </div>
   </div>
-
-  <!-- <ModalSlide
-    :show="state.isSlideModalOpen"
-    :close="closeSlideModal"
-    :title="'Select Dashboard Widget'"
-    :dialogClass="'flex h-full flex-col divide-y divide-black bg-opacity-90 bg-green-900 rounded-md shadow-xl mt-[4rem]'"
-    :buttonClass="'relative rounded-md bg-green-600 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500'"
-    :tittleClass="'text-2xl text-right font-bold leading-tight tracking-tight text-black'"
-  >
-    <div class="mt-8 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-left sm:px-6 lg:px-8">
-          <div class="overflow-hidden px-3 py-3.5 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <div class="inline-block min-w-full py-2 align-left sm:px-6 lg:px-8">
-              <button
-                @click="saveDashboardSettings()"
-                class="rounded-md px-6 py-2 bg-green-900 text-white font-semibold shadow-md hover:bg-green-600 hover:text-white transition-colors duration-200"
-              >
-                Save Dashboard Settings
-              </button>
-            </div>
-
-          
-            <table class="table-fixed w-full bg-opacity-90">
-           
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ModalSlide> -->
 </template>
 
 <script setup>
-import { reactive, computed, onMounted } from "vue";
-import { reportDetailsService } from "~/components/api/ReportDetailsService";
-import { reportDetailsExcelService } from "~/components/api/ReportDetailsExcelService";
-import { useUserStore } from "~/store/user";
-import { userDashboardWidgetsService } from "~/components/api/UserDashboardWidgetsService";
+import { reactive, computed, onMounted, watch } from "vue";
 import { report_yearService } from "~/components/api/ReportYears";
 import { reportDetailsGroupsService } from "~/components/api/ReportDetailsGroupsService";
-
-const userStore = useUserStore();
+import { indicatorService } from "~/components/api/IndicatorCategoryService";
 
 definePageMeta({ layout: "main" });
 
-import { watch } from "vue";
-import ExcelUploads from "~/components/graphs/excelUploads.vue";
-
-
-
-
-let tabs = [
-  { name: "Survival", icon: "monitor_heart" },
-  { name: "Development", icon: "school" },
-  { name: "Protection", icon: "local_police" },
-  { name: "Participation", icon: "diversity_3" },
-  { name: "Governance", icon: "account_balance" },
-  { name: "General Information", icon: "info" }
+const tabs = [
+  { name: "Survival" },
+  { name: "Development" },
+  { name: "Protection" },
+  { name: "Participation" },
+  { name: "Governance" },
+  { name: "General Information" }
 ];
 
-
+const TAB_TO_RIGHT_ID = {
+  "Survival": 1,
+  "Development": 2,
+  "Protection": 3,
+  "Participation": 4,
+  "Governance": 5,
+  "General Information": 6
+};
 
 const state = reactive({
   activeTab: tabs[0].name,
+  right_id: TAB_TO_RIGHT_ID[tabs[0].name],
+
   loading: true,
-
-   completenessByKey: {}, // { [subcategory_key]: payload }
-
-  user_dashboard_widgets: userStore.getUser.user_dashboard_widgets,
-  user_id: userStore.getUser.id,
-
-  right_id: 1,
-
-  passed_data_annual: [],
-  passed_data: [],
-
-  group_details: [],
-  exceldata: [],
-
   isPageLoading: false,
-  isSlideModalOpen: false,
 
-  // YEAR OPTIONS ONLY
+  passed_data: [],
+  passed_data_annual: [],
+
+  report_year: null,
+  report_years: { data: [] },
   options: {
-    report_years: []
+    report_years: [],
+    agencies: [
+      { value: 1, label: "SOCC", color: "bg-red-500 border-red-400" },
+      { value: 2, label: "CHO", color: "bg-blue-500 border-blue-400" },
+      { value: 3, label: "DepEd", color: "bg-green-500 border-green-400" },
+      { value: 4, label: "CSWDO", color: "bg-yellow-500 border-yellow-400" },
+      { value: 5, label: "CHED", color: "bg-purple-500 border-purple-400" },
+      { value: 6, label: "DCPO", color: "bg-pink-500 border-pink-400" },
+      { value: 7, label: "DILG", color: "bg-indigo-500 border-indigo-400" },
+      { value: 8, label: "IGDD", color: "bg-teal-500 border-teal-400" },
+      { value: 9, label: "CBO", color: "bg-orange-500 border-orange-400" },
+      { value: 10, label: "CPDO", color: "bg-gray-500 border-gray-400" },
+      { value: 11, label: "CCRO", color: "bg-lime-500 border-lime-400" },
+      { value: 12, label: "CDRRMO", color: "bg-rose-500 border-rose-400" },
+      { value: 13, label: "FCCDI", color: "bg-cyan-500 border-cyan-400" },
+      { value: 14, label: "PSA", color: "bg-emerald-500 border-emerald-400" },
+      { value: 15, label: "NCIP", color: "bg-fuchsia-500 border-fuchsia-400" },
+    ],
   },
 
-  // report_year is now the actual YEAR (e.g. 2025)
-  report_year: null,
+  rights_config_all: [],
+  rights_config_by_right: {},
 
-  // keep raw list if other components still use it
-  report_years: { data: [] },
-
-  
-
-  ShowGraphSurvivalMaternalService: true,
-
-  showGraphsGrp01: false,
-  showGraphsGrp02: false,
-  showGraphsGrp03: false,
-  showGraphsGrp04: false,
-  showGraphsGrp05: false,
-  showGraphsGrp06: false,
-  showGraphsGrp37: false,
-  showGraphsGrp45: false,
-  showGraphsGrp48: false,
-  showGraphsGrp49: false,
-  showGraphsGrp50: false,
-  showGraphsGrp55: false,
-  showGraphsGrp59: false,
-  showGraphsGrp65: false,
-  showGraphsGrp68: false,
-  showGraphsGrp70: false,
-  showGraphsGrp71: false,
-  showGraphsGrp72: false,
-  showGraphsGrp73: false,
-  showGraphsGrp74: false,
-  showGraphsGrp75: false,
-  showGraphsGrp76: false,
-  showGraphsGrp77: false,
-  showGraphsGrp78: false
+  completenessByKey: {},
 });
-
-
-
-
 
 const graphsKey = computed(() => `${state.activeTab}-${state.report_year}`);
 
+/** ----------------- boot ----------------- */
 onMounted(async () => {
-  await fetchreportyear(); // must run first to set default year
+  await fetchreportyear();
+  await fetchIndicatorConfig();
   await fetchData();
-  await getexceldata();
-  
+  state.loading = false;
 });
 
-
-
-
+/** ----------------- year watcher ----------------- */
 let fetchSeq = 0;
-
 watch(
   () => state.report_year,
   async (val, oldVal) => {
@@ -366,31 +308,28 @@ watch(
     await fetchData();
     if (seq !== fetchSeq) return;
 
-    await getexceldata();
-    if (seq !== fetchSeq) return;
-
     state.isPageLoading = false;
   }
 );
 
+/** ----------------- completeness recompute ----------------- */
+watch(
+  () => [
+    state.activeTab,
+    state.right_id,
+    state.report_year,
+    state.passed_data,
+    state.passed_data_annual,
+    state.report_years.data,
+    state.rights_config_by_right
+  ],
+  () => {
+    state.completenessByKey = computeCompletenessBySubcategory();
+  },
+  { deep: true }
+);
 
-
-
-function openSlideModal() {
-  state.isSlideModalOpen = true;
-}
-function closeSlideModal() {
-  state.isSlideModalOpen = false;
-}
-
-function saveDashboardSettings() {
-  deleteUserDashboardWidgets();
-  loopthroughNewSettings();
-  fetchUserDashboardWidgets();
-  state.isSlideModalOpen = false;
-}
-
-// opt: 1 = next, 2 = prev (based on your existing component behavior)
+/** ----------------- UI actions ----------------- */
 function change_selected_year(opt) {
   const opts = state.options.report_years.filter(Boolean);
   if (!opts.length) return;
@@ -398,164 +337,230 @@ function change_selected_year(opt) {
   const currentIndex = opts.findIndex(o => o.value === state.report_year);
   const idx = currentIndex === -1 ? 0 : currentIndex;
 
-  if (opt === 1 && idx < opts.length - 1) {
-    state.report_year = opts[idx + 1].value;
-  } else if (opt === 2 && idx > 0) {
-    state.report_year = opts[idx - 1].value;
-  }
+  if (opt === 1 && idx < opts.length - 1) state.report_year = opts[idx + 1].value;
+  else if (opt === 2 && idx > 0) state.report_year = opts[idx - 1].value;
 }
 
 function change_right_id(tab_name) {
   state.activeTab = tab_name;
-
-  if (state.activeTab === "Survival") state.right_id = 1;
-  else if (state.activeTab === "Development") state.right_id = 2;
-  else if (state.activeTab === "Protection") state.right_id = 3;
-  else if (state.activeTab === "Participation") state.right_id = 4;
-  else if (state.activeTab === "Governance") state.right_id = 5;
-  else if (state.activeTab === "General Information") state.right_id = 6;
-
-  // do NOT call fetchData here unless tab changes the query
+  state.right_id = TAB_TO_RIGHT_ID[tab_name] ?? 1;
 }
 
-function refresh_data() {
-  fetchData();
-}
+/** ----------------- fetchers ----------------- */
+async function fetchreportyear() {
+  const response = await report_yearService.getReportYears();
+  const rows = Array.isArray(response?.data) ? response.data : [];
 
-function handleCompleteness(payload) {
-  if (!payload?.subcategory_key) return;
-  state.completenessByKey[payload.subcategory_key] = payload;
+  state.report_years.data = rows;
+
+  const years = rows
+    .filter(r => Number(r?.status) === 1 && r?.year != null)
+    .map(r => Number(r.year))
+    .filter(Number.isFinite);
+
+  const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
+
+  state.options.report_years = uniqueYears.map(y => ({ value: y, label: String(y), year: y }));
+
+  state.report_year = uniqueYears[0] ?? null;
 }
 
 async function fetchData() {
   const params = { report_year: Number(state.report_year) };
 
   const response = await reportDetailsGroupsService.getReportDetailsGroups(params);
-  state.passed_data = response.data; // <-- replace whole ref
+  state.passed_data = Array.isArray(response?.data) ? response.data : [];
 
-  const response_annual = await reportDetailsGroupsService.getReportDetailsGroups();
-  state.passed_data_annual = response_annual.data;
+  const responseAnnual = await reportDetailsGroupsService.getReportDetailsGroups();
+  state.passed_data_annual = Array.isArray(responseAnnual?.data) ? responseAnnual.data : [];
 
-  
-
-  state.loading = false;
+  state.completenessByKey = computeCompletenessBySubcategory();
 }
 
-async function getexceldata() {
-  try {
-    // CHANGED: use report_year, not report_year_id
-    const params = {
-      report_year: Number(state.report_year)
+async function fetchIndicatorConfig() {
+  const response = await indicatorService.getIndicatorCategories();
+  const rows = Array.isArray(response?.data) ? response.data : [];
+  state.rights_config_all = rows;
+
+  const grouped = {};
+  for (const item of rows) {
+    const rid = Number(item?.right_id);
+    if (!Number.isFinite(rid)) continue;
+    if (!grouped[rid]) grouped[rid] = [];
+    grouped[rid].push(item);
+  }
+  state.rights_config_by_right = grouped;
+
+  state.completenessByKey = computeCompletenessBySubcategory();
+}
+
+/** ----------------- DataSources (Expected Ownership) ----------------- */
+const activeIndicatorConfig = computed(() => state.rights_config_by_right?.[state.right_id] ?? []);
+
+function buildAgencyDistributionFromConfig(configRoot, agencies) {
+  const categories = Array.isArray(configRoot)
+    ? configRoot
+    : Array.isArray(configRoot?.data)
+      ? configRoot.data
+      : Array.isArray(configRoot?.data?.data)
+        ? configRoot.data.data
+        : [];
+
+  const counts = new Map(); // agencyId -> count
+
+  for (const cat of categories) {
+    const subs = Array.isArray(cat?.indicator_subcategories) ? cat.indicator_subcategories : [];
+    for (const sub of subs) {
+      const groups = Array.isArray(sub?.indicator_groups) ? sub.indicator_groups : [];
+      for (const g of groups) {
+        const els = Array.isArray(g?.indicator_group_elements) ? g.indicator_group_elements : [];
+        for (const el of els) {
+          const agencyId = Number(el?.agency_id);
+          if (!Number.isFinite(agencyId) || agencyId <= 0) continue;
+          counts.set(agencyId, (counts.get(agencyId) ?? 0) + 1);
+        }
+      }
+    }
+  }
+
+  const getLabel = (id) =>
+    agencies.find((a) => Number(a?.value) === Number(id))?.label ?? `Agency ${id}`;
+
+  const rows = Array.from(counts.entries())
+    .map(([agencyId, count]) => ({ agencyId, label: getLabel(agencyId), count }))
+    .sort((a, b) => b.count - a.count);
+
+  return {
+    labels: rows.map((r) => r.label),
+    series: rows.map((r) => r.count),
+    meta: rows,
+  };
+}
+
+const datasourcePie = computed(() => {
+  return buildAgencyDistributionFromConfig(activeIndicatorConfig.value, state.options.agencies);
+});
+
+/** ----------------- completeness engine ----------------- */
+function normalizeArray(raw) {
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.data)) return raw.data;
+  if (raw && raw.data && Array.isArray(raw.data.data)) return raw.data.data;
+  return [];
+}
+
+function normStr(v) {
+  return String(v ?? "").trim();
+}
+
+function toNum(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function getRowYear(row) {
+  const y = row?.year ?? row?.report_year;
+  if (y != null && y !== "") {
+    const yn = Number(y);
+    return Number.isFinite(yn) ? yn : NaN;
+  }
+
+  const ryId = toNum(row?.report_year_id);
+  if (!Number.isFinite(ryId)) return NaN;
+
+  const reportYears = normalizeArray(state.report_years);
+  const match = reportYears.find(r => Number(r?.id) === ryId);
+  const my = toNum(match?.year);
+  return Number.isFinite(my) ? my : NaN;
+}
+
+function makeSubcategoryKey(rightId, categoryId, subId) {
+  return `r${rightId}_c${categoryId}_s${subId}`;
+}
+
+function computeCompletenessBySubcategory() {
+  const rightId = Number(state.right_id);
+  const selectedYear = Number(state.report_year);
+
+  const configTree = normalizeArray(state.rights_config_by_right?.[rightId] ?? []);
+
+  const detailsRows = [
+    ...normalizeArray(state.passed_data),
+    ...normalizeArray(state.passed_data_annual),
+  ];
+
+  const expectedBySub = new Map();
+
+  for (const cat of configTree) {
+    const categoryId = cat?.id ?? null;
+    const subs = Array.isArray(cat?.indicator_subcategories) ? cat.indicator_subcategories : [];
+
+    for (const sub of subs) {
+      const subId = sub?.id ?? null;
+      if (!subId || !categoryId) continue;
+
+      const key = makeSubcategoryKey(rightId, categoryId, subId);
+      const label = normStr(sub?.description ?? "Subcategory");
+
+      const expectedSet = new Set();
+      const groups = Array.isArray(sub?.indicator_groups) ? sub.indicator_groups : [];
+      for (const g of groups) {
+        const els = Array.isArray(g?.indicator_group_elements) ? g.indicator_group_elements : [];
+        for (const e of els) {
+          const ind = normStr(e?.indicator_no);
+          if (ind) expectedSet.add(ind);
+        }
+      }
+
+      expectedBySub.set(key, { label, expectedSet });
+    }
+  }
+
+  const actualSet = new Set();
+  for (const row of detailsRows) {
+    if (!row) continue;
+
+    const rowYear = getRowYear(row);
+    if (Number.isFinite(selectedYear) && rowYear !== selectedYear) continue;
+
+    const ind = normStr(row?.indicator_no ?? row?.indicator);
+    if (!ind) continue;
+
+    const value = toNum(row?.total);
+    if (!Number.isFinite(value)) continue;
+
+    actualSet.add(ind);
+  }
+
+  const out = {};
+  for (const [key, meta] of expectedBySub.entries()) {
+    const expected = meta.expectedSet.size;
+
+    let actual = 0;
+    for (const ind of meta.expectedSet) {
+      if (actualSet.has(ind)) actual += 1;
+    }
+
+    const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
+
+    out[key] = {
+      subcategory_key: key,
+      subcategory_label: meta.label,
+      tab_name: state.activeTab,
+      report_year: Number.isFinite(selectedYear) ? selectedYear : null,
+      expected,
+      actual,
+      percentage,
     };
-
-    const response = await reportDetailsExcelService.getReportExcelDetails(params);
-    state.exceldata = response;
-  } catch (err) {
-    console.error("Error getexceldata:", err);
   }
-}
 
-async function deleteUserDashboardWidgets() {
-  try {
-    // await userDashboardWidgetsService.deleteUserDashboardWidgets(state.user_id);
-  } catch (error) {
-    state.errorcount = (state.errorcount ?? 0) + 1;
-  }
-}
-
-async function fetchreportyear() {
-  try {
-    const response = await report_yearService.getReportYears();
-    const rows = response?.data ?? [];
-
-    state.report_years.data = rows;
-
-    const years = rows
-      .filter(r => Number(r.status) === 1 && r.year != null)
-      .map(r => Number(r.year))
-      .filter(y => Number.isFinite(y));
-
-    // Unique + sort DESC (so list shows newest first, but we won't auto-pick newest blindly)
-    const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
-
-    state.options.report_years = uniqueYears.map(y => ({
-      value: y,
-      label: String(y),
-      year: y,
-    }));
-
-    if (!state.options.report_years.length) return;
-
-    // DEFAULT: current year if available, otherwise fallback to latest available year
-    const currentYear = new Date().getFullYear();
-    const hasCurrent = uniqueYears.includes(currentYear);
-
-    state.report_year = hasCurrent ? currentYear : uniqueYears[0];
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function fetchUserDashboardWidgets() {
-  try {
-    const response = await userDashboardWidgetsService.getUserDashboardWidget(state.user_id);
-
-    if (response.data) state.user_dashboard_widgets.data = response.data;
-    else state.user_dashboard_widgets = [];
-  } catch (error) {}
-}
-
-function refresh_graphs() {
-  destroy_graphs();
-}
-
-async function destroy_graphs() {
-  state.showGraphsGrp01 = false;
-  state.showGraphsGrp02 = false;
-  state.showGraphsGrp03 = false;
-  state.showGraphsGrp04 = false;
-  state.showGraphsGrp05 = false;
-  state.showGraphsGrp06 = false;
-  state.showGraphsGrp37 = false;
-  state.showGraphsGrp45 = false;
-  state.showGraphsGrp48 = false;
-  state.showGraphsGrp49 = false;
-  state.showGraphsGrp50 = false;
-  state.showGraphsGrp55 = false;
-  state.showGraphsGrp59 = false;
-  state.showGraphsGrp65 = false;
-  state.showGraphsGrp68 = false;
-  state.showGraphsGrp70 = false;
-  state.showGraphsGrp71 = false;
-  state.showGraphsGrp72 = false;
-  state.showGraphsGrp73 = false;
-  state.showGraphsGrp74 = false;
-  state.showGraphsGrp75 = false;
-  state.showGraphsGrp76 = false;
-  state.showGraphsGrp77 = false;
-  state.showGraphsGrp78 = false;
-}
-
-function loopthroughNewSettings() {
-  // left as-is (you didn’t include this function)
-}
-
-function pageLoads(value) {
-  state.isPageLoading = value;
-}
-
-function printWindow() {
-  window.print();
+  return out;
 }
 </script>
 
 <style>
 @media print {
-  body {
-    background: white;
-  }
-  .apexcharts-canvas {
-    page-break-inside: avoid;
-  }
+  body { background: white; }
+  .apexcharts-canvas { page-break-inside: avoid; }
 }
 </style>
