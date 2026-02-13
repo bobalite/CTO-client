@@ -64,9 +64,7 @@ import { computed } from "vue";
 
 const props = defineProps({
   title: { type: String, default: "Completeness (All Subcategories)" },
-
   selected_tab: { type: [Object, String], required: false, default: "" },
-
   data: { type: [Array, Object], required: true },
 });
 

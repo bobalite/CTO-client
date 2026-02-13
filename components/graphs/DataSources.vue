@@ -18,7 +18,13 @@
 
     <div v-else>
       <ClientOnly>
-        <apexchart type="pie" height="320" width="100%" :options="options" :series="series" />
+        <apexchart
+          type="pie"
+          height="320"
+          width="100%"
+          :options="options"
+          :series="series"
+        />
       </ClientOnly>
     </div>
   </div>
@@ -32,17 +38,23 @@ const props = defineProps({
   section: { type: String, required: false },
   report_year: { type: [String, Number], required: false },
 
-  // from parent
   labels: { type: Array, required: true },
   series: { type: Array, required: true },
 });
 
-const total = computed(() => (props.series || []).reduce((s, x) => s + Number(x || 0), 0));
+const total = computed(() =>
+  (props.series || []).reduce((s, x) => s + Number(x || 0), 0)
+);
 
 const options = computed(() => ({
-  chart: { type: "pie", toolbar: { show: false } },
+  chart: {
+    type: "pie",
+    toolbar: { show: false },
+  },
+
   labels: props.labels,
   legend: { show: false },
+
   dataLabels: {
     enabled: true,
     style: { colors: ["#333"], fontSize: "12px", fontWeight: "bold" },
@@ -51,6 +63,7 @@ const options = computed(() => ({
       return [name, `${Number(val).toFixed(1)}%`];
     },
   },
+
   tooltip: {
     y: {
       formatter: (val, opts) => {

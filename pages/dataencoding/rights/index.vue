@@ -167,7 +167,8 @@ const getAgency = (id) => {
 
 
 definePageMeta({
-    layout: 'main'
+    layout: 'main',
+    middleware: ["auth-only"],
 })
 
 

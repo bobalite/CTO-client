@@ -1,223 +1,225 @@
 <template>
-  <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between z-1">
-    <div class="flex items-center space-x-4">
-      <h1 class="text-xl font-bold">My Dashboard</h1>
-
-      <FormYearSelector
-        v-model="state.report_year"
-        :options="state.options.report_years"
-        :change-selected-year="change_selected_year"
-      />
-    </div>
-
-    <button
-      class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300"
-      @click="toggleSidebar?.()"
-    >
-      ☰
-    </button>
-  </header>
-
-  <ul class="flex justify-between w-full items-center m-0 p-0">
-    <div class="flex space-x-4">
-      <li v-for="tab in tabs" :key="tab.name" class="list-none">
-        <a
-          href="#"
-          @click.prevent="change_right_id(tab.name)"
-          :class="[
-            'flex items-center justify-center p-2 rounded-t-md transition-colors',
-            state.activeTab === tab.name
-              ? 'bg-green-200 text-green-900 shadow-inner'
-              : 'hover:bg-gray-200 text-gray-600'
-          ]"
-        >
-          <span v-if="tab.name == 'Survival'"><IconMaterialSurvival /></span>
-          <span v-if="tab.name == 'Development'"><IconMaterialSchool /></span>
-          <span v-if="tab.name == 'Protection'"><IconMaterialPolice /></span>
-          <span v-if="tab.name == 'Participation'"><IconMaterialParticipation /></span>
-          <span v-if="tab.name == 'Governance'"><IconMaterialGovernance /></span>
-          <span v-if="tab.name == 'General Information'"><IconMaterialGenInfo /></span>
-        </a>
-      </li>
-    </div>
-  </ul>
-
-  <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
-    <h2 class="text-lg font-semibold">{{ state.activeTab }}</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <!-- ✅ Data Sources (Expected Ownership from config) -->
-      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
-        <GraphsDataSources
-          :title=" state.activeTab + ' Data Sources '"
-          :report_year="String(state.report_year || '')"
-          :labels="datasourcePie.labels"
-          :series="datasourcePie.series"
-          :section="state.activeTab"
-        />
-      </div>
-
-      <!-- ✅ Completeness (computed parent-side, child only renders) -->
-      <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
-        <GraphsDataStatistics
-          :data="state.completenessByKey"
-          :selected_tab="state.activeTab"
-          :indicator_config="state.rights_config_by_right[state.right_id] || []"
-          :agencies="state.options.agencies"
-        />
-      </div>
-    </div>
-  </main>
-
-  <div class="flex h-screen">
+  <!-- NOTHING protected renders until auth + boot are ready -->
+  <div v-if="bootReady" class="flex h-screen">
     <div class="flex-1 flex flex-col">
-      <div
-        v-if="!state.loading"
-        class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4"
-      >
-        <!-- Survival -->
-        <GraphsSurvivalMaternalServices
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+      <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between z-1">
+        <div class="flex items-center space-x-4">
+          <h1 class="text-xl font-bold">My Dashboard</h1>
 
-        <GraphsChildCareAndServices
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <FormYearSelector
+            v-model="state.report_year"
+            :options="state.options.report_years"
+            :change-selected-year="change_selected_year"
+          />
+        </div>
 
-        <GraphsSurvivalMortality
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+        <button
+          class="md:hidden px-3 py-2 rounded bg-gray-200 hover:bg-gray-300"
+          @click="toggleSidebar?.()"
+        >
+          ☰
+        </button>
+      </header>
 
-        <GraphsSurvivalNutritionalPreSchool
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+      <ul class="flex justify-between w-full items-center m-0 p-0">
+        <div class="flex space-x-4">
+          <li v-for="tab in tabs" :key="tab.name" class="list-none">
+            <a
+              href="#"
+              @click.prevent="change_right_id(tab.name)"
+              :class="[
+                'flex items-center justify-center p-2 rounded-t-md transition-colors',
+                state.activeTab === tab.name
+                  ? 'bg-green-200 text-green-900 shadow-inner'
+                  : 'hover:bg-gray-200 text-gray-600'
+              ]"
+            >
+              <span v-if="tab.name == 'Survival'"><IconMaterialSurvival /></span>
+              <span v-if="tab.name == 'Development'"><IconMaterialSchool /></span>
+              <span v-if="tab.name == 'Protection'"><IconMaterialPolice /></span>
+              <span v-if="tab.name == 'Participation'"><IconMaterialParticipation /></span>
+              <span v-if="tab.name == 'Governance'"><IconMaterialGovernance /></span>
+              <span v-if="tab.name == 'General Information'"><IconMaterialGenInfo /></span>
+            </a>
+          </li>
+        </div>
+      </ul>
 
-        <GraphsSurvivalNutritionalSchoolChildren
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+      <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
+        <!-- optional overlay loader when changing year -->
+        
+        <h2 class="text-lg font-semibold">{{ state.activeTab }}</h2>
 
-        <GraphsSurvivalAccess
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
+            <GraphsDataSources
+              :title="state.activeTab + ' Data Sources '"
+              :report_year="String(state.report_year || '')"
+              :labels="datasourcePie.labels"
+              :series="datasourcePie.series"
+              :section="state.activeTab"
+            />
+          </div>
 
-        <GraphsSurvivalHIV
-          v-if="state.activeTab === 'Survival'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <div class="bg-green-300 text-black p-4 rounded-lg shadow sm:col-span-2">
+            <GraphsDataStatistics
+              :data="state.completenessByKey"
+              :selected_tab="state.activeTab"
+              :indicator_config="state.rights_config_by_right[state.right_id] || []"
+              :agencies="state.options.agencies"
+            />
+          </div>
+        </div>
 
-        <!-- Development -->
-        <GraphsDevelopmentEarlyChildhood
-          v-if="state.activeTab === 'Development'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+        <div
+          class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-12 bg-green-200 border-solid border-grey pb-4 pt-4"
+        >
+          <!-- Survival -->
+          <GraphsSurvivalMaternalServices
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <GraphsDevelopmentEnrolment
-          v-if="state.activeTab === 'Development'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsChildCareAndServices
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <GraphsDevelopmentOSCY
-          v-if="state.activeTab === 'Development'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsSurvivalMortality
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <!-- Protection -->
-        <GraphsProtectionChildrenInNeed
-          v-if="state.activeTab === 'Protection'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsSurvivalNutritionalPreSchool
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <GraphsProtectionChildrenInConflict
-          v-if="state.activeTab === 'Protection'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsSurvivalNutritionalSchoolChildren
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <!-- Participation -->
-        <GraphsParticipationChildrens
-          v-if="state.activeTab === 'Participation'"
-          :key="graphsKey"
-          :passed_data="state.passed_data_annual"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsSurvivalAccess
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <!-- Governance -->
-        <GraphsGovernanceLocalCouncil
-          v-if="state.activeTab === 'Governance'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-red-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
+          <GraphsSurvivalHIV
+            v-if="state.activeTab === 'Survival'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
 
-        <!-- General Info -->
-        <GraphsGeneralInformation
-          v-if="state.activeTab === 'General Information'"
-          :key="graphsKey"
-          :passed_data="state.passed_data"
-          class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
-          :report_year="String(state.report_year || '')"
-          :report_years="state.report_years"
-        />
-      </div>
+          <!-- Development -->
+          <GraphsDevelopmentEarlyChildhood
+            v-if="state.activeTab === 'Development'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <GraphsDevelopmentEnrolment
+            v-if="state.activeTab === 'Development'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <GraphsDevelopmentOSCY
+            v-if="state.activeTab === 'Development'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <!-- Protection -->
+          <GraphsProtectionChildrenInNeed
+            v-if="state.activeTab === 'Protection'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <GraphsProtectionChildrenInConflict
+            v-if="state.activeTab === 'Protection'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <!-- Participation -->
+          <GraphsParticipationChildrens
+            v-if="state.activeTab === 'Participation'"
+            :key="graphsKey"
+            :passed_data="state.passed_data_annual"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <!-- Governance -->
+          <GraphsGovernanceLocalCouncil
+            v-if="state.activeTab === 'Governance'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-red-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
+          <!-- General Information -->
+          <GraphsGeneralInformation
+            v-if="state.activeTab === 'General Information'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+        </div>
+      </main>
     </div>
   </div>
+
+ 
 </template>
 
 <script setup>
@@ -225,8 +227,15 @@ import { reactive, computed, onMounted, watch } from "vue";
 import { report_yearService } from "~/components/api/ReportYears";
 import { reportDetailsGroupsService } from "~/components/api/ReportDetailsGroupsService";
 import { indicatorService } from "~/components/api/IndicatorCategoryService";
+import { useUserStore } from "~/store/user";
 
-definePageMeta({ layout: "main" });
+definePageMeta({
+  layout: "main",
+  middleware: ["auth-only"],
+  // ssr: false, // uncomment ONLY if you still get SSR flash due to localStorage-based auth
+});
+
+const userStore = useUserStore();
 
 const tabs = [
   { name: "Survival" },
@@ -238,11 +247,11 @@ const tabs = [
 ];
 
 const TAB_TO_RIGHT_ID = {
-  "Survival": 1,
-  "Development": 2,
-  "Protection": 3,
-  "Participation": 4,
-  "Governance": 5,
+  Survival: 1,
+  Development: 2,
+  Protection: 3,
+  Participation: 4,
+  Governance: 5,
   "General Information": 6
 };
 
@@ -250,14 +259,15 @@ const state = reactive({
   activeTab: tabs[0].name,
   right_id: TAB_TO_RIGHT_ID[tabs[0].name],
 
-  loading: true,
-  isPageLoading: false,
+  loading: true,        // boot
+  isPageLoading: false, // refetch
 
   passed_data: [],
   passed_data_annual: [],
 
   report_year: null,
   report_years: { data: [] },
+
   options: {
     report_years: [],
     agencies: [
@@ -287,11 +297,16 @@ const state = reactive({
 
 const graphsKey = computed(() => `${state.activeTab}-${state.report_year}`);
 
+const bootReady = computed(() => !!userStore?.getUser && state.loading === false);
+
 /** ----------------- boot ----------------- */
 onMounted(async () => {
+  if (!userStore?.getUser) return;
+
   await fetchreportyear();
   await fetchIndicatorConfig();
   await fetchData();
+
   state.loading = false;
 });
 
@@ -305,10 +320,11 @@ watch(
     const seq = ++fetchSeq;
     state.isPageLoading = true;
 
-    await fetchData();
-    if (seq !== fetchSeq) return;
-
-    state.isPageLoading = false;
+    try {
+      await fetchData();
+    } finally {
+      if (seq === fetchSeq) state.isPageLoading = false;
+    }
   }
 );
 
@@ -361,7 +377,6 @@ async function fetchreportyear() {
   const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
 
   state.options.report_years = uniqueYears.map(y => ({ value: y, label: String(y), year: y }));
-
   state.report_year = uniqueYears[0] ?? null;
 }
 
@@ -394,7 +409,7 @@ async function fetchIndicatorConfig() {
   state.completenessByKey = computeCompletenessBySubcategory();
 }
 
-/** ----------------- DataSources (Expected Ownership) ----------------- */
+/** ----------------- DataSources ----------------- */
 const activeIndicatorConfig = computed(() => state.rights_config_by_right?.[state.right_id] ?? []);
 
 function buildAgencyDistributionFromConfig(configRoot, agencies) {
@@ -406,7 +421,7 @@ function buildAgencyDistributionFromConfig(configRoot, agencies) {
         ? configRoot.data.data
         : [];
 
-  const counts = new Map(); // agencyId -> count
+  const counts = new Map();
 
   for (const cat of categories) {
     const subs = Array.isArray(cat?.indicator_subcategories) ? cat.indicator_subcategories : [];
@@ -430,16 +445,12 @@ function buildAgencyDistributionFromConfig(configRoot, agencies) {
     .map(([agencyId, count]) => ({ agencyId, label: getLabel(agencyId), count }))
     .sort((a, b) => b.count - a.count);
 
-  return {
-    labels: rows.map((r) => r.label),
-    series: rows.map((r) => r.count),
-    meta: rows,
-  };
+  return { labels: rows.map(r => r.label), series: rows.map(r => r.count), meta: rows };
 }
 
-const datasourcePie = computed(() => {
-  return buildAgencyDistributionFromConfig(activeIndicatorConfig.value, state.options.agencies);
-});
+const datasourcePie = computed(() =>
+  buildAgencyDistributionFromConfig(activeIndicatorConfig.value, state.options.agencies)
+);
 
 /** ----------------- completeness engine ----------------- */
 function normalizeArray(raw) {

@@ -664,7 +664,7 @@ const check_errors = computed(() => {
 
 
 definePageMeta({
-    layout: 'main',
+  layout: 'main',
   middleware: ['admin-only'],
 })
 
