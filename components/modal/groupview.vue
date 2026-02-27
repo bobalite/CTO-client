@@ -237,7 +237,7 @@ async function get_group_details() {
     const params = {
       indicator_group_id: props.group.group_no ?? null,
       report_year: Number(props.selected_year),
-      report_year_id: Number(props.selected_year_id),
+      //report_year_id: Number(props.selected_year_id),  // in an event of open/annual this should be not used. 
     }
 
     const response = await reportDetailsService.getReportDetails(params)
