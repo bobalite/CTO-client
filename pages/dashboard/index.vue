@@ -67,6 +67,7 @@
               :selected_tab="state.activeTab"
               :indicator_config="state.rights_config_by_right[state.right_id] || []"
               :agencies="state.options.agencies"
+              :report_year="String(state.report_year || '')"
             />
           </div>
         </div>

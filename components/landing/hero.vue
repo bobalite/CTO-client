@@ -21,14 +21,14 @@
                 // On second slide → move up + shrink
                 'text-[clamp(16px,3vw,24px)] -translate-y-16': current === 1
               }">
-                SPECIAL OFFICE FOR CHILDREN'S CONCERN Analytical and Reporting System
+                SPECIAL OFFICE FOR CHILDREN'S CONCERNS Analytical and Reporting System
               </h2>
 
               <!-- ApexChart (only visible on slide 2) -->
               <transition name="fade">
                 <div v-if="current === 1" class="w-full max-w-3xl h-80 text-lg font-bold">
-                  CHILDREN'S RIGHTS TO SURVIVAL
-                 <div class="grid grid-cols-2 gap-4">
+                  <!-- CHILDREN'S RIGHTS TO SURVIVAL -->
+                 <!-- <div class="grid grid-cols-2 gap-4">
                     <div class="bg-green-700 p-2">
                       <component :is="Chart" type="area" :options="chartOptionsSurvival1" :series="seriesSurvival1" height="150%"
                         width="100%" />
@@ -37,15 +37,15 @@
                       <component :is="Chart" type="bar" :options="chartOptionsSurvival2" :series="seriesSurvival2" height="100%"
                         width="100%" />
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </transition>
 
               <!-- Chart on Slide 3 -->
               <transition name="fade">
                 <div v-if="current === 2" class="w-full max-w-3xl h-80 text-lg font-bold">
-                  CHILDREN'S RIGHTS TO DEVELOPMENT
-                  <div class="grid grid-cols-2 gap-4">
+                  <!-- CHILDREN'S RIGHTS TO DEVELOPMENT -->
+                  <!-- <div class="grid grid-cols-2 gap-4">
                     <div class="bg-green-700 p-4">
                       <component :is="Chart" type="bar" :options="chartOptionsDevelopment1" :series="seriesDevelopment1" height="150%"
                         width="100%" />
@@ -54,7 +54,7 @@
                       <component :is="Chart" type="bar" :options="chartOptionsDevelopment2" :series="seriesDevelopment2" height="100%"
                         width="100%" />
                     </div>
-                  </div>
+                  </div> -->
 
 
                 </div>
@@ -64,12 +64,12 @@
               <!-- Chart on Slide 4 -->
               <transition name="fade">
                 <div v-if="current === 3" class="w-full max-w-3xl h-80 text-lg font-bold">
-                  CHILDREN'S RIGHTS TO PROTECTION
+                  <!-- CHILDREN'S RIGHTS TO PROTECTION -->
                   
-                    <div class="bg-green-700 p-4">
+                    <!-- <div class="bg-green-700 p-4">
                       <component :is="Chart" type="bar" :options="chartOptionsProtection" :series="seriesProtection" height="150%"
                         width="100%" />
-                    </div>
+                    </div> -->
                     
                   
                 </div>
@@ -80,13 +80,13 @@
               <transition name="fade">
                 <div v-if="current === 4" class="w-full max-w-3xl h-80 text-lg font-bold">
 
-                  CHILDREN'S RIGHTS TO PARTICIPATION
+                  <!-- CHILDREN'S RIGHTS TO PARTICIPATION -->
                 
-                    <div class="bg-green-700 p-4">
+                    <!-- <div class="bg-green-700 p-4">
                       <component :is="Chart" type="bar" :options="chartOptionsRepresentation" :series="seriesRepresentation" height="150%"
                         width="100%" />
                     </div>
-                   
+                    -->
                 
 
 

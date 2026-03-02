@@ -9,7 +9,7 @@
 
       <ClientOnly>
         <apexchart
-          type="bar"
+          type="line"
           height="90%"
           width="100%"
           :options="state.populationHoriOptions"
@@ -24,6 +24,12 @@
 import { reactive, onMounted, watch } from "vue";
 
 const emit = defineEmits(["completeness"]);
+
+const formatNumber = (val) => {
+  const n = Number(val)
+  if (!Number.isFinite(n)) return "0"
+  return n.toLocaleString("en-US") // 1,234,567
+}
 
 const props = defineProps({
   class: { type: String, required: false, default: "border-solid" },
@@ -54,10 +60,29 @@ const state = reactive({
     },
     plotOptions: { bar: { horizontal: false } },
     colors: ["#00796B", "#388E3C", "#AFB42B", "#F9A825"],
-    dataLabels: { enabled: true },
+
+    dataLabels: {
+      enabled: true,
+      formatter: (val) => formatNumber(val),
+    },
+
     stroke: { curve: "smooth" },
+
     xaxis: { categories: ["1Q", "2Q", "3Q", "4Q"] },
+
+    yaxis: {
+      labels: {
+        formatter: (val) => formatNumber(val),
+      },
+    },
+
+    tooltip: {
+      y: {
+        formatter: (val) => formatNumber(val),
+      },
+    },
   },
+
 });
 
 function recalc() {

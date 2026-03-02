@@ -152,6 +152,7 @@ const state = reactive({
   female: {},
   total: {},
   remarks: {},
+  submission_type: ''
 })
 
 // ---------------------------
@@ -183,12 +184,21 @@ async function loadExternalIndicators(indicatorNos = []) {
   if (!indicatorNos.length) return
   try {
     // Prepare params for report year context
-    const params = {
+
+     const params = {
       report_year: Number(props.selected_year),
       report_year_id: Number(props.selected_year_id),
       indicator_nos: indicatorNos, // preferred if backend accepts array
     }
 
+
+
+    if(state.submission_type === 'Open' || state.submission_type === 'Annual') {
+      delete params.report_year_id
+    }
+
+    console.log('Loading external indicators with params', params)
+   
     let response = null
 
     // Use dedicated endpoint if available
@@ -227,6 +237,11 @@ async function loadExternalIndicators(indicatorNos = []) {
 // ---------------------------
 function initStateFromGroup(g) {
   groupLocal.value = g || null
+  state.submission_type = g?.indicator_group_elements?.[0]?.submition_type || 'no submission_type found'
+  console.log('Initializing submission_type',  state.submission_type)
+
+
+
 
   // reset maps (preserve objects references for reactivity by assigning keys)
   state.male = {}
@@ -242,7 +257,8 @@ function initStateFromGroup(g) {
     state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
     state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
     state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    //state.remarks[id] = el.remarks ?? ' -- '
+    state.remarks[id] = el.remarks ?? '--'
+    
     if (excelUploads[id]) delete excelUploads[id]
   })
 }
@@ -286,6 +302,14 @@ async function get_group_details() {
       // indicator_group_id: g.group_no ?? g.id ?? null, // optional
     }
 
+
+    
+    if(state.submission_type === 'Open' || state.submission_type === 'Annual') {
+      delete params.report_year_id
+    }
+
+    console.log('Loading external indicators with params', params)
+
     try {
       const response = await reportDetailsService.getReportDetails(params)
       if (response?.data && Array.isArray(response.data)) {
@@ -295,7 +319,7 @@ async function get_group_details() {
           state.male[id] = Number(item.male ?? state.male[id] ?? 0)
           state.female[id] = Number(item.female ?? state.female[id] ?? 0)
           state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-          //state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
+          state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
         })
       }
     } catch (err) {

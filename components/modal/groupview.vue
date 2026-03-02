@@ -193,6 +193,7 @@ const state = reactive({
   header_name1: '',
   header_name2: '',
   header_name3: '',
+  submission_type: ''
 
 })
 
@@ -225,6 +226,8 @@ function initializeState() {
     state.total[key] = el.total_value ?? 0
     state.remarks[key] = el.remarks ?? ''
   })
+
+  state.submission_type = props.group?.indicator_group_elements?.[0]?.submition_type || 'no submission_type found'
 }
 
 /* ---------------------------------------------
@@ -237,8 +240,15 @@ async function get_group_details() {
     const params = {
       indicator_group_id: props.group.group_no ?? null,
       report_year: Number(props.selected_year),
-      //report_year_id: Number(props.selected_year_id),  // in an event of open/annual this should be not used. 
+      report_year_id: Number(props.selected_year_id),  // in an event of open/annual this should be not used. 
     }
+
+
+     if(state.submission_type === 'Open' || state.submission_type === 'Annual') {
+      delete params.report_year_id
+    }
+
+    console.log('Loading external indicators with params', params)
 
     const response = await reportDetailsService.getReportDetails(params)
     console.log('response reportDetailsService', response)

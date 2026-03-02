@@ -36,7 +36,7 @@
 
     <!-- Apex vertical bar chart -->
     <div class="mt-4">
-      <div v-if="filteredValues.length === 0" class="text-sm opacity-70 py-6 text-center">
+      <div v-if="groupSummaries.length === 0" class="text-sm opacity-70 py-6 text-center">
         No completeness data for this tab yet.
       </div>
 
@@ -66,6 +66,7 @@ const props = defineProps({
   title: { type: String, default: "Completeness (All Subcategories)" },
   selected_tab: { type: [Object, String], required: false, default: "" },
   data: { type: [Array, Object], required: true },
+  report_year: { type: [Number, String], required: true },
 });
 
 function normalizeData(raw) {
@@ -95,45 +96,145 @@ const filteredValues = computed(() => {
   });
 });
 
-const overall = computed(() => {
-  const values = filteredValues.value;
+/**
+ * Submission-type normalization
+ */
+function normalizeSubmissionType(v) {
+  return String(v?.submission_type ?? v?.submissionType ?? "")
+    .trim()
+    .toLowerCase();
+}
 
+/**
+ * Group key/label getters (group-encoded payload)
+ */
+function getGroupKey(row) {
+  return String(row?.subcategory_key ?? row?.subcategory_label ?? "unknown").trim();
+}
+
+function getGroupLabel(row) {
+  return String(row?.subcategory_label ?? row?.subcategory_key ?? "Subcategory").trim();
+}
+
+/**
+ * Year matching:
+ * - If row has year/report_year fields, filter by props.report_year
+ * - Else assume data is already year-filtered upstream
+ */
+function rowMatchesYear(row, year) {
+  const y =
+    row?.year ??
+    row?.report_year ??
+    row?.reportYear ??
+    null;
+
+  if (y == null || String(y).trim() === "") return true;
+  return Number(y) === Number(year);
+}
+
+/**
+ * Quarter identity:
+ * - Prefer row.quarter (1..4)
+ * - Else use report_year_id as a "quarter bucket id" if that’s what you store
+ */
+function getQuarterIdentity(row) {
+  const q = Number(row?.quarter);
+  if (Number.isFinite(q) && q >= 1 && q <= 4) return `Q${q}`;
+
+  const ryId = row?.report_year_id ?? row?.reportYearId;
+  if (ryId != null && String(ryId).trim() !== "") return String(ryId);
+
+  return null;
+}
+
+/**
+ * ✅ Simplified completeness per group:
+ * - Quarterly => expected=4, actual=distinct quarters present
+ * - Annual/Open/others => expected=1, actual=1 if any entry exists
+ */
+const groupSummaries = computed(() => {
+  const year = Number(props.report_year);
+  const rows = filteredValues.value.filter((r) => rowMatchesYear(r, year));
+
+  const map = new Map();
+
+  for (const row of rows) {
+    if (!row) continue;
+
+    const key = getGroupKey(row);
+    const label = getGroupLabel(row);
+    const st = normalizeSubmissionType(row);
+
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        label,
+        submission_type: st,
+        hasAny: false,
+        quarterSet: new Set(),
+      });
+    }
+
+    const g = map.get(key);
+    g.hasAny = true;
+
+    if (st === "quarterly") {
+      const qid = getQuarterIdentity(row);
+      if (qid) g.quarterSet.add(qid);
+    }
+  }
+
+  return Array.from(map.values()).map((g) => {
+    const expected = g.submission_type === "quarterly" ? 4 : 1;
+    const actual =
+      g.submission_type === "quarterly"
+        ? Math.min(g.quarterSet.size, 4)
+        : g.hasAny
+          ? 1
+          : 0;
+
+    const pct = expected > 0 ? (actual / expected) * 100 : 0;
+
+    return {
+      subcategory_key: g.key,
+      subcategory_label: g.label,
+      submission_type: g.submission_type,
+      expected,
+      actual,
+      percentage: Number(Math.min(pct, 100).toFixed(1)),
+    };
+  });
+});
+
+const overall = computed(() => {
   let expected = 0;
   let actual = 0;
 
-  for (const v of values) {
-    expected += Number(v?.expected) || 0;
-    actual += Number(v?.actual) || 0;
+  for (const g of groupSummaries.value) {
+    expected += Number(g.expected) || 0;
+    actual += Number(g.actual) || 0;
   }
 
   const percentage =
-    expected > 0
-      ? Number(((actual / expected) * 100).toFixed(1))
-      : 0;
+    expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
 
   return { expected, actual, percentage };
 });
 
 const segments = computed(() => {
-  const values = filteredValues.value.filter(
-    (v) => (Number(v?.expected) || 0) > 0
-  );
-
+  const values = groupSummaries.value.filter((g) => (Number(g.expected) || 0) > 0);
   const totalExpected = overall.value.expected || 0;
 
-  return values.map((v) => {
-    const expected = Number(v.expected) || 0;
-    const actual = Number(v.actual) || 0;
+  return values.map((g) => {
+    const expected = Number(g.expected) || 0;
+    const actual = Number(g.actual) || 0;
 
-    const widthPct =
-      totalExpected > 0 ? (expected / totalExpected) * 100 : 0;
-
-    const fillPct =
-      expected > 0 ? (actual / expected) * 100 : 0;
+    const widthPct = totalExpected > 0 ? (expected / totalExpected) * 100 : 0;
+    const fillPct = expected > 0 ? (actual / expected) * 100 : 0;
 
     return {
-      key: String(v.subcategory_key ?? v.subcategory_label ?? Math.random()),
-      label: String(v.subcategory_label ?? v.subcategory_key ?? "Subcategory"),
+      key: String(g.subcategory_key ?? g.subcategory_label ?? Math.random()),
+      label: String(g.subcategory_label ?? g.subcategory_key ?? "Subcategory"),
       expected,
       actual,
       pct: Number(Math.min(fillPct, 100).toFixed(1)),
@@ -144,28 +245,21 @@ const segments = computed(() => {
 });
 
 const chartSeries = computed(() => {
-  const values = filteredValues.value;
-
-  const data = values.map((v) => {
-    const expected = Number(v?.expected) || 0;
-    const actual = Number(v?.actual) || 0;
-    const pct = expected > 0 ? (actual / expected) * 100 : 0;
-    return Number(Math.min(pct, 100).toFixed(1));
-  });
-
+  const data = groupSummaries.value.map((g) => Number(g.percentage) || 0);
   return [{ name: "Completion (%)", data }];
 });
 
 const chartOptions = computed(() => {
-  const values = filteredValues.value;
+  const values = groupSummaries.value;
 
-  const categories = values.map((v) =>
-    String(v?.subcategory_label ?? v?.subcategory_key ?? "Subcategory")
+  const categories = values.map((g) =>
+    String(g.subcategory_label ?? g.subcategory_key ?? "Subcategory")
   );
 
-  const meta = values.map((v) => ({
-    expected: Number(v?.expected) || 0,
-    actual: Number(v?.actual) || 0,
+  const meta = values.map((g) => ({
+    expected: Number(g.expected) || 0,
+    actual: Number(g.actual) || 0,
+    submission_type: String(g.submission_type ?? "").trim(),
   }));
 
   return {
@@ -197,8 +291,9 @@ const chartOptions = computed(() => {
       y: {
         formatter: (val, opts) => {
           const i = opts.dataPointIndex;
-          const m = meta[i] || { actual: 0, expected: 0 };
-          return `${Number(val).toFixed(1)}% (Actual ${m.actual} / Expected ${m.expected})`;
+          const m = meta[i] || { actual: 0, expected: 0, submission_type: "" };
+          const st = m.submission_type ? `, ${m.submission_type}` : "";
+          return `${Number(val).toFixed(1)}% (Actual ${m.actual} / Expected ${m.expected}${st})`;
         },
       },
     },
