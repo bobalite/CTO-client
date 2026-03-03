@@ -26,17 +26,14 @@
         :title="`${seg.label}\n${seg.actual}/${seg.expected} (${seg.pct}%)`"
       >
         <div class="absolute inset-0 bg-gray-300 opacity-40"></div>
-        <div
-          class="absolute inset-y-0 left-0 bg-green-600"
-          :style="{ width: seg.fillPct + '%' }"
-        ></div>
+        <div class="absolute inset-y-0 left-0 bg-green-600" :style="{ width: seg.fillPct + '%' }"></div>
         <div class="absolute right-0 top-0 h-full w-[1px] bg-white/70"></div>
       </div>
     </div>
 
     <!-- Apex vertical bar chart -->
     <div class="mt-4">
-      <div v-if="groupSummaries.length === 0" class="text-sm opacity-70 py-6 text-center">
+      <div v-if="values.length === 0" class="text-sm opacity-70 py-6 text-center">
         No completeness data for this tab yet.
       </div>
 
@@ -63,9 +60,9 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  title: { type: String, default: "Completeness (All Subcategories)" },
+  title: { type: String, default: "Data Submission Status" },
   selected_tab: { type: [Object, String], required: false, default: "" },
-  data: { type: [Array, Object], required: true },
+  data: { type: [Array, Object], required: true }, // <-- parent computed object/map
   report_year: { type: [Number, String], required: true },
 });
 
@@ -83,193 +80,108 @@ const activeTabName = computed(() => {
   return String(props.selected_tab?.name ?? "").trim();
 });
 
-const filteredValues = computed(() => {
-  const values = allValues.value;
+/**
+ * Your parent output already includes:
+ * {
+ *   subcategory_key, subcategory_label, expected, actual, percentage,
+ *   report_year, tab_name, submission_type, group_no
+ * }
+ *
+ * So the component should ONLY:
+ * - filter by tab_name (optional)
+ * - filter by report_year (optional)
+ * - render totals + charts
+ */
+const values = computed(() => {
+  const year = Number(props.report_year);
   const tab = activeTabName.value;
 
-  if (!tab) return values;
+  return allValues.value
+    .filter((v) => v && typeof v === "object")
+    .filter((v) => {
+      // year filter (only if payload has year)
+      const y = v?.report_year ?? v?.year ?? null;
+      if (y == null || String(y).trim() === "") return true;
+      return Number(y) === year;
+    })
+    .filter((v) => {
+      // tab filter (only if payload has tab)
+      const tn = String(v?.tab_name ?? "").trim();
+      if (!tab) return true;
+      if (!tn) return true;
+      return tn === tab;
+    })
+    .map((v) => {
+      const expected = Number(v?.expected) || 0;
+      const actual = Number(v?.actual) || 0;
+      const pct = expected > 0 ? (actual / expected) * 100 : 0;
 
-  return values.filter((v) => {
-    const tn = String(v?.tab_name ?? "").trim();
-    if (!tn) return true; // fallback for legacy payload
-    return tn === tab;
-  });
-});
-
-/**
- * Submission-type normalization
- */
-function normalizeSubmissionType(v) {
-  return String(v?.submission_type ?? v?.submissionType ?? "")
-    .trim()
-    .toLowerCase();
-}
-
-/**
- * Group key/label getters (group-encoded payload)
- */
-function getGroupKey(row) {
-  return String(row?.subcategory_key ?? row?.subcategory_label ?? "unknown").trim();
-}
-
-function getGroupLabel(row) {
-  return String(row?.subcategory_label ?? row?.subcategory_key ?? "Subcategory").trim();
-}
-
-/**
- * Year matching:
- * - If row has year/report_year fields, filter by props.report_year
- * - Else assume data is already year-filtered upstream
- */
-function rowMatchesYear(row, year) {
-  const y =
-    row?.year ??
-    row?.report_year ??
-    row?.reportYear ??
-    null;
-
-  if (y == null || String(y).trim() === "") return true;
-  return Number(y) === Number(year);
-}
-
-/**
- * Quarter identity:
- * - Prefer row.quarter (1..4)
- * - Else use report_year_id as a "quarter bucket id" if that’s what you store
- */
-function getQuarterIdentity(row) {
-  const q = Number(row?.quarter);
-  if (Number.isFinite(q) && q >= 1 && q <= 4) return `Q${q}`;
-
-  const ryId = row?.report_year_id ?? row?.reportYearId;
-  if (ryId != null && String(ryId).trim() !== "") return String(ryId);
-
-  return null;
-}
-
-/**
- * ✅ Simplified completeness per group:
- * - Quarterly => expected=4, actual=distinct quarters present
- * - Annual/Open/others => expected=1, actual=1 if any entry exists
- */
-const groupSummaries = computed(() => {
-  const year = Number(props.report_year);
-  const rows = filteredValues.value.filter((r) => rowMatchesYear(r, year));
-
-  const map = new Map();
-
-  for (const row of rows) {
-    if (!row) continue;
-
-    const key = getGroupKey(row);
-    const label = getGroupLabel(row);
-    const st = normalizeSubmissionType(row);
-
-    if (!map.has(key)) {
-      map.set(key, {
-        key,
-        label,
-        submission_type: st,
-        hasAny: false,
-        quarterSet: new Set(),
-      });
-    }
-
-    const g = map.get(key);
-    g.hasAny = true;
-
-    if (st === "quarterly") {
-      const qid = getQuarterIdentity(row);
-      if (qid) g.quarterSet.add(qid);
-    }
-  }
-
-  return Array.from(map.values()).map((g) => {
-    const expected = g.submission_type === "quarterly" ? 4 : 1;
-    const actual =
-      g.submission_type === "quarterly"
-        ? Math.min(g.quarterSet.size, 4)
-        : g.hasAny
-          ? 1
-          : 0;
-
-    const pct = expected > 0 ? (actual / expected) * 100 : 0;
-
-    return {
-      subcategory_key: g.key,
-      subcategory_label: g.label,
-      submission_type: g.submission_type,
-      expected,
-      actual,
-      percentage: Number(Math.min(pct, 100).toFixed(1)),
-    };
-  });
+      return {
+        key: String(v?.subcategory_key ?? v?.group_no ?? v?.subcategory_label ?? Math.random()),
+        label: String(v?.subcategory_label ?? "Group"),
+        expected,
+        actual,
+        percentage: Number(Math.min(pct, 100).toFixed(1)),
+        submission_type: String(v?.submission_type ?? "").trim(),
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 });
 
 const overall = computed(() => {
   let expected = 0;
   let actual = 0;
 
-  for (const g of groupSummaries.value) {
-    expected += Number(g.expected) || 0;
-    actual += Number(g.actual) || 0;
+  for (const v of values.value) {
+    expected += v.expected;
+    actual += v.actual;
   }
 
-  const percentage =
-    expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
-
+  const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
   return { expected, actual, percentage };
 });
 
 const segments = computed(() => {
-  const values = groupSummaries.value.filter((g) => (Number(g.expected) || 0) > 0);
   const totalExpected = overall.value.expected || 0;
 
-  return values.map((g) => {
-    const expected = Number(g.expected) || 0;
-    const actual = Number(g.actual) || 0;
+  return values.value
+    .filter((v) => v.expected > 0)
+    .map((v) => {
+      const widthPct = totalExpected > 0 ? (v.expected / totalExpected) * 100 : 0;
+      const fillPct = v.expected > 0 ? (v.actual / v.expected) * 100 : 0;
 
-    const widthPct = totalExpected > 0 ? (expected / totalExpected) * 100 : 0;
-    const fillPct = expected > 0 ? (actual / expected) * 100 : 0;
-
-    return {
-      key: String(g.subcategory_key ?? g.subcategory_label ?? Math.random()),
-      label: String(g.subcategory_label ?? g.subcategory_key ?? "Subcategory"),
-      expected,
-      actual,
-      pct: Number(Math.min(fillPct, 100).toFixed(1)),
-      widthPct: Number(widthPct.toFixed(3)),
-      fillPct: Number(Math.min(fillPct, 100).toFixed(3)),
-    };
-  });
+      return {
+        key: v.key,
+        label: v.label,
+        expected: v.expected,
+        actual: v.actual,
+        pct: Number(Math.min(fillPct, 100).toFixed(1)),
+        widthPct: Number(widthPct.toFixed(3)),
+        fillPct: Number(Math.min(fillPct, 100).toFixed(3)),
+      };
+    });
 });
 
 const chartSeries = computed(() => {
-  const data = groupSummaries.value.map((g) => Number(g.percentage) || 0);
-  return [{ name: "Completion (%)", data }];
+  return [{ name: "Completion (%)", data: values.value.map((v) => v.percentage) }];
 });
 
+/**
+ * ✅ FIX: avoid opts.w.globals (that’s what was crashing you elsewhere)
+ * Use local meta array instead.
+ */
 const chartOptions = computed(() => {
-  const values = groupSummaries.value;
-
-  const categories = values.map((g) =>
-    String(g.subcategory_label ?? g.subcategory_key ?? "Subcategory")
-  );
-
-  const meta = values.map((g) => ({
-    expected: Number(g.expected) || 0,
-    actual: Number(g.actual) || 0,
-    submission_type: String(g.submission_type ?? "").trim(),
+  const cats = values.value.map((v) => v.label);
+  const meta = values.value.map((v) => ({
+    expected: v.expected,
+    actual: v.actual,
+    submission_type: v.submission_type,
   }));
 
   return {
     chart: { type: "bar", toolbar: { show: false }, zoom: { enabled: false } },
     plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "55%",
-        dataLabels: { position: "top" },
-      },
+      bar: { horizontal: false, columnWidth: "55%", dataLabels: { position: "top" } },
     },
     dataLabels: {
       enabled: true,
@@ -277,7 +189,7 @@ const chartOptions = computed(() => {
       offsetY: -6,
     },
     xaxis: {
-      categories,
+      categories: cats,
       labels: { rotate: -25, trim: true, style: { fontSize: "11px" } },
     },
     yaxis: {
@@ -290,8 +202,11 @@ const chartOptions = computed(() => {
     tooltip: {
       y: {
         formatter: (val, opts) => {
-          const i = opts.dataPointIndex;
-          const m = meta[i] || { actual: 0, expected: 0, submission_type: "" };
+          const i = opts?.dataPointIndex ?? -1;
+          const m =
+            i >= 0 && i < meta.length
+              ? meta[i]
+              : { actual: 0, expected: 0, submission_type: "" };
           const st = m.submission_type ? `, ${m.submission_type}` : "";
           return `${Number(val).toFixed(1)}% (Actual ${m.actual} / Expected ${m.expected}${st})`;
         },

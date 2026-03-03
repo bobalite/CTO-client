@@ -46,8 +46,6 @@
       </ul>
 
       <main class="flex-1 z-5 p-6 overflow-y-auto bg-green-200 text-green-900">
-        <!-- optional overlay loader when changing year -->
-        
         <h2 class="text-lg font-semibold">{{ state.activeTab }}</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -219,8 +217,6 @@
       </main>
     </div>
   </div>
-
- 
 </template>
 
 <script setup>
@@ -233,7 +229,6 @@ import { useUserStore } from "~/store/user";
 definePageMeta({
   layout: "main",
   middleware: ["auth-only"],
-  // ssr: false, // uncomment ONLY if you still get SSR flash due to localStorage-based auth
 });
 
 const userStore = useUserStore();
@@ -244,7 +239,7 @@ const tabs = [
   { name: "Protection" },
   { name: "Participation" },
   { name: "Governance" },
-  { name: "General Information" }
+  { name: "General Information" },
 ];
 
 const TAB_TO_RIGHT_ID = {
@@ -253,15 +248,76 @@ const TAB_TO_RIGHT_ID = {
   Protection: 3,
   Participation: 4,
   Governance: 5,
-  "General Information": 6
+  "General Information": 6,
 };
+
+/**
+ * ✅ SINGLE SOURCE OF TRUTH for completeness expectations
+ * NOTE: Keep this in ONE place (parent), not scattered in children.
+ */
+const GROUP_DEFS = [
+  { group_no: 1,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["1.1"], expected_per_year: 4 },
+  { group_no: 2,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["2.1","2.1.1","2.1.2","2.2"], expected_per_year: 16 },
+  { group_no: 3,  right_id: 1, title: "PRENATAL CARE", submission_type: "quarterly", indicators: ["3.1","3.2","3.2.1","3.2.2"], expected_per_year: 16 },
+  { group_no: 4,  right_id: 1, title: "FACILITY-BASED DELIVERIES", submission_type: "quarterly", indicators: ["4.1","4.1.1","4.1.2","4.1.3"], expected_per_year: 16 },
+  { group_no: 5,  right_id: 1, title: "FACILITY-BASED DELIVERIES", submission_type: "quarterly", indicators: ["5.1","5.1.1","5.1.2","5.1.3"], expected_per_year: 16 },
+  { group_no: 6,  right_id: 1, title: "POSTPARTUM CARE", submission_type: "quarterly", indicators: ["6.1","6.2","6.2.1","6.2.2"], expected_per_year: 16 },
+  { group_no: 7,  right_id: 1, title: "BIRTH WEIGHT", submission_type: "quarterly", indicators: ["7.1","7.2","7.3"], expected_per_year: 12 },
+  { group_no: 8,  right_id: 1, title: "INFANT BREASTFEEDING", submission_type: "quarterly", indicators: ["8.1","8.2"], expected_per_year: 8 },
+  { group_no: 9,  right_id: 1, title: "CHILD IMMUNIZATION", submission_type: "quarterly", indicators: ["9.1","9.2","9.3"], expected_per_year: 12 },
+  { group_no: 10, right_id: 1, title: "MATERNAL MORTALITY", submission_type: "quarterly", indicators: ["10.1","10.2"], expected_per_year: 8 },
+  { group_no: 11, right_id: 1, title: "CHILD MORTALITY", submission_type: "quarterly", indicators: ["11.1","11.2","11.3","11.4","11.5","11.6"], expected_per_year: 24 },
+  { group_no: 12, right_id: 1, title: "CHILD MORTALITY", submission_type: "quarterly", indicators: ["12.1","12.2"], expected_per_year: 8 },
+  { group_no: 13, right_id: 1, title: "OPERATION TIMBANG (OPT) PLUS", submission_type: "open", indicators: ["13.1","13.2","13.3"], expected_per_year: 3 },
+  { group_no: 14, right_id: 1, title: "NUTRITIONAL STATUS OF 0-59 MONTHS OLD CHILDREN", submission_type: "open", indicators: ["14.1","14.2","14.3","14.4","14.5","14.6","14.7","14.8","14.9","14.10","14.11","14.12","14.13","14.14","14.15","14.16","14.17","14.18"], expected_per_year: 18 },
+  { group_no: 15, right_id: 1, title: "SCHOOL-BASED FEEDING PROGRAM (SBFP)", submission_type: "open", indicators: ["15.1"], expected_per_year: 1 },
+  { group_no: 16, right_id: 1, title: "NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS", submission_type: "open", indicators: ["16.1","16.2","16.3"], expected_per_year: 3 },
+  { group_no: 17, right_id: 1, title: "NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS", submission_type: "open", indicators: ["17.1","17.2","17.3"], expected_per_year: 3 },
+  { group_no: 18, right_id: 1, title: "LOCAL HEALTH CENTERS", submission_type: "open", indicators: ["18.1"], expected_per_year: 1 },
+  { group_no: 19, right_id: 1, title: "WATER & SANITATION SERVICES", submission_type: "open", indicators: ["19.1","19.2","19.3","19.4","19.5","19.6","19.7"], expected_per_year: 7 },
+  { group_no: 20, right_id: 1, title: "WATER & SANITATION SERVICES", submission_type: "open", indicators: ["20.1","20.2","20.3"], expected_per_year: 3 },
+  { group_no: 21, right_id: 1, title: "CHILDREN AFFECTED BY HIV/AIDS", submission_type: "quarterly", indicators: ["21.1","21.2"], expected_per_year: 8 },
+
+  { group_no: 22, right_id: 2, title: "EARLY CHILDHOOD CARE AND DEVELOPMENT (ECCD)", submission_type: "open", indicators: ["22.1","22.2","22.2.1","22.2.2","22.3","22.4","22.5","22.6","22.7"], expected_per_year: 9 },
+  { group_no: 23, right_id: 2, title: "STUDENT ENROLMENT", submission_type: "open", indicators: ["23.1","23.2","23.3","23.4","23.5"], expected_per_year: 5 },
+  { group_no: 24, right_id: 2, title: "NET ENROLMENT", submission_type: "open", indicators: ["24.1","24.2","24.3","24.4"], expected_per_year: 4 },
+  { group_no: 25, right_id: 2, title: "COMPLETION", submission_type: "open", indicators: ["25.1","25.2"], expected_per_year: 2 },
+  { group_no: 26, right_id: 2, title: "SCHOOL LEAVER (DROP-OUT)", submission_type: "open", indicators: ["26.1","26.2"], expected_per_year: 2 },
+  { group_no: 27, right_id: 2, title: "SECTORAL ENROLMENT (IP)", submission_type: "open", indicators: ["27.1","27.1.1","27.1.2","27.1.3","27.1.4"], expected_per_year: 5 },
+  { group_no: 28, right_id: 2, title: "SECTORAL ENROLMENT (MORO)", submission_type: "open", indicators: ["28.1","28.1.1","28.1.2","28.1.3","28.1.4"], expected_per_year: 5 },
+  { group_no: 29, right_id: 2, title: "SECTORAL ENROLMENT (CWSN/CWD)", submission_type: "open", indicators: ["29.1","29.1.1","29.1.2","29.1.3","29.1.4"], expected_per_year: 5 },
+  { group_no: 30, right_id: 2, title: "ALTERNATIVE LEARNING SYSTEM", submission_type: "open", indicators: ["30.1","30.1.1","30.1.2","30.1.3","30.1.4"], expected_per_year: 5 },
+  { group_no: 31, right_id: 2, title: "OUT OF SCHOOL CHILDREN", submission_type: "open", indicators: ["31.1","31.1.1","31.1.2","31.1.3"], expected_per_year: 4 },
+  { group_no: 32, right_id: 2, title: "OUT OF SCHOOL CHILDREN AND YOUTH (OSCY)", submission_type: "open", indicators: ["32.1","32.2","32.3","32.4"], expected_per_year: 4 },
+
+  { group_no: 33, right_id: 3, title: "CHILDREN AT-RISK", submission_type: "quarterly", indicators: ["33.1","33.2","33.3","33.4","33.5","33.6","33.7","33.8","33.9","33.10","33.11","33.12","33.13","33.14","33.15","33.16","33.17","33.18","33.19","33.20","33.21","33.22","33.23","33.24","33.25","33.26","33.27"], expected_per_year: 108 },
+  { group_no: 34, right_id: 3, title: "PERMIT TO TRAVEL", submission_type: "quarterly", indicators: ["34.1","34.1.1","34.1.2"], expected_per_year: 12 },
+  { group_no: 35, right_id: 3, title: "CHILD ABUSE (RA 7610)", submission_type: "quarterly", indicators: ["35.1","35.1.1","35.1.2","35.1.3","35.1.4","35.1.5","35.1.6"], expected_per_year: 28 },
+  { group_no: 36, right_id: 3, title: "CHILD SEXUAL ABUSE", submission_type: "quarterly", indicators: ["36.1","36.1.1","36.1.2","36.1.3","36.1.4","36.1.5","36.1.6"], expected_per_year: 28 },
+  { group_no: 37, right_id: 3, title: "CHILDREN IN-CONFLICT WITH THE LAW (CICL)", submission_type: "quarterly", indicators: ["37.1","37.1.1","37.1.2","37.1.3","37.1.4","37.1.5","37.1.6","37.1.7","37.1.8","37.1.9","37.1.10"], expected_per_year: 44 },
+  { group_no: 38, right_id: 3, title: "CRIMES AGAINST PERSON COMMITTED BY CHILDREN", submission_type: "quarterly", indicators: ["38.1","38.1.1","38.1.2","38.1.3","38.1.4","38.1.5","38.1.6","38.1.7","38.1.8","38.1.9","38.1.10","38.1.11","38.1.12","38.1.13","38.1.14","38.1.15","38.1.16"], expected_per_year: 68 },
+  { group_no: 39, right_id: 3, title: "CRIMES AGAINST PROPERTY COMMITTED BY CHILDREN", submission_type: "quarterly", indicators: ["39.1","39.1.1","39.1.2","39.1.3","39.1.4","39.1.5","39.1.6","39.1.7"], expected_per_year: 32 },
+  { group_no: 40, right_id: 3, title: "CRIMES AGAINST PUBLIC ORDER COMMITTED BY CHILDREN", submission_type: "quarterly", indicators: ["40.1","40.1.1","40.1.2","40.1.3"], expected_per_year: 16 },
+  { group_no: 41, right_id: 3, title: "CRIMES UNDER SPECIAL PENAL LAWS", submission_type: "quarterly", indicators: ["41.1","41.1.1","41.1.2","41.1.3","41.1.4","41.1.5","41.1.6","41.1.7","41.1.8"], expected_per_year: 36 },
+  { group_no: 42, right_id: 3, title: "GRAND TOTAL CRIMES COMMITTED BY CHILDREN", submission_type: "quarterly", indicators: ["42.1"], expected_per_year: 4 },
+
+  { group_no: 43, right_id: 4, title: "CHILD REPRESENTATION", submission_type: "open", indicators: ["43.1","43.1.1","43.1.2","43.2"], expected_per_year: 4 },
+
+  { group_no: 44, right_id: 5, title: "LCPC FUNCTIONALITY", submission_type: "open", indicators: ["44.1","44.2","44.3","44.4","44.5","44.6"], expected_per_year: 6 },
+  { group_no: 45, right_id: 5, title: "LOCAL INSTITUTIONS", submission_type: "open", indicators: ["45.1","45.2"], expected_per_year: 2 },
+
+  { group_no: 46, right_id: 6, title: "GENERAL POPULATION", submission_type: "open", indicators: ["46.1","46.2","46.2.1","46.2.2","46.2.3","46.2.4","46.2.5","46.2.6","46.2.7","46.2.8","46.2.9","46.2.10","46.2.11","46.2.12","46.2.13","46.2.14","46.2.15","46.2.16","46.2.17","46.2.18"], expected_per_year: 20 },
+  { group_no: 47, right_id: 6, title: "SECTORAL POPULATION (PWD & CHILD LABOR)", submission_type: "open", indicators: ["47.1","47.1.1","47.1.2","47.2"], expected_per_year: 4 },
+  { group_no: 48, right_id: 6, title: "SECTORAL POPULATION (IP/MORO BY ETHNICITY)", submission_type: "open", indicators: ["48.1","48.2","48.3","48.4","48.5","48.6","48.7","48.8","48.9","48.10","48.11","48.12","48.13","48.14","48.15","48.16","48.17","48.18","48.19","48.20","48.21","48.22","48.23"], expected_per_year: 23 },
+  { group_no: 49, right_id: 6, title: "CIVIL REGISTRATION", submission_type: "quarterly", indicators: ["49.1","49.2","49.3","49.4","49.5"], expected_per_year: 20 },
+];
 
 const state = reactive({
   activeTab: tabs[0].name,
   right_id: TAB_TO_RIGHT_ID[tabs[0].name],
 
-  loading: true,        // boot
-  isPageLoading: false, // refetch
+  loading: true,
+  isPageLoading: false,
 
   passed_data: [],
   passed_data_annual: [],
@@ -297,7 +353,6 @@ const state = reactive({
 });
 
 const graphsKey = computed(() => `${state.activeTab}-${state.report_year}`);
-
 const bootReady = computed(() => !!userStore?.getUser && state.loading === false);
 
 /** ----------------- boot ----------------- */
@@ -329,7 +384,7 @@ watch(
   }
 );
 
-/** ----------------- completeness recompute ----------------- */
+/** ----------------- recompute completeness ----------------- */
 watch(
   () => [
     state.activeTab,
@@ -338,10 +393,9 @@ watch(
     state.passed_data,
     state.passed_data_annual,
     state.report_years.data,
-    state.rights_config_by_right
   ],
   () => {
-    state.completenessByKey = computeCompletenessBySubcategory();
+    state.completenessByKey = computeCompletenessByGroupDefs();
   },
   { deep: true }
 );
@@ -351,7 +405,7 @@ function change_selected_year(opt) {
   const opts = state.options.report_years.filter(Boolean);
   if (!opts.length) return;
 
-  const currentIndex = opts.findIndex(o => o.value === state.report_year);
+  const currentIndex = opts.findIndex((o) => o.value === state.report_year);
   const idx = currentIndex === -1 ? 0 : currentIndex;
 
   if (opt === 1 && idx < opts.length - 1) state.report_year = opts[idx + 1].value;
@@ -371,13 +425,13 @@ async function fetchreportyear() {
   state.report_years.data = rows;
 
   const years = rows
-    .filter(r => Number(r?.status) === 1 && r?.year != null)
-    .map(r => Number(r.year))
+    .filter((r) => Number(r?.status) === 1 && r?.year != null)
+    .map((r) => Number(r.year))
     .filter(Number.isFinite);
 
   const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
 
-  state.options.report_years = uniqueYears.map(y => ({ value: y, label: String(y), year: y }));
+  state.options.report_years = uniqueYears.map((y) => ({ value: y, label: String(y), year: y }));
   state.report_year = uniqueYears[0] ?? null;
 }
 
@@ -387,10 +441,11 @@ async function fetchData() {
   const response = await reportDetailsGroupsService.getReportDetailsGroups(params);
   state.passed_data = Array.isArray(response?.data) ? response.data : [];
 
-  const responseAnnual = await reportDetailsGroupsService.getReportDetailsGroups();
+  // ✅ Better: request annual/open with year too (if backend supports it)
+  const responseAnnual = await reportDetailsGroupsService.getReportDetailsGroups(params);
   state.passed_data_annual = Array.isArray(responseAnnual?.data) ? responseAnnual.data : [];
 
-  state.completenessByKey = computeCompletenessBySubcategory();
+  state.completenessByKey = computeCompletenessByGroupDefs();
 }
 
 async function fetchIndicatorConfig() {
@@ -407,7 +462,8 @@ async function fetchIndicatorConfig() {
   }
   state.rights_config_by_right = grouped;
 
-  state.completenessByKey = computeCompletenessBySubcategory();
+  // completeness depends on data too; ok to pre-init
+  state.completenessByKey = computeCompletenessByGroupDefs();
 }
 
 /** ----------------- DataSources ----------------- */
@@ -439,21 +495,20 @@ function buildAgencyDistributionFromConfig(configRoot, agencies) {
     }
   }
 
-  const getLabel = (id) =>
-    agencies.find((a) => Number(a?.value) === Number(id))?.label ?? `Agency ${id}`;
+  const getLabel = (id) => agencies.find((a) => Number(a?.value) === Number(id))?.label ?? `Agency ${id}`;
 
   const rows = Array.from(counts.entries())
     .map(([agencyId, count]) => ({ agencyId, label: getLabel(agencyId), count }))
     .sort((a, b) => b.count - a.count);
 
-  return { labels: rows.map(r => r.label), series: rows.map(r => r.count), meta: rows };
+  return { labels: rows.map((r) => r.label), series: rows.map((r) => r.count), meta: rows };
 }
 
 const datasourcePie = computed(() =>
   buildAgencyDistributionFromConfig(activeIndicatorConfig.value, state.options.agencies)
 );
 
-/** ----------------- completeness engine ----------------- */
+/** ----------------- completeness engine (GROUP_DEFS-based) ----------------- */
 function normalizeArray(raw) {
   if (Array.isArray(raw)) return raw;
   if (raw && Array.isArray(raw.data)) return raw.data;
@@ -470,99 +525,111 @@ function toNum(v) {
   return Number.isFinite(n) ? n : NaN;
 }
 
+/**
+ * Prefer row.report_year (your API has it).
+ * Fallback to report_year_id -> report_years.data if needed.
+ */
 function getRowYear(row) {
-  const y = row?.year ?? row?.report_year;
-  if (y != null && y !== "") {
-    const yn = Number(y);
-    return Number.isFinite(yn) ? yn : NaN;
-  }
+  const direct = toNum(row?.report_year ?? row?.year);
+  if (Number.isFinite(direct)) return direct;
 
   const ryId = toNum(row?.report_year_id);
   if (!Number.isFinite(ryId)) return NaN;
 
   const reportYears = normalizeArray(state.report_years);
-  const match = reportYears.find(r => Number(r?.id) === ryId);
+  const match = reportYears.find((r) => Number(r?.id) === ryId);
   const my = toNum(match?.year);
   return Number.isFinite(my) ? my : NaN;
 }
 
-function makeSubcategoryKey(rightId, categoryId, subId) {
-  return `r${rightId}_c${categoryId}_s${subId}`;
+function normalizeSchedule(v) {
+  return String(v ?? "").trim().toLowerCase(); // "quarterly" | "open" | ...
 }
 
-function computeCompletenessBySubcategory() {
+/**
+ * ✅ Bulletproof completeness using GROUP_DEFS and your actual response:
+ * - Quarterly: distinct (indicator_no + report_year_id)
+ * - Open: distinct indicator_no
+ */
+function computeCompletenessByGroupDefs() {
   const rightId = Number(state.right_id);
   const selectedYear = Number(state.report_year);
-
-  const configTree = normalizeArray(state.rights_config_by_right?.[rightId] ?? []);
 
   const detailsRows = [
     ...normalizeArray(state.passed_data),
     ...normalizeArray(state.passed_data_annual),
   ];
 
-  const expectedBySub = new Map();
+  const defs = GROUP_DEFS.filter((g) => Number(g.right_id) === rightId);
 
-  for (const cat of configTree) {
-    const categoryId = cat?.id ?? null;
-    const subs = Array.isArray(cat?.indicator_subcategories) ? cat.indicator_subcategories : [];
-
-    for (const sub of subs) {
-      const subId = sub?.id ?? null;
-      if (!subId || !categoryId) continue;
-
-      const key = makeSubcategoryKey(rightId, categoryId, subId);
-      const label = normStr(sub?.description ?? "Subcategory");
-
-      const expectedSet = new Set();
-      const groups = Array.isArray(sub?.indicator_groups) ? sub.indicator_groups : [];
-      for (const g of groups) {
-        const els = Array.isArray(g?.indicator_group_elements) ? g.indicator_group_elements : [];
-        for (const e of els) {
-          const ind = normStr(e?.indicator_no);
-          if (ind) expectedSet.add(ind);
-        }
-      }
-
-      expectedBySub.set(key, { label, expectedSet });
+  const indicatorToGroupNo = new Map();
+  for (const def of defs) {
+    for (const ind of def.indicators ?? []) {
+      indicatorToGroupNo.set(String(ind), Number(def.group_no));
     }
   }
 
-  const actualSet = new Set();
+  const openActual = new Map();
+  const quarterlyActual = new Map();
+
   for (const row of detailsRows) {
     if (!row) continue;
 
     const rowYear = getRowYear(row);
-    if (Number.isFinite(selectedYear) && rowYear !== selectedYear) continue;
+    if (Number.isFinite(selectedYear) && Number.isFinite(rowYear) && rowYear !== selectedYear) continue;
 
-    const ind = normStr(row?.indicator_no ?? row?.indicator);
+    const ind = normStr(row?.indicator_no);
     if (!ind) continue;
 
-    const value = toNum(row?.total);
-    if (!Number.isFinite(value)) continue;
+    const groupNo = indicatorToGroupNo.get(ind);
+    if (!Number.isFinite(groupNo)) continue;
 
-    actualSet.add(ind);
+    const total = toNum(row?.total);
+    if (!Number.isFinite(total)) continue;
+
+    const schedule = normalizeSchedule(row?.report_schedule);
+
+    if (schedule === "quarterly") {
+      const qid = row?.report_year_id;
+      if (qid == null || String(qid).trim() === "") continue;
+      const key = `${ind}|${qid}`;
+
+      if (!quarterlyActual.has(groupNo)) quarterlyActual.set(groupNo, new Set());
+      quarterlyActual.get(groupNo).add(key);
+    } else {
+      if (!openActual.has(groupNo)) openActual.set(groupNo, new Set());
+      openActual.get(groupNo).add(ind);
+    }
   }
 
   const out = {};
-  for (const [key, meta] of expectedBySub.entries()) {
-    const expected = meta.expectedSet.size;
+
+  for (const def of defs) {
+    const groupNo = Number(def.group_no);
+    const expected = Number(def.expected_per_year) || 0;
 
     let actual = 0;
-    for (const ind of meta.expectedSet) {
-      if (actualSet.has(ind)) actual += 1;
+    if (String(def.submission_type).toLowerCase() === "quarterly") {
+      actual = quarterlyActual.get(groupNo)?.size ?? 0;
+    } else {
+      actual = openActual.get(groupNo)?.size ?? 0;
     }
+
+    actual = Math.min(actual, expected);
 
     const percentage = expected > 0 ? Number(((actual / expected) * 100).toFixed(1)) : 0;
 
+    const key = `r${rightId}_g${groupNo}`;
     out[key] = {
       subcategory_key: key,
-      subcategory_label: meta.label,
+      subcategory_label: def.title,
       tab_name: state.activeTab,
       report_year: Number.isFinite(selectedYear) ? selectedYear : null,
       expected,
       actual,
       percentage,
+      submission_type: def.submission_type,
+      group_no: groupNo,
     };
   }
 
