@@ -213,6 +213,17 @@
             :report_year="String(state.report_year || '')"
             :report_years="state.report_years"
           />
+
+
+          <GraphsGerneralInformationCivilReg
+            v-if="state.activeTab === 'General Information'"
+            :key="graphsKey"
+            :passed_data="state.passed_data"
+            class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
+            :report_year="String(state.report_year || '')"
+            :report_years="state.report_years"
+          />
+
         </div>
       </main>
     </div>

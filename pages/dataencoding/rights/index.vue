@@ -152,7 +152,6 @@
 <script setup>
 import { ref } from 'vue'
 import { indicatorService } from '~/components/api/IndicatorCategoryService';
-//import { reportDetailsService } from '~/components/api/ReportDetailsService';
 import { rolesService } from '~/components/api/Roles';
 import { useUserStore } from '~/store/user'
 import { report_yearService } from '~/components/api/ReportYears';
@@ -379,7 +378,6 @@ function changeData() {
 const expandedCategories = ref([])
 const expandedSubcategories = ref([])
 const expandedGroups = ref([])
-const showGroupedit = ref(false)
 const showGroupadd = ref(false)
 const showGroupview = ref(false)
 

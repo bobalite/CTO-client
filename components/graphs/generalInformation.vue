@@ -35,12 +35,6 @@
       </ClientOnly>
     </div>
 
-    
-
-  </div>
-
-  <!-- 2 column block -->
-  <div :class="props.class" class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="border rounded-xl p-2">
       <h3 class="text-sm font-bold mb-2">Persons With Disabilities (PWDs)</h3>
 
@@ -55,20 +49,16 @@
       </ClientOnly>
     </div>
 
-    <div class="border rounded-xl p-2">
-      <h3 class="text-sm font-bold mb-2">CIVIL REGISTRATION</h3>
+    
 
-      <ClientOnly>
-        <apexchart
-          type="bar"
-          height="400"
-          width="100%"
-          :options="state.barOptionsCivreg"
-          :series="state.civreg"
-        />
-      </ClientOnly>
-    </div>
   </div>
+
+
+  
+    
+
+    
+ 
 </template>
 
 <script setup>
@@ -96,13 +86,13 @@ const state = reactive({
   pop: [],
   pwd: [],
   tribe_pop: [],
-  civreg: [],
+ 
 
   // separate options per chart (prevents “options fights”)
   barOptionsPop: baseBarOptions(),
   barOptionsPwd: baseBarOptions(),
   barOptionsTribe: baseBarOptions(),
-  barOptionsCivreg: baseBarOptions(),
+  
 });
 
 function baseBarOptions() {
@@ -175,7 +165,7 @@ function buildAnnualAxisFromAnnualData() {
   state.barOptionsPop = { ...state.barOptionsPop, xaxis: { ...state.barOptionsPop.xaxis, categories: state.annualYearNames } };
   state.barOptionsPwd = { ...state.barOptionsPwd, xaxis: { ...state.barOptionsPwd.xaxis, categories: state.annualYearNames } };
   state.barOptionsTribe = { ...state.barOptionsTribe, xaxis: { ...state.barOptionsTribe.xaxis, categories: state.annualYearNames } };
-  state.barOptionsCivreg = { ...state.barOptionsCivreg, xaxis: { ...state.barOptionsCivreg.xaxis, categories: state.annualYearNames } };
+ 
 }
 
 function buildAnnualSeriesFromAnnualData() {
@@ -186,7 +176,7 @@ function buildAnnualSeriesFromAnnualData() {
     state.pop = [];
     state.pwd = [];
     state.tribe_pop = [];
-    state.civreg = [];
+    
     return;
   }
 
@@ -246,12 +236,7 @@ function buildAnnualSeriesFromAnnualData() {
   const tribe_48_22 = new Array(yearIds.length).fill(0);
   const tribe_48_23 = new Array(yearIds.length).fill(0);
 
-  // ---- 49.* (Civil registration)
-  const civ_49_1 = new Array(yearIds.length).fill(0);
-  const civ_49_2 = new Array(yearIds.length).fill(0);
-  const civ_49_3 = new Array(yearIds.length).fill(0);
-  const civ_49_4 = new Array(yearIds.length).fill(0);
-  const civ_49_5 = new Array(yearIds.length).fill(0);
+  
 
   for (const row of data) {
     if (!row) continue;
@@ -319,12 +304,7 @@ function buildAnnualSeriesFromAnnualData() {
       case "48.22": tribe_48_22[idx] += value; break;
       case "48.23": tribe_48_23[idx] += value; break;
 
-      // 49.*
-      case "49.1": civ_49_1[idx] += value; break;
-      case "49.2": civ_49_2[idx] += value; break;
-      case "49.3": civ_49_3[idx] += value; break;
-      case "49.4": civ_49_4[idx] += value; break;
-      case "49.5": civ_49_5[idx] += value; break;
+      
 
       default: break;
     }
@@ -386,12 +366,6 @@ function buildAnnualSeriesFromAnnualData() {
     { name: "48.23 Tausug Children (<=17)", data: tribe_48_23 },
   ];
 
-  state.civreg = [
-    { name: "49.1 Children registered at-birth (<=17)", data: civ_49_1 },
-    { name: "49.2 Moro children registered at-birth (<=17)", data: civ_49_2 },
-    { name: "49.3 IP children registered at-birth (<=17)", data: civ_49_3 },
-    { name: '49.4 Birth registrations via SCRA (<=17)', data: civ_49_4 },
-    { name: "49.5 Birth registrations via BCRA (<=17)", data: civ_49_5 },
-  ];
+  
 }
 </script>
