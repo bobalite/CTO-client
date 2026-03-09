@@ -611,7 +611,7 @@ async function saveIndicators() {
         bulkRows.push({
           // ✅ quarterly keeps report_year_id, open/annual stores null
           
-          report_year_id: excelIsOpenOrAnnual ? null : reportYearId,
+          report_year_id: excelIsOpenOrAnnual ? null : reportYearId, // backend must accept null for open/annual 
           report_year: Number(props.selected_year),
 
           indicator_no: String(id),
@@ -632,6 +632,11 @@ async function saveIndicators() {
         });
       });
     }
+
+    console.log('Prepared bulk rows for Excel upload', bulkRows)
+
+
+
     if (bulkRows.length) {
       try {
         //await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
@@ -646,6 +651,11 @@ async function saveIndicators() {
     // 3️⃣ Update existing normal rows if needed
 
     // this is for normal entries---------------------------------------------------------------------------------------------
+
+
+
+
+
     if (existingRecords.length > 0) {
       const confirmUpdate = confirm(`${existingRecords.length} record(s) already exist. Update them?`)
       if (confirmUpdate) {
@@ -657,6 +667,8 @@ async function saveIndicators() {
       }
     }
 
+    
+    
     // this is for normal entries---------------------------------------------------------------------------------------------
 
     alert(`Done: ${successCount} saved, ${errorCount} errors.`)

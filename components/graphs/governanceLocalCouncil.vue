@@ -15,97 +15,54 @@
           :options="state.barOptions"
           :series="state.lcpc"
         />
-      </ClientOnly>
+     </ClientOnly>
     </div>
 
     <!-- Chart 2 -->
     <div class="border rounded-xl p-2">
       <h3 class="text-lg font-bold mb-2">LOCAL INSTITUTIONS</h3>
       <ClientOnly>
-        <apexchart
-          type="bar"
-          height="400"
-          width="100%"
-          :options="state.barOptions"
-          :series="state.local"
-        />
+        <apexchart type="bar" height="400" width="100%" :options="state.barOptions" :series="state.local" />
       </ClientOnly>
     </div>
 
-    <!-- Excel-derived ANNUAL view -->
+    <!-- Annual Excel List -->
     <div class="border rounded-xl p-2 md:col-span-2">
       <h3 class="text-base font-bold mb-2">
-        List of LGU Accredited NGOs/CSOs providing services to Children (Annual Data)
+        List of LGU Accredited NGOs/CSOs providing services to Children
       </h3>
 
       <div v-if="state.annualYearIds.length === 0" class="text-sm opacity-70 text-center py-6">
         No years found.
       </div>
 
-      <!-- ✅ ONE YEAR PER ROW (one column) -->
       <div v-else class="grid grid-cols-1 gap-4">
-        <div
-          v-for="(year, idx) in state.annualYearIds"
-          :key="'lgu-annual-' + year"
-          class="border rounded-xl p-3"
-        >
-          <div class="text-sm font-semibold mb-2 text-center">
-            {{ state.annualYearNames?.[idx] ?? year }}
+        <div v-for="year in state.annualYearIds" :key="'lgu-annual-' + year" class="border rounded-xl p-4">
+          <div class="text-lg font-bold mb-4 text-center">
+            {{ year }}
           </div>
 
-          <div
-            v-if="(state.lguAccreditedListByYear?.[year]?.length ?? 0) === 0"
-            class="text-xs opacity-70 text-center py-6"
-          >
+          <div v-if="(state.lguAccreditedListByYear?.[year]?.length ?? 0) === 0"
+            class="text-sm opacity-70 text-center py-6">
             No data.
           </div>
 
-          <!-- ✅ LIST + PIE SIDE-BY-SIDE -->
-          <div v-else class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
-            <!-- LEFT: List (scrollable if huge) -->
-            <div class="md:col-span-7">
-              <div class="max-h-[520px] overflow-auto pr-2">
-                <ul class="space-y-1 text-xs">
-                  <li
-                    v-for="item in state.lguAccreditedListByYear[year]"
-                    :key="'lgu-' + year + '-' + item.rank + '-' + item.name"
-                    class="flex items-start gap-2 leading-tight"
-                    :title="item.name"
-                  >
-                    <div class="w-10 shrink-0 text-right font-semibold">
-                      {{ item.rank }}.
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                      <div class="font-medium">
-                        {{ item.name }}
-                      </div>
-                      <div class="text-[10px] opacity-70">
-                        {{ item.count }} · {{ item.pct }}%
-                      </div>
-                    </div>
-                  </li>
-                </ul>
+          <ul v-else class="columns-1 md:columns-2 gap-10 text-base leading-relaxed">
+            <li v-for="item in state.lguAccreditedListByYear[year]" :key="'lgu-' + year + '-' + item.rank"
+              class="break-inside-avoid mb-2 flex items-start gap-3">
+              <div class="w-12 shrink-0 text-right font-bold text-gray-700">
+                {{ item.rank }}.
               </div>
-            </div>
 
-            <!-- RIGHT: Pie -->
-            <div class="md:col-span-5">
-              <ClientOnly>
-                <apexchart
-                  type="pie"
-                  height="420"
-                  width="100%"
-                  :options="lguPieOptions(year)"
-                  :series="state.lguAccreditedPieByYear[year]?.series ?? []"
-                />
-              </ClientOnly>
-            </div>
-          </div>
+              <div class="flex-1 font-medium text-gray-800">
+                {{ item.name }}
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <!-- /Excel-derived ANNUAL view -->
+    <!-- /Annual Excel List -->
   </div>
 </template>
 
@@ -133,13 +90,18 @@ const state = reactive({
   lcpc: [],
   local: [],
 
-  exceldata: [],
-  lguAccreditedListByYear: {}, // { [year:number]: [{rank,name,count,pct}] }
-  lguAccreditedPieByYear: {},  // { [year:number]: {labels,series,total} }
+  lguAccreditedListByYear: {},
 
   barOptions: {
-    chart: { type: "bar", stacked: false, toolbar: { show: false }, zoom: { enabled: false } },
-    plotOptions: { bar: { horizontal: false, columnWidth: "60%" } },
+    chart: {
+      type: "bar",
+      stacked: false,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+    },
+    plotOptions: {
+      bar: { horizontal: false, columnWidth: "60%" },
+    },
     dataLabels: { enabled: true },
     stroke: { curve: "smooth" },
     tooltip: { shared: true, intersect: false },
@@ -196,11 +158,7 @@ function getRowYear(row) {
 function recalc() {
   buildAnnualArrays();
   fetchReports_Details_Bars_Annual();
-
-  // kept (harmless)
   buildQuarterArrays();
-
-  // ✅ annual excel aggregation
   getexceldataAnnual();
 }
 
@@ -216,7 +174,10 @@ function buildAnnualArrays() {
 
   state.barOptions = {
     ...state.barOptions,
-    xaxis: { ...state.barOptions.xaxis, categories: state.annualYearNames },
+    xaxis: {
+      ...state.barOptions.xaxis,
+      categories: state.annualYearNames,
+    },
   };
 }
 
@@ -275,17 +236,34 @@ function fetchReports_Details_Bars_Annual() {
       if (!Number.isFinite(value)) continue;
 
       switch (String(row.indicator_no)) {
-        case "44.1": lcpc_44_1[idx] += value; break;
-        case "44.2": lcpc_44_2[idx] += value; break;
-        case "44.3": lcpc_44_3[idx] += value; break;
-        case "44.4": lcpc_44_4[idx] += value; break;
-        case "44.5": lcpc_44_5[idx] += value; break;
-        case "44.6": lcpc_44_6[idx] += value; break;
+        case "44.1":
+          lcpc_44_1[idx] += value;
+          break;
+        case "44.2":
+          lcpc_44_2[idx] += value;
+          break;
+        case "44.3":
+          lcpc_44_3[idx] += value;
+          break;
+        case "44.4":
+          lcpc_44_4[idx] += value;
+          break;
+        case "44.5":
+          lcpc_44_5[idx] += value;
+          break;
+        case "44.6":
+          lcpc_44_6[idx] += value;
+          break;
 
-        case "45.1": local_45_1[idx] += value; break;
-        case "45.2": local_45_2[idx] += value; break;
+        case "45.1":
+          local_45_1[idx] += value;
+          break;
+        case "45.2":
+          local_45_2[idx] += value;
+          break;
 
-        default: break;
+        default:
+          break;
       }
     }
 
@@ -316,15 +294,13 @@ async function getexceldataAnnual() {
     const rows = Array.isArray(response?.data)
       ? response.data
       : Array.isArray(response)
-      ? response
-      : [];
+        ? response
+        : [];
 
-    state.exceldata = rows;
+    const yearsWanted = (state.annualYearIds ?? []).map(Number).filter(Number.isFinite);
 
-    const yearsWanted = (state.annualYearIds ?? []).map(Number);
     if (!yearsWanted.length) {
       state.lguAccreditedListByYear = {};
-      state.lguAccreditedPieByYear = {};
       return;
     }
 
@@ -337,73 +313,69 @@ async function getexceldataAnnual() {
 
     const indicatorNo = "45.2";
 
-    // year -> name -> count sum
-    const agg = new Map();
+    // year -> Map(name -> count)
+    const yearlyNameCounts = new Map();
 
-    for (const r of rows) {
-      if (!r) continue;
-      if (String(r.indicator_no) !== indicatorNo) continue;
+    for (const row of rows) {
+      if (!row) continue;
+      if (String(row.indicator_no ?? "") !== indicatorNo) continue;
 
-      const ryId = Number(r.report_year_id);
-      const year = reportYearIdToYear.get(ryId);
+      let year = null;
+
+      // quarterly rows
+      if (row.report_year_id != null && row.report_year_id !== "") {
+        const ryId = Number(row.report_year_id);
+        const mappedYear = reportYearIdToYear.get(ryId);
+        if (Number.isFinite(mappedYear)) {
+          year = mappedYear;
+        }
+      }
+
+      // open / annual rows
+      if (!Number.isFinite(year)) {
+        const directYear = Number(row.report_year);
+        if (Number.isFinite(directYear)) {
+          year = directYear;
+        }
+      }
+
       if (!Number.isFinite(year)) continue;
       if (!yearsWanted.includes(year)) continue;
 
-      const name = String(r.header_value2 ?? "").trim();
+      const name = String(row.header_value2 ?? "").trim();
       if (!name) continue;
 
-      const count = toNum(r.header_value3);
+      const count = toNum(row.header_value3);
 
-      if (!agg.has(year)) agg.set(year, new Map());
-      const byName = agg.get(year);
+      if (!yearlyNameCounts.has(year)) {
+        yearlyNameCounts.set(year, new Map());
+      }
+
+      const byName = yearlyNameCounts.get(year);
       byName.set(name, (byName.get(name) ?? 0) + count);
     }
 
     const listOut = {};
-    const pieOut = {};
 
     for (const year of yearsWanted) {
-      const byName = agg.get(year) ?? new Map();
+      const byName = yearlyNameCounts.get(year) ?? new Map();
 
       const list = Array.from(byName.entries())
         .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count) // ✅ no limit
-        .map((x, i) => ({ rank: i + 1, ...x }));
+        .sort((a, b) => b.count - a.count);
 
-      const total = list.reduce((sum, x) => sum + x.count, 0);
-
-      listOut[year] = list.map((x) => ({
-        ...x,
-        pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+      const ranked = list.map((item, index) => ({
+        rank: index + 1,
+        name: item.name,
       }));
 
-      pieOut[year] = {
-        labels: listOut[year].map((x) => x.name),
-        series: listOut[year].map((x) => Number(x.pct.toFixed(2))),
-        total,
-      };
+      listOut[year] = ranked;
     }
 
     state.lguAccreditedListByYear = listOut;
-    state.lguAccreditedPieByYear = pieOut;
   } catch (err) {
     console.error("Error fetching report detail excel:", err);
-    state.exceldata = [];
     state.lguAccreditedListByYear = {};
-    state.lguAccreditedPieByYear = {};
   }
-}
-
-function lguPieOptions(year) {
-  const pack = state.lguAccreditedPieByYear?.[year];
-  return {
-    chart: { type: "pie" },
-    labels: pack?.labels ?? [],
-    legend: { show: false },
-    dataLabels: { enabled: false },
-    tooltip: {
-      y: { formatter: (val) => `${val}%` },
-    },
-  };
 }
 </script>
