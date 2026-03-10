@@ -29,10 +29,12 @@
       <PrintRowcategory :description="category.description" />
 
       <!-- SUBCATEGORY -->
-      <template v-for="subcategory in (category.indicator_subcategories || [])" :key="subcategory.id">
+      <template v-for="(subcategory, subIndex) in (category.indicator_subcategories || [])" :key="subcategory.id">
         <div
-          class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start
-                 overflow-visible h-auto print:gap-1 print:py-1"
+          :class="[
+            'grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start overflow-visible h-auto print:gap-1 print:py-1',
+            { 'print-subcategory-new-page': subIndex > 0 }
+          ]"
         >
           <!-- LEFT: SUBCATEGORY LABEL -->
           <div class="flex items-start px-2 print:px-1">
@@ -49,14 +51,13 @@
                   Group {{ group.group_no }}
                 </div>
 
-                <!-- ✅ NORMAL TABLE: ALWAYS SHOW ALL ELEMENTS (including excel ones) -->
+                <!-- NORMAL TABLE -->
                 <div
                   v-if="(group.indicator_group_elements || []).length"
                   class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3 overflow-visible h-auto"
                 >
                   <GridCell class="sm:col-span-15 text-center text-xs border-r border-b" displaytext="" />
 
-                  <!-- ✅ HEADER: INDICATOR / MALE / FEMALE / TOTAL / REMARKS / AGENCY (one line) -->
                   <GridCell class="sm:col-span-6 text-center text-xs border-l border-b" displaytext="INDICATOR" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="MALE" />
                   <GridCell class="sm:col-span-2 text-center text-xs border-l border-b" displaytext="FEMALE" />
@@ -73,7 +74,6 @@
                       :displaytext="el.indicator_no"
                     />
 
-                    <!-- ✅ INDICATOR description reduced by 1 col to make space for AGENCY -->
                     <GridCell
                       class="sm:col-span-5 px-1 text-xs border-b break-words"
                       :displaytext="el.description"
@@ -97,14 +97,12 @@
                       :modelValue="state.total[String(el.indicator_no).trim()] ?? ''"
                     />
 
-                    <!-- ✅ REMARKS reduced to 3 cols -->
                     <GridTextPrintAreaViewReadonly
                       class="sm:col-span-3 px-1 text-xs border-l border-b break-words"
                       :entrystatus="el.remarks"
                       :modelValue="state.remarks[String(el.indicator_no).trim()] ?? ''"
                     />
 
-                    <!-- ✅ AGENCY (same row) -->
                     <div class="sm:col-span-1 border-l border-b border-r px-1 flex items-center justify-center">
                       <span
                         v-if="agencyMeta(el.agency_id).label"
@@ -122,66 +120,125 @@
                   No elements.
                 </div>
 
-                <!-- ✅ EXCEL LISTS: SHOW ONLY FOR EXCEL ELEMENTS -->
+                <!-- EXCEL LISTS -->
                 <div v-if="excelElements(group).length" class="space-y-4 mt-4">
-                  <div
-                    v-for="el in excelElements(group)"
-                    :key="'excel-' + el.id"
-                    class="border rounded-xl p-2"
-                  >
+
+
+                  <div v-for="el in excelElements(group)" :key="'excel-' + el.id" class="border rounded-xl p-2"> <!-- Loop through Excel-type elements that are quarterly -->
                     <div class="font-semibold text-sm print:text-xs mb-2">
-                      {{ el.indicator_no }} {{ el.description }} (Excel)
+                      {{ el.indicator_no }} {{ el.description }} {{ el.submition_type }} (Excel)
                     </div>
 
-                    <!-- 2 quarters per row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div
-                        v-for="(qid, idx) in state.quarterIds"
-                        :key="String(el.indicator_no) + '-q-' + qid"
-                        class="border rounded-xl p-3"
-                      >
-                        <div class="text-sm font-semibold mb-2 text-center">
-                          {{ state.quarterNames?.[idx] ?? `Q${idx + 1}` }}
-                        </div>
-
+                    <!-- QUARTERLY -->
+                    <template v-if="String(el.submition_type).toLowerCase() === 'quarterly'">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div
-                          v-if="getExcelList(el.indicator_no, qid).length === 0"
-                          class="text-xs opacity-70 text-center py-6"
+                          v-for="bucket in getExcelBuckets(el.indicator_no)"
+                          :key="String(el.indicator_no) + '-' + bucket.key"
+                          class="border rounded-xl p-3"
                         >
+                          <div class="text-sm font-semibold mb-2 text-center">
+                            {{ bucket.label }}
+                          </div>
+
+                          <div v-if="!bucket.rows.length" class="text-xs opacity-70 text-center py-6">
+                            No data.
+                          </div>
+
+                          <div v-else class="grid grid-cols-12 gap-3 items-start">
+                            <div class="col-span-12">
+                              <ul class="space-y-1 text-xs">
+                                <li
+                                  v-for="item in bucket.rows"
+                                  :key="String(el.indicator_no) + '-' + bucket.key + '-' + item.rank + '-' + item.disease"
+                                  class="flex items-start gap-2 leading-tight"
+                                  :title="item.disease"
+                                >
+                                  <div class="w-6 shrink-0 text-right font-semibold">
+                                    {{ item.rank }}.
+                                  </div>
+
+                                  <div class="min-w-0 flex-1">
+                                    <div class="font-medium break-words">
+                                      {{ item.disease }}
+                                    </div>
+                                    <div class="text-[10px] opacity-70">
+                                      {{ item.count }} · {{ item.pct }}%
+                                    </div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                         </div>
+                        </div>
+                      </div>
+                    </template>
+
+
+
+
+                  </div> <!-- end of loop-->
+
+                                  <!-- OPEN / ANNUAL / NON-QUARTERLY -->
+                  <template v-for="el in excelElements(group)" :key="'open-annual-' + el.id">
+                    <template v-if="String(el.submition_type).toLowerCase() !== 'quarterly'">
+
+                      <div class="border rounded-xl p-4 bg-gray-50 print:bg-white">
+
+                        <!-- Header -->
+                        <!-- <div class="flex items-center justify-between border-b pb-2 mb-3">
+                          <div class="font-semibold text-sm print:text-xs">
+                            {{ el.indicator_no }} {{ el.description }}
+                          </div>
+
+                          <div class="text-xs uppercase tracking-wide text-gray-500">
+                            {{ el.submition_type }}
+                          </div>
+                        </div> -->
+
+                        <!-- Empty state -->
+                        <div v-if="getOpenAnnualExcelRows(el.indicator_no, el.submition_type).length === 0"
+                          class="text-sm opacity-70 text-center py-6">
                           No data.
                         </div>
 
-                        <div v-else class="grid grid-cols-12 gap-3 items-start">
-                          <div class="col-span-12">
-                            <ul class="space-y-1 text-xs">
-                              <li
-                                v-for="item in getExcelList(el.indicator_no, qid)"
-                                :key="String(el.indicator_no) + '-' + qid + '-' + item.rank"
-                                class="flex items-start gap-2 leading-tight"
-                                :title="item.disease"
-                              >
-                                <div class="w-6 shrink-0 text-right font-semibold">
-                                  {{ item.rank }}.
-                                </div>
+                        <!-- LIST -->
+                        <div v-else class="space-y-3">
 
-                                <div class="min-w-0 flex-1">
-                                  <div class="font-medium truncate">
-                                    {{ item.disease }}
-                                  </div>
-                                  <div class="text-[10px] opacity-70">
-                                    {{ item.count }} · {{ item.pct }}%
-                                  </div>
-                                </div>
-                              </li>
-                            </ul>
+                          <div v-for="item in getOpenAnnualExcelRows(el.indicator_no, el.submition_type)"
+                            :key="'open-row-' + el.indicator_no + '-' + item.id"
+                            class="flex items-start gap-4 border-b border-dashed border-gray-200 pb-3">
+
+                            <!-- Number -->
+                            <div class="w-10 shrink-0 text-right font-bold text-gray-700 text-sm">
+                              {{ item.rankLabel }}
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0">
+
+                              <div class="font-medium text-sm leading-relaxed break-words text-gray-900">
+                                {{ item.title }}
+                              </div>
+
+                              <div v-if="item.subtitle" class="text-xs text-gray-500 mt-1 break-words">
+                                {{ item.subtitle }}
+                              </div>
+
+                            </div>
+
                           </div>
+
                         </div>
 
-                        
                       </div>
-                    </div>
 
-                  </div>
+                    </template>
+                  </template>
+
+                  <!-- OPEN / ANNUAL / NON-QUARTERLY -->
+
+
                 </div>
                 <!-- /excel lists -->
               </div>
@@ -190,7 +247,6 @@
         </div>
       </template>
     </template>
-
     <PrintFooter />
 
     <button @click="printChart" class="print:hidden mt-4 bg-blue-600 text-white px-4 py-2 rounded">
@@ -229,7 +285,8 @@ const state = reactive({
   remarks: {},
 
   exceldata: [],
-  excelListByIndicatorQuarter: {},
+  excelBucketsByIndicator: {},
+  excelBucketsByIndicatorAnnual: {},
 
   agencies: [
     { value: 1, label: 'SOCC', color: 'bg-red-500 border-red-400' },
@@ -279,15 +336,12 @@ function change_selected_year(opt) {
   }
 }
 
-/* ----------------------- AGENCY BADGE ----------------------- */
 function agencyMeta(agencyId) {
   const id = Number(agencyId)
   const a = state.agencies.find(x => Number(x.value) === id)
   if (!a) return { label: '', color: 'bg-gray-200 border-gray-300 text-gray-800' }
   return { label: a.label, color: `${a.color} text-white` }
 }
-
-/* ----------------------- FETCH OPTIONS ----------------------- */
 
 async function fetchIndicatorCategories() {
   const res = await indicatorService.getIndicatorCategories()
@@ -361,8 +415,6 @@ function buildQuarterArrays() {
   })
 }
 
-/* ----------------------- EXCEL ELEMENT HELPERS ----------------------- */
-
 function isExcelElement(el) {
   return String(el?.value_type ?? '').toLowerCase() === 'excel'
 }
@@ -370,8 +422,6 @@ function isExcelElement(el) {
 function excelElements(group) {
   return (group?.indicator_group_elements || []).filter(isExcelElement)
 }
-
-/* ----------------------- NORMAL DATA MAPPING ----------------------- */
 
 function toNumberOrNull(v) {
   if (v === null || v === undefined) return null
@@ -461,53 +511,89 @@ async function fetchData() {
   }
 }
 
-/* ----------------------- EXCEL DATA (PER INDICATOR + QUARTER) ----------------------- */
-
 function toNum(v) {
-  const n = Number(String(v ?? '').trim())
+  const n = Number(String(v ?? '').trim().replace(/,/g, ''))
   return Number.isFinite(n) ? n : 0
 }
 
-function buildExcelListsByIndicatorQuarter(rows) {
-  const quarterIds = (state.quarterIds ?? []).map(Number)
+function buildExcelBucketsByIndicator(rows) {
   const out = {}
-  if (!quarterIds.length) return out
-
+  const quarterIds = (state.quarterIds ?? []).map(Number)
+  const quarterNames = state.quarterNames ?? []
   const targetYear = Number(state.report_year)
+
   const scopedRows = rows.filter(r => {
-    const y = Number(r?.year ?? r?.report_year ?? r?.report_year_value)
-    return !Number.isFinite(y) || y === targetYear
+    const year =
+      Number(r?.report_year) ||
+      Number(r?.year) ||
+      Number(r?.report_year_value)
+
+    return !Number.isFinite(year) || year === targetYear
   })
 
   const indicatorNos = Array.from(
-    new Set(scopedRows.map(r => String(r?.indicator_no ?? '').trim()).filter(Boolean))
+    new Set(
+      scopedRows
+        .map(r => String(r?.indicator_no ?? '').trim())
+        .filter(Boolean)
+    )
   )
 
   for (const indicatorNo of indicatorNos) {
-    out[indicatorNo] = {}
+    const indicatorRows = scopedRows.filter(
+      r => String(r?.indicator_no ?? '').trim() === indicatorNo
+    )
 
-    for (const qid of quarterIds) {
-      const list = scopedRows
-        .filter(r => {
-          if (!r) return false
-          if (String(r.indicator_no ?? '').trim() !== indicatorNo) return false
-          return Number(r.report_year_id) === qid
-        })
-        .map(r => ({
-          rank: toNum(r.header_value1),
+    const hasQuarterlyRows = indicatorRows.some(r => {
+      const q = Number(r?.report_year_id)
+      return Number.isFinite(q)
+    })
+
+    if (hasQuarterlyRows) {
+      out[indicatorNo] = quarterIds.map((qid, idx) => {
+        const list = indicatorRows
+          .filter(r => Number(r?.report_year_id) === qid)
+          .map((r, index) => ({
+            rank: toNum(r.header_value1) || (index + 1),
+            disease: String(r.header_value2 ?? '').trim(),
+            count: toNum(r.header_value3),
+          }))
+          .filter(x => x.disease)
+          .sort((a, b) => a.rank - b.rank)
+
+        const total = list.reduce((sum, x) => sum + x.count, 0)
+
+        return {
+          key: `q-${qid}`,
+          label: quarterNames?.[idx] ?? `Q${idx + 1}`,
+          rows: list.map(x => ({
+            ...x,
+            pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+          })),
+        }
+      })
+    } else {
+      const list = indicatorRows
+        .map((r, index) => ({
+          rank: toNum(r.header_value1) || (index + 1),
           disease: String(r.header_value2 ?? '').trim(),
           count: toNum(r.header_value3),
         }))
         .filter(x => x.disease)
         .sort((a, b) => a.rank - b.rank)
-        .slice(0, 10)
 
       const total = list.reduce((sum, x) => sum + x.count, 0)
 
-      out[indicatorNo][qid] = list.map(x => ({
-        ...x,
-        pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
-      }))
+      out[indicatorNo] = [
+        {
+          key: `y-${targetYear}`,
+          label: String(targetYear),
+          rows: list.map(x => ({
+            ...x,
+            pct: total > 0 ? Number(((x.count / total) * 100).toFixed(1)) : 0,
+          })),
+        },
+      ]
     }
   }
 
@@ -524,21 +610,56 @@ async function getexceldata() {
         : []
 
     state.exceldata = rows
-    state.excelListByIndicatorQuarter = buildExcelListsByIndicatorQuarter(rows)
+    state.excelBucketsByIndicator = buildExcelBucketsByIndicator(rows)
   } catch (err) {
     console.error("Error fetching report detail excel:", err)
     state.exceldata = []
-    state.excelListByIndicatorQuarter = {}
+    state.excelBucketsByIndicator = {}
   }
 }
 
-function getExcelList(indicatorNo, quarterId) {
+function getExcelBuckets(indicatorNo) {
   const key = String(indicatorNo ?? '').trim()
-  const qid = Number(quarterId)
-  return state.excelListByIndicatorQuarter?.[key]?.[qid] ?? []
+  return state.excelBucketsByIndicator?.[key] ?? []
 }
 
-/* ----------------------- LIFECYCLE ----------------------- */
+
+function getOpenAnnualExcelRows(indicatorNo) {
+  const key = String(indicatorNo ?? '').trim()
+
+  return (state.exceldata || [])
+    .filter((item) => {
+      if (!item) return false
+      if (String(item.indicator_no ?? '').trim() !== key) return false
+
+      const submissionType = String(
+        item.submition_type ??
+        item.submission_type ??
+        ''
+      ).trim().toLowerCase()
+
+      // treat anything non-quarterly as annual/open here
+      if (submissionType === 'quarterly') return false
+
+      const rowYear = Number(item.report_year)
+      const selectedYear = Number(state.report_year)
+
+      return Number.isFinite(rowYear) && rowYear === selectedYear
+    })
+    .map((item, index) => {
+      const rawRank = String(item.header_value1 ?? '').trim()
+      const rawTitle = String(item.header_value2 ?? '').trim()
+      const rawValue = String(item.header_value3 ?? '').trim()
+
+      return {
+        id: item.id ?? `${key}-${index}`,
+        rankLabel: rawRank || `${index + 1}.`,
+        title: rawTitle || 'Untitled entry',
+        subtitle: rawValue && rawValue !== '0' ? rawValue : '',
+      }
+    })
+}
+
 
 onMounted(async () => {
   await fetchreportyear()
@@ -587,6 +708,11 @@ watch(
   .print-avoid-break {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+  }
+
+  .print-subcategory-new-page {
+    break-before: page !important;
+    page-break-before: always !important;
   }
 }
 </style>

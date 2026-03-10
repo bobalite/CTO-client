@@ -1,39 +1,3 @@
-<!-- <template>
-  <h3 class="sm:col-span-12 text-lg text-center font-bold mt-3 mb-0 w-full">
-    LGU POPULATION
-  </h3>
-
-  <div class="border rounded-xl p-3">
-    <h3 class="text-sm font-bold mb-2">CIVIL REGISTRATION</h3>
-
-    <ClientOnly>
-      <apexchart
-        type="bar"
-        height="420"
-        width="100%"
-        :options="state.barOptionsCivreg"
-        :series="state.civreg"
-      />
-    </ClientOnly>
-  </div>
-
-
-   <div class="border rounded-xl p-2">
-      <h3 class="text-sm font-bold mb-2">Persons With Disabilities (PWDs)</h3>
-
-      <ClientOnly>
-        <apexchart
-          type="bar"
-          height="400"
-          width="100%"
-          :options="state.barOptionsCivreg"
-          :series="state.civreg"
-        />
-      </ClientOnly>
-    </div>
-
-</template> -->
-
 <template>
   <h3 class="sm:col-span-12 text-lg text-center font-bold mt-3 mb-0 w-full">
     
