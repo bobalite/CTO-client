@@ -192,12 +192,14 @@
                   </NuxtLink>
                 </li>
 
-                <!-- Optional: show why admin links are missing (only when expanded) -->
+                <!-- Optional: show why admin links are missing (only when expanded) 
                 <li v-if="expanded && !isAdmin" class="px-2 pt-2">
                   <p class="text-xs text-green-200 italic">
                     Admin tools are hidden (insufficient rights).
                   </p>
                 </li>
+
+                -->
               </ul>
             </li>
           </ul>
@@ -453,7 +455,7 @@ const navigation = computed(() => {
   const items = [
     { name: 'Dashboard', link: '/dashboard', icon: HomeIcon, current: false },
     { name: 'Calendar', link: '/calendar', icon: CalendarIcon, current: false },
-    { name: 'Reports', link: '/reports', icon: PrinterIcon, current: false },
+    { name: 'Report', link: '/reports', icon: PrinterIcon, current: false },
     { name: 'Encoding', link: '/dataencoding/rights', icon: PencilSquareIcon, current: false },
 
     // admin-only

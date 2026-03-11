@@ -1,5 +1,4 @@
 <template>
-  <!-- NOTHING protected renders until auth + boot are ready -->
   <div v-if="bootReady" class="flex h-screen">
     <div class="flex-1 flex flex-col">
       <header class="w-full bg-white shadow px-4 py-1 flex items-center justify-between z-1">
@@ -103,7 +102,7 @@
 
           <GraphsSurvivalNutritionalPreSchool
             v-if="state.activeTab === 'Survival'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -112,7 +111,7 @@
 
           <GraphsSurvivalNutritionalSchoolChildren
             v-if="state.activeTab === 'Survival'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -121,7 +120,7 @@
 
           <GraphsSurvivalAccess
             v-if="state.activeTab === 'Survival'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-green-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -140,7 +139,7 @@
           <!-- Development -->
           <GraphsDevelopmentEarlyChildhood
             v-if="state.activeTab === 'Development'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -149,7 +148,7 @@
 
           <GraphsDevelopmentEnrolment
             v-if="state.activeTab === 'Development'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -158,7 +157,7 @@
 
           <GraphsDevelopmentOSCY
             v-if="state.activeTab === 'Development'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-yellow-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -187,7 +186,7 @@
           <!-- Participation -->
           <GraphsParticipationChildrens
             v-if="state.activeTab === 'Participation'"
-            :key="graphsKey"
+            :key="annualGraphsKey"
             :passed_data="state.passed_data_annual"
             class="sm:col-span-12 text-xl font-bold text-left m-1 pl-2 border-1 border-solid bg-blue-100 rounded-xl border-blue-900"
             :report_year="String(state.report_year || '')"
@@ -214,7 +213,6 @@
             :report_years="state.report_years"
           />
 
-
           <GraphsGerneralInformationCivilReg
             v-if="state.activeTab === 'General Information'"
             :key="graphsKey"
@@ -223,7 +221,6 @@
             :report_year="String(state.report_year || '')"
             :report_years="state.report_years"
           />
-
         </div>
       </main>
     </div>
@@ -262,10 +259,6 @@ const TAB_TO_RIGHT_ID = {
   "General Information": 6,
 };
 
-/**
- * ✅ SINGLE SOURCE OF TRUTH for completeness expectations
- * NOTE: Keep this in ONE place (parent), not scattered in children.
- */
 const GROUP_DEFS = [
   { group_no: 1,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["1.1"], expected_per_year: 4 },
   { group_no: 2,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["2.1","2.1.1","2.1.2","2.2"], expected_per_year: 16 },
@@ -315,7 +308,7 @@ const GROUP_DEFS = [
   { group_no: 43, right_id: 4, title: "CHILD REPRESENTATION", submission_type: "open", indicators: ["43.1","43.1.1","43.1.2","43.2"], expected_per_year: 4 },
 
   { group_no: 44, right_id: 5, title: "LCPC FUNCTIONALITY", submission_type: "open", indicators: ["44.1","44.2","44.3","44.4","44.5","44.6"], expected_per_year: 6 },
-  { group_no: 45, right_id: 5, title: "LOCAL INSTITUTIONS", submission_type: "open", indicators: ["45.1","45.2"], expected_per_year: 2 },
+  { group_no: 45, right_id: 5, title: "LOCAL INSTITUTIONS", submission_type: "open", indicators: ["45.1"], expected_per_year: 1 },
 
   { group_no: 46, right_id: 6, title: "GENERAL POPULATION", submission_type: "open", indicators: ["46.1","46.2","46.2.1","46.2.2","46.2.3","46.2.4","46.2.5","46.2.6","46.2.7","46.2.8","46.2.9","46.2.10","46.2.11","46.2.12","46.2.13","46.2.14","46.2.15","46.2.16","46.2.17","46.2.18"], expected_per_year: 20 },
   { group_no: 47, right_id: 6, title: "SECTORAL POPULATION (PWD & CHILD LABOR)", submission_type: "open", indicators: ["47.1","47.1.1","47.1.2","47.2"], expected_per_year: 4 },
@@ -359,14 +352,13 @@ const state = reactive({
 
   rights_config_all: [],
   rights_config_by_right: {},
-
   completenessByKey: {},
 });
 
 const graphsKey = computed(() => `${state.activeTab}-${state.report_year}`);
+const annualGraphsKey = computed(() => `${state.activeTab}-annual`);
 const bootReady = computed(() => !!userStore?.getUser && state.loading === false);
 
-/** ----------------- boot ----------------- */
 onMounted(async () => {
   if (!userStore?.getUser) return;
 
@@ -377,7 +369,6 @@ onMounted(async () => {
   state.loading = false;
 });
 
-/** ----------------- year watcher ----------------- */
 let fetchSeq = 0;
 watch(
   () => state.report_year,
@@ -395,7 +386,6 @@ watch(
   }
 );
 
-/** ----------------- recompute completeness ----------------- */
 watch(
   () => [
     state.activeTab,
@@ -411,7 +401,6 @@ watch(
   { deep: true }
 );
 
-/** ----------------- UI actions ----------------- */
 function change_selected_year(opt) {
   const opts = state.options.report_years.filter(Boolean);
   if (!opts.length) return;
@@ -428,7 +417,6 @@ function change_right_id(tab_name) {
   state.right_id = TAB_TO_RIGHT_ID[tab_name] ?? 1;
 }
 
-/** ----------------- fetchers ----------------- */
 async function fetchreportyear() {
   const response = await report_yearService.getReportYears();
   const rows = Array.isArray(response?.data) ? response.data : [];
@@ -438,22 +426,28 @@ async function fetchreportyear() {
   const years = rows
     .filter((r) => Number(r?.status) === 1 && r?.year != null)
     .map((r) => Number(r.year))
-    .filter(Number.isFinite);
+    .filter((y) => Number.isFinite(y));
 
   const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
 
-  state.options.report_years = uniqueYears.map((y) => ({ value: y, label: String(y), year: y }));
-  state.report_year = uniqueYears[0] ?? null;
+  state.options.report_years = uniqueYears.map((y) => ({
+    value: y,
+    label: String(y),
+    year: y,
+  }));
+
+  state.report_year = uniqueYears.length ? uniqueYears[0] : null;
 }
 
 async function fetchData() {
-  const params = { report_year: Number(state.report_year) };
+  const selectedYearParams = { report_year: Number(state.report_year) };
 
-  const response = await reportDetailsGroupsService.getReportDetailsGroups(params);
-  state.passed_data = Array.isArray(response?.data) ? response.data : [];
+  const [responseFiltered, responseAnnual] = await Promise.all([
+    reportDetailsGroupsService.getReportDetailsGroups(selectedYearParams),
+    reportDetailsGroupsService.getReportDetailsGroups({}),
+  ]);
 
-  // ✅ Better: request annual/open with year too (if backend supports it)
-  const responseAnnual = await reportDetailsGroupsService.getReportDetailsGroups(params);
+  state.passed_data = Array.isArray(responseFiltered?.data) ? responseFiltered.data : [];
   state.passed_data_annual = Array.isArray(responseAnnual?.data) ? responseAnnual.data : [];
 
   state.completenessByKey = computeCompletenessByGroupDefs();
@@ -473,11 +467,9 @@ async function fetchIndicatorConfig() {
   }
   state.rights_config_by_right = grouped;
 
-  // completeness depends on data too; ok to pre-init
   state.completenessByKey = computeCompletenessByGroupDefs();
 }
 
-/** ----------------- DataSources ----------------- */
 const activeIndicatorConfig = computed(() => state.rights_config_by_right?.[state.right_id] ?? []);
 
 function buildAgencyDistributionFromConfig(configRoot, agencies) {
@@ -512,14 +504,17 @@ function buildAgencyDistributionFromConfig(configRoot, agencies) {
     .map(([agencyId, count]) => ({ agencyId, label: getLabel(agencyId), count }))
     .sort((a, b) => b.count - a.count);
 
-  return { labels: rows.map((r) => r.label), series: rows.map((r) => r.count), meta: rows };
+  return {
+    labels: rows.map((r) => r.label),
+    series: rows.map((r) => r.count),
+    meta: rows,
+  };
 }
 
 const datasourcePie = computed(() =>
   buildAgencyDistributionFromConfig(activeIndicatorConfig.value, state.options.agencies)
 );
 
-/** ----------------- completeness engine (GROUP_DEFS-based) ----------------- */
 function normalizeArray(raw) {
   if (Array.isArray(raw)) return raw;
   if (raw && Array.isArray(raw.data)) return raw.data;
@@ -536,10 +531,6 @@ function toNum(v) {
   return Number.isFinite(n) ? n : NaN;
 }
 
-/**
- * Prefer row.report_year (your API has it).
- * Fallback to report_year_id -> report_years.data if needed.
- */
 function getRowYear(row) {
   const direct = toNum(row?.report_year ?? row?.year);
   if (Number.isFinite(direct)) return direct;
@@ -554,22 +545,16 @@ function getRowYear(row) {
 }
 
 function normalizeSchedule(v) {
-  return String(v ?? "").trim().toLowerCase(); // "quarterly" | "open" | ...
+  return String(v ?? "").trim().toLowerCase();
 }
 
-/**
- * ✅ Bulletproof completeness using GROUP_DEFS and your actual response:
- * - Quarterly: distinct (indicator_no + report_year_id)
- * - Open: distinct indicator_no
- */
 function computeCompletenessByGroupDefs() {
   const rightId = Number(state.right_id);
   const selectedYear = Number(state.report_year);
 
-  const detailsRows = [
-    ...normalizeArray(state.passed_data),
-    ...normalizeArray(state.passed_data_annual),
-  ];
+  const detailsRows = normalizeArray(state.passed_data_annual).length
+    ? normalizeArray(state.passed_data_annual)
+    : normalizeArray(state.passed_data);
 
   const defs = GROUP_DEFS.filter((g) => Number(g.right_id) === rightId);
 

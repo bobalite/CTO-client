@@ -29,7 +29,7 @@
     <!-- Annual Excel List -->
     <div class="border rounded-xl p-2 md:col-span-2">
       <h3 class="text-base font-bold mb-2">
-        List of LGU Accredited NGOs/CSOs providing services to Children
+        45.2 List of LGU Accredited NGOs/CSOs providing services to Children
       </h3>
 
       <div v-if="state.annualYearIds.length === 0" class="text-sm opacity-70 text-center py-6">
@@ -258,9 +258,9 @@ function fetchReports_Details_Bars_Annual() {
         case "45.1":
           local_45_1[idx] += value;
           break;
-        case "45.2":
-          local_45_2[idx] += value;
-          break;
+        // case "45.2":
+        //   local_45_2[idx] += value;
+        //   break;
 
         default:
           break;
@@ -278,7 +278,7 @@ function fetchReports_Details_Bars_Annual() {
 
     state.local = [
       { name: "45.1 Total Number of Functional BVAWC Desks", data: local_45_1 },
-      { name: "45.2 LGU Accredited NGOs/CSOs (count)", data: local_45_2 },
+      //{ name: "45.2 LGU Accredited NGOs/CSOs (count)", data: local_45_2 },
     ];
   } catch (error) {
     console.error("fetchReports_Details_Bars_Annual error:", error);

@@ -144,6 +144,9 @@ function recalc() {
   buildAnnualYearAxisFromData();
   buildAnnualSeriesFromData();
   emitCompletenessForSelectedYear();
+
+
+  //console.log('report_years', props.report_years) 
 }
 
 function buildAnnualYearAxisFromData() {

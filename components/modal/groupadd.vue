@@ -227,7 +227,7 @@ async function loadExternalIndicators(indicatorNos = []) {
         state.male[id] = Number(item.male ?? state.male[id] ?? 0)
         state.female[id] = Number(item.female ?? state.female[id] ?? 0)
         state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-        state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
+        state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? '').trim() || ' -- '
       })
     } else {
       console.warn('No external indicators returned for', indicatorNos)
@@ -262,7 +262,7 @@ function initStateFromGroup(g) {
     state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
     state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
     state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    state.remarks[id] = el.remarks ?? '--'
+    state.remarks[id] = String(el.remarks ?? '--' )
     
     if (excelUploads[id]) delete excelUploads[id]
   })
@@ -324,7 +324,8 @@ async function get_group_details() {
           state.male[id] = Number(item.male ?? state.male[id] ?? 0)
           state.female[id] = Number(item.female ?? state.female[id] ?? 0)
           state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-          state.remarks[id] = item.remarks ?? state.remarks[id] ?? ' -- '
+          state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? ' -- ')
+           console.log('group details item remarks', item.indicator_no, item.remarks)
         })
       }
     } catch (err) {
@@ -346,6 +347,8 @@ async function get_group_details() {
   } catch (err) {
     console.error('Error fetching group details:', err)
   }
+
+ 
 }
 
 // ---------------------------
@@ -464,6 +467,7 @@ function computeTotals() {
       state.male[id] = Number(state.male[id] ?? el.male_value ?? el.default_male ?? 0)
       state.female[id] = Number(state.female[id] ?? el.female_value ?? el.default_female ?? 0)
       state.total[id] = Number(state.total[id] ?? el.total_value ?? el.default_total ?? 0)
+      //state.remarks[id] = Number(state.total[id] ?? el.total_value ?? el.default_total ?? 0) //---------------------------------------------test 
     }
   })
 
@@ -565,7 +569,7 @@ async function saveIndicators() {
         male: Number(state.male[id]) || 0,
         female: Number(state.female[id]) || 0,
         total: Number(state.total[id]) || 0,
-        remarks: state.remarks[id] || ' --',
+        remarks: String(state.remarks[id] || '--'),
         indicator_group_element_id: el.id,
         indicator_group_id: groupLocal.value.id,
         report_year_id: reportYearId,
