@@ -11,7 +11,7 @@
           ×
         </button>
 
-        <h2 class="text-lg font-semibold mb-4">{{ props.modalTitle }}</h2>
+        <h2 class="text-lg font-semibold mb-4">{{ props.modalTitle }}  i am group View</h2>
 
         <div
           class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16 border-solid border-grey border-t pb-4 max-h-[80vh] overflow-y-auto"
@@ -249,7 +249,7 @@ function initializeState() {
     state.male[key] = el.male_value ?? 0
     state.female[key] = el.female_value ?? 0
     state.total[key] = el.total_value ?? 0
-    state.remarks[key] = el.remarks ?? ''
+    state.remarks[key] = '--'
   })
 
   state.submission_type = props.group?.indicator_group_elements?.[0]?.submition_type || ''

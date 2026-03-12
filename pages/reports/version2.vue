@@ -41,10 +41,10 @@
         >
           <div class="print-subcategory-page">
             <div
-              class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start overflow-visible h-auto print:block print:py-1"
+              class="grid grid-cols-[110px_1fr] gap-2 border-t border-gray-300 py-2 items-start overflow-visible h-auto print:gap-1 print:py-1"
             >
               <!-- LEFT: SUBCATEGORY LABEL -->
-              <div class="flex items-start px-2 print:block print:px-0 print:mb-2">
+              <div class="flex items-start px-2 print:px-1">
                 <div class="subcategory-label w-full text-xs leading-tight print:text-[10px] print:leading-tight">
                   {{ subcategory.description }}
                 </div>
@@ -59,10 +59,10 @@
                     </div>
 
                     <div class="print-group-content">
-                      <!-- SCREEN TABLE -->
+                      <!-- NORMAL TABLE -->
                       <div
                         v-if="(group.indicator_group_elements || []).length"
-                        class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3 overflow-visible h-auto print:hidden"
+                        class="mt-2 grid grid-cols-1 sm:grid-cols-16 gap-0 border-t border-grey pb-3 overflow-visible h-auto"
                       >
                         <GridCell
                           class="sm:col-span-15 text-center text-xs border-r border-b"
@@ -142,54 +142,6 @@
                         </template>
                       </div>
 
-                      <!-- PRINT TABLE -->
-                      <div
-                        v-if="(group.indicator_group_elements || []).length"
-                        class="hidden print:block mt-2"
-                      >
-                        <table class="print-table">
-                          <thead>
-                            <tr>
-                              <th class="print-th print-col-no">#</th>
-                              <th class="print-th print-col-indicator">Indicator</th>
-                              <th class="print-th print-col-num">Male</th>
-                              <th class="print-th print-col-num">Female</th>
-                              <th class="print-th print-col-num">Total</th>
-                              <th class="print-th print-col-remarks">Remarks</th>
-                              <th class="print-th print-col-agency">Agency</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr
-                              v-for="el in (group.indicator_group_elements || [])"
-                              :key="'print-row-' + el.id"
-                            >
-                              <td class="print-td print-col-no">
-                                {{ el.indicator_no }}
-                              </td>
-                              <td class="print-td print-col-indicator">
-                                {{ el.description }}
-                              </td>
-                              <td class="print-td print-col-num print-center">
-                                {{ state.male[String(el.indicator_no).trim()] ?? '' }}
-                              </td>
-                              <td class="print-td print-col-num print-center">
-                                {{ state.female[String(el.indicator_no).trim()] ?? '' }}
-                              </td>
-                              <td class="print-td print-col-num print-center">
-                                {{ state.total[String(el.indicator_no).trim()] ?? '' }}
-                              </td>
-                              <td class="print-td print-col-remarks">
-                                {{ state.remarks[String(el.indicator_no).trim()] ?? '' }}
-                              </td>
-                              <td class="print-td print-col-agency print-center">
-                                {{ agencyMeta(el.agency_id).label || '—' }}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-
                       <div v-else class="text-xs opacity-70">
                         No elements.
                       </div>
@@ -199,7 +151,7 @@
                         <div
                           v-for="el in excelElements(group)"
                           :key="'excel-' + el.id"
-                          class="border rounded-xl p-2 print-keep print:rounded-none"
+                          class="border rounded-xl p-2 print-keep"
                         >
                           <div class="font-semibold text-sm print:text-xs mb-2">
                             {{ el.indicator_no }} {{ el.description }} {{ el.submition_type }} (Excel)
@@ -207,13 +159,13 @@
 
                           <!-- QUARTERLY -->
                           <template v-if="String(el.submition_type).toLowerCase() === 'quarterly'">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 print:block">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div
                                 v-for="bucket in getExcelBuckets(el.indicator_no)"
                                 :key="String(el.indicator_no) + '-' + bucket.key"
-                                class="border rounded-xl p-3 print-keep print:rounded-none print:mb-3"
+                                class="border rounded-xl p-3 print-keep"
                               >
-                                <div class="text-sm font-semibold mb-2 text-center print:text-left">
+                                <div class="text-sm font-semibold mb-2 text-center">
                                   {{ bucket.label }}
                                 </div>
 
@@ -221,25 +173,25 @@
                                   No data.
                                 </div>
 
-                                <div v-else class="grid grid-cols-12 gap-3 items-start print:block">
+                                <div v-else class="grid grid-cols-12 gap-3 items-start">
                                   <div class="col-span-12">
                                     <ul class="space-y-1 text-xs">
                                       <li
                                         v-for="item in bucket.rows"
                                         :key="String(el.indicator_no) + '-' + bucket.key + '-' + item.rank + '-' + item.disease"
-                                        class="flex items-start gap-2 leading-tight print:block print:mb-1"
+                                        class="flex items-start gap-2 leading-tight"
                                         :title="item.disease"
                                       >
-                                        <div class="w-6 shrink-0 text-right font-semibold print:inline">
+                                        <div class="w-6 shrink-0 text-right font-semibold">
                                           {{ item.rank }}.
                                         </div>
 
-                                        <div class="min-w-0 flex-1 print:inline">
-                                          <div class="font-medium break-words inline">
+                                        <div class="min-w-0 flex-1">
+                                          <div class="font-medium break-words">
                                             {{ item.disease }}
                                           </div>
-                                          <div class="text-[10px] opacity-70 inline">
-                                            — {{ item.count }} · {{ item.pct }}%
+                                          <div class="text-[10px] opacity-70">
+                                            {{ item.count }} · {{ item.pct }}%
                                           </div>
                                         </div>
                                       </li>
@@ -254,7 +206,7 @@
                         <!-- OPEN / ANNUAL / NON-QUARTERLY -->
                         <template v-for="el in excelElements(group)" :key="'open-annual-' + el.id">
                           <template v-if="String(el.submition_type).toLowerCase() !== 'quarterly'">
-                            <div class="border rounded-xl p-4 bg-gray-50 print:bg-white print-keep print:rounded-none">
+                            <div class="border rounded-xl p-4 bg-gray-50 print:bg-white print-keep">
                               <div
                                 v-if="getOpenAnnualExcelRows(el.indicator_no, el.submition_type).length === 0"
                                 class="text-sm opacity-70 text-center py-6"
@@ -266,22 +218,22 @@
                                 <div
                                   v-for="item in getOpenAnnualExcelRows(el.indicator_no, el.submition_type)"
                                   :key="'open-row-' + el.indicator_no + '-' + item.id"
-                                  class="flex items-start gap-4 border-b border-dashed border-gray-200 pb-3 print:block"
+                                  class="flex items-start gap-4 border-b border-dashed border-gray-200 pb-3"
                                 >
-                                  <div class="w-10 shrink-0 text-right font-bold text-gray-700 text-sm print:inline print:mr-2">
+                                  <div class="w-10 shrink-0 text-right font-bold text-gray-700 text-sm">
                                     {{ item.rankLabel }}
                                   </div>
 
-                                  <div class="flex-1 min-w-0 print:inline">
-                                    <div class="font-medium text-sm leading-relaxed break-words text-gray-900 inline">
+                                  <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm leading-relaxed break-words text-gray-900">
                                       {{ item.title }}
                                     </div>
 
                                     <div
                                       v-if="item.subtitle"
-                                      class="text-xs text-gray-500 mt-1 break-words print:inline"
+                                      class="text-xs text-gray-500 mt-1 break-words"
                                     >
-                                      — {{ item.subtitle }}
+                                      {{ item.subtitle }}
                                     </div>
                                   </div>
                                 </div>
@@ -777,11 +729,10 @@ watch(
     page-break-inside: auto !important;
   }
 
+  /* Allow large groups to split naturally across pages */
   .print-group {
     break-inside: auto !important;
     page-break-inside: auto !important;
-    border-radius: 0 !important;
-    padding: 8px !important;
   }
 
   .print-group-content {
@@ -789,77 +740,16 @@ watch(
     page-break-inside: auto !important;
   }
 
+  /* Try to keep heading with following content */
   .print-group-title {
     break-after: avoid !important;
     page-break-after: avoid !important;
   }
 
+  /* Only use this on smaller blocks */
   .print-keep {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-  }
-
-  .print-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 10px;
-  }
-
-  .print-table thead {
-    display: table-header-group;
-  }
-
-  .print-table tfoot {
-    display: table-footer-group;
-  }
-
-  .print-table tbody {
-    display: table-row-group;
-  }
-
-  .print-table tr {
-    break-inside: avoid-page;
-    page-break-inside: avoid;
-  }
-
-  .print-th,
-  .print-td {
-    border: 1px solid #9ca3af;
-    padding: 4px 6px;
-    vertical-align: top;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-    white-space: normal;
-  }
-
-  .print-th {
-    font-weight: 700;
-    text-align: center;
-  }
-
-  .print-center {
-    text-align: center;
-  }
-
-  .print-col-no {
-    width: 7%;
-  }
-
-  .print-col-indicator {
-    width: 33%;
-  }
-
-  .print-col-num {
-    width: 10%;
-  }
-
-  .print-col-remarks {
-    width: 20%;
-  }
-
-  .print-col-agency {
-    width: 10%;
   }
 }
 </style>

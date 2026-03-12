@@ -271,7 +271,7 @@ const GROUP_DEFS = [
   { group_no: 9,  right_id: 1, title: "CHILD IMMUNIZATION", submission_type: "quarterly", indicators: ["9.1","9.2","9.3"], expected_per_year: 12 },
   { group_no: 10, right_id: 1, title: "MATERNAL MORTALITY", submission_type: "quarterly", indicators: ["10.1","10.2"], expected_per_year: 8 },
   { group_no: 11, right_id: 1, title: "CHILD MORTALITY", submission_type: "quarterly", indicators: ["11.1","11.2","11.3","11.4","11.5","11.6"], expected_per_year: 24 },
-  { group_no: 12, right_id: 1, title: "CHILD MORTALITY", submission_type: "quarterly", indicators: ["12.1","12.2"], expected_per_year: 8 },
+  { group_no: 12, right_id: 1, title: "CHILD MORTALITY EXCEL", submission_type: "quarterly", indicators: ["12.1","12.2"], expected_per_year: 8 }, // this comes from excel uploads
   { group_no: 13, right_id: 1, title: "OPERATION TIMBANG (OPT) PLUS", submission_type: "open", indicators: ["13.1","13.2","13.3"], expected_per_year: 3 },
   { group_no: 14, right_id: 1, title: "NUTRITIONAL STATUS OF 0-59 MONTHS OLD CHILDREN", submission_type: "open", indicators: ["14.1","14.2","14.3","14.4","14.5","14.6","14.7","14.8","14.9","14.10","14.11","14.12","14.13","14.14","14.15","14.16","14.17","14.18"], expected_per_year: 18 },
   { group_no: 15, right_id: 1, title: "SCHOOL-BASED FEEDING PROGRAM (SBFP)", submission_type: "open", indicators: ["15.1"], expected_per_year: 1 },

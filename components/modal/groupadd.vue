@@ -3,7 +3,7 @@
     <div v-if="props.show" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div
         class="w-full sm:max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-        <h2 class="text-lg font-semibold mb-4">{{ props.modalTitle }}</h2>
+        <h2 class="text-lg font-semibold mb-4">{{ props.modalTitle }} I am Group Add</h2>
 
         <div
           class="mt-1 grid grid-cols-1 gap-x-0 gap-y-0 sm:grid-cols-16 border-solid border-grey border-t pb-4 max-h-[80vh] overflow-y-auto">
@@ -61,10 +61,12 @@
 
               <GridTextArea v-model="state.remarks[el.indicator_no]"
                 class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
-                 :displaytext="''" />
+                 :displaytext="''"  :entrystatus="el.remarks" />
+
+                
             </template>
 
-            <template v-else>
+            <template v-else> <!--Excel upload--> 
               <GridCell class="sm:col-span-1 px-2 text-left table-header-4 text-xs border-white ring-1 ring-white pb-1"
                 :displaytext="el.submition_type" />
 
@@ -84,6 +86,9 @@
                 class="sm:col-span-3 px-1 table-header-4 text-center text-xs border-l border-b border-grey pb-1"
                 :displaytext="''" />
             </template>
+
+
+
           </template>
 
           <GridCell
@@ -227,7 +232,8 @@ async function loadExternalIndicators(indicatorNos = []) {
         state.male[id] = Number(item.male ?? state.male[id] ?? 0)
         state.female[id] = Number(item.female ?? state.female[id] ?? 0)
         state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-        state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? '').trim() || ' -- '
+        //state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? '').trim() || ' -- '
+        state.remarks[id] = ' -- '
       })
     } else {
       console.warn('No external indicators returned for', indicatorNos)
@@ -262,7 +268,7 @@ function initStateFromGroup(g) {
     state.male[id] = Number(el.male_value ?? el.default_male ?? 0)
     state.female[id] = Number(el.female_value ?? el.default_female ?? 0)
     state.total[id] = Number(el.total_value ?? el.default_total ?? 0)
-    state.remarks[id] = String(el.remarks ?? '--' )
+    state.remarks[id] = '--'
     
     if (excelUploads[id]) delete excelUploads[id]
   })
@@ -324,7 +330,7 @@ async function get_group_details() {
           state.male[id] = Number(item.male ?? state.male[id] ?? 0)
           state.female[id] = Number(item.female ?? state.female[id] ?? 0)
           state.total[id] = Number(item.total ?? state.total[id] ?? 0)
-          state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? ' -- ')
+          state.remarks[id] = String(item.remarks ?? state.remarks[id] ?? ' -- ') // this is where remarks from DB are loaded; if none, it falls back to existing state or ' -- '
            console.log('group details item remarks', item.indicator_no, item.remarks)
         })
       }
@@ -547,33 +553,39 @@ function computeTotals() {
 // Save indicators
 // ---------------------------
 
-
-
 async function saveIndicators() {
-  if (!groupLocal.value) { alert('No group to save.'); return }
+  if (!groupLocal.value) {
+    alert('No group to save.')
+    return
+  }
+
   isSaving.value = true
+
   const reportYearId = Number(props.selected_year_id)
-  let successCount = 0, errorCount = 0
+  let successCount = 0
+  let errorCount = 0
   const existingRecords = []
 
   try {
-    // 1️⃣ Save normal indicators
     for (const el of groupLocal.value.indicator_group_elements) {
-      if (!el || !el.indicator_no || el.value_type === 'excel') continue
-      const id = el.indicator_no
- 
+      if (!el || !el.indicator_no) continue
 
+      const id = el.indicator_no
+      const rowIsOpenOrAnnual = isOpenOrAnnual(el.submition_type)
 
       const params = {
         indicator_no: id,
         male: Number(state.male[id]) || 0,
         female: Number(state.female[id]) || 0,
         total: Number(state.total[id]) || 0,
-        remarks: String(state.remarks[id] || '--'),
+        remarks:
+          el.value_type === 'excel'
+            ? String(state.remarks[id] || 'Excel upload - see details')
+            : String(state.remarks[id] || '--'),
         indicator_group_element_id: el.id,
         indicator_group_id: groupLocal.value.id,
-        report_year_id: reportYearId,
-        report_year: props.selected_year,
+        report_year_id: rowIsOpenOrAnnual ? null : reportYearId,
+        report_year: Number(props.selected_year),
         report_schedule: el.submition_type,
         is_active: 1,
       }
@@ -582,98 +594,90 @@ async function saveIndicators() {
 
       try {
         const res = await reportDetailsService.createReportDetails(params)
-        if (res?.exists && res?.existing_id) existingRecords.push({ id: res.existing_id, params })
-        else successCount++
-      } catch (err) { console.error('Error saving row', id, err); errorCount++ }
+
+        if (res?.exists && res?.existing_id) {
+          existingRecords.push({
+            id: res.existing_id,
+            params: { ...params },
+          })
+        } else {
+          successCount++
+        }
+      } catch (err) {
+        console.error('Error saving row', id, err)
+        errorCount++
+      }
     }
 
-    // 2️⃣ Bulk save Excel rows --------------------------------------------------------------------------------------
-    const bulkRows = [];
+    const bulkRows = []
 
     for (const el of groupLocal.value.indicator_group_elements) {
-      if (!el || !el.indicator_no || el.value_type !== "excel") continue;
+      if (!el || !el.indicator_no || el.value_type !== 'excel') continue
 
-      const id = el.indicator_no;
-      const rows = excelUploads[id] || [];
-      if (!rows.length) continue;
+      const id = el.indicator_no
+      const rows = excelUploads[id] || []
+      if (!rows.length) continue
 
-      const excelIsOpenOrAnnual = isOpenOrAnnual(el.submition_type);
-
-      console.log('excelIsOpenOrAnnual', excelIsOpenOrAnnual)
+      const excelIsOpenOrAnnual = isOpenOrAnnual(el.submition_type)
 
       rows.forEach((r) => {
-        const keys = Object.keys(r || {});
+        const keys = Object.keys(r || {})
 
-        const rawHeader1 = String(keys[0] ?? "").trim();
-        const rawHeader2 = String(keys[1] ?? "").trim();
-        const rawHeader3 = String(keys[2] ?? "").trim();
-
-        const header_name1 = rawHeader1 ? rawHeader1.toUpperCase() : null;
-        const header_name2 = rawHeader2 ? rawHeader2.toUpperCase() : null;
-        const header_name3 = rawHeader3 ? rawHeader3.toUpperCase() : null;
+        const rawHeader1 = String(keys[0] ?? '').trim()
+        const rawHeader2 = String(keys[1] ?? '').trim()
+        const rawHeader3 = String(keys[2] ?? '').trim()
 
         bulkRows.push({
-          // ✅ quarterly keeps report_year_id, open/annual stores null
-          
-          report_year_id: excelIsOpenOrAnnual ? null : reportYearId, // backend must accept null for open/annual 
+          report_year_id: excelIsOpenOrAnnual ? null : reportYearId,
           report_year: Number(props.selected_year),
 
           indicator_no: String(id),
           indicator_group_element_id: el.id,
           indicator_group_id: groupLocal.value.id,
 
-          header_name1,
+          header_name1: rawHeader1 ? rawHeader1.toUpperCase() : null,
           header_value1: rawHeader1 ? Number(r?.[keys[0]]) || 0 : null,
 
-          header_name2,
-          header_value2: rawHeader2 ? String(r?.[keys[1]] ?? "") : null,
+          header_name2: rawHeader2 ? rawHeader2.toUpperCase() : null,
+          header_value2: rawHeader2 ? String(r?.[keys[1]] ?? '') : null,
 
-          header_name3,
-          header_value3: rawHeader3 ? (Number(r?.[keys[2]]) || 0) : null,
+          header_name3: rawHeader3 ? rawHeader3.toUpperCase() : null,
+          header_value3: rawHeader3 ? Number(r?.[keys[2]]) || 0 : null,
 
           is_active: 1,
-          report_schedule: el.submition_type, // optional but useful for backend logic/debugging
-        });
-      });
+          report_schedule: el.submition_type,
+        })
+      })
     }
 
     console.log('Prepared bulk rows for Excel upload', bulkRows)
 
-
-
     if (bulkRows.length) {
       try {
-        //await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
         await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
         successCount += bulkRows.length
-      }  catch (err) {
+      } catch (err) {
         console.error('Error saving Excel rows in bulk', err?.response?.data || err)
         errorCount += bulkRows.length
       }
     }
 
-    // 3️⃣ Update existing normal rows if needed
-
-    // this is for normal entries---------------------------------------------------------------------------------------------
-
-
-
-
-
     if (existingRecords.length > 0) {
       const confirmUpdate = confirm(`${existingRecords.length} record(s) already exist. Update them?`)
+
       if (confirmUpdate) {
         for (const item of existingRecords) {
-          console.log('Updating ID', item.id, 'with params', item.params)
-          try { await reportDetailsService.updateReportDetails(item.params, item.id); successCount++ }
-          catch (err) { console.error('Error updating existing record', item.id, err); errorCount++ }
+          try {
+            console.log('Updating ID', item.id, 'with params', item.params)
+            await reportDetailsService.updateReportDetails(item.params, item.id)
+            successCount++
+          } catch (err) {
+            console.error('Error updating existing record', item.id, err)
+            errorCount++
+          }
         }
       }
     }
-
-    
-    
-    // this is for normal entries---------------------------------------------------------------------------------------------
 
     alert(`Done: ${successCount} saved, ${errorCount} errors.`)
     emit('close')
@@ -684,6 +688,165 @@ async function saveIndicators() {
     isSaving.value = false
   }
 }
+
+
+// async function saveIndicators() {
+//   if (!groupLocal.value) { alert('No group to save.'); return }
+//   isSaving.value = true
+//   const reportYearId = Number(props.selected_year_id)
+//   let successCount = 0, errorCount = 0
+//   const existingRecords = []
+
+//   try {
+//     // 1️⃣ Save normal indicators
+//     for (const el of groupLocal.value.indicator_group_elements) {
+//       if (!el || !el.indicator_no ) continue
+
+
+
+//       if (el.value_type === 'excel') {
+
+//         const id = el.indicator_no
+//         const params = {
+//           indicator_no: id,
+//           male: Number(state.male[id]) || 0,
+//           female: Number(state.female[id]) || 0,
+//           total: Number(state.total[id]) || 0,
+//           remarks: String(state.remarks[id] || 'Excel upload - see details') ,
+//           indicator_group_element_id: el.id,
+//           indicator_group_id: groupLocal.value.id,
+//           report_year_id: reportYearId,
+//           report_year: props.selected_year,
+//           report_schedule: el.submition_type,
+//           is_active: 1,
+//         }
+
+//       } else {
+//         const id = el.indicator_no
+//         const params = {
+//           indicator_no: id,
+//           male: Number(state.male[id]) || 0,
+//           female: Number(state.female[id]) || 0,
+//           total: Number(state.total[id]) || 0,
+//           remarks: String(state.remarks[id] || '--'),
+//           indicator_group_element_id: el.id,
+//           indicator_group_id: groupLocal.value.id,
+//           report_year_id: reportYearId,
+//           report_year: props.selected_year,
+//           report_schedule: el.submition_type,
+//           is_active: 1,
+//         }
+
+//       }
+
+
+
+//       console.log('params in saving', params)
+
+//       try {
+//         const res = await reportDetailsService.createReportDetails(params)
+//         if (res?.exists && res?.existing_id) existingRecords.push({ id: res.existing_id, params })
+//         else successCount++
+//       } catch (err) { console.error('Error saving row', id, err); errorCount++ }
+//     }
+
+//     // 2️⃣ Bulk save Excel rows --------------------------------------------------------------------------------------
+//     const bulkRows = [];
+
+//     for (const el of groupLocal.value.indicator_group_elements) {
+//       if (!el || !el.indicator_no || el.value_type !== "excel") continue;
+
+//       const id = el.indicator_no;
+//       const rows = excelUploads[id] || [];
+//       if (!rows.length) continue;
+
+//       const excelIsOpenOrAnnual = isOpenOrAnnual(el.submition_type);
+
+//       console.log('excelIsOpenOrAnnual', excelIsOpenOrAnnual)
+
+//       rows.forEach((r) => {
+//         const keys = Object.keys(r || {});
+
+//         const rawHeader1 = String(keys[0] ?? "").trim();
+//         const rawHeader2 = String(keys[1] ?? "").trim();
+//         const rawHeader3 = String(keys[2] ?? "").trim();
+
+//         const header_name1 = rawHeader1 ? rawHeader1.toUpperCase() : null;
+//         const header_name2 = rawHeader2 ? rawHeader2.toUpperCase() : null;
+//         const header_name3 = rawHeader3 ? rawHeader3.toUpperCase() : null;
+
+//         bulkRows.push({
+//           // ✅ quarterly keeps report_year_id, open/annual stores null
+          
+//           report_year_id: excelIsOpenOrAnnual ? null : reportYearId, // backend must accept null for open/annual 
+//           report_year: Number(props.selected_year),
+
+//           indicator_no: String(id),
+//           indicator_group_element_id: el.id,
+//           indicator_group_id: groupLocal.value.id,
+
+//           header_name1,
+//           header_value1: rawHeader1 ? Number(r?.[keys[0]]) || 0 : null,
+
+//           header_name2,
+//           header_value2: rawHeader2 ? String(r?.[keys[1]] ?? "") : null,
+
+//           header_name3,
+//           header_value3: rawHeader3 ? (Number(r?.[keys[2]]) || 0) : null,
+
+//           is_active: 1,
+//           report_schedule: el.submition_type, // optional but useful for backend logic/debugging
+//         });
+//       });
+//     }
+
+//     console.log('Prepared bulk rows for Excel upload', bulkRows)
+
+
+
+//     if (bulkRows.length) {
+//       try {
+//         //await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
+//         await reportDetailsExcelService.saveExcelRows({ rows: bulkRows })
+//         successCount += bulkRows.length
+//       }  catch (err) {
+//         console.error('Error saving Excel rows in bulk', err?.response?.data || err)
+//         errorCount += bulkRows.length
+//       }
+//     }
+
+//     // 3️⃣ Update existing normal rows if needed
+
+//     // this is for normal entries---------------------------------------------------------------------------------------------
+
+
+
+
+
+//     if (existingRecords.length > 0) {
+//       const confirmUpdate = confirm(`${existingRecords.length} record(s) already exist. Update them?`)
+//       if (confirmUpdate) {
+//         for (const item of existingRecords) {
+//           console.log('Updating ID', item.id, 'with params', item.params)
+//           try { await reportDetailsService.updateReportDetails(item.params, item.id); successCount++ }
+//           catch (err) { console.error('Error updating existing record', item.id, err); errorCount++ }
+//         }
+//       }
+//     }
+
+    
+    
+//     // this is for normal entries---------------------------------------------------------------------------------------------
+
+//     alert(`Done: ${successCount} saved, ${errorCount} errors.`)
+//     emit('close')
+//   } catch (err) {
+//     console.error('Unexpected save error', err)
+//     alert('Unexpected error while saving.')
+//   } finally {
+//     isSaving.value = false
+//   }
+// }
 
 // ---------------------------
 // Emit close

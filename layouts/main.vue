@@ -57,23 +57,87 @@
                     <li>
                       <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in navigation" :key="item.name">
-                          <NuxtLink
-                            :to="item.link"
-                            :class="[
-                              item.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                            ]"
-                          >
-                            <component
-                              :is="item.icon"
+                          <!-- NORMAL LINK -->
+                          <template v-if="!item.children">
+                            <NuxtLink
+                              :to="item.link"
                               :class="[
-                                item.current ? 'text-white' : 'text-green-200 group-hover:text-white',
-                                'h-6 w-6 shrink-0'
+                                isItemActive(item)
+                                  ? 'bg-green-700 text-white'
+                                  : 'text-green-200 hover:text-white hover:bg-green-700',
+                                'group flex items-center rounded-md p-2 text-sm leading-6 font-semibold'
                               ]"
-                              aria-hidden="true"
-                            />
-                            {{ item.name }}
-                          </NuxtLink>
+                            >
+                              <span class="flex w-6 justify-center">
+                                <component
+                                  :is="item.icon"
+                                  :class="[
+                                    isItemActive(item)
+                                      ? 'text-white'
+                                      : 'text-green-200 group-hover:text-white',
+                                    'h-6 w-6 shrink-0'
+                                  ]"
+                                  aria-hidden="true"
+                                />
+                              </span>
+
+                              <span class="ml-3 flex-1 text-left">{{ item.name }}</span>
+
+                              <span class="w-5 shrink-0"></span>
+                            </NuxtLink>
+                          </template>
+
+                          <!-- DROPDOWN -->
+                          <template v-else>
+                            <button
+                              type="button"
+                              @click="toggleMenu(item.menuKey)"
+                              :class="[
+                                hasActiveChild(item)
+                                  ? 'bg-green-700 text-white'
+                                  : 'text-green-200 hover:text-white hover:bg-green-700',
+                                'group flex w-full items-center rounded-md p-2 text-sm leading-6 font-semibold'
+                              ]"
+                            >
+                              <span class="flex w-6 justify-center">
+                                <component
+                                  :is="item.icon"
+                                  :class="[
+                                    hasActiveChild(item)
+                                      ? 'text-white'
+                                      : 'text-green-200 group-hover:text-white',
+                                    'h-6 w-6 shrink-0'
+                                  ]"
+                                  aria-hidden="true"
+                                />
+                              </span>
+
+                              <span class="ml-3 flex-1 text-left">{{ item.name }}</span>
+
+                              <span class="flex w-5 justify-center shrink-0">
+                                <ChevronDownIcon
+                                  class="h-5 w-5 transition-transform duration-200"
+                                  :class="{ 'rotate-180': openMenus[item.menuKey] }"
+                                />
+                              </span>
+                            </button>
+
+                            <div v-if="openMenus[item.menuKey]" class="mt-1 ml-9 space-y-1">
+                              <NuxtLink
+                                v-for="child in item.children"
+                                :key="child.name"
+                                :to="child.link"
+                                :class="[
+                                  route.path === child.link
+                                    ? 'bg-green-800 text-white'
+                                    : 'text-green-200 hover:text-white hover:bg-green-700',
+                                  'block rounded-md px-3 py-2 text-sm font-medium'
+                                ]"
+                              >
+                                {{ child.name }}
+                              </NuxtLink>
+                            </div>
+                          </template>
                         </li>
                       </ul>
                     </li>
@@ -157,52 +221,126 @@
             <span v-if="expanded" class="mt-1 font-bold text-lg">S.O.A.R.</span>
           </div>
 
-          <ul>
-            <li class="flex items-center py-3 px-2 hover:bg-green-900 rounded">
-              <ul role="list" class="-mx-2 space-y-1">
-                <!-- ✅ Admin links are filtered out automatically for non-admins -->
-                <li v-for="item in navigation" :key="item.name">
+          <div class="py-3 px-2">
+            <ul role="list" class="-mx-2 space-y-1 w-full">
+              <li v-for="item in navigation" :key="item.name">
+                <!-- NORMAL LINK -->
+                <template v-if="!item.children">
                   <NuxtLink
                     :to="item.link"
                     :class="[
-                      item.current ? 'bg-green-700 text-white' : 'text-green-200 hover:text-white hover:bg-green-700',
-                      'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                      isItemActive(item)
+                        ? 'bg-green-700 text-white'
+                        : 'text-green-200 hover:text-white hover:bg-green-700',
+                      'group flex items-center rounded-md p-2 text-sm leading-6 font-semibold'
                     ]"
                   >
-                    <!-- Dot placeholder -->
-                    <span
-                      :class="[
-                        'h-2 w-2 rounded-full',
-                        item.link === route.path ? 'bg-white' : 'bg-transparent'
-                      ]"
-                    ></span>
+                    <!-- dot slot -->
+                    <span class="flex w-4 justify-center">
+                      <span
+                        :class="[
+                          'h-2 w-2 rounded-full',
+                          isItemActive(item) ? 'bg-white' : 'bg-transparent'
+                        ]"
+                      ></span>
+                    </span>
 
-                    <!-- Icon -->
-                    <component
-                      :is="item.icon"
-                      :class="[
-                        item.current ? 'text-white' : 'text-green-200 group-hover:text-white',
-                        'h-6 w-6 shrink-0'
-                      ]"
-                      aria-hidden="true"
-                    />
+                    <!-- icon slot -->
+                    <span class="flex w-6 justify-center">
+                      <component
+                        :is="item.icon"
+                        :class="[
+                          isItemActive(item)
+                            ? 'text-white'
+                            : 'text-green-200 group-hover:text-white',
+                          'h-6 w-6 shrink-0'
+                        ]"
+                        aria-hidden="true"
+                      />
+                    </span>
 
-                    <!-- Label -->
-                    <span v-if="expanded" class="ml-3">{{ item.name }}</span>
+                    <!-- label -->
+                    <span v-if="expanded" class="ml-3 flex-1 text-left">
+                      {{ item.name }}
+                    </span>
+
+                    <!-- placeholder for chevron alignment -->
+                    <span v-if="expanded" class="w-4 shrink-0"></span>
                   </NuxtLink>
-                </li>
+                </template>
 
-                <!-- Optional: show why admin links are missing (only when expanded) 
-                <li v-if="expanded && !isAdmin" class="px-2 pt-2">
-                  <p class="text-xs text-green-200 italic">
-                    Admin tools are hidden (insufficient rights).
-                  </p>
-                </li>
+                <!-- DROPDOWN -->
+                <template v-else>
+                  <button
+                    type="button"
+                    @click="toggleMenu(item.menuKey)"
+                    :class="[
+                      hasActiveChild(item)
+                        ? 'bg-green-700 text-white'
+                        : 'text-green-200 hover:text-white hover:bg-green-700',
+                      'group flex w-full items-center rounded-md p-2 text-sm leading-6 font-semibold'
+                    ]"
+                  >
+                    <!-- dot slot -->
+                    <span class="flex w-4 justify-center">
+                      <span
+                        :class="[
+                          'h-2 w-2 rounded-full',
+                          hasActiveChild(item) ? 'bg-white' : 'bg-transparent'
+                        ]"
+                      ></span>
+                    </span>
 
-                -->
-              </ul>
-            </li>
-          </ul>
+                    <!-- icon slot -->
+                    <span class="flex w-6 justify-center">
+                      <component
+                        :is="item.icon"
+                        :class="[
+                          hasActiveChild(item)
+                            ? 'text-white'
+                            : 'text-green-200 group-hover:text-white',
+                          'h-6 w-6 shrink-0'
+                        ]"
+                        aria-hidden="true"
+                      />
+                    </span>
+
+                    <!-- label -->
+                    <span v-if="expanded" class="ml-3 flex-1 text-left">
+                      {{ item.name }}
+                    </span>
+
+                    <!-- chevron slot -->
+                    <span v-if="expanded" class="flex w-4 justify-center shrink-0">
+                      <component
+                        :is="openMenus[item.menuKey] ? ChevronDownIcon : ChevronRightIcon"
+                        class="h-4 w-4"
+                      />
+                    </span>
+                  </button>
+
+                  <div
+                    v-if="expanded && openMenus[item.menuKey]"
+                    class="ml-10 mt-1 space-y-1"
+                  >
+                    <NuxtLink
+                      v-for="child in item.children"
+                      :key="child.name"
+                      :to="child.link"
+                      :class="[
+                        route.path === child.link
+                          ? 'bg-green-800 text-white'
+                          : 'text-green-200 hover:text-white hover:bg-green-700',
+                        'block rounded-md px-3 py-2 text-sm font-medium'
+                      ]"
+                    >
+                      {{ child.name }}
+                    </NuxtLink>
+                  </div>
+                </template>
+              </li>
+            </ul>
+          </div>
         </aside>
       </transition>
     </div>
@@ -383,7 +521,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 
 import { authService } from '~/components/api/AuthService'
 import { userService } from '~/components/api/UserService'
@@ -411,6 +549,7 @@ import {
 
 import {
   ChevronDownIcon,
+  ChevronRightIcon,
   PencilSquareIcon,
   UsersIcon,
   CalendarDaysIcon,
@@ -440,25 +579,55 @@ const state = reactive({
   password1: '',
   password2: '',
   password1_error: 0,
-  password_error: 0, // your UI references password_error
+  password_error: 0,
   successcount: 0,
   errorcount: 0,
 })
 
+const openMenus = reactive({
+  report: route.path.startsWith('/reports'),
+})
+
+function toggleMenu(key) {
+  openMenus[key] = !openMenus[key]
+}
+
+function hasActiveChild(item) {
+  return item.children?.some((child) => route.path === child.link) ?? false
+}
+
+function isItemActive(item) {
+  if (item.link && route.path === item.link) return true
+  return hasActiveChild(item)
+}
+
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath.startsWith('/reports')) {
+      openMenus.report = true
+    }
+  }
+)
+
 const isAdmin = computed(() => Number(userStore?.getUser?.userRole?.role_id) === 1)
 
-/**
- * ✅ Admin-only hiding is done HERE.
- * If role_id !== 1, "Users" + "Schedules" will not exist in the menu.
- */
 const navigation = computed(() => {
   const items = [
     { name: 'Dashboard', link: '/dashboard', icon: HomeIcon, current: false },
     { name: 'Calendar', link: '/calendar', icon: CalendarIcon, current: false },
-    { name: 'Report', link: '/reports', icon: PrinterIcon, current: false },
+    {
+      name: 'Report',
+      icon: PrinterIcon,
+      current: false,
+      menuKey: 'report',
+      children: [
+        { name: 'Version 1', link: '/reports/' },
+        { name: 'Version 2', link: '/reports/version2' },
+      ],
+    },
     { name: 'Encoding', link: '/dataencoding/rights', icon: PencilSquareIcon, current: false },
 
-    // admin-only
     { name: 'Users', link: '/admin/usermanagement', icon: UsersIcon, current: false, adminOnly: true },
     { name: 'Schedules', link: '/admin/managereportschedules', icon: CalendarDaysIcon, current: false, adminOnly: true },
   ]
@@ -493,7 +662,6 @@ const check_errors = computed(() => {
 })
 
 async function logout() {
-  // client-safe
   userStore.resetUser()
   if (import.meta.client) localStorage.removeItem('_token')
 
@@ -560,7 +728,6 @@ async function SaveNewPasswordUser() {
 
     const response = await userService.updateUser(state.user_id, params)
 
-    // With your BaseAPIService/$fetch, response is usually already the payload
     if (response?.data || response) {
       state.successcount = state.successcount + 1
       alert('Successfully Changed Password')
