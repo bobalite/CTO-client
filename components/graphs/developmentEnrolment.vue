@@ -279,12 +279,6 @@ function aggregateSeries() {
       case "23.1.3": a23_1_3[idx] += value; break;
       case "23.1.4": a23_1_4[idx] += value; break;
 
-      case "23.2": a23_2[idx] += value; break;
-      case "23.2.1": a23_2_1[idx] += value; break;
-      case "23.2.2": a23_2_2[idx] += value; break;
-      case "23.2.3": a23_2_3[idx] += value; break;
-      case "23.2.4": a23_2_4[idx] += value; break;
-
       case "24.1": a24_1[idx] += value; break;
       case "24.2": a24_2[idx] += value; break;
       case "24.3": a24_3[idx] += value; break;
@@ -336,11 +330,6 @@ function aggregateSeries() {
     { name: "23.1.3 JHS (A)", data: a23_1_3 },
     { name: "23.1.4 SHS (A)", data: a23_1_4 },
 
-    { name: "23.2 Total School enrollees (B)", data: a23_2 },
-    { name: "23.2.1 Kinder (B)", data: a23_2_1 },
-    { name: "23.2.2 Elem (B)", data: a23_2_2 },
-    { name: "23.2.3 JHS (B)", data: a23_2_3 },
-    { name: "23.2.4 SHS (B)", data: a23_2_4 },
   ];
 
   state.net_enrol = [

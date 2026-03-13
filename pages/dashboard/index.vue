@@ -283,7 +283,9 @@ const GROUP_DEFS = [
   { group_no: 21, right_id: 1, title: "CHILDREN AFFECTED BY HIV/AIDS", submission_type: "quarterly", indicators: ["21.1","21.2"], expected_per_year: 8 },
 
   { group_no: 22, right_id: 2, title: "EARLY CHILDHOOD CARE AND DEVELOPMENT (ECCD)", submission_type: "open", indicators: ["22.1","22.2","22.2.1","22.2.2","22.3","22.4","22.5","22.6","22.7"], expected_per_year: 9 },
-  { group_no: 23, right_id: 2, title: "STUDENT ENROLMENT", submission_type: "open", indicators: ["23.1","23.2","23.3","23.4","23.5"], expected_per_year: 5 },
+ 
+  { group_no: 23, right_id: 2, title: "STUDENT ENROLMENT", submission_type: "open", indicators: ["23.1","23.1.1","23.1.2","23.1.3","23.4"], expected_per_year: 5 },
+ 
   { group_no: 24, right_id: 2, title: "NET ENROLMENT", submission_type: "open", indicators: ["24.1","24.2","24.3","24.4"], expected_per_year: 4 },
   { group_no: 25, right_id: 2, title: "COMPLETION", submission_type: "open", indicators: ["25.1","25.2"], expected_per_year: 2 },
   { group_no: 26, right_id: 2, title: "SCHOOL LEAVER (DROP-OUT)", submission_type: "open", indicators: ["26.1","26.2"], expected_per_year: 2 },
