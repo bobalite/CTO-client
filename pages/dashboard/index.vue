@@ -260,11 +260,9 @@ const TAB_TO_RIGHT_ID = {
 };
 
 const GROUP_DEFS = [
-  { group_no: 1,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["1.1"], expected_per_year: 4 },
-  { group_no: 2,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["2.1","2.1.1","2.1.2","2.2"], expected_per_year: 16 },
+  { group_no: 1,  right_id: 1, title: "MATERNAL DELIVERIES", submission_type: "quarterly", indicators: ["1.1","2.1","2.1.1","2.1.2","2.2"], expected_per_year: 20 },
   { group_no: 3,  right_id: 1, title: "PRENATAL CARE", submission_type: "quarterly", indicators: ["3.1","3.2","3.2.1","3.2.2"], expected_per_year: 16 },
-  { group_no: 4,  right_id: 1, title: "FACILITY-BASED DELIVERIES", submission_type: "quarterly", indicators: ["4.1","4.1.1","4.1.2","4.1.3"], expected_per_year: 16 },
-  { group_no: 5,  right_id: 1, title: "FACILITY-BASED DELIVERIES", submission_type: "quarterly", indicators: ["5.1","5.1.1","5.1.2","5.1.3"], expected_per_year: 16 },
+  { group_no: 4,  right_id: 1, title: "FACILITY-BASED DELIVERIES", submission_type: "quarterly", indicators: ["4.1","4.1.1","4.1.2","4.1.3", "5.1","5.1.1","5.1.2","5.1.3"], expected_per_year: 32 },
   { group_no: 6,  right_id: 1, title: "POSTPARTUM CARE", submission_type: "quarterly", indicators: ["6.1","6.2","6.2.1","6.2.2"], expected_per_year: 16 },
   { group_no: 7,  right_id: 1, title: "BIRTH WEIGHT", submission_type: "quarterly", indicators: ["7.1","7.2","7.3"], expected_per_year: 12 },
   { group_no: 8,  right_id: 1, title: "INFANT BREASTFEEDING", submission_type: "quarterly", indicators: ["8.1","8.2"], expected_per_year: 8 },
@@ -275,17 +273,14 @@ const GROUP_DEFS = [
   { group_no: 13, right_id: 1, title: "OPERATION TIMBANG (OPT) PLUS", submission_type: "open", indicators: ["13.1","13.2","13.3"], expected_per_year: 3 },
   { group_no: 14, right_id: 1, title: "NUTRITIONAL STATUS OF 0-59 MONTHS OLD CHILDREN", submission_type: "open", indicators: ["14.1","14.2","14.3","14.4","14.5","14.6","14.7","14.8","14.9","14.10","14.11","14.12","14.13","14.14","14.15","14.16","14.17","14.18"], expected_per_year: 18 },
   { group_no: 15, right_id: 1, title: "SCHOOL-BASED FEEDING PROGRAM (SBFP)", submission_type: "open", indicators: ["15.1"], expected_per_year: 1 },
-  { group_no: 16, right_id: 1, title: "NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS", submission_type: "open", indicators: ["16.1","16.2","16.3"], expected_per_year: 3 },
-  { group_no: 17, right_id: 1, title: "NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS", submission_type: "open", indicators: ["17.1","17.2","17.3"], expected_per_year: 3 },
+  { group_no: 16, right_id: 1, title: "NUTRITIONAL STATUS OF KINDER TO GRADE 6 LEARNERS", submission_type: "open", indicators: ["16.1","16.2","16.3", "17.1","17.2","17.3"], expected_per_year: 6 },
+  
   { group_no: 18, right_id: 1, title: "LOCAL HEALTH CENTERS", submission_type: "open", indicators: ["18.1"], expected_per_year: 1 },
-  { group_no: 19, right_id: 1, title: "WATER & SANITATION SERVICES", submission_type: "open", indicators: ["19.1","19.2","19.3","19.4","19.5","19.6","19.7"], expected_per_year: 7 },
-  { group_no: 20, right_id: 1, title: "WATER & SANITATION SERVICES", submission_type: "open", indicators: ["20.1","20.2","20.3"], expected_per_year: 3 },
+  { group_no: 19, right_id: 1, title: "WATER & SANITATION SERVICES", submission_type: "open", indicators: ["19.1","19.2","19.3","19.4","19.5","19.6","19.7","20.1","20.2","20.3"], expected_per_year: 10 },
   { group_no: 21, right_id: 1, title: "CHILDREN AFFECTED BY HIV/AIDS", submission_type: "quarterly", indicators: ["21.1","21.2"], expected_per_year: 8 },
-
+  
   { group_no: 22, right_id: 2, title: "EARLY CHILDHOOD CARE AND DEVELOPMENT (ECCD)", submission_type: "open", indicators: ["22.1","22.2","22.2.1","22.2.2","22.3","22.4","22.5","22.6","22.7"], expected_per_year: 9 },
- 
-  { group_no: 23, right_id: 2, title: "STUDENT ENROLMENT", submission_type: "open", indicators: ["23.1","23.1.1","23.1.2","23.1.3","23.4"], expected_per_year: 5 },
- 
+  { group_no: 23, right_id: 2, title: "STUDENT ENROLMENT", submission_type: "open", indicators: ["23.1","23.1.1","23.1.2","23.1.3","23.1.4"], expected_per_year: 5 },
   { group_no: 24, right_id: 2, title: "NET ENROLMENT", submission_type: "open", indicators: ["24.1","24.2","24.3","24.4"], expected_per_year: 4 },
   { group_no: 25, right_id: 2, title: "COMPLETION", submission_type: "open", indicators: ["25.1","25.2"], expected_per_year: 2 },
   { group_no: 26, right_id: 2, title: "SCHOOL LEAVER (DROP-OUT)", submission_type: "open", indicators: ["26.1","26.2"], expected_per_year: 2 },
