@@ -12,10 +12,10 @@
 
       <ClientOnly>
         <apexchart
-          type="bar"
+          type="line"
           height="200"
           width="100%"
-          :options="state.annualBarOptions"
+          :options="state.annualLineOptions"
           :series="state.nutritional"
         />
       </ClientOnly>
@@ -29,10 +29,10 @@
 
       <ClientOnly>
         <apexchart
-          type="bar"
+          type="line"
           height="200"
           width="100%"
-          :options="state.annualBarOptions"
+          :options="state.annualLineOptions"
           :series="state.nutritional2"
         />
       </ClientOnly>
@@ -71,11 +71,11 @@ const state = reactive({
   nutritional: [],
   nutritional2: [],
 
-  annualBarOptions: {
-    chart: { type: "bar", stacked: false, toolbar: { show: false }, zoom: { enabled: false } },
-    plotOptions: { bar: { horizontal: false } },
+  annualLineOptions: {
+    chart: { type: "line", toolbar: { show: false }, zoom: { enabled: false } },
     dataLabels: { enabled: true },
     stroke: { curve: "smooth" },
+    markers: { size: 4 },
     xaxis: { categories: [] },
     colors: [
       "#312e81", "#c026d3", "#46C2CB", "#db2777", "#9d174d",
@@ -137,8 +137,8 @@ function buildAnnualAxisFromAnnualData() {
   state.annualYearIds = years;
   state.annualYearNames = years.map(String);
 
-  state.annualBarOptions.xaxis = {
-    ...state.annualBarOptions.xaxis,
+  state.annualLineOptions.xaxis = {
+    ...state.annualLineOptions.xaxis,
     categories: state.annualYearNames,
   };
 }
