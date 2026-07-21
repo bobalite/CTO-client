@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
       console.error('Logout error:', err);
     } finally {
       localStorage.removeItem('_token'); // ✅ same key as BaseAPIService
-      router.push('/login');             // ✅ route, not /api/...
+      router.push('/');             // ✅ route, not /api/...   router.push('/login');
     }
   };
 

@@ -17,7 +17,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseURL: process.env.API_BASE_URL,
+      ordsApiBaseUrl: process.env.NUXT_PUBLIC_ORDS_API_BASE_URL ||
+                'http://localhost:8080/ords/rpt/api',
     },
   },
 
