@@ -452,9 +452,19 @@
             />
 
             <div>
+              <NuxtLink
+                to="/rpt-calculator"
+                class="service-link"
+              >
               <h3 class="text-lg font-bold text-blue-950">
-                General computation guide
+                Real Property Tax Calculator
               </h3>
+
+              </NuxtLink>
+               
+
+                
+             
 
               <div
                 class="mt-4 grid gap-4 font-mono text-sm text-blue-900 sm:grid-cols-2"
