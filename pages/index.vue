@@ -234,41 +234,50 @@
               class="mt-7 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg"
             >
               Access tax information, treasury services, payment guidance,
-              official announcements, and document verification services.
+             official announcements, and document verification services.
             </p>
 
             <div class="mt-10 flex flex-wrap gap-4">
-              <NuxtLink
-                to="/services"
-                class="group inline-flex items-center gap-2 rounded-md bg-[#15803d] px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#166534]"
-              >
+              <NuxtLink to="/services"
+                class="group inline-flex items-center gap-2 rounded-md bg-[#bb1e2d] px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#991827]">
                 <BoltIcon class="h-5 w-5" />
+
                 View Services
 
-                <ArrowRightIcon
-                  class="h-4 w-4 transition-transform group-hover:translate-x-1"
-                />
+                <ArrowRightIcon class="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </NuxtLink>
 
-              <NuxtLink
-                to="/verify"
-                class="group inline-flex items-center gap-2 rounded-md bg-white px-7 py-4 font-bold text-[#173a67] shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100"
-              >
+              <NuxtLink to="/verify"
+                class="group inline-flex items-center gap-2 rounded-md bg-white px-7 py-4 font-bold text-[#173a67] shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100">
                 <ShieldCheckIcon class="h-5 w-5" />
+
                 Verify Tax Clearance
               </NuxtLink>
 
-              <NuxtLink
-                to="/updates"
-                class="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-7 py-4 font-bold text-white backdrop-blur-md transition hover:bg-white/20"
-              >
+              <NuxtLink to="/rpt-calculator"
+                class="group inline-flex items-center gap-2 rounded-md bg-cyan-400 px-7 py-4 font-bold text-[#102c50] shadow-lg transition hover:-translate-y-0.5 hover:bg-cyan-300">
+                <CalculatorIcon class="h-5 w-5" />
+
+                RPT Tax Calculator
+              </NuxtLink>
+
+              <NuxtLink to="/updates"
+                class="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-7 py-4 font-bold text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/20">
                 <MegaphoneIcon class="h-5 w-5" />
+
                 Latest Updates
               </NuxtLink>
+
+              <NuxtLink to="/login"
+                class="group inline-flex items-center gap-2 rounded-md border border-white/40 bg-[#173a67] px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#102c50]">
+                <ArrowRightOnRectangleIcon class="h-5 w-5" />
+
+                Login
+              </NuxtLink>
             </div>
+
           </div>
         </div>
-
         <!-- Slideshow Controls -->
         <div
           class="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2"

@@ -92,18 +92,11 @@
                 <span
                   class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-500"
                 >
-                  ₱
+                 ₱
                 </span>
-
-                <input
-                  id="marketValue"
-                  v-model.number="form.marketValue"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  class="form-input pl-10"
-                  placeholder="0.00"
-                />
+                <input id="marketValue" v-model="marketValueInput" type="text" inputmode="decimal"
+                  class="form-input pl-10 pr-4 text-right" placeholder="0.00" @focus="unformatMarketValue"
+                  @blur="formatMarketValue" />
               </div>
             </div>
 
@@ -967,6 +960,39 @@ function clamp(
     maximum,
   )
 }
+
+const marketValueInput = ref('')
+
+function unformatMarketValue(): void {
+  marketValueInput.value =
+    form.marketValue > 0
+      ? String(form.marketValue)
+      : ''
+}
+
+function formatMarketValue(): void {
+  const parsedValue = Number(
+    marketValueInput.value.replace(/,/g, ''),
+  )
+
+  form.marketValue =
+    Number.isFinite(parsedValue) && parsedValue >= 0
+      ? parsedValue
+      : 0
+
+  marketValueInput.value =
+    form.marketValue > 0
+      ? new Intl.NumberFormat('en-PH', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(form.marketValue)
+      : ''
+}
+
+onMounted(() => {
+  formatMarketValue()
+})
+
 
 function roundMoney(value: number): number {
   return Math.round(
