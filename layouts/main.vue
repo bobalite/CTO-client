@@ -376,9 +376,7 @@
                 <template v-if="userStore?.getUser?.email === 'admin@davaocity.citc'">
                   <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg" alt="" />
                 </template>
-                <template v-else-if="userStore?.getUser?.email === 'cath@davaocity.citc'">
-                  <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
-                </template>
+                
                 <template v-else>
                   <img class="h-8 w-8 rounded-full bg-gray-50" src="/assets/images/default_pic.png" alt="" />
                 </template>
@@ -439,9 +437,7 @@
             <template v-if="userStore?.getUser?.email === 'admin@davaocity.citc'">
               <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/bryan_ronin.jpg" alt="" />
             </template>
-            <template v-else-if="userStore?.getUser?.email === 'cath@davaocity.citc'">
-              <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/cat.jpg" alt="" />
-            </template>
+           
             <template v-else>
               <img class="h-13 w-13 rounded-full bg-gray-50" src="/assets/images/default_pic.png" alt="" />
             </template>
