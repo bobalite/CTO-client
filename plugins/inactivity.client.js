@@ -7,6 +7,8 @@ export default defineNuxtPlugin(() => {
   let inactivityTimer;
 
   const logoutUser = async () => {
+    if (sessionStorage.getItem('cto-demo-session')) return;
+    if (!localStorage.getItem('_token')) return;
     try {
       await authService.logout(); // ✅ hits /auth/logout with apiBaseURL
     } catch (err) {

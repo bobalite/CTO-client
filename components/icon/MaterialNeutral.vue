@@ -1,7 +1,0 @@
-<template>
-    <div class="mr-2 h-5 w-5 text-white">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-120v-80h480v80H240Z"/></svg>
-    </div>
-</template>
-<script setup lang="ts">
-</script>

@@ -934,7 +934,7 @@ async function verifyTaxClearance(): Promise<void> {
 
   try {
     const apiBaseUrl = String(
-      runtimeConfig.public.ordsApiBaseUrl || '',
+      runtimeConfig.public.apiBaseURL || '',
     ).replace(/\/+$/, '')
 
     if (!apiBaseUrl) {

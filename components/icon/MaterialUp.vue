@@ -1,7 +1,0 @@
-<template>
-    <div class="mr-2 h-5 w-5 text-white">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M440-80v-647L256-544l-56-56 280-280 280 280-56 57-184-184v647h-80Z"/></svg>
-    </div>
-</template>
-<script setup lang="ts">
-</script>

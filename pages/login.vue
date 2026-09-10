@@ -247,7 +247,8 @@
             <button
               type="button"
               class="social-button"
-              :disabled="state.isLoading || state.socialProvider !== null"
+              :disabled="state.isLoading || state.socialProvider !== null || !socialLoginUrls.google"
+              aria-describedby="social-login-notice"
               @click="loginWithGoogle"
             >
               <svg
@@ -277,7 +278,7 @@
                 {{
                   state.socialProvider === 'google'
                     ? 'Connecting...'
-                    : 'Google'
+                    : 'Continue with Google'
                 }}
               </span>
             </button>
@@ -285,7 +286,8 @@
             <button
               type="button"
               class="social-button"
-              :disabled="state.isLoading || state.socialProvider !== null"
+              :disabled="state.isLoading || state.socialProvider !== null || !socialLoginUrls.facebook"
+              aria-describedby="social-login-notice"
               @click="loginWithFacebook"
             >
               <svg
@@ -303,11 +305,17 @@
                 {{
                   state.socialProvider === 'facebook'
                     ? 'Connecting...'
-                    : 'Facebook'
+                    : 'Continue with Facebook'
                 }}
               </span>
             </button>
           </div>
+
+          <p id="social-login-notice" class="mt-3 text-sm leading-6 text-slate-500">
+            {{ !socialLoginUrls.google || !socialLoginUrls.facebook
+              ? 'Unavailable sign-in options will be enabled when the service is ready.'
+              : 'Continue securely with your Google or Facebook account.' }}
+          </p>
 
           <div class="my-7 flex items-center gap-4">
             <div class="h-px flex-1 bg-slate-200"></div>
@@ -550,6 +558,10 @@ definePageMeta({
 })
 
 const runtimeConfig = useRuntimeConfig()
+const socialLoginUrls = {
+  google: String(runtimeConfig.public.googleLoginUrl || '').trim(),
+  facebook: String(runtimeConfig.public.facebookLoginUrl || '').trim(),
+}
 const userStore = useUserStore()
 
 const currentYear = new Date().getFullYear()
@@ -613,6 +625,8 @@ const v$ = useVuelidate(rules, state)
 onMounted(() => {
   localStorage.removeItem('_token')
   sessionStorage.removeItem('_token')
+  sessionStorage.removeItem('cto-demo-session')
+  userStore.resetUser()
 })
 
 function closeMobileMenu() {
@@ -654,7 +668,7 @@ async function login() {
 
     userStore.setUser(response.data.user)
 
-    await navigateTo('/dashboard')
+    await navigateTo('/my-requests')
   } catch (error) {
     state.error = error
 
@@ -701,18 +715,15 @@ function startSocialLogin(provider) {
   state.socialProvider = provider
 
   try {
-    const apiBaseUrl = String(
-      runtimeConfig.public.apiBaseUrl || '',
-    ).replace(/\/+$/, '')
-
-    if (!apiBaseUrl) {
-      throw new Error(
-        'The API base URL is not configured.',
-      )
+    const configuredUrl = socialLoginUrls[provider]
+    if (!configuredUrl) {
+      throw new Error('This sign-in option is not available yet.')
     }
-
-    window.location.href =
-      `${apiBaseUrl}/auth/${provider}/redirect`
+    const url = new URL(configuredUrl, window.location.origin)
+    if (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))) {
+      throw new Error('This sign-in option is currently unavailable.')
+    }
+    window.location.assign(url.href)
   } catch (error) {
     state.socialProvider = null
 

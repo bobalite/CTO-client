@@ -17,15 +17,16 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      ordsApiBaseUrl: process.env.NUXT_PUBLIC_ORDS_API_BASE_URL ||
-                'http://localhost:8080/ords/rpt/api',
+      apiBaseURL: 'http://localhost:8000/api',
+      backendUrl: 'http://localhost:8000',
+      googleLoginUrl: 'http://localhost:8000/auth/google/redirect',
+      facebookLoginUrl: 'http://localhost:8000/auth/facebook/redirect',
     },
   },
 
   modules: [
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt', // ✅ NEW official module
-    'vue3-carousel-nuxt',
     '@nuxt/image',
   ],
 })

@@ -1084,7 +1084,7 @@ function mapApiResponse(
 
 function getApiBaseUrl(): string {
   return String(
-    runtimeConfig.public.ordsApiBaseUrl || '',
+      runtimeConfig.public.apiBaseURL || '',
   ).replace(/\/+$/, '')
 }
 

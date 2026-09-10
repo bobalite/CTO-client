@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="min-h-screen bg-slate-50">
     <Head>
@@ -552,7 +551,7 @@
                 </p>
 
                 <NuxtLink
-                  :to="`/updates/${updateItem.slug}`"
+                  to="/updates"
                   class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#15803d]"
                 >
                   Read More
@@ -730,7 +729,7 @@
 
           <div class="flex flex-wrap gap-4">
             <NuxtLink
-              to="/privacy"
+              to="/transparency"
               class="transition hover:text-white"
             >
               Privacy Policy
@@ -752,11 +751,13 @@
 <script setup lang="ts">
 import {
   ArrowRightIcon,
+  ArrowRightOnRectangleIcon,
   BanknotesIcon,
   Bars3Icon,
   BoltIcon,
   BuildingOffice2Icon,
   CalendarDaysIcon,
+  CalculatorIcon,
   ChevronRightIcon,
   DocumentTextIcon,
   EnvelopeIcon,
@@ -866,7 +867,7 @@ const quickServices: ServiceItem[] = [
     title: 'Official Receipts',
     description:
       'Review official receipt information and treasury payment guidance.',
-    link: '/services/official-receipts',
+    link: '/services',
     icon: ReceiptPercentIcon,
   },
 ]
@@ -921,7 +922,7 @@ const aboutLinks: NavigationItem[] = [
   },
   {
     label: 'Departments',
-    link: '/departments',
+    link: '/about',
   },
   {
     label: 'Transparency',
@@ -948,15 +949,15 @@ const serviceLinks: NavigationItem[] = [
   },
   {
     label: 'Statement of Account',
-    link: '/services/statement-of-account',
+    link: '/verify_soa',
   },
   {
     label: 'Official Receipts',
-    link: '/services/official-receipts',
+    link: '/services',
   },
   {
     label: 'Treasury Forms',
-    link: '/services/forms',
+    link: '/services',
   },
 ]
 
@@ -1066,4 +1067,3 @@ onUnmounted(() => {
   transform: translateY(-8px);
 }
 </style>
-```
