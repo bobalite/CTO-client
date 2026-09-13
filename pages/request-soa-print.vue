@@ -159,7 +159,7 @@ const headers = () => ({ Authorization: 'Bearer ' + localStorage.getItem('_token
 onMounted(async () => {
   if (!localStorage.getItem('_token')) return
   try {
-    const response = await $fetch<any>(config.public.apiBaseURL + '/me', { headers: headers() })
+    const response = await $fetch<any>(config.public.apiBaseUrl + '/me', { headers: headers() })
     authenticated.value = true
     form.requester_name = response.data.username || ''
     form.mailing_address = response.data.mailing_address || ''
@@ -171,7 +171,7 @@ async function submitRequest() {
   saving.value = true
   message.value = ''
   try {
-    const response = await $fetch<any>(config.public.apiBaseURL + '/user-requests/soa', {
+    const response = await $fetch<any>(config.public.apiBaseUrl + '/user-requests/soa', {
       method: 'POST', headers: headers(), body: { ...form, delivery_preference: deliveryMethod.value.toUpperCase() },
     })
     savedCode.value = response.data.request_code
@@ -185,7 +185,7 @@ async function trackRequest() {
   if (!authenticated.value || tracking.value || !trackingCode.value) return
   tracking.value = true
   try {
-    const response = await $fetch<any>(config.public.apiBaseURL + '/user-requests/' + encodeURIComponent(trackingCode.value), { headers: headers() })
+    const response = await $fetch<any>(config.public.apiBaseUrl + '/user-requests/' + encodeURIComponent(trackingCode.value), { headers: headers() })
     trackingMessage.value = 'Status: ' + response.data.status
   } catch { trackingMessage.value = 'Request not found for your account, or tracking is unavailable.' }
   finally { tracking.value = false }

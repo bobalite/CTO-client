@@ -1,6 +1,6 @@
 // plugins/inactivity.client.js
 import { useRouter } from '#app';
-import { authService } from '~/components/api/AuthService'; // adjust path if needed
+import { authService } from '~/api/AuthService'; // adjust path if needed
 
 export default defineNuxtPlugin(() => {
   const router = useRouter();

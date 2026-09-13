@@ -527,7 +527,7 @@
 </template>
 
 <script setup>
-import { authService } from '~/components/api/AuthService'
+import { authService } from '~/api/AuthService'
 import { useUserStore } from '~/store/user'
 import { useVuelidate } from '@vuelidate/core'
 import {

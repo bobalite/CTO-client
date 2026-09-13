@@ -1,12 +1,21 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-12-01',
-    experimental: {
+
+  experimental: {
     appManifest: false,
   },
-  devtools: { enabled: true },
 
-  css: ['~/assets/css/main.css'],
-  plugins: ['~/plugins/inactivity.client.js'],
+  devtools: {
+    enabled: true,
+  },
+
+  css: [
+    '~/assets/css/main.css',
+  ],
+
+  plugins: [
+    '~/plugins/inactivity.client.js',
+  ],
 
   postcss: {
     plugins: {
@@ -17,7 +26,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseURL: 'http://localhost:8000/api',
+      apiBaseUrl: 'http://localhost:8000/api',
       backendUrl: 'http://localhost:8000',
       googleLoginUrl: 'http://localhost:8000/auth/google/redirect',
       facebookLoginUrl: 'http://localhost:8000/auth/facebook/redirect',
@@ -26,7 +35,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt', // ✅ NEW official module
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/image',
   ],
 })

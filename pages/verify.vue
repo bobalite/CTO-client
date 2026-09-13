@@ -138,7 +138,6 @@
                 or the hash value by itself.
               </p>
 
-              <!-- Validation Error -->
               <div
                 v-if="validationMessage"
                 class="mt-5 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4"
@@ -152,7 +151,6 @@
                 </p>
               </div>
 
-              <!-- API Error -->
               <div
                 v-if="requestError"
                 class="mt-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4"
@@ -208,7 +206,6 @@
                   : 'border-red-200'
               "
             >
-              <!-- Result Header -->
               <div
                 class="result-header flex flex-col gap-5 px-6 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8"
                 :class="
@@ -278,13 +275,11 @@
                 </span>
               </div>
 
-              <!-- Valid Result Details -->
               <div
                 v-if="verificationResult.valid"
                 class="result-body p-6 sm:p-8"
               >
                 <dl class="result-details grid gap-x-8 gap-y-7 sm:grid-cols-2">
-                  <!-- Verification Code -->
                   <div class="detail-item sm:col-span-2">
                     <dt class="detail-label">
                       Verification Code
@@ -299,7 +294,6 @@
                     </dd>
                   </div>
 
-                  <!-- Control Number -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Control Number
@@ -314,7 +308,6 @@
                     </dd>
                   </div>
 
-                  <!-- Date Issued -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Date Issued
@@ -329,7 +322,6 @@
                     </dd>
                   </div>
 
-                  <!-- Taxpayer -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Taxpayer / Owner
@@ -344,7 +336,6 @@
                     </dd>
                   </div>
 
-                  <!-- Tax Year -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Tax Year
@@ -359,7 +350,6 @@
                     </dd>
                   </div>
 
-                  <!-- Address -->
                   <div class="detail-item sm:col-span-2">
                     <dt class="detail-label">
                       Taxpayer Address
@@ -374,7 +364,6 @@
                     </dd>
                   </div>
 
-                  <!-- Location -->
                   <div class="detail-item sm:col-span-2">
                     <dt class="detail-label">
                       Property Location
@@ -389,7 +378,6 @@
                     </dd>
                   </div>
 
-                  <!-- Land PIN -->
                   <div class="detail-item sm:col-span-2">
                     <dt class="detail-label">
                       Land Property Identification Number
@@ -404,7 +392,6 @@
                     </dd>
                   </div>
 
-                  <!-- Improvements -->
                   <div class="detail-item improvements-section sm:col-span-2">
                     <dt class="detail-label">
                       Property Improvements
@@ -473,7 +460,6 @@
                     </dd>
                   </div>
 
-                  <!-- OR Number -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Official Receipt Number
@@ -488,7 +474,6 @@
                     </dd>
                   </div>
 
-                  <!-- Verification Date -->
                   <div class="detail-item">
                     <dt class="detail-label">
                       Verification Date
@@ -534,7 +519,6 @@
                 </div>
               </div>
 
-              <!-- Invalid Result -->
               <div
                 v-else
                 class="result-body p-6 sm:p-8"
@@ -849,11 +833,10 @@ function mapImprovements(
   return improvements.map((improvement) => {
     return {
       improvementPin:
-        decodeHtmlEntities(improvement.improvement_pin) ||
-        null,
+        decodeHtmlEntities(improvement.improvement_pin) || null,
+
       improvementType:
-        decodeHtmlEntities(improvement.improvement_type) ||
-        null,
+        decodeHtmlEntities(improvement.improvement_type) || null,
     }
   })
 }
@@ -872,48 +855,52 @@ function mapApiResponse(
     )
   }
 
-  const taxpayerAddress = decodeHtmlEntities(
-    details.taxpayer_address,
-  )
-
-  const propertyLocation = decodeHtmlEntities(
-    details.property_location,
-  )
-
   return {
     valid: true,
-    status: response.status || 'VERIFIED',
+
+    status:
+      response.status ||
+      'VERIFIED',
+
     message:
       response.message ||
       'This tax clearance was found in the official records.',
+
     verificationCode,
+
     controlNumber:
-      details.control_number ||
-      null,
+      details.control_number || null,
+
     taxpayerName:
-      decodeHtmlEntities(details.taxpayer_name) ||
-      null,
+      decodeHtmlEntities(details.taxpayer_name) || null,
+
     taxpayerAddress:
-      taxpayerAddress ||
-      null,
+      decodeHtmlEntities(details.taxpayer_address) || null,
+
     landPin:
-      details.pin ||
-      null,
+      details.pin || null,
+
     taxYear:
-      details.tax_year ??
-      null,
+      details.tax_year ?? null,
+
     dateIssued:
-      details.date_issued ||
-      null,
+      details.date_issued || null,
+
     propertyLocation:
-      propertyLocation ||
-      null,
+      decodeHtmlEntities(details.property_location) || null,
+
     orNumber:
-      details.or_number ||
-      null,
+      details.or_number || null,
+
     improvements:
       mapImprovements(details.improvements),
   }
+}
+
+function getApiBaseUrl(): string {
+  return String(
+    runtimeConfig.public.apiBaseUrl || '',
+  ).replace(/\/+$/, '')
 }
 
 async function verifyTaxClearance(): Promise<void> {
@@ -930,26 +917,36 @@ async function verifyTaxClearance(): Promise<void> {
     return
   }
 
+  const apiBaseUrl = getApiBaseUrl()
+
+  if (!apiBaseUrl) {
+    requestError.value =
+      'The application API is not configured.'
+
+    return
+  }
+
   isLoading.value = true
 
   try {
-    const apiBaseUrl = String(
-      runtimeConfig.public.apiBaseURL || '',
-    ).replace(/\/+$/, '')
-
-    if (!apiBaseUrl) {
-      throw new Error(
-        'The ORDS API base URL is not configured.',
-      )
-    }
-
     const encodedCode = encodeURIComponent(normalizedValue)
 
+    /*
+     * IMPORTANT:
+     *
+     * This calls Laravel, NOT Oracle ORDS.
+     *
+     * Example:
+     * http://localhost:8000/api/tax-clearance/verify/{code}
+     *
+     * Laravel then calls Oracle server-to-server.
+     */
     const response =
       await $fetch<TaxClearanceApiResponse>(
         `${apiBaseUrl}/tax-clearance/verify/${encodedCode}`,
         {
           method: 'GET',
+
           headers: {
             Accept: 'application/json',
           },
@@ -975,11 +972,23 @@ async function verifyTaxClearance(): Promise<void> {
       message?: string
       statusCode?: number
       status?: number
+      response?: {
+        status?: number
+      }
     }
 
     const statusCode =
       fetchError.statusCode ||
-      fetchError.status
+      fetchError.status ||
+      fetchError.response?.status
+
+    if (statusCode === 400 || statusCode === 422) {
+      validationMessage.value =
+        fetchError.data?.message ||
+        'The verification code format is invalid.'
+
+      return
+    }
 
     if (statusCode === 404) {
       verificationResult.value =
@@ -992,10 +1001,23 @@ async function verifyTaxClearance(): Promise<void> {
       return
     }
 
+    if (statusCode === 429) {
+      requestError.value =
+        'Too many verification attempts. Please wait before trying again.'
+
+      return
+    }
+
+    if (statusCode === 502 || statusCode === 503) {
+      requestError.value =
+        'The verification service is temporarily unavailable. Please try again later.'
+
+      return
+    }
+
     requestError.value =
       fetchError.data?.message ||
       fetchError.data?.error ||
-      fetchError.message ||
       'The verification service is currently unavailable. Please try again.'
   } finally {
     isLoading.value = false
@@ -1077,12 +1099,14 @@ function printResult(): void {
   if (!verificationResult.value) {
     requestError.value =
       'There is no verification result available to print.'
+
     return
   }
 
   if (!printResultSection.value) {
     requestError.value =
       'The verification result could not be prepared for printing.'
+
     return
   }
 
@@ -1095,10 +1119,12 @@ function printResult(): void {
   if (!printWindow) {
     requestError.value =
       'The print window was blocked. Please allow pop-ups and try again.'
+
     return
   }
 
-  const resultHtml = printResultSection.value.innerHTML
+  const resultHtml =
+    printResultSection.value.innerHTML
 
   printWindow.document.open()
 
@@ -1113,7 +1139,9 @@ function printResult(): void {
           content="width=device-width, initial-scale=1.0"
         />
 
-        <title>Tax Clearance Verification Result</title>
+        <title>
+          Tax Clearance Verification Result
+        </title>
 
         <style>
           * {
@@ -1216,7 +1244,8 @@ function printResult(): void {
 
           .result-details {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns:
+              repeat(2, minmax(0, 1fr));
             gap: 22px 30px;
             margin: 0;
           }
@@ -1354,18 +1383,24 @@ function printResult(): void {
       <body>
         <div class="print-container">
           <div class="print-header">
-            <h1>City Treasurer's Office</h1>
+            <h1>
+              City Treasurer's Office
+            </h1>
 
-            <p>Tax Clearance Verification Result</p>
+            <p>
+              Tax Clearance Verification Result
+            </p>
           </div>
 
           ${resultHtml}
 
           <div class="print-footer">
-            This document is a verification result only and is not a
-            replacement for the original tax clearance.
+            This document is a verification result only
+            and is not a replacement for the original
+            tax clearance.
             <br />
-            Printed on ${escapeHtml(currentVerificationDate.value)}
+            Printed on
+            ${escapeHtml(currentVerificationDate.value)}
           </div>
         </div>
       </body>
@@ -1408,7 +1443,8 @@ onMounted(() => {
 
   if (codeFromUrl) {
     verificationValue.value = codeFromUrl
-    verifyTaxClearance()
+
+    void verifyTaxClearance()
   }
 })
 </script>

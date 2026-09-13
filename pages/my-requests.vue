@@ -45,7 +45,7 @@
 <script setup>
 import { DocumentTextIcon } from '@heroicons/vue/24/outline'
 import { useUserStore } from '~/store/user'
-import { authService } from '~/components/api/AuthService'
+import { authService } from '~/api/AuthService'
 
 const userStore = useUserStore()
 const ready = ref(false)
