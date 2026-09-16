@@ -1084,7 +1084,7 @@ function mapApiResponse(
 
 function getApiBaseUrl(): string {
   return String(
-      runtimeConfig.public.apiBaseURL || '',
+    runtimeConfig.public.apiBaseUrl || '',
   ).replace(/\/+$/, '')
 }
 
@@ -1095,7 +1095,7 @@ function buildVerificationEndpoint(
 
   if (!apiBaseUrl) {
     throw new Error(
-      'The ORDS API base URL is not configured.',
+      'The application API is not configured.',
     )
   }
 
@@ -1103,11 +1103,12 @@ function buildVerificationEndpoint(
     encodeURIComponent(soaNumber)
 
   /*
-   * Expected base URL:
-   * http://localhost:8080/ords/rpt/api
+   * Nuxt calls Laravel only.
    *
-   * Final endpoint:
-   * /soa-verify/soa-verify/{SOA_NO}
+   * Example:
+   * http://localhost:8000/api/soa-verify/soa-verify/{SOA_NO}
+   *
+   * Laravel then calls Oracle ORDS server-to-server.
    */
   return `${apiBaseUrl}/soa-verify/soa-verify/${encodedSoaNumber}`
 }
@@ -1185,11 +1186,26 @@ async function verifySoa(): Promise<void> {
       message?: string
       statusCode?: number
       status?: number
+      response?: {
+        status?: number
+      }
     }
 
     const statusCode =
       fetchError.statusCode ||
-      fetchError.status
+      fetchError.status ||
+      fetchError.response?.status
+
+    if (
+      statusCode === 400 ||
+      statusCode === 422
+    ) {
+      validationMessage.value =
+        fetchError.data?.message ||
+        'The SOA number supplied is invalid.'
+
+      return
+    }
 
     if (statusCode === 404) {
       verificationResult.value =
@@ -1202,14 +1218,6 @@ async function verifySoa(): Promise<void> {
       return
     }
 
-    if (statusCode === 400) {
-      validationMessage.value =
-        fetchError.data?.message ||
-        'The SOA number supplied is invalid.'
-
-      return
-    }
-
     if (statusCode === 429) {
       requestError.value =
         'Too many verification requests were made from your connection. Please wait about one minute before trying again.'
@@ -1217,10 +1225,19 @@ async function verifySoa(): Promise<void> {
       return
     }
 
+    if (
+      statusCode === 502 ||
+      statusCode === 503
+    ) {
+      requestError.value =
+        'The SOA verification service is temporarily unavailable. Please try again later.'
+
+      return
+    }
+
     requestError.value =
       fetchError.data?.message ||
       fetchError.data?.error ||
-      fetchError.message ||
       'The SOA verification service is currently unavailable. Please try again.'
   } finally {
     isLoading.value = false
@@ -1253,11 +1270,11 @@ function formatDate(
   }
 
   /*
-   * The API returns:
-   * YYYY-MM-DDTHH24:MI:SS
+   * The API may return:
+   * YYYY-MM-DDTHH:MI:SS
    *
-   * It does not include a timezone offset, so it is displayed
-   * as Philippine local database time.
+   * When no timezone is present,
+   * display it as local database time.
    */
   const localDateMatch = value.match(
     /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/,

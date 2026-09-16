@@ -7,7 +7,7 @@
 
       <Meta
         name="description"
-        content="Prepare a request for a printed real property tax Statement of Account."
+        content="Submit and track a printed real property tax Statement of Account request."
       />
     </Head>
 
@@ -24,41 +24,105 @@
       ></div>
 
       <div
-        class="relative z-10 mx-auto max-w-7xl px-6 py-20 lg:px-8"
+        class="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8"
       >
-        <div class="max-w-3xl">
-          <div
-            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm"
-          >
-            <DocumentPlusIcon class="h-4 w-4 text-emerald-300" />
-
-            <span
-              class="text-xs font-bold uppercase tracking-[0.18em] text-white/90"
+        <div
+          class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <div class="max-w-3xl">
+            <NuxtLink
+              to="/logged/services"
+              class="mb-7 inline-flex items-center gap-2 text-sm font-semibold text-white/70 transition hover:text-white"
             >
-              Online Government Services
-            </span>
+              <ArrowLeftIcon class="h-4 w-4" />
+
+              Back to services
+            </NuxtLink>
+
+            <div
+              class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm"
+            >
+              <DocumentPlusIcon class="h-4 w-4 text-emerald-300" />
+
+              <span
+                class="text-xs font-bold uppercase tracking-[0.18em] text-white/90"
+              >
+                Authenticated SOA Service
+              </span>
+            </div>
+
+            <h1
+              class="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
+            >
+              Request SOA Print
+            </h1>
+
+            <p
+              class="mt-5 max-w-2xl text-lg leading-8 text-white/75"
+            >
+              Submit and track Statement of Account print requests associated
+              with your signed-in account.
+            </p>
           </div>
 
-          <h1
-            class="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
+          <!-- Account Summary -->
+          <div
+            v-if="currentUser"
+            class="w-full rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-md lg:max-w-sm"
           >
-            Request SOA Print
-          </h1>
+            <div class="flex items-center gap-4">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 text-white"
+              >
+                <UserCircleIcon class="h-7 w-7" />
+              </div>
 
-          <p
-            class="mt-5 max-w-2xl text-lg leading-8 text-white/75"
-          >
-            Provide the property and requester details for a printed
-            Statement of Account.
-          </p>
+              <div class="min-w-0">
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.14em] text-emerald-300"
+                >
+                  Signed in as
+                </p>
+
+                <p class="mt-1 truncate font-bold text-white">
+                  {{ displayName }}
+                </p>
+
+                <p class="truncate text-sm text-white/65">
+                  {{ currentUser.email || 'No email provided' }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- Loading -->
+    <main
+      v-if="loadingAccount"
+      class="mx-auto max-w-7xl px-6 py-16 lg:px-8"
+    >
+      <div
+        class="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm"
+      >
+        <ArrowPathIcon
+          class="mx-auto h-8 w-8 animate-spin text-green-700"
+        />
+
+        <p class="mt-4 font-semibold text-slate-700">
+          Loading your account...
+        </p>
+      </div>
+    </main>
+
     <!-- Main -->
-    <section class="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+    <section
+      v-else
+      class="mx-auto max-w-7xl px-6 py-14 lg:px-8"
+    >
       <NuxtLink
-        to="/services"
+        to="/logged/services"
         class="inline-flex items-center gap-2 text-sm font-bold text-green-700 hover:underline"
       >
         <ArrowLeftIcon
@@ -107,36 +171,29 @@
               <!-- New Request -->
               <TabPanel :unmount="false">
                 <div
-                  id="submission-notice"
-                  class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-base leading-7 text-amber-950"
+                  class="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-base leading-7 text-blue-950"
                 >
-                  <p class="font-bold">
-                    {{
-                      authenticated
-                        ? 'Submit your SOA request'
-                        : 'Sign in to submit a request'
-                    }}
-                  </p>
+                  <div class="flex items-start gap-3">
+                    <ShieldCheckIcon
+                      class="mt-0.5 h-5 w-5 shrink-0 text-blue-700"
+                    />
 
-                  <p class="mt-1">
-                    <span v-if="authenticated">
-                      Your request will be saved for review. Printing and
-                      delivery are not automatic.
-                    </span>
+                    <div>
+                      <p class="font-bold">
+                        Request linked to your account
+                      </p>
 
-                    <NuxtLink
-                      v-else
-                      to="/login"
-                      class="font-bold underline"
-                    >
-                      Sign in to your account
-                    </NuxtLink>
-                  </p>
+                      <p class="mt-1 text-sm leading-6">
+                        Your account details have been loaded automatically.
+                        This request will be associated with your signed-in
+                        account.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <form
                   class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
-                  aria-describedby="submission-notice"
                   @submit.prevent="submitRequest"
                 >
                   <div class="mb-6 flex items-start gap-4">
@@ -155,15 +212,11 @@
                       </h2>
 
                       <p class="mt-2 text-sm leading-6 text-slate-600">
-                        Enter the property details and contact information for
-                        your SOA request.
+                        Enter the property details for your Statement of
+                        Account request.
                       </p>
                     </div>
                   </div>
-
-                  <p class="text-sm text-slate-600">
-                    All fields are required.
-                  </p>
 
                   <!-- Property -->
                   <fieldset class="mt-6">
@@ -188,7 +241,7 @@
                           name="pin"
                           type="text"
                           required
-                          class="field-input"
+                          class="field-input font-mono uppercase"
                           aria-describedby="pin-help"
                           :disabled="saving"
                         />
@@ -239,11 +292,11 @@
 
                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
                       <label
-                        class="flex cursor-pointer items-start gap-3 rounded-xl border p-4"
+                        class="flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition"
                         :class="
                           deliveryMethod === 'postal'
                             ? 'border-green-700 bg-green-50'
-                            : 'border-slate-200'
+                            : 'border-slate-200 hover:border-slate-300'
                         "
                       >
                         <input
@@ -272,11 +325,11 @@
                       </label>
 
                       <label
-                        class="flex cursor-pointer items-start gap-3 rounded-xl border p-4"
+                        class="flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition"
                         :class="
                           deliveryMethod === 'email'
                             ? 'border-green-700 bg-green-50'
-                            : 'border-slate-200'
+                            : 'border-slate-200 hover:border-slate-300'
                         "
                       >
                         <input
@@ -316,7 +369,12 @@
                       Requester details
                     </legend>
 
-                    <div class="grid gap-6 sm:grid-cols-2">
+                    <p class="mt-1 text-sm leading-6 text-slate-600">
+                      These details were loaded from your account. You may
+                      review them before submitting.
+                    </p>
+
+                    <div class="mt-5 grid gap-6 sm:grid-cols-2">
                       <div>
                         <label
                           for="soa-requester"
@@ -383,42 +441,69 @@
                   <div
                     v-if="message"
                     role="alert"
-                    class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+                    class="mt-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4"
                   >
-                    {{ message }}
+                    <ExclamationCircleIcon
+                      class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+                    />
+
+                    <p class="text-sm text-red-800">
+                      {{ message }}
+                    </p>
                   </div>
 
                   <!-- Success -->
                   <div
                     v-if="savedCode"
                     role="status"
-                    class="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-900"
+                    class="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5"
                   >
-                    Request saved.
+                    <div class="flex items-start gap-3">
+                      <CheckCircleIcon
+                        class="mt-0.5 h-6 w-6 shrink-0 text-green-700"
+                      />
 
-                    Your request code is
+                      <div>
+                        <p class="font-bold text-green-950">
+                          Request saved
+                        </p>
 
-                    <strong class="break-all font-mono">
-                      {{ savedCode }}
-                    </strong>.
+                        <p class="mt-2 text-sm leading-6 text-green-900">
+                          Your request code is
+                          <strong class="font-mono">
+                            {{ savedCode }}
+                          </strong>.
+                        </p>
 
-                    Status:
-                    <strong>PENDING</strong>.
+                        <p class="mt-1 text-sm text-green-800">
+                          Current status:
+                          <strong>PENDING</strong>
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div
-                    class="mt-8 border-t border-slate-200 pt-6"
+                    class="mt-8 flex flex-wrap gap-3 border-t border-slate-200 pt-6"
                   >
                     <button
                       type="submit"
                       :disabled="
-                        !authenticated ||
                         saving ||
                         !!savedCode
                       "
-                      aria-describedby="submission-notice"
-                      class="w-full rounded-xl bg-green-700 px-6 py-3.5 text-base font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 sm:w-auto"
+                      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-6 py-3.5 text-base font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 sm:w-auto"
                     >
+                      <ArrowPathIcon
+                        v-if="saving"
+                        class="h-5 w-5 animate-spin"
+                      />
+
+                      <DocumentPlusIcon
+                        v-else
+                        class="h-5 w-5"
+                      />
+
                       {{
                         saving
                           ? 'Saving...'
@@ -426,6 +511,17 @@
                             ? 'Request saved'
                             : 'Submit Request'
                       }}
+                    </button>
+
+                    <button
+                      v-if="savedCode"
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+                      @click="trackSavedRequest"
+                    >
+                      <MagnifyingGlassIcon class="h-4 w-4" />
+
+                      Track this request
                     </button>
                   </div>
                 </form>
@@ -452,18 +548,16 @@
                     </h2>
 
                     <p class="mt-2 text-sm leading-6 text-slate-600">
-                      Use your request code to check the status of your SOA
-                      print request while signed in.
+                      Enter a request code belonging to your signed-in account.
                     </p>
                   </div>
                 </div>
 
                 <div
-                  id="tracking-notice"
-                  class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950"
+                  class="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-950"
                 >
-                  Sign in and enter a request code to view a request belonging
-                  to your account.
+                  For security, only requests associated with your account can
+                  be viewed here.
                 </div>
 
                 <form
@@ -485,20 +579,27 @@
                     autocomplete="off"
                     placeholder="Enter your request code"
                     class="field-input font-mono uppercase"
-                    aria-describedby="tracking-notice"
                     :disabled="tracking"
                   />
 
                   <button
                     type="submit"
                     :disabled="
-                      !authenticated ||
                       tracking ||
                       !trackingCode.trim()
                     "
-                    aria-describedby="tracking-notice"
-                    class="mt-6 w-full rounded-xl bg-green-700 px-6 py-3.5 text-base font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+                    class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-6 py-3.5 text-base font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
                   >
+                    <ArrowPathIcon
+                      v-if="tracking"
+                      class="h-5 w-5 animate-spin"
+                    />
+
+                    <MagnifyingGlassIcon
+                      v-else
+                      class="h-5 w-5"
+                    />
+
                     {{
                       tracking
                         ? 'Checking...'
@@ -513,6 +614,51 @@
                   >
                     {{ trackingMessage }}
                   </div>
+
+                  <div
+                    v-if="trackedRequest"
+                    class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                  >
+                    <dl class="grid gap-5 sm:grid-cols-2">
+                      <div>
+                        <dt class="detail-label">
+                          Request code
+                        </dt>
+
+                        <dd class="detail-value font-mono">
+                          {{ trackedRequest.request_code }}
+                        </dd>
+                      </div>
+
+                      <div>
+                        <dt class="detail-label">
+                          Status
+                        </dt>
+
+                        <dd class="mt-2">
+                          <span
+                            class="inline-flex rounded-full px-3 py-1 text-xs font-bold"
+                            :class="statusColor(trackedRequest.status)"
+                          >
+                            {{ trackedRequest.status }}
+                          </span>
+                        </dd>
+                      </div>
+
+                      <div
+                        v-if="trackedRequest.remarks"
+                        class="sm:col-span-2"
+                      >
+                        <dt class="detail-label">
+                          Remarks
+                        </dt>
+
+                        <dd class="detail-value">
+                          {{ trackedRequest.remarks }}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
                 </form>
               </TabPanel>
             </TabPanels>
@@ -520,84 +666,142 @@
         </div>
 
         <!-- Sidebar -->
-        <aside
-          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
-        >
+        <aside class="space-y-6">
+          <!-- Account -->
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-800"
+            class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
           >
-            <InformationCircleIcon
-              class="h-6 w-6"
-              aria-hidden="true"
-            />
-          </div>
-
-          <h2 class="mt-5 text-xl font-bold text-slate-900">
-            How it works
-          </h2>
-
-          <p class="mt-2 text-sm leading-6 text-slate-600">
-            For signed-in users:
-          </p>
-
-          <ol class="mt-6 space-y-6">
-            <li
-              v-for="(instruction, index) in instructions"
-              :key="instruction.title"
-              class="flex gap-4"
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700"
             >
-              <span
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-700 text-sm font-bold text-white"
-              >
-                {{ index + 1 }}
-              </span>
+              <UserCircleIcon class="h-6 w-6" />
+            </div>
+
+            <h2 class="mt-5 text-xl font-bold text-slate-900">
+              Your account
+            </h2>
+
+            <dl class="mt-6 space-y-5">
+              <div>
+                <dt class="detail-label">
+                  Name
+                </dt>
+
+                <dd class="detail-value">
+                  {{ displayName }}
+                </dd>
+              </div>
 
               <div>
-                <h3 class="font-bold text-slate-900">
-                  {{ instruction.title }}
-                </h3>
+                <dt class="detail-label">
+                  Email
+                </dt>
 
-                <p class="mt-1 text-sm leading-6 text-slate-600">
-                  {{ instruction.description }}
-                </p>
+                <dd class="detail-value break-all">
+                  {{ currentUser?.email || 'Not provided' }}
+                </dd>
               </div>
-            </li>
-          </ol>
 
-          <div
-            class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5"
-          >
-            <p class="font-bold text-amber-900">
-              Important
-            </p>
+              <div>
+                <dt class="detail-label">
+                  Mailing address
+                </dt>
 
-            <p class="mt-1 text-sm leading-6 text-amber-800">
-              Submitting a request does not automatically approve or print the
-              Statement of Account. Requests are subject to review by the City
-              Treasurer's Office.
-            </p>
+                <dd class="detail-value">
+                  {{
+                    currentUser?.mailing_address ||
+                    'Not provided'
+                  }}
+                </dd>
+              </div>
+            </dl>
+
+            <NuxtLink
+              to="/my-requests"
+              class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-green-700 transition hover:text-green-900"
+            >
+              View My Requests
+
+              <ArrowRightIcon class="h-4 w-4" />
+            </NuxtLink>
           </div>
 
-          <div class="mt-8 border-t border-slate-200 pt-6">
-            <h3 class="font-bold text-slate-900">
-              Request statuses
-            </h3>
+          <!-- How it works -->
+          <div
+            class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+          >
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-800"
+            >
+              <InformationCircleIcon
+                class="h-6 w-6"
+                aria-hidden="true"
+              />
+            </div>
 
-            <div class="mt-4 space-y-4">
-              <div
-                v-for="status in statuses"
-                :key="status.label"
+            <h2 class="mt-5 text-xl font-bold text-slate-900">
+              How it works
+            </h2>
+
+            <ol class="mt-6 space-y-6">
+              <li
+                v-for="(instruction, index) in instructions"
+                :key="instruction.title"
+                class="flex gap-4"
               >
                 <span
-                  class="inline-flex rounded-full px-3 py-1 text-xs font-bold"
-                  :class="status.color"
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-700 text-sm font-bold text-white"
                 >
-                  {{ status.label }}
+                  {{ index + 1 }}
                 </span>
 
-                <p class="mt-1 text-sm leading-6 text-slate-600">
-                  {{ status.description }}
-                </p>
+                <div>
+                  <h3 class="font-bold text-slate-900">
+                    {{ instruction.title }}
+                  </h3>
+
+                  <p class="mt-1 text-sm leading-6 text-slate-600">
+                    {{ instruction.description }}
+                  </p>
+                </div>
+              </li>
+            </ol>
+
+            <div
+              class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5"
+            >
+              <p class="font-bold text-amber-900">
+                Important
+              </p>
+
+              <p class="mt-1 text-sm leading-6 text-amber-800">
+                Submitting a request does not automatically approve or print
+                the Statement of Account. Requests are subject to review by
+                the City Treasurer's Office.
+              </p>
+            </div>
+
+            <div class="mt-8 border-t border-slate-200 pt-6">
+              <h3 class="font-bold text-slate-900">
+                Request statuses
+              </h3>
+
+              <div class="mt-4 space-y-4">
+                <div
+                  v-for="status in statuses"
+                  :key="status.label"
+                >
+                  <span
+                    class="inline-flex rounded-full px-3 py-1 text-xs font-bold"
+                    :class="status.color"
+                  >
+                    {{ status.label }}
+                  </span>
+
+                  <p class="mt-1 text-sm leading-6 text-slate-600">
+                    {{ status.description }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -618,13 +822,25 @@ import {
 
 import {
   ArrowLeftIcon,
+  ArrowPathIcon,
+  ArrowRightIcon,
+  CheckCircleIcon,
   DocumentPlusIcon,
+  ExclamationCircleIcon,
   InformationCircleIcon,
   MagnifyingGlassIcon,
+  ShieldCheckIcon,
+  UserCircleIcon,
 } from '@heroicons/vue/24/outline'
 
+import { useUserStore } from '~/store/user'
+
+definePageMeta({
+  middleware: 'auth',
+})
+
 interface AuthenticatedUser {
-  id?: string
+  id: string
   username?: string
   fname?: string
   mname?: string | null
@@ -649,8 +865,12 @@ interface UserRequestResponse {
 }
 
 const config = useRuntimeConfig()
+const userStore = useUserStore()
 
-const authenticated = ref(false)
+const loadingAccount = ref(true)
+const currentUser =
+  ref<AuthenticatedUser | null>(null)
+
 const saving = ref(false)
 const savedCode = ref('')
 const message = ref('')
@@ -658,6 +878,9 @@ const message = ref('')
 const trackingCode = ref('')
 const tracking = ref(false)
 const trackingMessage = ref('')
+
+const trackedRequest =
+  ref<UserRequestData | null>(null)
 
 const deliveryMethod = ref('postal')
 
@@ -667,6 +890,33 @@ const form = reactive({
   requester_name: '',
   mailing_address: '',
   email: '',
+})
+
+const displayName = computed(() => {
+  const user = currentUser.value
+
+  if (!user) {
+    return 'Account holder'
+  }
+
+  const fullName = [
+    user.fname,
+    user.mname,
+    user.lname,
+  ]
+    .filter(
+      (value): value is string =>
+        typeof value === 'string' &&
+        value.trim() !== '',
+    )
+    .join(' ')
+    .trim()
+
+  return (
+    fullName ||
+    user.username ||
+    'Account holder'
+  )
 })
 
 function getApiBaseUrl(): string {
@@ -688,6 +938,7 @@ function authHeaders(): Record<string, string> {
 
   return {
     Accept: 'application/json',
+
     ...(token
       ? {
           Authorization: `Bearer ${token}`,
@@ -696,12 +947,14 @@ function authHeaders(): Record<string, string> {
   }
 }
 
-function logoutLocal(): void {
-  authenticated.value = false
-
+async function redirectToLogin(): Promise<void> {
   if (import.meta.client) {
     localStorage.removeItem('_token')
   }
+
+  userStore.resetUser()
+
+  await navigateTo('/login')
 }
 
 function getFullName(
@@ -713,7 +966,7 @@ function getFullName(
     user.lname,
   ]
     .filter(
-      (value) =>
+      (value): value is string =>
         typeof value === 'string' &&
         value.trim() !== '',
     )
@@ -723,19 +976,16 @@ function getFullName(
   return name || user.username || ''
 }
 
-onMounted(async () => {
+async function loadAccount(): Promise<void> {
   const apiBaseUrl = getApiBaseUrl()
   const token = getToken()
 
   if (!apiBaseUrl || !token) {
+    await redirectToLogin()
     return
   }
 
   try {
-    /*
-     * Laravel:
-     * GET /api/me
-     */
     const response =
       await $fetch<MeResponse>(
         `${apiBaseUrl}/me`,
@@ -746,11 +996,12 @@ onMounted(async () => {
       )
 
     if (!response?.data) {
-      logoutLocal()
+      await redirectToLogin()
       return
     }
 
-    authenticated.value = true
+    currentUser.value = response.data
+    userStore.setUser(response.data)
 
     form.requester_name =
       getFullName(response.data)
@@ -760,22 +1011,15 @@ onMounted(async () => {
 
     form.email =
       response.data.email || ''
-  } catch (error: any) {
-    if (
-      error?.status === 401 ||
-      error?.statusCode === 401
-    ) {
-      logoutLocal()
-      return
-    }
-
-    authenticated.value = false
+  } catch {
+    await redirectToLogin()
+  } finally {
+    loadingAccount.value = false
   }
-})
+}
 
 async function submitRequest(): Promise<void> {
   if (
-    !authenticated.value ||
     saving.value ||
     savedCode.value
   ) {
@@ -795,10 +1039,6 @@ async function submitRequest(): Promise<void> {
   message.value = ''
 
   try {
-    /*
-     * Laravel:
-     * POST /api/user-requests/soa
-     */
     const response =
       await $fetch<UserRequestResponse>(
         `${apiBaseUrl}/user-requests/soa`,
@@ -808,10 +1048,13 @@ async function submitRequest(): Promise<void> {
           headers: authHeaders(),
 
           body: {
-            request_type: 'SOA_PRINT',
+            request_type:
+              'SOA_PRINT',
 
             pin:
-              form.pin.trim(),
+              form.pin
+                .trim()
+                .toUpperCase(),
 
             land_owner:
               form.land_owner.trim(),
@@ -853,11 +1096,7 @@ async function submitRequest(): Promise<void> {
       error?.response?.status
 
     if (status === 401) {
-      logoutLocal()
-
-      message.value =
-        'Your session has expired. Please sign in again.'
-
+      await redirectToLogin()
       return
     }
 
@@ -908,7 +1147,6 @@ async function submitRequest(): Promise<void> {
 
 async function trackRequest(): Promise<void> {
   if (
-    !authenticated.value ||
     tracking.value ||
     !trackingCode.value.trim()
   ) {
@@ -933,15 +1171,9 @@ async function trackRequest(): Promise<void> {
 
   tracking.value = true
   trackingMessage.value = ''
+  trackedRequest.value = null
 
   try {
-    /*
-     * Laravel:
-     * GET /api/user-requests/{code}
-     *
-     * This queries the Laravel/MySQL user_requests table.
-     * It does NOT call Oracle ORDS.
-     */
     const response =
       await $fetch<UserRequestResponse>(
         `${apiBaseUrl}/user-requests/${encodeURIComponent(code)}`,
@@ -966,13 +1198,16 @@ async function trackRequest(): Promise<void> {
         .toUpperCase() ||
       'UNKNOWN'
 
-    trackingMessage.value =
-      `Status: ${status}`
-
-    if (request.remarks) {
-      trackingMessage.value +=
-        ` — ${request.remarks}`
+    trackedRequest.value = {
+      ...request,
+      request_code:
+        request.request_code ||
+        code,
+      status,
     }
+
+    trackingMessage.value =
+      `Current status: ${status}`
   } catch (error: any) {
     const status =
       error?.statusCode ??
@@ -980,11 +1215,7 @@ async function trackRequest(): Promise<void> {
       error?.response?.status
 
     if (status === 401) {
-      logoutLocal()
-
-      trackingMessage.value =
-        'Your session has expired. Please sign in again.'
-
+      await redirectToLogin()
       return
     }
 
@@ -1010,6 +1241,52 @@ async function trackRequest(): Promise<void> {
   }
 }
 
+async function trackSavedRequest(): Promise<void> {
+  if (!savedCode.value) {
+    return
+  }
+
+  trackingCode.value =
+    savedCode.value
+
+  await nextTick()
+}
+
+function statusColor(
+  status?: string,
+): string {
+  const normalized =
+    status
+      ?.trim()
+      .toUpperCase() || ''
+
+  switch (normalized) {
+    case 'PENDING':
+      return 'bg-amber-100 text-amber-800'
+
+    case 'FOR REVIEW':
+      return 'bg-blue-100 text-blue-800'
+
+    case 'APPROVED':
+      return 'bg-emerald-100 text-emerald-800'
+
+    case 'READY FOR PRINTING':
+      return 'bg-violet-100 text-violet-800'
+
+    case 'COMPLETED':
+      return 'bg-green-100 text-green-800'
+
+    case 'REJECTED':
+      return 'bg-red-100 text-red-800'
+
+    case 'CANCELLED':
+      return 'bg-slate-200 text-slate-800'
+
+    default:
+      return 'bg-slate-200 text-slate-800'
+  }
+}
+
 const tabs = [
   {
     label: 'New request',
@@ -1025,22 +1302,22 @@ const instructions = [
   {
     title: 'Enter the property details',
     description:
-      'Provide the PIN and the name of its land owner.',
+      'Provide the PIN and the name of the property owner.',
   },
   {
-    title: 'Choose delivery and provide your details',
+    title: 'Choose your delivery preference',
     description:
-      'Choose a printed copy by postal mail or a PDF by email, then enter your name, mailing address, and email address.',
+      'Select a printed copy by postal mail or a PDF copy by email.',
   },
   {
-    title: 'Save your request code',
+    title: 'Submit your request',
     description:
-      'Keep the request code provided after submission.',
+      'The request is saved under your signed-in account for review.',
   },
   {
     title: 'Track the request',
     description:
-      'Use the Track request tab to check the status and remarks.',
+      'Use the request code or visit My Requests to check its progress.',
   },
 ]
 
@@ -1095,6 +1372,10 @@ const statuses = [
       'bg-slate-200 text-slate-800',
   },
 ]
+
+onMounted(() => {
+  void loadAccount()
+})
 </script>
 
 <style scoped>
@@ -1118,5 +1399,21 @@ const statuses = [
 
 .field-input {
   @apply mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-800 outline-none transition focus:border-green-700 focus:ring-4 focus:ring-green-700/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500;
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(100 116 139);
+}
+
+.detail-value {
+  margin-top: 0.4rem;
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
 }
 </style>

@@ -668,7 +668,7 @@ async function login() {
 
     userStore.setUser(response.data.user)
 
-    await navigateTo('/my-requests')
+    await navigateTo('/logged')
   } catch (error) {
     state.error = error
 

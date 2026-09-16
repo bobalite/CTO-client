@@ -1523,7 +1523,7 @@ function getRequestsEndpoint(): string {
 
   if (!apiBaseUrl) {
     throw new Error(
-      'The ORDS API base URL is not configured.',
+      'The application API is not configured.',
     )
   }
 
@@ -1930,13 +1930,20 @@ async function trackRequest(): Promise<void> {
       message?: string
       statusCode?: number
       status?: number
+      response?: {
+        status?: number
+      }
     }
 
     const statusCode =
       fetchError.statusCode ||
-      fetchError.status
+      fetchError.status ||
+      fetchError.response?.status
 
-    if (statusCode === 400) {
+    if (
+      statusCode === 400 ||
+      statusCode === 422
+    ) {
       trackingValidationMessage.value =
         fetchError.data?.message ||
         'The request code format is invalid.'
@@ -1962,10 +1969,19 @@ async function trackRequest(): Promise<void> {
       return
     }
 
+    if (
+      statusCode === 502 ||
+      statusCode === 503
+    ) {
+      trackingError.value =
+        'The request tracking service is temporarily unavailable. Please try again later.'
+
+      return
+    }
+
     trackingError.value =
       fetchError.data?.message ||
       fetchError.data?.error ||
-      fetchError.message ||
       'The request tracking service is currently unavailable.'
   } finally {
     isTracking.value = false
