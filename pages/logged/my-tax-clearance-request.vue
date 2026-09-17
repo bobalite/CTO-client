@@ -23,9 +23,7 @@
         class="absolute -bottom-28 left-1/4 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"
       ></div>
 
-      <div
-        class="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8"
-      >
+      <div class="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div
           class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
         >
@@ -265,9 +263,7 @@
 
               <!-- Delivery Preference -->
               <fieldset class="border-t border-slate-200 pt-7">
-                <legend
-                  class="pr-3 text-lg font-bold text-slate-900"
-                >
+                <legend class="pr-3 text-lg font-bold text-slate-900">
                   Delivery preference
                 </legend>
 
@@ -296,9 +292,7 @@
                     />
 
                     <span>
-                      <span
-                        class="block text-sm font-bold text-slate-800"
-                      >
+                      <span class="block text-sm font-bold text-slate-800">
                         Printed copy by postal mail
                       </span>
 
@@ -330,9 +324,7 @@
                     />
 
                     <span>
-                      <span
-                        class="block text-sm font-bold text-slate-800"
-                      >
+                      <span class="block text-sm font-bold text-slate-800">
                         PDF file by email
                       </span>
 
@@ -378,6 +370,17 @@
                     <p class="mt-1 text-xs text-slate-500">
                       Add one or more PINs. Maximum 50.
                     </p>
+
+                    <p class="mt-1 text-xs text-slate-500">
+                      Accepted formats:
+                      <span class="font-mono font-semibold">
+                        172-XX-XXX-XXX-XXX
+                      </span>
+                      or
+                      <span class="font-mono font-semibold">
+                        172-XX-XXX-XXX-XXX-XXXX
+                      </span>
+                    </p>
                   </div>
 
                   <span
@@ -396,15 +399,20 @@
                     <input
                       v-model.trim="pinInput"
                       type="text"
+                      inputmode="numeric"
                       autocomplete="off"
-                      placeholder="Example: 0124-01-001-001-001"
+                      maxlength="24"
+                      placeholder="Example: 172-01-001-001-001"
                       class="form-input form-input-with-icon font-mono uppercase"
+                      :class="{
+                        'form-input-error': pinMessage,
+                      }"
                       :disabled="
                         isSubmitting ||
                         form.pins.length >= 50
                       "
                       @keydown.enter.prevent="addPin"
-                      @input="pinMessage = ''"
+                      @input="handlePinInput"
                     />
                   </div>
 
@@ -424,13 +432,21 @@
                   </button>
                 </div>
 
-                <p
+                <!-- PIN validation error -->
+                <div
                   v-if="pinMessage"
-                  class="mt-3 text-sm text-amber-700"
+                  class="mt-3 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3"
                 >
-                  {{ pinMessage }}
-                </p>
+                  <ExclamationCircleIcon
+                    class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+                  />
 
+                  <p class="text-sm font-medium leading-6 text-red-700">
+                    {{ pinMessage }}
+                  </p>
+                </div>
+
+                <!-- Added PINs -->
                 <div
                   v-if="form.pins.length"
                   class="mt-4 overflow-hidden rounded-2xl border border-slate-200"
@@ -863,6 +879,7 @@ import {
   CheckCircleIcon,
   DocumentPlusIcon,
   EnvelopeIcon,
+  ExclamationCircleIcon,
   HashtagIcon,
   InformationCircleIcon,
   MagnifyingGlassIcon,
@@ -1095,6 +1112,25 @@ const requestStatusBadgeClass =
     }
   })
 
+/*
+|--------------------------------------------------------------------------
+| PIN Validation
+|--------------------------------------------------------------------------
+|
+| Accepted formats:
+|
+| 172-XX-XXX-XXX-XXX
+| 172-XX-XXX-XXX-XXX-XXXX
+|
+| Examples:
+|
+| 172-01-001-001-001
+| 172-01-001-001-001-0001
+|
+*/
+const pinPattern =
+  /^172-\d{2}-\d{3}-\d{3}-\d{3}(?:-\d{4})?$/
+
 function authHeaders():
   Record<string, string> {
   if (!import.meta.client) {
@@ -1178,6 +1214,38 @@ function normalizePin(
     .toUpperCase()
 }
 
+function handlePinInput(
+  event: Event,
+): void {
+  const input =
+    event.target as HTMLInputElement
+
+  /*
+   * Keep only numbers and hyphens.
+   */
+  let value =
+    input.value.replace(
+      /[^0-9-]/g,
+      '',
+    )
+
+  /*
+   * Prevent accidental spaces and normalize input.
+   */
+  value = value
+    .trim()
+    .toUpperCase()
+
+  pinInput.value =
+    value
+
+  /*
+   * Remove the previous error while the
+   * user is correcting the value.
+   */
+  pinMessage.value = ''
+}
+
 function addPin(): void {
   pinMessage.value = ''
 
@@ -1193,20 +1261,17 @@ function addPin(): void {
     return
   }
 
-  if (pin.length > 100) {
-    pinMessage.value =
-      'A PIN must not exceed 100 characters.'
-
-    return
-  }
-
+  /*
+   * Strict PIN validation:
+   *
+   * 172-XX-XXX-XXX-XXX
+   * 172-XX-XXX-XXX-XXX-XXXX
+   */
   if (
-    !/^[A-Z0-9-]+$/.test(
-      pin,
-    )
+    !pinPattern.test(pin)
   ) {
     pinMessage.value =
-      'PINs may contain only letters, numbers, and hyphens.'
+      'Invalid PIN format. Use 172-XX-XXX-XXX-XXX or 172-XX-XXX-XXX-XXX-XXXX.'
 
     return
   }
@@ -1296,6 +1361,20 @@ function validateForm():
     form.pins.length === 0
   ) {
     return 'Add at least one PIN.'
+  }
+
+  /*
+   * Validate every PIN again before
+   * sending the request.
+   */
+  const invalidPin =
+    form.pins.find(
+      pin =>
+        !pinPattern.test(pin),
+    )
+
+  if (invalidPin) {
+    return `Invalid PIN: ${invalidPin}. Accepted formats are 172-XX-XXX-XXX-XXX or 172-XX-XXX-XXX-XXX-XXXX.`
   }
 
   return null
@@ -1710,27 +1789,15 @@ onMounted(() => {
   color: rgb(30 41 59);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Standard Form Input
-|--------------------------------------------------------------------------
-|
-| All normal text fields and textareas receive 1.25rem left padding.
-|
-*/
 .form-input {
   width: 100%;
-
   border-radius: 1rem;
   border: 1px solid rgb(203 213 225);
-
   background: white;
 
   padding-top: 1rem;
   padding-right: 1.25rem;
   padding-bottom: 1rem;
-
-  /* Normal left padding */
   padding-left: 1.25rem;
 
   color: rgb(15 23 42);
@@ -1739,17 +1806,10 @@ onMounted(() => {
 
   transition:
     border-color 150ms ease,
-    box-shadow 150ms ease;
+    box-shadow 150ms ease,
+    background-color 150ms ease;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Inputs With Left Icons
-|--------------------------------------------------------------------------
-|
-| These require additional room so the text does not overlap the icon.
-|
-*/
 .form-input-with-icon {
   padding-left: 3rem;
 }
@@ -1767,11 +1827,25 @@ onMounted(() => {
 
 .form-input:disabled {
   cursor: not-allowed;
-
-  background:
-    rgb(248 250 252);
-
+  background: rgb(248 250 252);
   opacity: 0.7;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Invalid PIN
+|--------------------------------------------------------------------------
+*/
+.form-input-error {
+  border-color: rgb(248 113 113);
+  background: rgb(254 242 242);
+}
+
+.form-input-error:focus {
+  border-color: rgb(220 38 38);
+
+  box-shadow:
+    0 0 0 4px rgb(220 38 38 / 0.1);
 }
 
 .detail-label {

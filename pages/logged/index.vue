@@ -525,6 +525,54 @@
                 </div>
               </div>
 
+              <!-- Cancel action -->
+              <div
+                v-if="canCancelRequest(request)"
+                class="mt-7 border-t border-slate-200 pt-6"
+              >
+                <div
+                  class="flex flex-col gap-4 rounded-2xl border border-red-200 bg-red-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p class="font-bold text-red-950">
+                      Cancel this request
+                    </p>
+
+                    <p class="mt-1 text-sm leading-6 text-red-700">
+                      You may cancel this request while payment has not yet
+                      been made.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-red-600 bg-white px-4 py-2.5 text-sm font-bold text-red-700 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="
+                      cancellingRequestCode === request.request_code
+                    "
+                    @click="openCancelDialog(request)"
+                  >
+                    <ArrowPathIcon
+                      v-if="
+                        cancellingRequestCode === request.request_code
+                      "
+                      class="h-4 w-4 animate-spin"
+                    />
+
+                    <XCircleIcon
+                      v-else
+                      class="h-4 w-4"
+                    />
+
+                    {{
+                      cancellingRequestCode === request.request_code
+                        ? 'Cancelling...'
+                        : 'Cancel request'
+                    }}
+                  </button>
+                </div>
+              </div>
+
               <!-- Details -->
               <details
                 class="group mt-6 border-t border-slate-200 pt-5"
@@ -649,6 +697,85 @@
         </section>
       </template>
     </main>
+
+    <!-- Cancel confirmation modal -->
+    <div
+      v-if="requestToCancel"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm"
+      @click.self="closeCancelDialog"
+    >
+      <div
+        class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-7"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cancel-request-title"
+      >
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-700"
+        >
+          <ExclamationTriangleIcon class="h-6 w-6" />
+        </div>
+
+        <h2
+          id="cancel-request-title"
+          class="mt-5 text-xl font-black text-slate-900"
+        >
+          Cancel this request?
+        </h2>
+
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          You are about to cancel request
+          <span class="font-mono font-bold text-slate-900">
+            {{ requestToCancel.request_code }}
+          </span>.
+        </p>
+
+        <p class="mt-2 text-sm leading-6 text-slate-600">
+          Once cancelled, this request will no longer be processed.
+        </p>
+
+        <div
+          v-if="cancelError"
+          class="mt-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+        >
+          {{ cancelError }}
+        </div>
+
+        <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="!!cancellingRequestCode"
+            @click="closeCancelDialog"
+          >
+            Keep request
+          </button>
+
+          <button
+            type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="!!cancellingRequestCode"
+            @click="confirmCancelRequest"
+          >
+            <ArrowPathIcon
+              v-if="cancellingRequestCode"
+              class="h-4 w-4 animate-spin"
+            />
+
+            <XCircleIcon
+              v-else
+              class="h-4 w-4"
+            />
+
+            {{
+              cancellingRequestCode
+                ? 'Cancelling...'
+                : 'Yes, cancel request'
+            }}
+          </button>
+        </div>
+      </div>
+    </div>
   </PublicPageShell>
 </template>
 
@@ -718,20 +845,37 @@ interface UserRequestListResponse {
   data: UserRequestData[]
 }
 
-const config = useRuntimeConfig()
+const config =
+  useRuntimeConfig()
 
-const userStore = useUserStore()
+const userStore =
+  useUserStore()
 
-const ready = ref(false)
+const ready =
+  ref(false)
 
-const loadingRequests = ref(false)
+const loadingRequests =
+  ref(false)
 
-const requestError = ref('')
+const requestError =
+  ref('')
 
 const requests =
   ref<UserRequestData[]>([])
 
-const activeFilter = ref('All')
+const activeFilter =
+  ref('All')
+
+const requestToCancel =
+  ref<UserRequestData | null>(
+    null,
+  )
+
+const cancellingRequestCode =
+  ref('')
+
+const cancelError =
+  ref('')
 
 const filters = [
   'All',
@@ -747,51 +891,61 @@ const steps = [
   'Completed',
 ]
 
-const apiBaseUrl = computed(() =>
-  String(
-    config.public.apiBaseUrl || '',
-  ).replace(/\/+$/, ''),
-)
-
-const displayName = computed(() => {
-  const user = userStore.user
-
-  if (!user) {
-    return 'Account holder'
-  }
-
-  const fullName = [
-    user.fname,
-    user.mname,
-    user.lname,
-  ]
-    .filter(
-      (value): value is string =>
-        typeof value === 'string' &&
-        value.trim() !== '',
-    )
-    .join(' ')
-    .trim()
-
-  return (
-    fullName ||
-    user.username ||
-    'Account holder'
+const apiBaseUrl =
+  computed(() =>
+    String(
+      config.public.apiBaseUrl ||
+      '',
+    ).replace(/\/+$/, ''),
   )
-})
 
-function authHeaders(): Record<string, string> {
+const displayName =
+  computed(() => {
+    const user =
+      userStore.user
+
+    if (!user) {
+      return 'Account holder'
+    }
+
+    const fullName = [
+      user.fname,
+      user.mname,
+      user.lname,
+    ]
+      .filter(
+        (value): value is string =>
+          typeof value ===
+            'string' &&
+          value.trim() !== '',
+      )
+      .join(' ')
+      .trim()
+
+    return (
+      fullName ||
+      user.username ||
+      'Account holder'
+    )
+  })
+
+function authHeaders():
+  Record<string, string> {
   if (!import.meta.client) {
     return {
-      Accept: 'application/json',
+      Accept:
+        'application/json',
     }
   }
 
   const token =
-    localStorage.getItem('_token')
+    localStorage.getItem(
+      '_token',
+    )
 
   return {
-    Accept: 'application/json',
+    Accept:
+      'application/json',
 
     ...(token
       ? {
@@ -802,10 +956,13 @@ function authHeaders(): Record<string, string> {
   }
 }
 
-async function loadRequests(): Promise<void> {
-  loadingRequests.value = true
+async function loadRequests():
+  Promise<void> {
+  loadingRequests.value =
+    true
 
-  requestError.value = ''
+  requestError.value =
+    ''
 
   try {
     const response =
@@ -813,14 +970,18 @@ async function loadRequests(): Promise<void> {
         `${apiBaseUrl.value}/user-requests`,
         {
           method: 'GET',
-          headers: authHeaders(),
+          headers:
+            authHeaders(),
         },
       )
 
     requests.value =
-      Array.isArray(response.data)
+      Array.isArray(
+        response.data,
+      )
         ? response.data
         : []
+
   } catch (error: any) {
     const status =
       error?.statusCode ??
@@ -828,13 +989,19 @@ async function loadRequests(): Promise<void> {
       error?.response?.status
 
     if (status === 401) {
-      if (import.meta.client) {
-        localStorage.removeItem('_token')
+      if (
+        import.meta.client
+      ) {
+        localStorage.removeItem(
+          '_token',
+        )
       }
 
       userStore.resetUser()
 
-      await navigateTo('/login')
+      await navigateTo(
+        '/login',
+      )
 
       return
     }
@@ -842,8 +1009,10 @@ async function loadRequests(): Promise<void> {
     requestError.value =
       error?.data?.message ||
       'Unable to load your request history.'
+
   } finally {
-    loadingRequests.value = false
+    loadingRequests.value =
+      false
   }
 }
 
@@ -852,16 +1021,24 @@ function matches(
   filter: string,
 ): boolean {
   const status =
-    request.status
-      ?.trim()
-      .toUpperCase() || ''
+    formatStatus(
+      request.status,
+    )
 
-  if (filter === 'All') {
+  if (
+    filter === 'All'
+  ) {
     return true
   }
 
-  if (filter === 'Completed') {
-    return status === 'COMPLETED'
+  if (
+    filter ===
+    'Completed'
+  ) {
+    return (
+      status ===
+      'COMPLETED'
+    )
   }
 
   if (
@@ -881,15 +1058,16 @@ function matches(
   ].includes(status)
 }
 
-const visibleRequests = computed(() => {
-  return requests.value.filter(
-    request =>
-      matches(
-        request,
-        activeFilter.value,
-      ),
-  )
-})
+const visibleRequests =
+  computed(() => {
+    return requests.value.filter(
+      request =>
+        matches(
+          request,
+          activeFilter.value,
+        ),
+    )
+  })
 
 function count(
   filter: string,
@@ -946,7 +1124,10 @@ function formatStatus(
   return (
     status
       ?.trim()
-      .replaceAll('_', ' ')
+      .replaceAll(
+        '_',
+        ' ',
+      )
       .toUpperCase() ||
     'UNKNOWN'
   )
@@ -971,6 +1152,9 @@ function statusColor(
 
       'READY FOR PRINTING':
         'bg-violet-100 text-violet-800',
+
+      PAID:
+        'bg-cyan-100 text-cyan-800',
 
       COMPLETED:
         'bg-green-100 text-green-800',
@@ -1004,6 +1188,7 @@ function requestStage(
     case 'READY FOR PRINTING':
       return 2
 
+    case 'PAID':
     case 'COMPLETED':
       return 3
 
@@ -1034,6 +1219,9 @@ function defaultRemark(
     case 'READY FOR PRINTING':
       return 'Your requested document is ready for printing or delivery.'
 
+    case 'PAID':
+      return 'Payment has been recorded for this request.'
+
     case 'COMPLETED':
       return 'Your request has been completed.'
 
@@ -1045,6 +1233,172 @@ function defaultRemark(
 
     default:
       return 'No additional update is available.'
+  }
+}
+
+function canCancelRequest(
+  request: UserRequestData,
+): boolean {
+  const status =
+    formatStatus(
+      request.status,
+    )
+
+  /*
+   * The button is shown only while the
+   * request is still unpaid.
+   */
+  return [
+    'PENDING',
+    'FOR REVIEW',
+    'APPROVED',
+    'READY FOR PRINTING',
+  ].includes(status)
+}
+
+function openCancelDialog(
+  request: UserRequestData,
+): void {
+  cancelError.value =
+    ''
+
+  requestToCancel.value =
+    request
+}
+
+function closeCancelDialog():
+  void {
+  if (
+    cancellingRequestCode.value
+  ) {
+    return
+  }
+
+  requestToCancel.value =
+    null
+
+  cancelError.value =
+    ''
+}
+
+async function confirmCancelRequest():
+  Promise<void> {
+  const request =
+    requestToCancel.value
+
+  if (!request) {
+    return
+  }
+
+  cancellingRequestCode.value =
+    request.request_code
+
+  cancelError.value = ''
+
+  try {
+    const response = await $fetch<any>(
+      `${apiBaseUrl.value}/user-requests/${encodeURIComponent(request.request_code)}/cancel`,
+      {
+        method: 'PATCH',
+
+        headers:
+          authHeaders(),
+      },
+    )
+
+    console.log(
+      'Cancel success:',
+      response,
+    )
+
+    requestToCancel.value =
+      null
+
+    await loadRequests()
+
+  } catch (error: any) {
+    const status =
+      error?.statusCode ??
+      error?.status ??
+      error?.response?.status ??
+      'unknown'
+
+    const responseData =
+      error?.data ??
+      error?.response?._data ??
+      null
+
+    console.error(
+      'CANCEL REQUEST FAILED',
+      {
+        status,
+        responseData,
+        error,
+      },
+    )
+
+    if (status === 401) {
+      cancelError.value =
+        'Your login session is no longer valid. Please sign in again.'
+
+      return
+    }
+
+    if (status === 403) {
+      cancelError.value =
+        responseData?.message ||
+        'You do not have permission to cancel this request.'
+
+      return
+    }
+
+    if (status === 404) {
+      cancelError.value =
+        responseData?.message ||
+        'This request was not found for your account.'
+
+      return
+    }
+
+    if (status === 405) {
+      cancelError.value =
+        'Cancel API returned HTTP 405. The PATCH route is not being reached correctly.'
+
+      return
+    }
+
+    if (status === 419) {
+      cancelError.value =
+        'Cancel API returned HTTP 419. The request may be hitting a CSRF-protected route instead of the API route.'
+
+      return
+    }
+
+    if (status === 422) {
+      cancelError.value =
+        responseData?.errors?.request?.[0] ||
+        responseData?.message ||
+        'This request can no longer be cancelled.'
+
+      return
+    }
+
+    if (status === 429) {
+      cancelError.value =
+        'Too many cancellation attempts. Please wait before trying again.'
+
+      return
+    }
+
+    cancelError.value =
+      responseData?.message ||
+      responseData?.error ||
+      error?.message ||
+      `Unable to cancel the request. HTTP ${status}.`
+
+  } finally {
+    cancellingRequestCode.value =
+      ''
   }
 }
 
@@ -1074,39 +1428,54 @@ function formatDate(
       day: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
-      timeZone: 'Asia/Manila',
+      timeZone:
+        'Asia/Manila',
     },
   ).format(date)
 }
 
-async function signOut(): Promise<void> {
+async function signOut():
+  Promise<void> {
   try {
     await authService.logout()
   } catch {
-    // Browser session will still be cleared.
+    /*
+     * Clear browser session even if
+     * logout API is temporarily unavailable.
+     */
   }
 
-  if (import.meta.client) {
-    localStorage.removeItem('_token')
+  if (
+    import.meta.client
+  ) {
+    localStorage.removeItem(
+      '_token',
+    )
   }
 
   userStore.resetUser()
 
-  await navigateTo('/login')
+  await navigateTo(
+    '/login',
+  )
 }
 
 onMounted(async () => {
   if (
-    !localStorage.getItem('_token')
+    !localStorage.getItem(
+      '_token',
+    )
   ) {
-    await navigateTo('/login')
+    await navigateTo(
+      '/login',
+    )
 
     return
   }
 
   /*
-   * Auth middleware should normally have
-   * already loaded the user.
+   * Auth middleware should normally
+   * have loaded the user already.
    */
   if (!userStore.user) {
     try {
@@ -1117,27 +1486,34 @@ onMounted(async () => {
           `${apiBaseUrl.value}/me`,
           {
             method: 'GET',
-            headers: authHeaders(),
+            headers:
+              authHeaders(),
           },
         )
 
-      if (response.data) {
+      if (
+        response.data
+      ) {
         userStore.setUser(
           response.data,
         )
       }
+
     } catch {
       localStorage.removeItem(
         '_token',
       )
 
-      await navigateTo('/login')
+      await navigateTo(
+        '/login',
+      )
 
       return
     }
   }
 
-  ready.value = true
+  ready.value =
+    true
 
   await loadRequests()
 })
@@ -1175,10 +1551,6 @@ onMounted(async () => {
 |--------------------------------------------------------------------------
 | Form Inputs
 |--------------------------------------------------------------------------
-|
-| Adds left padding to all text inputs, textareas, and select controls
-| used on this page.
-|
 */
 input,
 textarea,
@@ -1193,17 +1565,32 @@ select {
 */
 .form-input {
   width: 100%;
+
   border-radius: 1rem;
-  border: 1px solid rgb(203 213 225);
-  background: white;
+  border:
+    1px solid
+    rgb(203 213 225);
 
-  padding-top: 1rem;
-  padding-right: 1.25rem;
-  padding-bottom: 1rem;
-  padding-left: 1.25rem;
+  background:
+    white;
 
-  color: rgb(15 23 42);
-  outline: none;
+  padding-top:
+    1rem;
+
+  padding-right:
+    1.25rem;
+
+  padding-bottom:
+    1rem;
+
+  padding-left:
+    1.25rem;
+
+  color:
+    rgb(15 23 42);
+
+  outline:
+    none;
 
   transition:
     border-color 150ms ease,
@@ -1211,19 +1598,27 @@ select {
 }
 
 .form-input::placeholder {
-  color: rgb(148 163 184);
+  color:
+    rgb(148 163 184);
 }
 
 .form-input:focus {
-  border-color: rgb(22 163 74);
+  border-color:
+    rgb(22 163 74);
 
   box-shadow:
-    0 0 0 4px rgb(22 163 74 / 0.1);
+    0 0 0 4px
+    rgb(22 163 74 / 0.1);
 }
 
 .form-input:disabled {
-  cursor: not-allowed;
-  background: rgb(248 250 252);
-  opacity: 0.7;
+  cursor:
+    not-allowed;
+
+  background:
+    rgb(248 250 252);
+
+  opacity:
+    0.7;
 }
 </style>

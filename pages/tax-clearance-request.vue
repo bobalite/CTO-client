@@ -31,7 +31,6 @@
           class="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-white/70 transition hover:text-white"
         >
           <ArrowLeftIcon class="h-4 w-4" />
-
           Back to services
         </NuxtLink>
 
@@ -83,7 +82,6 @@
               @click="switchTab('submit')"
             >
               <DocumentPlusIcon class="h-5 w-5" />
-
               New request
             </button>
 
@@ -98,7 +96,6 @@
               @click="switchTab('track')"
             >
               <MagnifyingGlassIcon class="h-5 w-5" />
-
               Track request
             </button>
           </div>
@@ -131,13 +128,13 @@
               class="mt-8 space-y-7"
               @submit.prevent="submitRequest"
             >
-              <!-- Requestee Name -->
+              <!-- Requester Name -->
               <div>
                 <label
                   for="requesteeName"
                   class="block text-sm font-bold text-slate-800"
                 >
-                  Name of requestee
+                  Name of requester
                 </label>
 
                 <div class="relative mt-2">
@@ -220,6 +217,38 @@
                 </p>
               </div>
 
+              <!-- Delivery Preference -->
+              <div>
+                <label
+                  for="deliveryPreference"
+                  class="block text-sm font-bold text-slate-800"
+                >
+                  Delivery preference
+                </label>
+
+                <div class="relative mt-2">
+                  <TruckIcon
+                    class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                  />
+
+                  <select
+                    id="deliveryPreference"
+                    v-model="form.deliveryPreference"
+                    class="form-input pl-12"
+                    :disabled="isSubmitting"
+                    @change="clearSubmitMessages"
+                  >
+                    <option value="POSTAL">
+                      Printed copy by postal mail
+                    </option>
+
+                    <option value="EMAIL">
+                      PDF file by email
+                    </option>
+                  </select>
+                </div>
+              </div>
+
               <!-- PINs -->
               <div>
                 <div
@@ -257,26 +286,44 @@
                       id="pinInput"
                       v-model.trim="pinInput"
                       type="text"
+                      inputmode="numeric"
+                      maxlength="23"
                       autocomplete="off"
-                      placeholder="Example: 0124-01-001-001-001"
+                      placeholder="Example: 172-01-001-001-001"
                       class="form-input pl-12 font-mono uppercase"
-                      :disabled="isSubmitting || form.pins.length >= 50"
+                      :disabled="
+                        isSubmitting ||
+                        form.pins.length >= 50
+                      "
                       @keydown.enter.prevent="addPin"
-                      @input="pinMessage = ''"
+                      @input="handlePinInput"
                     />
                   </div>
 
                   <button
                     type="button"
                     class="inline-flex items-center justify-center gap-2 rounded-2xl border border-green-700 bg-white px-5 py-4 font-bold text-green-700 transition hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="isSubmitting || form.pins.length >= 50"
+                    :disabled="
+                      isSubmitting ||
+                      form.pins.length >= 50
+                    "
                     @click="addPin"
                   >
                     <PlusIcon class="h-5 w-5" />
-
                     Add PIN
                   </button>
                 </div>
+
+                <p class="mt-2 text-xs leading-relaxed text-slate-500">
+                  Accepted formats:
+                  <span class="font-mono font-semibold">
+                    172-XX-XXX-XXX-XXX
+                  </span>
+                  or
+                  <span class="font-mono font-semibold">
+                    172-XX-XXX-XXX-XXX-XXXX
+                  </span>.
+                </p>
 
                 <div
                   v-if="pinMessage"
@@ -419,7 +466,6 @@
                   @click="resetSubmitForm"
                 >
                   <ArrowPathIcon class="h-5 w-5" />
-
                   Reset form
                 </button>
               </div>
@@ -473,7 +519,7 @@
                   </p>
 
                   <p
-                    class="mt-3 break-all font-mono text-3xl font-black tracking-[0.12em] text-emerald-950 sm:text-4xl"
+                    class="mt-3 break-all font-mono text-3xl font-black tracking-[0.08em] text-emerald-950 sm:text-4xl"
                   >
                     {{ submittedRequest.requestCode }}
                   </p>
@@ -521,7 +567,21 @@
                     </dd>
                   </div>
 
-                  <div class="detail-item sm:col-span-2">
+                  <div class="detail-item">
+                    <dt class="detail-label">
+                      Delivery
+                    </dt>
+
+                    <dd class="detail-value">
+                      {{
+                        deliveryLabel(
+                          submittedRequest.deliveryPreference,
+                        )
+                      }}
+                    </dd>
+                  </div>
+
+                  <div class="detail-item">
                     <dt class="detail-label">
                       Date submitted
                     </dt>
@@ -541,7 +601,6 @@
                     @click="trackSubmittedRequest"
                   >
                     <MagnifyingGlassIcon class="h-4 w-4" />
-
                     Track this request
                   </button>
 
@@ -551,7 +610,6 @@
                     @click="startNewRequest"
                   >
                     <DocumentPlusIcon class="h-4 w-4" />
-
                     Submit another request
                   </button>
                 </div>
@@ -577,8 +635,8 @@
                 </h2>
 
                 <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                  Enter the 10-character request code received after submitting
-                  your tax clearance print request.
+                  Enter the request code received after submitting your tax
+                  clearance print request.
                 </p>
               </div>
             </div>
@@ -603,9 +661,9 @@
                   id="requestCode"
                   v-model.trim="trackingCode"
                   type="text"
-                  maxlength="10"
+                  maxlength="13"
                   autocomplete="off"
-                  placeholder="Example: 8RFK-3ZQ_T"
+                  placeholder="Example: TC-SW4KWBLODT"
                   class="form-input pl-12 pr-12 font-mono uppercase tracking-widest"
                   :disabled="isTracking"
                   @input="handleTrackingCodeInput"
@@ -624,8 +682,10 @@
               </div>
 
               <p class="mt-2 text-xs text-slate-500">
-                Request codes contain 10 letters, numbers, hyphens, or
-                underscores.
+                Enter the request code provided after submission, for example
+                <span class="font-mono font-semibold">
+                  TC-SW4KWBLODT
+                </span>.
               </p>
 
               <div
@@ -830,16 +890,15 @@
                     </dd>
                   </div>
 
-                  <div class="detail-item sm:col-span-2">
+                  <div class="detail-item">
                     <dt class="detail-label">
-                      Remarks
+                      Delivery
                     </dt>
 
-                    <dd class="detail-value whitespace-pre-line">
+                    <dd class="detail-value">
                       {{
-                        displayValue(
-                          trackingResult.remarks,
-                          'No remarks have been provided.',
+                        deliveryLabel(
+                          trackingResult.deliveryPreference,
                         )
                       }}
                     </dd>
@@ -855,7 +914,22 @@
                     </dd>
                   </div>
 
-                  <div class="detail-item">
+                  <div class="detail-item sm:col-span-2">
+                    <dt class="detail-label">
+                      Remarks
+                    </dt>
+
+                    <dd class="detail-value whitespace-pre-line">
+                      {{
+                        displayValue(
+                          trackingResult.remarks,
+                          'No remarks have been provided.',
+                        )
+                      }}
+                    </dd>
+                  </div>
+
+                  <div class="detail-item sm:col-span-2">
                     <dt class="detail-label">
                       Last updated
                     </dt>
@@ -888,7 +962,6 @@
                     @click="refreshTracking"
                   >
                     <ArrowPathIcon class="h-4 w-4" />
-
                     Refresh status
                   </button>
 
@@ -898,7 +971,6 @@
                     @click="clearTracking"
                   >
                     <MagnifyingGlassIcon class="h-4 w-4" />
-
                     Track another
                   </button>
                 </div>
@@ -919,8 +991,8 @@
                   class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4"
                 >
                   <p class="text-sm leading-relaxed text-amber-800">
-                    Check that the 10-character request code was entered exactly
-                    as provided after submission.
+                    Check that the request code was entered exactly as provided
+                    after submission.
                   </p>
                 </div>
 
@@ -930,7 +1002,6 @@
                   @click="clearTracking"
                 >
                   <ArrowPathIcon class="h-4 w-4" />
-
                   Try another request code
                 </button>
               </div>
@@ -1030,6 +1101,12 @@
                 />
 
                 <StatusLegend
+                  status="PAID"
+                  description="Payment for the request has been recorded."
+                  badge-class="bg-cyan-100 text-cyan-800"
+                />
+
+                <StatusLegend
                   status="COMPLETED"
                   description="The request has been completed."
                   badge-class="bg-green-100 text-green-800"
@@ -1064,7 +1141,6 @@
                 class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-green-700 transition hover:text-green-900"
               >
                 Contact the office
-
                 <ArrowRightIcon class="h-4 w-4" />
               </NuxtLink>
             </div>
@@ -1096,44 +1172,64 @@ import {
   PlusIcon,
   PrinterIcon,
   TrashIcon,
+  TruckIcon,
   UserIcon,
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
 
-type PageTab = 'submit' | 'track'
+type PageTab =
+  | 'submit'
+  | 'track'
+
+type DeliveryPreference =
+  | 'POSTAL'
+  | 'EMAIL'
 
 interface SubmitApiRequest {
-  requestee_name: string
+  requester_name: string
   mailing_address: string
-  email_address: string
+  email: string
+  delivery_preference: DeliveryPreference
   pins: string[]
 }
 
+interface PublicRequestData {
+  id: string
+  request_code: string
+
+  request_type:
+    | 'SOA_PRINT'
+    | 'TAX_CLEARANCE'
+
+  delivery_preference:
+    | DeliveryPreference
+    | null
+
+  pin: string | null
+  pins?: string[]
+  pin_count?: number
+
+  land_owner: string | null
+  requester_name: string | null
+  mailing_address: string | null
+  email: string | null
+
+  status: string
+  remarks?: string | null
+
+  requested_at: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
 interface SubmitApiResponse {
-  success?: boolean
-  message?: string | null
-  request?: {
-    request_code?: string | null
-    status?: string | null
-    remarks?: string | null
-    pin_count?: number | null
-    requested_on?: string | null
-  } | null
+  message?: string
+  data: PublicRequestData
 }
 
 interface TrackingApiResponse {
-  success?: boolean
-  found?: boolean
-  message?: string | null
-  request?: {
-    request_code?: string | null
-    status?: string | null
-    remarks?: string | null
-    pin_count?: number | null
-    requested_on?: string | null
-    updated_on?: string | null
-  } | null
+  data: PublicRequestData
 }
 
 interface SubmittedRequest {
@@ -1141,6 +1237,7 @@ interface SubmittedRequest {
   status: string
   remarks: string | null
   pinCount: number
+  deliveryPreference: DeliveryPreference | null
   requestedOn: string | null
 }
 
@@ -1151,6 +1248,7 @@ interface TrackingResult {
   status: string
   remarks: string | null
   pinCount: number
+  deliveryPreference: DeliveryPreference | null
   requestedOn: string | null
   updatedOn: string | null
 }
@@ -1161,21 +1259,25 @@ const StatusLegend = defineComponent({
       type: String,
       required: true,
     },
+
     description: {
       type: String,
       required: true,
     },
+
     badgeClass: {
       type: String,
       required: true,
     },
   },
+
   setup(props) {
     return () =>
       h(
         'div',
         {
-          class: 'flex items-start gap-3',
+          class:
+            'flex items-start gap-3',
         },
         [
           h(
@@ -1188,10 +1290,12 @@ const StatusLegend = defineComponent({
             },
             props.status,
           ),
+
           h(
             'p',
             {
-              class: 'pt-0.5 text-sm leading-relaxed text-slate-600',
+              class:
+                'pt-0.5 text-sm leading-relaxed text-slate-600',
             },
             props.description,
           ),
@@ -1200,326 +1304,447 @@ const StatusLegend = defineComponent({
   },
 })
 
-const runtimeConfig = useRuntimeConfig()
-const route = useRoute()
-const router = useRouter()
+const runtimeConfig =
+  useRuntimeConfig()
 
-const activeTab = ref<PageTab>('submit')
+const route =
+  useRoute()
+
+const router =
+  useRouter()
+
+const activeTab =
+  ref<PageTab>('submit')
 
 const form = reactive({
-  requesteeName: '',
-  mailingAddress: '',
-  emailAddress: '',
-  pins: [] as string[],
+  requesteeName:
+    '',
+
+  mailingAddress:
+    '',
+
+  emailAddress:
+    '',
+
+  deliveryPreference:
+    'POSTAL' as DeliveryPreference,
+
+  pins:
+    [] as string[],
 })
 
-const pinInput = ref('')
-const pinMessage = ref('')
+const pinInput =
+  ref('')
 
-const isSubmitting = ref(false)
-const submitValidationMessage = ref('')
-const submitError = ref('')
-const submittedRequest = ref<SubmittedRequest | null>(null)
-const codeCopied = ref(false)
+const pinMessage =
+  ref('')
 
-const trackingCode = ref('')
-const isTracking = ref(false)
-const trackingValidationMessage = ref('')
-const trackingError = ref('')
-const trackingResult = ref<TrackingResult | null>(null)
-const trackingResultSection = ref<HTMLElement | null>(null)
+const isSubmitting =
+  ref(false)
+
+const submitValidationMessage =
+  ref('')
+
+const submitError =
+  ref('')
+
+const submittedRequest =
+  ref<SubmittedRequest | null>(
+    null,
+  )
+
+const codeCopied =
+  ref(false)
+
+const trackingCode =
+  ref('')
+
+const isTracking =
+  ref(false)
+
+const trackingValidationMessage =
+  ref('')
+
+const trackingError =
+  ref('')
+
+const trackingResult =
+  ref<TrackingResult | null>(
+    null,
+  )
+
+const trackingResultSection =
+  ref<HTMLElement | null>(
+    null,
+  )
 
 const instructions = [
   {
-    title: 'Enter your information',
+    title:
+      'Enter your information',
+
     description:
-      'Provide the requestee name, mailing address, and a valid email address.',
+      'Provide the requester name, mailing address, email address, and preferred delivery method.',
   },
+
   {
-    title: 'Add one or more PINs',
+    title:
+      'Add one or more PINs',
+
     description:
       'Enter every property identification number that should be included in the request.',
   },
+
   {
-    title: 'Save your request code',
+    title:
+      'Save your request code',
+
     description:
-      'After submission, keep the generated 10-character request code.',
+      'After submission, keep the generated request code.',
   },
+
   {
-    title: 'Track the request',
+    title:
+      'Track the request',
+
     description:
       'Use the request code on this page to view the status and remarks.',
   },
 ]
 
-const normalizedRequestStatus = computed(() => {
-  return (
-    trackingResult.value?.status
-      ?.trim()
-      .toUpperCase() || 'UNKNOWN'
-  )
-})
+const normalizedRequestStatus =
+  computed(() => {
+    return (
+      trackingResult.value
+        ?.status
+        ?.trim()
+        .toUpperCase() ||
+      'UNKNOWN'
+    )
+  })
+
+const requestStatusBadgeClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'bg-amber-500 text-white'
+
+      case 'FOR REVIEW':
+        return 'bg-blue-600 text-white'
+
+      case 'APPROVED':
+        return 'bg-emerald-600 text-white'
+
+      case 'READY FOR PRINTING':
+        return 'bg-violet-600 text-white'
+
+      case 'PAID':
+        return 'bg-cyan-600 text-white'
+
+      case 'COMPLETED':
+        return 'bg-green-700 text-white'
+
+      case 'REJECTED':
+        return 'bg-red-600 text-white'
 
-const requestStatusBadgeClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'bg-amber-500 text-white'
+      case 'CANCELLED':
+        return 'bg-slate-600 text-white'
 
-    case 'FOR REVIEW':
-      return 'bg-blue-600 text-white'
+      default:
+        return 'bg-slate-600 text-white'
+    }
+  })
 
-    case 'APPROVED':
-      return 'bg-emerald-600 text-white'
+const requestStatusBorderClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'border-amber-200'
+
+      case 'FOR REVIEW':
+        return 'border-blue-200'
+
+      case 'APPROVED':
+        return 'border-emerald-200'
+
+      case 'READY FOR PRINTING':
+        return 'border-violet-200'
+
+      case 'PAID':
+        return 'border-cyan-200'
 
-    case 'READY FOR PRINTING':
-      return 'bg-violet-600 text-white'
+      case 'COMPLETED':
+        return 'border-green-200'
 
-    case 'COMPLETED':
-      return 'bg-green-700 text-white'
+      case 'REJECTED':
+        return 'border-red-200'
 
-    case 'REJECTED':
-      return 'bg-red-600 text-white'
+      case 'CANCELLED':
+        return 'border-slate-300'
 
-    case 'CANCELLED':
-      return 'bg-slate-600 text-white'
+      default:
+        return 'border-slate-200'
+    }
+  })
 
-    default:
-      return 'bg-slate-600 text-white'
-  }
-})
+const requestStatusHeaderClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'bg-amber-50'
+
+      case 'FOR REVIEW':
+        return 'bg-blue-50'
+
+      case 'APPROVED':
+        return 'bg-emerald-50'
 
-const requestStatusBorderClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'border-amber-200'
+      case 'READY FOR PRINTING':
+        return 'bg-violet-50'
 
-    case 'FOR REVIEW':
-      return 'border-blue-200'
+      case 'PAID':
+        return 'bg-cyan-50'
 
-    case 'APPROVED':
-      return 'border-emerald-200'
+      case 'COMPLETED':
+        return 'bg-green-50'
 
-    case 'READY FOR PRINTING':
-      return 'border-violet-200'
+      case 'REJECTED':
+        return 'bg-red-50'
 
-    case 'COMPLETED':
-      return 'border-green-200'
+      case 'CANCELLED':
+        return 'bg-slate-100'
 
-    case 'REJECTED':
-      return 'border-red-200'
+      default:
+        return 'bg-slate-50'
+    }
+  })
 
-    case 'CANCELLED':
-      return 'border-slate-300'
+const requestStatusIconClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'bg-amber-100 text-amber-700'
 
-    default:
-      return 'border-slate-200'
-  }
-})
+      case 'FOR REVIEW':
+        return 'bg-blue-100 text-blue-700'
 
-const requestStatusHeaderClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'bg-amber-50'
+      case 'APPROVED':
+        return 'bg-emerald-100 text-emerald-700'
 
-    case 'FOR REVIEW':
-      return 'bg-blue-50'
+      case 'READY FOR PRINTING':
+        return 'bg-violet-100 text-violet-700'
 
-    case 'APPROVED':
-      return 'bg-emerald-50'
+      case 'PAID':
+        return 'bg-cyan-100 text-cyan-700'
 
-    case 'READY FOR PRINTING':
-      return 'bg-violet-50'
+      case 'COMPLETED':
+        return 'bg-green-100 text-green-700'
 
-    case 'COMPLETED':
-      return 'bg-green-50'
+      case 'REJECTED':
+        return 'bg-red-100 text-red-700'
 
-    case 'REJECTED':
-      return 'bg-red-50'
+      case 'CANCELLED':
+        return 'bg-slate-200 text-slate-700'
 
-    case 'CANCELLED':
-      return 'bg-slate-100'
+      default:
+        return 'bg-slate-100 text-slate-700'
+    }
+  })
 
-    default:
-      return 'bg-slate-50'
-  }
-})
+const requestStatusTitleClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'text-amber-700'
 
-const requestStatusIconClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'bg-amber-100 text-amber-700'
+      case 'FOR REVIEW':
+        return 'text-blue-700'
 
-    case 'FOR REVIEW':
-      return 'bg-blue-100 text-blue-700'
+      case 'APPROVED':
+        return 'text-emerald-700'
 
-    case 'APPROVED':
-      return 'bg-emerald-100 text-emerald-700'
+      case 'READY FOR PRINTING':
+        return 'text-violet-700'
 
-    case 'READY FOR PRINTING':
-      return 'bg-violet-100 text-violet-700'
+      case 'PAID':
+        return 'text-cyan-700'
 
-    case 'COMPLETED':
-      return 'bg-green-100 text-green-700'
+      case 'COMPLETED':
+        return 'text-green-700'
 
-    case 'REJECTED':
-      return 'bg-red-100 text-red-700'
+      case 'REJECTED':
+        return 'text-red-700'
 
-    case 'CANCELLED':
-      return 'bg-slate-200 text-slate-700'
+      case 'CANCELLED':
+        return 'text-slate-700'
 
-    default:
-      return 'bg-slate-100 text-slate-700'
-  }
-})
+      default:
+        return 'text-slate-700'
+    }
+  })
 
-const requestStatusTitleClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'text-amber-700'
+const requestStatusHeadingClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'text-amber-950'
 
-    case 'FOR REVIEW':
-      return 'text-blue-700'
+      case 'FOR REVIEW':
+        return 'text-blue-950'
 
-    case 'APPROVED':
-      return 'text-emerald-700'
+      case 'APPROVED':
+        return 'text-emerald-950'
 
-    case 'READY FOR PRINTING':
-      return 'text-violet-700'
+      case 'READY FOR PRINTING':
+        return 'text-violet-950'
 
-    case 'COMPLETED':
-      return 'text-green-700'
+      case 'PAID':
+        return 'text-cyan-950'
 
-    case 'REJECTED':
-      return 'text-red-700'
+      case 'COMPLETED':
+        return 'text-green-950'
 
-    case 'CANCELLED':
-      return 'text-slate-700'
+      case 'REJECTED':
+        return 'text-red-950'
 
-    default:
-      return 'text-slate-700'
-  }
-})
+      case 'CANCELLED':
+        return 'text-slate-950'
 
-const requestStatusHeadingClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'text-amber-950'
+      default:
+        return 'text-slate-950'
+    }
+  })
 
-    case 'FOR REVIEW':
-      return 'text-blue-950'
+const requestStatusNoticeClass =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'border-amber-200 bg-amber-50 text-amber-900'
 
-    case 'APPROVED':
-      return 'text-emerald-950'
+      case 'FOR REVIEW':
+        return 'border-blue-200 bg-blue-50 text-blue-900'
 
-    case 'READY FOR PRINTING':
-      return 'text-violet-950'
+      case 'APPROVED':
+        return 'border-emerald-200 bg-emerald-50 text-emerald-900'
 
-    case 'COMPLETED':
-      return 'text-green-950'
+      case 'READY FOR PRINTING':
+        return 'border-violet-200 bg-violet-50 text-violet-900'
 
-    case 'REJECTED':
-      return 'text-red-950'
+      case 'PAID':
+        return 'border-cyan-200 bg-cyan-50 text-cyan-900'
 
-    case 'CANCELLED':
-      return 'text-slate-950'
+      case 'COMPLETED':
+        return 'border-green-200 bg-green-50 text-green-900'
 
-    default:
-      return 'text-slate-950'
-  }
-})
+      case 'REJECTED':
+        return 'border-red-200 bg-red-50 text-red-900'
 
-const requestStatusNoticeClass = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'border-amber-200 bg-amber-50 text-amber-900'
+      case 'CANCELLED':
+        return 'border-slate-300 bg-slate-100 text-slate-900'
 
-    case 'FOR REVIEW':
-      return 'border-blue-200 bg-blue-50 text-blue-900'
+      default:
+        return 'border-slate-200 bg-slate-50 text-slate-900'
+    }
+  })
 
-    case 'APPROVED':
-      return 'border-emerald-200 bg-emerald-50 text-emerald-900'
+const requestStatusNoticeTitle =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'Request pending'
 
-    case 'READY FOR PRINTING':
-      return 'border-violet-200 bg-violet-50 text-violet-900'
+      case 'FOR REVIEW':
+        return 'Request under review'
 
-    case 'COMPLETED':
-      return 'border-green-200 bg-green-50 text-green-900'
+      case 'APPROVED':
+        return 'Request approved'
 
-    case 'REJECTED':
-      return 'border-red-200 bg-red-50 text-red-900'
+      case 'READY FOR PRINTING':
+        return 'Ready for printing'
 
-    case 'CANCELLED':
-      return 'border-slate-300 bg-slate-100 text-slate-900'
+      case 'PAID':
+        return 'Payment recorded'
 
-    default:
-      return 'border-slate-200 bg-slate-50 text-slate-900'
-  }
-})
+      case 'COMPLETED':
+        return 'Request completed'
 
-const requestStatusNoticeTitle = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'Request pending'
+      case 'REJECTED':
+        return 'Request rejected'
 
-    case 'FOR REVIEW':
-      return 'Request under review'
+      case 'CANCELLED':
+        return 'Request cancelled'
 
-    case 'APPROVED':
-      return 'Request approved'
+      default:
+        return 'Request status'
+    }
+  })
 
-    case 'READY FOR PRINTING':
-      return 'Ready for printing'
+const requestStatusNoticeMessage =
+  computed(() => {
+    switch (
+      normalizedRequestStatus.value
+    ) {
+      case 'PENDING':
+        return 'Your request was received and is waiting to be reviewed by the City Treasurer’s Office.'
 
-    case 'COMPLETED':
-      return 'Request completed'
+      case 'FOR REVIEW':
+        return 'Your submitted information and property identification numbers are currently being reviewed.'
 
-    case 'REJECTED':
-      return 'Request rejected'
+      case 'APPROVED':
+        return 'Your request has been approved and may proceed to the next processing step.'
 
-    case 'CANCELLED':
-      return 'Request cancelled'
+      case 'READY FOR PRINTING':
+        return 'Your tax clearance request has been processed and is ready for printing.'
 
-    default:
-      return 'Request status'
-  }
-})
+      case 'PAID':
+        return 'Payment has been recorded for this request.'
 
-const requestStatusNoticeMessage = computed(() => {
-  switch (normalizedRequestStatus.value) {
-    case 'PENDING':
-      return 'Your request was received and is waiting to be reviewed by the City Treasurer’s Office.'
+      case 'COMPLETED':
+        return 'The tax clearance print request has been completed.'
 
-    case 'FOR REVIEW':
-      return 'Your submitted information and property identification numbers are currently being reviewed.'
+      case 'REJECTED':
+        return 'The request was not approved. Review the remarks for additional information.'
 
-    case 'APPROVED':
-      return 'Your request has been approved and may proceed to the next processing step.'
+      case 'CANCELLED':
+        return 'The request was cancelled. Review the remarks for additional information.'
 
-    case 'READY FOR PRINTING':
-      return 'Your tax clearance request has been processed and is ready for printing.'
+      default:
+        return 'Review the current request status and remarks below.'
+    }
+  })
 
-    case 'COMPLETED':
-      return 'The tax clearance print request has been completed.'
-
-    case 'REJECTED':
-      return 'The request was not approved. Review the remarks for additional information.'
-
-    case 'CANCELLED':
-      return 'The request was cancelled. Review the remarks for additional information.'
-
-    default:
-      return 'Review the current request status and remarks below.'
-  }
-})
-
-function getApiBaseUrl(): string {
+function getApiBaseUrl():
+  string {
   return String(
-      runtimeConfig.public.apiBaseUrl || '',
-  ).replace(/\/+$/, '')
+    runtimeConfig.public
+      .apiBaseUrl ||
+      '',
+  ).replace(
+    /\/+$/,
+    '',
+  )
 }
 
-function getRequestsEndpoint(): string {
-  const apiBaseUrl = getApiBaseUrl()
+function getPublicTaxClearanceEndpoint():
+  string {
+  const apiBaseUrl =
+    getApiBaseUrl()
 
   if (!apiBaseUrl) {
     throw new Error(
@@ -1527,201 +1752,428 @@ function getRequestsEndpoint(): string {
     )
   }
 
-  return `${apiBaseUrl}/tax-clearance/requests`
+  return `${apiBaseUrl}/public-requests/tax-clearance`
 }
 
-function normalizePin(value: string): string {
-  return value.trim().toUpperCase()
+function getPublicTrackingEndpoint(
+  code: string,
+): string {
+  const apiBaseUrl =
+    getApiBaseUrl()
+
+  if (!apiBaseUrl) {
+    throw new Error(
+      'The application API is not configured.',
+    )
+  }
+
+  return `${apiBaseUrl}/public-requests/${encodeURIComponent(code)}`
 }
 
-function isValidPin(value: string): boolean {
-  return /^[A-Z0-9-]+$/.test(value)
+function normalizePin(
+  value: string,
+): string {
+  return value
+    .trim()
+    .toUpperCase()
 }
 
-function addPin(): void {
-  pinMessage.value = ''
-  submitValidationMessage.value = ''
-  submitError.value = ''
-  submittedRequest.value = null
+function isValidPin(
+  value: string,
+): boolean {
+  return /^172-\d{2}-\d{3}-\d{3}-\d{3}(?:-\d{4})?$/.test(
+    value,
+  )
+}
 
-  const normalizedPin = normalizePin(pinInput.value)
+function handlePinInput():
+  void {
+  pinInput.value =
+    pinInput.value
+      .replace(
+        /[^0-9-]/g,
+        '',
+      )
+      .slice(
+        0,
+        23,
+      )
+
+  pinMessage.value =
+    ''
+
+  submitValidationMessage.value =
+    ''
+
+  submitError.value =
+    ''
+}
+
+function addPin():
+  void {
+  pinMessage.value =
+    ''
+
+  submitValidationMessage.value =
+    ''
+
+  submitError.value =
+    ''
+
+  submittedRequest.value =
+    null
+
+  const normalizedPin =
+    normalizePin(
+      pinInput.value,
+    )
 
   if (!normalizedPin) {
-    pinMessage.value = 'Enter a PIN before clicking Add PIN.'
-    return
-  }
-
-  if (normalizedPin.length > 100) {
     pinMessage.value =
-      'A PIN must not exceed 100 characters.'
+      'Enter a PIN before clicking Add PIN.'
+
     return
   }
 
-  if (!isValidPin(normalizedPin)) {
+  if (
+    !isValidPin(
+      normalizedPin,
+    )
+  ) {
     pinMessage.value =
-      'PIN values may contain only letters, numbers, and hyphens.'
+      'Enter a valid PIN using 172-XX-XXX-XXX-XXX or 172-XX-XXX-XXX-XXX-XXXX.'
+
     return
   }
 
-  if (form.pins.includes(normalizedPin)) {
+  if (
+    form.pins.includes(
+      normalizedPin,
+    )
+  ) {
     pinMessage.value =
       'This PIN has already been added.'
+
     return
   }
 
-  if (form.pins.length >= 50) {
+  if (
+    form.pins.length >= 50
+  ) {
     pinMessage.value =
       'A maximum of 50 PINs is allowed per request.'
+
     return
   }
 
-  form.pins.push(normalizedPin)
-  pinInput.value = ''
+  form.pins.push(
+    normalizedPin,
+  )
+
+  pinInput.value =
+    ''
 }
 
-function removePin(index: number): void {
-  form.pins.splice(index, 1)
+function removePin(
+  index: number,
+):
+  void {
+  form.pins.splice(
+    index,
+    1,
+  )
+
   clearSubmitMessages()
 }
 
-function clearPins(): void {
+function clearPins():
+  void {
   form.pins.splice(0)
-  pinInput.value = ''
-  pinMessage.value = ''
+
+  pinInput.value =
+    ''
+
+  pinMessage.value =
+    ''
+
   clearSubmitMessages()
 }
 
-function clearSubmitMessages(): void {
-  submitValidationMessage.value = ''
-  submitError.value = ''
-  submittedRequest.value = null
-  codeCopied.value = false
+function clearSubmitMessages():
+  void {
+  submitValidationMessage.value =
+    ''
+
+  submitError.value =
+    ''
+
+  submittedRequest.value =
+    null
+
+  codeCopied.value =
+    false
 }
 
-function validateSubmitForm(): string | null {
-  if (!form.requesteeName.trim()) {
-    return 'Name of requestee is required.'
+function validateSubmitForm():
+  string | null {
+  if (
+    !form.requesteeName.trim()
+  ) {
+    return 'Name of requester is required.'
   }
 
-  if (!form.mailingAddress.trim()) {
+  if (
+    !form.mailingAddress.trim()
+  ) {
     return 'Mailing address is required.'
   }
 
-  if (!form.emailAddress.trim()) {
+  if (
+    !form.emailAddress.trim()
+  ) {
     return 'Email address is required.'
   }
 
   const emailPattern =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-  if (!emailPattern.test(form.emailAddress.trim())) {
+  if (
+    !emailPattern.test(
+      form.emailAddress.trim(),
+    )
+  ) {
     return 'Enter a valid email address.'
   }
 
-  if (form.pins.length === 0) {
+  if (
+    ![
+      'POSTAL',
+      'EMAIL',
+    ].includes(
+      form.deliveryPreference,
+    )
+  ) {
+    return 'Select a delivery preference.'
+  }
+
+  if (
+    form.pins.length === 0
+  ) {
     return 'Add at least one property identification number.'
+  }
+
+  const invalidPin =
+    form.pins.find(
+      pin =>
+        !isValidPin(
+          pin,
+        ),
+    )
+
+  if (invalidPin) {
+    return `Invalid PIN: ${invalidPin}`
   }
 
   return null
 }
 
-async function submitRequest(): Promise<void> {
-  submitValidationMessage.value = ''
-  submitError.value = ''
-  submittedRequest.value = null
-  codeCopied.value = false
+async function submitRequest():
+  Promise<void> {
+  submitValidationMessage.value =
+    ''
 
-  const validationError = validateSubmitForm()
+  submitError.value =
+    ''
+
+  submittedRequest.value =
+    null
+
+  codeCopied.value =
+    false
+
+  const validationError =
+    validateSubmitForm()
 
   if (validationError) {
-    submitValidationMessage.value = validationError
+    submitValidationMessage.value =
+      validationError
+
     return
   }
 
-  isSubmitting.value = true
+  isSubmitting.value =
+    true
 
   try {
-    const payload: SubmitApiRequest = {
-      requestee_name: form.requesteeName.trim(),
-      mailing_address: form.mailingAddress.trim(),
-      email_address: form.emailAddress
-        .trim()
-        .toLowerCase(),
-      pins: [...form.pins],
+    const payload:
+      SubmitApiRequest = {
+      requester_name:
+        form.requesteeName
+          .trim(),
+
+      mailing_address:
+        form.mailingAddress
+          .trim(),
+
+      email:
+        form.emailAddress
+          .trim()
+          .toLowerCase(),
+
+      delivery_preference:
+        form.deliveryPreference,
+
+      pins:
+        [...form.pins],
     }
+
+    console.log(
+      'Submitting public tax clearance request:',
+      payload,
+    )
 
     const response =
       await $fetch<SubmitApiResponse>(
-        getRequestsEndpoint(),
+        getPublicTaxClearanceEndpoint(),
         {
-          method: 'POST',
+          method:
+            'POST',
+
           headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+            Accept:
+              'application/json',
+
+            'Content-Type':
+              'application/json',
           },
-          body: payload,
+
+          body:
+            payload,
         },
       )
 
-    const request = response.request
+    console.log(
+      'Public request response:',
+      response,
+    )
+
+    const request =
+      response.data
+
     const requestCode =
-      request?.request_code?.trim().toUpperCase()
+      request
+        ?.request_code
+        ?.trim()
+        .toUpperCase()
 
     if (
-      response.success !== true ||
       !request ||
       !requestCode
     ) {
       throw new Error(
         response.message ||
-          'The server did not return a request code.',
+        'The server did not return a request code.',
       )
     }
 
     submittedRequest.value = {
       requestCode,
+
       status:
-        request.status?.trim().toUpperCase() ||
+        request.status
+          ?.trim()
+          .toUpperCase() ||
         'PENDING',
-      remarks: request.remarks || null,
+
+      remarks:
+        request.remarks ||
+        null,
+
       pinCount:
-        Number(request.pin_count) ||
+        Number(
+          request.pin_count,
+        ) ||
+        request.pins
+          ?.length ||
         form.pins.length,
+
+      deliveryPreference:
+        request.delivery_preference ||
+        form.deliveryPreference,
+
       requestedOn:
-        request.requested_on || null,
+        request.requested_at ||
+        null,
     }
 
-    trackingCode.value = requestCode
+    trackingCode.value =
+      requestCode
 
     await router.replace({
       query: {
-        code: requestCode,
+        code:
+          requestCode,
       },
     })
-  } catch (error: unknown) {
-    const fetchError = error as {
-      data?: {
-        message?: string
-        error?: string
-      }
-      message?: string
-      statusCode?: number
-      status?: number
-    }
 
+  } catch (
+    error: any
+  ) {
     const statusCode =
-      fetchError.statusCode ||
-      fetchError.status
+      error?.statusCode ??
+      error?.status ??
+      error?.response?.status
 
-    if (statusCode === 400 || statusCode === 422) {
-      submitValidationMessage.value =
-        fetchError.data?.message ||
-        'Review the submitted information and try again.'
+    console.error(
+      'PUBLIC TAX CLEARANCE SUBMIT ERROR:',
+      error,
+    )
+
+    const responseData =
+      error?.data ??
+      error?.response?._data
+
+    if (
+      statusCode === 400 ||
+      statusCode === 422
+    ) {
+      const errors =
+        responseData?.errors
+
+      if (
+        errors &&
+        typeof errors ===
+          'object'
+      ) {
+        const firstError =
+          Object.values(
+            errors,
+          )
+            .flat()
+            .find(
+              value =>
+                typeof value ===
+                'string',
+            )
+
+        submitValidationMessage.value =
+          String(
+            firstError ||
+            responseData?.message ||
+            'Review the submitted information and try again.',
+          )
+      } else {
+        submitValidationMessage.value =
+          responseData?.message ||
+          'Review the submitted information and try again.'
+      }
 
       return
     }
 
-    if (statusCode === 429) {
+    if (
+      statusCode === 429
+    ) {
       submitError.value =
         'Too many requests were submitted from your connection. Please wait before trying again.'
 
@@ -1729,182 +2181,325 @@ async function submitRequest(): Promise<void> {
     }
 
     submitError.value =
-      fetchError.data?.message ||
-      fetchError.data?.error ||
-      fetchError.message ||
+      responseData?.message ||
+      responseData?.error ||
+      error?.message ||
       'The tax clearance request service is currently unavailable.'
+
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value =
+      false
   }
 }
 
-function resetSubmitForm(): void {
-  form.requesteeName = ''
-  form.mailingAddress = ''
-  form.emailAddress = ''
+function resetSubmitForm():
+  void {
+  form.requesteeName =
+    ''
+
+  form.mailingAddress =
+    ''
+
+  form.emailAddress =
+    ''
+
+  form.deliveryPreference =
+    'POSTAL'
+
   form.pins.splice(0)
 
-  pinInput.value = ''
-  pinMessage.value = ''
-  submitValidationMessage.value = ''
-  submitError.value = ''
-  submittedRequest.value = null
-  codeCopied.value = false
+  pinInput.value =
+    ''
+
+  pinMessage.value =
+    ''
+
+  submitValidationMessage.value =
+    ''
+
+  submitError.value =
+    ''
+
+  submittedRequest.value =
+    null
+
+  codeCopied.value =
+    false
 }
 
-async function copyRequestCode(): Promise<void> {
-  const code = submittedRequest.value?.requestCode
+async function copyRequestCode():
+  Promise<void> {
+  const code =
+    submittedRequest.value
+      ?.requestCode
 
-  if (!code || !import.meta.client) {
+  if (
+    !code ||
+    !import.meta.client
+  ) {
     return
   }
 
   try {
-    await navigator.clipboard.writeText(code)
-    codeCopied.value = true
+    await navigator
+      .clipboard
+      .writeText(
+        code,
+      )
 
-    window.setTimeout(() => {
-      codeCopied.value = false
-    }, 2000)
+    codeCopied.value =
+      true
+
+    window.setTimeout(
+      () => {
+        codeCopied.value =
+          false
+      },
+      2000,
+    )
+
   } catch {
     submitError.value =
       'The request code could not be copied automatically.'
   }
 }
 
-async function trackSubmittedRequest(): Promise<void> {
-  if (!submittedRequest.value) {
+async function trackSubmittedRequest():
+  Promise<void> {
+  if (
+    !submittedRequest.value
+  ) {
     return
   }
 
   trackingCode.value =
-    submittedRequest.value.requestCode
+    submittedRequest.value
+      .requestCode
 
-  activeTab.value = 'track'
+  activeTab.value =
+    'track'
+
   await nextTick()
+
   await trackRequest()
 }
 
-function startNewRequest(): void {
+function startNewRequest():
+  void {
   resetSubmitForm()
-  activeTab.value = 'submit'
+
+  activeTab.value =
+    'submit'
 
   void router.replace({
     query: {},
   })
 }
 
-function normalizeRequestCode(value: string): string {
+function normalizeRequestCode(
+  value: string,
+): string {
   return value
     .trim()
     .toUpperCase()
-    .replace(/[^A-Z0-9_-]/g, '')
-    .slice(0, 10)
+    .replace(
+      /[^A-Z0-9-]/g,
+      '',
+    )
+    .slice(
+      0,
+      13,
+    )
 }
 
-function handleTrackingCodeInput(): void {
+function handleTrackingCodeInput():
+  void {
   trackingCode.value =
-    normalizeRequestCode(trackingCode.value)
+    normalizeRequestCode(
+      trackingCode.value,
+    )
 
-  trackingValidationMessage.value = ''
-  trackingError.value = ''
-  trackingResult.value = null
+  trackingValidationMessage.value =
+    ''
+
+  trackingError.value =
+    ''
+
+  trackingResult.value =
+    null
 }
 
-function isValidRequestCode(value: string): boolean {
-  return /^[A-Z0-9_-]{10}$/.test(value)
+function isValidRequestCode(
+  value: string,
+): boolean {
+  return /^TC-[A-Z0-9]{10}$/.test(
+    value,
+  )
 }
 
 function createNotFoundTrackingResult(
   code: string,
   message: string,
-): TrackingResult {
+):
+  TrackingResult {
   return {
-    found: false,
+    found:
+      false,
+
     message,
-    requestCode: code,
-    status: 'NOT FOUND',
-    remarks: null,
-    pinCount: 0,
-    requestedOn: null,
-    updatedOn: null,
+
+    requestCode:
+      code,
+
+    status:
+      'NOT FOUND',
+
+    remarks:
+      null,
+
+    pinCount:
+      0,
+
+    deliveryPreference:
+      null,
+
+    requestedOn:
+      null,
+
+    updatedOn:
+      null,
   }
 }
 
-async function trackRequest(): Promise<void> {
-  trackingValidationMessage.value = ''
-  trackingError.value = ''
-  trackingResult.value = null
+async function trackRequest():
+  Promise<void> {
+  trackingValidationMessage.value =
+    ''
+
+  trackingError.value =
+    ''
+
+  trackingResult.value =
+    null
 
   const code =
-    normalizeRequestCode(trackingCode.value)
+    normalizeRequestCode(
+      trackingCode.value,
+    )
 
-  trackingCode.value = code
+  trackingCode.value =
+    code
 
   if (!code) {
     trackingValidationMessage.value =
       'Enter your request code.'
+
     return
   }
 
-  if (!isValidRequestCode(code)) {
+  if (
+    !isValidRequestCode(
+      code,
+    )
+  ) {
     trackingValidationMessage.value =
-      'The request code must contain exactly 10 letters, numbers, hyphens, or underscores.'
+      'Enter a valid request code such as TC-SW4KWBLODT.'
+
     return
   }
 
-  isTracking.value = true
+  isTracking.value =
+    true
 
   try {
-    const endpoint =
-      `${getRequestsEndpoint()}/${encodeURIComponent(code)}`
-
     const response =
       await $fetch<TrackingApiResponse>(
-        endpoint,
+        getPublicTrackingEndpoint(
+          code,
+        ),
         {
-          method: 'GET',
+          method:
+            'GET',
+
           headers: {
-            Accept: 'application/json',
+            Accept:
+              'application/json',
           },
         },
       )
 
+    const request =
+      response.data
+
+    if (!request) {
+      trackingResult.value =
+        createNotFoundTrackingResult(
+          code,
+          'No public tax clearance request was found for this request code.',
+        )
+
+      return
+    }
+
+    /*
+     * This public page is specifically
+     * for Tax Clearance requests.
+     */
     if (
-      response.found !== true ||
-      !response.request
+      request.request_type !==
+      'TAX_CLEARANCE'
     ) {
       trackingResult.value =
         createNotFoundTrackingResult(
           code,
-          response.message ||
-            'No tax clearance print request was found for this request code.',
+          'The request code does not belong to a tax clearance request.',
         )
-    } else {
-      const request = response.request
 
-      trackingResult.value = {
-        found: true,
-        message:
-          response.message ||
-          'The tax clearance print request was found.',
-        requestCode:
-          request.request_code
-            ?.trim()
-            .toUpperCase() || code,
-        status:
-          request.status
-            ?.trim()
-            .toUpperCase() || 'UNKNOWN',
-        remarks:
-          request.remarks || null,
-        pinCount:
-          Number(request.pin_count) || 0,
-        requestedOn:
-          request.requested_on || null,
-        updatedOn:
-          request.updated_on || null,
-      }
+      return
+    }
+
+    trackingResult.value = {
+      found:
+        true,
+
+      message:
+        'The tax clearance print request was found.',
+
+      requestCode:
+        request.request_code
+          ?.trim()
+          .toUpperCase() ||
+        code,
+
+      status:
+        request.status
+          ?.trim()
+          .toUpperCase() ||
+        'UNKNOWN',
+
+      remarks:
+        request.remarks ||
+        null,
+
+      pinCount:
+        Number(
+          request.pin_count,
+        ) ||
+        request.pins
+          ?.length ||
+        0,
+
+      deliveryPreference:
+        request.delivery_preference ||
+        null,
+
+      requestedOn:
+        request.requested_at ||
+        null,
+
+      updatedOn:
+        request.updated_at ||
+        null,
     }
 
     await router.replace({
@@ -1915,88 +2510,99 @@ async function trackRequest(): Promise<void> {
 
     await nextTick()
 
-    if (import.meta.client) {
-      trackingResultSection.value?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      })
-    }
-  } catch (error: unknown) {
-    const fetchError = error as {
-      data?: {
-        message?: string
-        error?: string
-      }
-      message?: string
-      statusCode?: number
-      status?: number
-      response?: {
-        status?: number
-      }
+    if (
+      import.meta.client
+    ) {
+      trackingResultSection.value
+        ?.scrollIntoView({
+          behavior:
+            'smooth',
+
+          block:
+            'start',
+        })
     }
 
+  } catch (
+    error: any
+  ) {
     const statusCode =
-      fetchError.statusCode ||
-      fetchError.status ||
-      fetchError.response?.status
+      error?.statusCode ??
+      error?.status ??
+      error?.response?.status
+
+    const responseData =
+      error?.data ??
+      error?.response?._data
+
+    console.error(
+      'PUBLIC REQUEST TRACKING ERROR:',
+      error,
+    )
+
+    if (
+      statusCode === 404
+    ) {
+      trackingResult.value =
+        createNotFoundTrackingResult(
+          code,
+          responseData?.message ||
+          'No public tax clearance request was found for this request code.',
+        )
+
+      return
+    }
 
     if (
       statusCode === 400 ||
       statusCode === 422
     ) {
       trackingValidationMessage.value =
-        fetchError.data?.message ||
+        responseData?.message ||
         'The request code format is invalid.'
 
       return
     }
 
-    if (statusCode === 404) {
-      trackingResult.value =
-        createNotFoundTrackingResult(
-          code,
-          fetchError.data?.message ||
-            'No tax clearance print request was found for this request code.',
-        )
-
-      return
-    }
-
-    if (statusCode === 429) {
+    if (
+      statusCode === 429
+    ) {
       trackingError.value =
         'Too many status requests were made from your connection. Please wait before trying again.'
 
       return
     }
 
-    if (
-      statusCode === 502 ||
-      statusCode === 503
-    ) {
-      trackingError.value =
-        'The request tracking service is temporarily unavailable. Please try again later.'
-
-      return
-    }
-
     trackingError.value =
-      fetchError.data?.message ||
-      fetchError.data?.error ||
+      responseData?.message ||
+      responseData?.error ||
+      error?.message ||
       'The request tracking service is currently unavailable.'
+
   } finally {
-    isTracking.value = false
+    isTracking.value =
+      false
   }
 }
 
-async function refreshTracking(): Promise<void> {
+async function refreshTracking():
+  Promise<void> {
   await trackRequest()
 }
 
-async function clearTracking(): Promise<void> {
-  trackingCode.value = ''
-  trackingValidationMessage.value = ''
-  trackingError.value = ''
-  trackingResult.value = null
+async function clearTracking():
+  Promise<void> {
+  trackingCode.value =
+    ''
+
+  trackingValidationMessage.value =
+    ''
+
+  trackingError.value =
+    ''
+
+  trackingResult.value =
+    null
 
   await router.replace({
     query: {},
@@ -2004,31 +2610,76 @@ async function clearTracking(): Promise<void> {
 
   await nextTick()
 
-  if (import.meta.client) {
+  if (
+    import.meta.client
+  ) {
     document
-      .getElementById('requestCode')
+      .getElementById(
+        'requestCode',
+      )
       ?.focus()
   }
 }
 
-function switchTab(tab: PageTab): void {
-  activeTab.value = tab
+function switchTab(
+  tab: PageTab,
+):
+  void {
+  activeTab.value =
+    tab
 
-  submitValidationMessage.value = ''
-  submitError.value = ''
-  trackingValidationMessage.value = ''
-  trackingError.value = ''
+  submitValidationMessage.value =
+    ''
 
-  if (tab === 'submit') {
-    trackingResult.value = null
+  submitError.value =
+    ''
+
+  trackingValidationMessage.value =
+    ''
+
+  trackingError.value =
+    ''
+
+  if (
+    tab === 'submit'
+  ) {
+    trackingResult.value =
+      null
+  }
+}
+
+function deliveryLabel(
+  delivery:
+    | DeliveryPreference
+    | null,
+):
+  string {
+  switch (delivery) {
+    case 'POSTAL':
+      return 'Printed copy by postal mail'
+
+    case 'EMAIL':
+      return 'PDF file by email'
+
+    default:
+      return 'Not provided'
   }
 }
 
 function displayValue(
-  value: string | null | undefined,
-  fallback = 'Not provided',
-): string {
-  if (!value || !value.trim()) {
+  value:
+    | string
+    | null
+    | undefined,
+
+  fallback =
+    'Not provided',
+):
+  string {
+  if (
+    !value ||
+    !value.trim()
+  ) {
     return fallback
   }
 
@@ -2036,74 +2687,72 @@ function displayValue(
 }
 
 function formatDate(
-  value: string | null | undefined,
-): string {
+  value:
+    | string
+    | null
+    | undefined,
+):
+  string {
   if (!value) {
     return 'Not provided'
   }
 
-  const localDateMatch = value.match(
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?$/,
-  )
-
-  if (localDateMatch) {
-    const [
-      ,
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      second,
-      milliseconds,
-    ] = localDateMatch
-
-    const localDate = new Date(
-      Number(year),
-      Number(month) - 1,
-      Number(day),
-      Number(hour),
-      Number(minute),
-      Number(second),
-      milliseconds
-        ? Number(milliseconds.slice(0, 3).padEnd(3, '0'))
-        : 0,
+  const parsedDate =
+    new Date(
+      value,
     )
 
-    return new Intl.DateTimeFormat('en-PH', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    }).format(localDate)
-  }
-
-  const parsedDate = new Date(value)
-
-  if (Number.isNaN(parsedDate.getTime())) {
+  if (
+    Number.isNaN(
+      parsedDate.getTime(),
+    )
+  ) {
     return value
   }
 
-  return new Intl.DateTimeFormat('en-PH', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: 'Asia/Manila',
-  }).format(parsedDate)
+  return new Intl.DateTimeFormat(
+    'en-PH',
+    {
+      year:
+        'numeric',
+
+      month:
+        'long',
+
+      day:
+        'numeric',
+
+      hour:
+        'numeric',
+
+      minute:
+        '2-digit',
+
+      timeZone:
+        'Asia/Manila',
+    },
+  ).format(
+    parsedDate,
+  )
 }
 
 onMounted(() => {
   const requestCodeFromUrl =
-    typeof route.query.code === 'string'
-      ? normalizeRequestCode(route.query.code)
+    typeof route.query.code ===
+      'string'
+      ? normalizeRequestCode(
+          route.query.code,
+        )
       : ''
 
-  if (requestCodeFromUrl) {
-    activeTab.value = 'track'
-    trackingCode.value = requestCodeFromUrl
+  if (
+    requestCodeFromUrl
+  ) {
+    activeTab.value =
+      'track'
+
+    trackingCode.value =
+      requestCodeFromUrl
 
     void trackRequest()
   }
@@ -2130,14 +2779,26 @@ onMounted(() => {
   border-radius: 1rem;
   border: 1px solid rgb(203 213 225);
   background: white;
+
   padding-top: 1rem;
   padding-right: 1rem;
   padding-bottom: 1rem;
+  padding-left: 1.25rem;
+
   color: rgb(15 23 42);
   outline: none;
+
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease;
+}
+
+.form-input.pl-12 {
+  padding-left: 3rem;
+}
+
+.form-input.pr-12 {
+  padding-right: 3rem;
 }
 
 .form-input::placeholder {
@@ -2146,7 +2807,10 @@ onMounted(() => {
 
 .form-input:focus {
   border-color: rgb(22 163 74);
-  box-shadow: 0 0 0 4px rgb(22 163 74 / 0.1);
+
+  box-shadow:
+    0 0 0 4px
+    rgb(22 163 74 / 0.1);
 }
 
 .form-input:disabled {
@@ -2156,24 +2820,46 @@ onMounted(() => {
 }
 
 .detail-item {
-  border-bottom: 1px solid rgb(226 232 240);
-  padding-bottom: 1rem;
+  border-bottom:
+    1px solid
+    rgb(226 232 240);
+
+  padding-bottom:
+    1rem;
 }
 
 .detail-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgb(100 116 139);
+  font-size:
+    0.75rem;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+
+  color:
+    rgb(100 116 139);
 }
 
 .detail-value {
-  margin-top: 0.45rem;
-  overflow-wrap: anywhere;
-  font-size: 1rem;
-  font-weight: 700;
-  color: rgb(15 23 42);
+  margin-top:
+    0.45rem;
+
+  overflow-wrap:
+    anywhere;
+
+  font-size:
+    1rem;
+
+  font-weight:
+    700;
+
+  color:
+    rgb(15 23 42);
 }
 
 .result-enter-active,
@@ -2186,6 +2872,8 @@ onMounted(() => {
 .result-enter-from,
 .result-leave-to {
   opacity: 0;
-  transform: translateY(12px);
+
+  transform:
+    translateY(12px);
 }
 </style>
